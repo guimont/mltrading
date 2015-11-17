@@ -1,0 +1,21 @@
+{
+  "generator-jhipster": {
+    "baseName": "mltrading",
+    "packageName": "com.mltrading",
+    "packageFolder": "com/mltrading",
+    "authenticationType": "session",
+    "hibernateCache": "no",
+    "clusteredHttpSession": "no",
+    "websocket": "spring-websocket",
+    "databaseType": "mongodb",
+    "devDatabaseType": "mongodb",
+    "prodDatabaseType": "mongodb",
+    "searchEngine": "no",
+    "useCompass": false,
+    "buildTool": "maven",
+    "frontendBuilder": "grunt",
+    "javaVersion": "8",
+    "enableTranslation": true,
+    "rememberMeKey": "6a97070fb5dfa9d68e1ad1cceb6b229244f8712d"
+  }
+}
