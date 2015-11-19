@@ -1,8 +1,9 @@
 package com.mltrading.ml;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
+import com.mltrading.models.stock.StockHistory;
+import org.apache.spark.mllib.linalg.Vectors;
 import scala.Tuple2;
 import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.JavaPairRDD;
@@ -21,9 +22,26 @@ import org.apache.spark.SparkConf;
  */
 public class RandomForestStock {
 
+    SparkConf sparkConf = new SparkConf().setAppName("JavaRandomForest");
+    JavaSparkContext sc = new JavaSparkContext(sparkConf);
+
+    public void createRDD() {
+        List<StockHistory> test = new ArrayList<StockHistory>();
+        JavaRDD<StockHistory> data = sc.parallelize(test);
+
+        JavaRDD<LabeledPoint> parsedData = data.map(
+            new Function<StockHistory, LabeledPoint>() {
+                public LabeledPoint call(StockHistory line) {
+                    return new LabeledPoint(0., Vectors.dense(null));
+                }
+            }
+        );
+
+        parsedData.cache();
+    }
+
     public void processRF() {
-        SparkConf sparkConf = new SparkConf().setAppName("JavaRandomForest");
-        JavaSparkContext sc = new JavaSparkContext(sparkConf);
+
 
         // Load and parse the data file.
         String datapath = "data/mllib/sample_libsvm_data.txt";

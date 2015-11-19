@@ -18,7 +18,9 @@ import java.net.URL;
  */
 public class ParserMain {
 
-    static String cac40 = "http://bourse.lesechos.fr/bourse/actions/cours_az.jsp?select_fMARCHE_COURS=ind_FR0003500008&col=&ord=&page=&lettre=A";
+    //static String cac40 = "http://bourse.lesechos.fr/bourse/actions/cours_az.jsp?select_fMARCHE_COURS=ind_FR0003500008&col=&ord=&page=&lettre=A";
+
+    static String cac40 = "http://investir.lesechos.fr/actions/cotations/cours-az.html?select_fMARCHE_COURS=ind_FR0003500008&col=&ord=&page=&lettre=A";
     static String rawMatPetrole = "http://bourse.lesechos.fr/bourse/matieres_premieres/petrole.jsp";
     static String rawMatMetal = "http://bourse.lesechos.fr/bourse/matieres_premieres/metaux.jsp";
 
@@ -28,8 +30,8 @@ public class ParserMain {
 
     public static void loaderAll() {
         loaderStock(cac40);
-        loaderRawMaterials(rawMatPetrole);
-        loaderRawMaterials(rawMatMetal);
+        //loaderRawMaterials(rawMatPetrole);
+        //loaderRawMaterials(rawMatMetal);
     }
 
     public static void loaderStock(String url) {

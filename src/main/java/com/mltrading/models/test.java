@@ -1,6 +1,7 @@
 package com.mltrading.models;
 
 import com.mltrading.models.parser.Analyse;
+import com.mltrading.models.parser.ParserHistory;
 import com.mltrading.models.parser.ParserMain;
 import com.mltrading.models.stock.StockAnalyse;
 import com.mltrading.models.stock.StockHistory;
@@ -49,12 +50,12 @@ public class test {
 
         System.out.print(meanQ);*/
 
+/*
+        Analyse a = new Analyse();
+        a.processAll();
 
-        /*Analyse a = new Analyse();
-        a.processAll();*/
-
-        StockHistory a = StockHistory.getStockHistory("FR0000045072", "2013-03-03T23:00:00Z");
-        System.out.println(a.toString());
+        StockHistory sh = StockHistory.getStockHistory("FR0000045072", "2013-03-03T23:00:00Z");
+        System.out.println(sh.toString());*/
 
 
 
