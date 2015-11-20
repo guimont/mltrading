@@ -1,8 +1,9 @@
 package com.mltrading.models;
 
-import com.mltrading.models.parser.Analyse;
-import com.mltrading.models.parser.ParserHistory;
-import com.mltrading.models.parser.ParserMain;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.mltrading.models.parser.*;
+import com.mltrading.models.parser.impl.RealTimeParserBoursorama;
 import com.mltrading.models.stock.StockAnalyse;
 import com.mltrading.models.stock.StockHistory;
 
@@ -12,6 +13,9 @@ import com.mltrading.models.stock.StockHistory;
 public class test {
 
     public static void main(String[] args) {
+
+        Injector injector = Guice.createInjector(new ServiceParser());
+        RealTimeParser rtPrice = injector.getInstance( RealTimeParser.class );
 
         //ScheduleParserGeneral g = new ScheduleParserGeneral();
         //g.start();
@@ -23,9 +27,12 @@ public class test {
         influxDB.createDatabase(dbName);
         influxDB.deleteDatabase(dbName);*/
 
-        ParserMain.loaderAll();
+        //ParserMain.loaderAll();
         //ParserHistory.loader();
-        System.out.println("parsing ok");
+        //System.out.println("parsing ok");
+        rtPrice.refreshCache();
+
+
 
 
         /*QueryResult res =InfluxDaoConnector.getPoints("SELECT * FROM FR0000131708");

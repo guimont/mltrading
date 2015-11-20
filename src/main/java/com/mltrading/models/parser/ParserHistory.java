@@ -85,11 +85,12 @@ public class ParserHistory {
                                     hist.setVolume(Integer.parseInt(t));
                                 }
                             }
-                            saveHistory(bp, hist);
+                            //saveHistory(bp, hist);
+                            System.out.println(hist.toString());
 
                         }
 
-                        InfluxDaoConnector.writePoints(bp);
+                        //InfluxDaoConnector.writePoints(bp);
 
                     }
 

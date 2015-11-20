@@ -6,6 +6,7 @@ import java.util.TreeMap;
 /**
  * Created by gmo on 17/06/2015.
  */
+
 public class CacheStockGeneral {
 
     private Map<String,StockGeneral> CSCache = new TreeMap<>();
