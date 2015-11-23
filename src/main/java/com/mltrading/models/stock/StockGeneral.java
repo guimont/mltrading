@@ -13,6 +13,17 @@ public class StockGeneral {
 
     private String codif;
 
+    private String placeCodif;
+
+
+    public String getPlaceCodif() {
+        return placeCodif;
+    }
+
+    public void setPlaceCodif(String placeCodif) {
+        this.placeCodif = placeCodif;
+    }
+
     /**
      * last price of stock
      */
@@ -61,6 +72,13 @@ public class StockGeneral {
     public StockGeneral() {
     }
 
+    public StockGeneral(String code, String name, String place, String codif, String placeCodif) {
+        this.code = code;
+        this.name = name;
+        this.place = place;
+        this.codif = codif;
+        this.placeCodif = placeCodif;
+    }
 
     public StockGeneral(Float value, Float variation, Float opening, Float highest, Float lowest, Float firstJanuaryVaraition, Integer volume) {
         this.value = value;
