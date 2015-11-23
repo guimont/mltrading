@@ -16,6 +16,7 @@ public class test {
 
         Injector injector = Guice.createInjector(new ServiceParser());
         RealTimeParser rtPrice = injector.getInstance( RealTimeParser.class );
+        HistoryParser histParser = injector.getInstance(HistoryParser.class);
 
         //ScheduleParserGeneral g = new ScheduleParserGeneral();
         //g.start();
@@ -31,6 +32,7 @@ public class test {
         //ParserHistory.loader();
         //System.out.println("parsing ok");
         rtPrice.refreshCache();
+        histParser.fetch();
 
 
 

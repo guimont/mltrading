@@ -20,7 +20,7 @@ public class CacheStockGeneral {
     static {
         Map<String, StockGeneral> aMap = new HashMap<>();
         aMap.put("BE0003470755", new StockGeneral("BE0003470755","Solvay","SOLB","","PA"));
-        aMap.put("CH0012214059", new StockGeneral("CH0012214059","LafargeHolcim","LHN","","PA"));
+        aMap.put("CH0012214059", new StockGeneral("CH0012214059","LafargeHolcim","LG","","PA"));
         aMap.put("FR0000045072", new StockGeneral("FR0000045072","Credit Agricole","ACA","","PA"));
         aMap.put("FR0000073272", new StockGeneral("FR0000073272","Safran","SAF","","PA"));
         aMap.put("FR0000120073", new StockGeneral("FR0000120073","Air Liquide","AI","","PA"));
@@ -45,7 +45,7 @@ public class CacheStockGeneral {
         aMap.put("FR0000125338", new StockGeneral("FR0000125338","Cap Gemini","CAP","","PA"));
         aMap.put("FR0000125486", new StockGeneral("FR0000125486","Vinci","DG","","PA"));
         aMap.put("FR0000127771", new StockGeneral("FR0000127771","Vivendi","VIV","","PA"));
-        aMap.put("FR0000130338", new StockGeneral("FR0000130338","Alcatel-Lucent","ALU","","PA"));
+        aMap.put("FR0000130007", new StockGeneral("FR0000130007","Alcatel-Lucent","ALU","","PA"));
         aMap.put("FR0000130338", new StockGeneral("FR0000130338","Valeo","FR","","PA"));
         aMap.put("FR0000130577", new StockGeneral("FR0000130577","Publicis Groupe","PUB","","PA"));
         aMap.put("FR0000130809", new StockGeneral("FR0000130809","Societe Generale","GLE","","PA"));
@@ -53,7 +53,7 @@ public class CacheStockGeneral {
         aMap.put("FR0000131708", new StockGeneral("FR0000131708","Technip","TEC","","PA"));
         aMap.put("FR0000131906", new StockGeneral("FR0000131906","Renault","RNO","","PA"));
         aMap.put("FR0000133308", new StockGeneral("FR0000133308","Orange","ORA","","PA"));
-        aMap.put("FR0010208488", new StockGeneral("FR0010208488","Engie","ENGI","","PA"));
+        aMap.put("FR0010208488", new StockGeneral("FR0010208488","Engie","GSZ","","PA"));
         aMap.put("FR0010220475", new StockGeneral("FR0010220475","Alstom","ALO","","PA"));
         aMap.put("FR0010242511", new StockGeneral("FR0010242511","EDF","EDF","","PA"));
         aMap.put("FR0010307819", new StockGeneral("FR0010307819","Legrand SA","LR","","PA"));
@@ -87,6 +87,13 @@ public class CacheStockGeneral {
 
     public static Map<String,StockGeneral> getIsinCache() {
         return ISINMap;
+    }
+
+    public static String getCode(String codif) {
+        for (StockGeneral g: CacheStockGeneral.getIsinCache().values()) {
+            if (g.getCodif().equals(codif)) return g.getCode();
+        }
+        return null;
     }
 
     public static void removeCache() {

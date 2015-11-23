@@ -72,7 +72,7 @@ public class StockGeneral {
     public StockGeneral() {
     }
 
-    public StockGeneral(String code, String name, String place, String codif, String placeCodif) {
+    public StockGeneral(String code, String name,  String codif, String place, String placeCodif) {
         this.code = code;
         this.name = name;
         this.place = place;

@@ -12,6 +12,7 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.regex.Pattern;
 
 /**
  * Created by gmo on 21/11/2015.
@@ -37,11 +38,33 @@ public class RealTimeParserYahoo implements RealTimeParser {
             Document doc = Jsoup.parse(text);
 
             Elements links = doc.select(refCode);
-            Elements sublinks = links.select("tr");
+            for (Element link : links) {
+                if (link.children().size() > 40) {
+                    Elements sublinks  = link.children().select("tr");
+                    for (Element elt : sublinks) {
+                        Elements t = elt.select("td");
+                        if (t.size() > 3) {
+                            StockGeneral g = new StockGeneral();
+                            String[] refSplit = t.get(0).text().split(Pattern.quote("."));
+                            g.setName(t.get(1).text());
+                            g.setPlaceCodif(refSplit[1]);
+                            g.setCodif(refSplit[0]);
+                            g.setValue(new Float(t.get(2).child(0).text().replace(",", ".")));
+                            System.out.println(g.getName());
+                            try {
+                                g.setVariation(new Float(t.get(3).child(0).child(1).text().replace(",", ".")));
+                                g.setVolume(new Integer(t.get(4).child(0).text().replaceAll(" ", "")));
+                            }
+                            catch (IndexOutOfBoundsException e){
+                               //System.out.println(e);
+                            }
 
-            for (Element link : sublinks) {
+                            g.setCode(CacheStockGeneral.getCode(g.getCodif()));
 
-
+                            CacheStockGeneral.getCache().put(g.getCode(),g);
+                        }
+                    }
+                }
             }
 
 
