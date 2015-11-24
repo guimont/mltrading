@@ -24,15 +24,17 @@ public class RandomForestStock {
 
     SparkConf sparkConf = new SparkConf().setAppName("JavaRandomForest");
     JavaSparkContext sc = new JavaSparkContext(sparkConf);
+    static int featuresLength = 8;
 
     public void createRDD() {
-        List<StockHistory> test = new ArrayList<StockHistory>();
-        JavaRDD<StockHistory> data = sc.parallelize(test);
+        List<StockHistory> shL  = StockHistory.getStockHistoryList("FR0000045072");
+        List<FeaturesStock> fsL  = null; //FeaturesStock.transformList(shL);
+        JavaRDD<FeaturesStock> data = sc.parallelize(fsL);
 
         JavaRDD<LabeledPoint> parsedData = data.map(
-            new Function<StockHistory, LabeledPoint>() {
-                public LabeledPoint call(StockHistory line) {
-                    return new LabeledPoint(0., Vectors.dense(null));
+            new Function<FeaturesStock, LabeledPoint>() {
+                public LabeledPoint call(FeaturesStock fs) {
+                    return new LabeledPoint(fs.getPredictionValue(), Vectors.dense(fs.vectorize()));
                 }
             }
         );

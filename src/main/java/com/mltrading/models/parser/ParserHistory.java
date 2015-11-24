@@ -66,23 +66,23 @@ public class ParserHistory {
                                 }
                                 if (!linkField.isEmpty() && linkField.compareToIgnoreCase("valorisation") == 0) {
                                     String t = e.text().replace(',', '.');
-                                    hist.setValue(Float.parseFloat(t));
+                                    hist.setValue(Double.parseDouble(t));
                                 }
                                 if (!linkField.isEmpty() && linkField.compareToIgnoreCase("high") == 0) {
                                     String t = e.text().replace(',', '.');
-                                    hist.setHighest(Float.parseFloat(t));
+                                    hist.setHighest(Double.parseDouble(t));
                                 }
                                 if (!linkField.isEmpty() && linkField.compareToIgnoreCase("low") == 0) {
                                     String t = e.text().replace(',', '.');
-                                    hist.setLowest(Float.parseFloat(t));
+                                    hist.setLowest(Double.parseDouble(t));
                                 }
                                 if (!linkField.isEmpty() && linkField.compareToIgnoreCase("open") == 0) {
                                     String t = e.text().replace(',', '.');
-                                    hist.setOpening(Float.parseFloat(t));
+                                    hist.setOpening(Double.parseDouble(t));
                                 }
                                 if (!linkField.isEmpty() && linkField.compareToIgnoreCase("volume") == 0) {
                                     String t = e.text().replace('�', ' ').replaceAll(" ", "");
-                                    hist.setVolume(Integer.parseInt(t));
+                                    hist.setVolume(Double.parseDouble(t));
                                 }
                             }
                             //saveHistory(bp, hist);

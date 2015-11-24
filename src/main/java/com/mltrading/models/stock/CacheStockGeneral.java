@@ -19,7 +19,7 @@ public class CacheStockGeneral {
     private static final Map<String, StockGeneral> ISINMap;
     static {
         Map<String, StockGeneral> aMap = new HashMap<>();
-        aMap.put("BE0003470755", new StockGeneral("BE0003470755","Solvay","SOLB","","PA"));
+        aMap.put("BE0003470755", new StockGeneral("BE0003470755","Solvay","SOLB","","BR"));
         aMap.put("CH0012214059", new StockGeneral("CH0012214059","LafargeHolcim","LG","","PA"));
         aMap.put("FR0000045072", new StockGeneral("FR0000045072","Credit Agricole","ACA","","PA"));
         aMap.put("FR0000073272", new StockGeneral("FR0000073272","Safran","SAF","","PA"));
