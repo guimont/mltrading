@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Created by gmo on 24/06/2015.
  */
-public class StockHistory {
+public class StockHistory extends Object{
 
     private String code;
 
@@ -236,6 +236,8 @@ public class StockHistory {
     }
 
 
+
+
     @Override
     public String toString() {
         return "StockHistory{" +
@@ -253,5 +255,10 @@ public class StockHistory {
             ", lowest=" + lowest +
             ", volume=" + volume +
             '}';
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }

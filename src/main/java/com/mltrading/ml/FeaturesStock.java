@@ -2,6 +2,9 @@ package com.mltrading.ml;
 
 import com.mltrading.models.stock.StockHistory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by gmo on 24/11/2015.
  */
@@ -98,19 +101,38 @@ public class FeaturesStock {
     }
 
 
-    public FeaturesStock transform(StockHistory sh) {
-        this.setMm20(sh.getAnalyse_tech().getMma20());
-        this.setMma50(sh.getAnalyse_tech().getMma50());
-        this.setMme12(sh.getAnalyse_tech().getMme12());
-        this.setMme26(sh.getAnalyse_tech().getMme26());
-        this.setMomentum(sh.getAnalyse_tech().getMomentum());
-        this.setStdDev(sh.getAnalyse_tech().getStdDev());
-        this.setValue(sh.getValue());
-        this.setVolume(sh.getVolume());
-        return this;
+    public static FeaturesStock transform(StockHistory sh,double value) {
+        FeaturesStock fs = new FeaturesStock();
+
+        fs.setPredictionValue(value);
+        fs.setMm20(sh.getAnalyse_tech().getMma20());
+        fs.setMma50(sh.getAnalyse_tech().getMma50());
+        fs.setMme12(sh.getAnalyse_tech().getMme12());
+        fs.setMme26(sh.getAnalyse_tech().getMme26());
+        fs.setMomentum(sh.getAnalyse_tech().getMomentum());
+        fs.setStdDev(sh.getAnalyse_tech().getStdDev());
+        fs.setValue(sh.getValue());
+        fs.setVolume(sh.getVolume());
+        return fs;
     }
 
     public double[] vectorize() {
         return new double[8];
+    }
+
+    public  static List<FeaturesStock> transformList(List<StockHistory> shL) {
+        List<FeaturesStock> fsL = new ArrayList<>();
+        StockHistory feature = null;
+
+        for (StockHistory sh:shL) {
+            if (feature != null)
+                fsL.add(transform(feature,sh.getValue()));
+            try {
+                feature = (StockHistory) sh.clone();
+            } catch (CloneNotSupportedException e) {
+                e.printStackTrace();
+            }
+        }
+        return fsL;
     }
 }

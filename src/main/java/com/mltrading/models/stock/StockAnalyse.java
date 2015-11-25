@@ -6,7 +6,7 @@ import com.mltrading.influxdb.dto.QueryResult;
 /**
  * Created by gmo on 16/11/2015.
  */
-public class StockAnalyse {
+public class StockAnalyse extends Object{
     private Double mma20;
 
     private Double mma50;
@@ -96,5 +96,10 @@ public class StockAnalyse {
         a.setStdDev((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(6));
 
         return a;
+    }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }

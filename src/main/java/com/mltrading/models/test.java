@@ -2,6 +2,7 @@ package com.mltrading.models;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.mltrading.ml.RandomForestStock;
 import com.mltrading.models.parser.*;
 import com.mltrading.models.parser.impl.RealTimeParserBoursorama;
 import com.mltrading.models.stock.StockAnalyse;
@@ -63,14 +64,18 @@ public class test {
 
 
        /*Analyse a = new Analyse();
-        a.processAll();*/
+        a.processAll();
 
         StockHistory sh = StockHistory.getStockHistory("FR0000045072", "2015-04-29T22:00:00Z");
         List<StockHistory> shL = StockHistory.getStockHistoryList("FR0000045072");
 
         System.out.println(shL.size());
 
-        System.out.println(sh.toString());
+        System.out.println(sh.toString());   */
+
+
+        RandomForestStock rf = new RandomForestStock();
+        rf.processRF();
 
 
 

@@ -22,13 +22,12 @@ import org.apache.spark.SparkConf;
  */
 public class RandomForestStock {
 
-    SparkConf sparkConf = new SparkConf().setAppName("JavaRandomForest");
-    JavaSparkContext sc = new JavaSparkContext(sparkConf);
+
     static int featuresLength = 8;
 
-    public void createRDD() {
+    public JavaRDD<LabeledPoint> createRDD(JavaSparkContext sc) {
         List<StockHistory> shL  = StockHistory.getStockHistoryList("FR0000045072");
-        List<FeaturesStock> fsL  = null; //FeaturesStock.transformList(shL);
+        List<FeaturesStock> fsL  = FeaturesStock.transformList(shL);
         JavaRDD<FeaturesStock> data = sc.parallelize(fsL);
 
         JavaRDD<LabeledPoint> parsedData = data.map(
@@ -40,14 +39,17 @@ public class RandomForestStock {
         );
 
         parsedData.cache();
+        return parsedData;
     }
 
     public void processRF() {
 
+        SparkConf conf = new SparkConf().setAppName("JavaRandomForest").setMaster("local[*]");
+        JavaSparkContext sc = new JavaSparkContext(conf);
+
 
         // Load and parse the data file.
-        String datapath = "data/mllib/sample_libsvm_data.txt";
-        JavaRDD<LabeledPoint> data = MLUtils.loadLibSVMFile(sc.sc(), datapath).toJavaRDD();
+        JavaRDD<LabeledPoint> data = createRDD(sc);
         // Split the data into training and test sets (30% held out for testing)
         JavaRDD<LabeledPoint>[] splits = data.randomSplit(new double[]{0.7, 0.3});
         JavaRDD<LabeledPoint> trainingData = splits[0];
