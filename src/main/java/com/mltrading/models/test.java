@@ -63,7 +63,7 @@ public class test {
         System.out.print(meanQ);*/
 
 
-       /*Analyse a = new Analyse();
+        /*Analyse a = new Analyse();
         a.processAll();
 
         StockHistory sh = StockHistory.getStockHistory("FR0000045072", "2015-04-29T22:00:00Z");
@@ -71,7 +71,7 @@ public class test {
 
         System.out.println(shL.size());
 
-        System.out.println(sh.toString());   */
+        System.out.println(sh.toString());*/
 
 
         RandomForestStock rf = new RandomForestStock();

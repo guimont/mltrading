@@ -100,6 +100,13 @@ public class StockAnalyse extends Object{
 
     @Override
     protected Object clone() throws CloneNotSupportedException {
-        return super.clone();
+        StockAnalyse copy = new StockAnalyse();
+        copy.setMma20(this.mma20);
+        copy.setMma50(this.mma50);
+        copy.setMme12(this.mme12);
+        copy.setMme26(this.mme26);
+        copy.setMomentum(this.momentum);
+        copy.setStdDev(this.stdDev);
+        return copy;
     }
 }

@@ -73,7 +73,7 @@ public class Analyse {
 
         QueryResult res = InfluxDaoConnector.getPoints("SELECT * FROM " + code);
 
-        if (res.getResults().get(0).getSeries().get(0).getValues() == null) return; //resultat empry
+        if (res.getResults().get(0).getSeries() == null || res.getResults().get(0).getSeries().get(0).getValues() == null) return; //resultat empry
 
         int len = res.getResults().get(0).getSeries().get(0).getValues().size();
 

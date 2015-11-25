@@ -4,6 +4,7 @@ import java.util.*;
 
 import com.mltrading.models.stock.StockHistory;
 import org.apache.spark.mllib.linalg.Vectors;
+import scala.Serializable;
 import scala.Tuple2;
 import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.JavaPairRDD;
@@ -14,13 +15,12 @@ import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.mllib.regression.LabeledPoint;
 import org.apache.spark.mllib.tree.RandomForest;
 import org.apache.spark.mllib.tree.model.RandomForestModel;
-import org.apache.spark.mllib.util.MLUtils;
 import org.apache.spark.SparkConf;
 
 /**
  * Created by gmo on 14/11/2015.
  */
-public class RandomForestStock {
+public class RandomForestStock implements Serializable {
 
 
     static int featuresLength = 8;
@@ -51,6 +51,7 @@ public class RandomForestStock {
         // Load and parse the data file.
         JavaRDD<LabeledPoint> data = createRDD(sc);
         // Split the data into training and test sets (30% held out for testing)
+
         JavaRDD<LabeledPoint>[] splits = data.randomSplit(new double[]{0.7, 0.3});
         JavaRDD<LabeledPoint> trainingData = splits[0];
         JavaRDD<LabeledPoint> testData = splits[1];
@@ -60,9 +61,9 @@ public class RandomForestStock {
         //  Empty categoricalFeaturesInfo indicates all features are continuous.
         Map<Integer, Integer> categoricalFeaturesInfo = new HashMap<Integer, Integer>();
         String impurity = "variance";
-        Integer maxDepth = 4;
+        Integer maxDepth = 6;
         Integer maxBins = 32;
-        Integer numTrees = 3; // Use more in practice.
+        Integer numTrees = 60; // Use more in practice.
         String featureSubsetStrategy = "auto"; // Let the algorithm choose.
 
         // Train a RandomForest model.
@@ -81,6 +82,8 @@ public class RandomForestStock {
             predictionAndLabel.map(new Function<Tuple2<Double, Double>, Double>() {
                 @Override
                 public Double call(Tuple2<Double, Double> pl) {
+                    System.out.println("estimate: " + pl._1());
+                    System.out.println("result: " + pl._2());
                     Double diff = pl._1() - pl._2();
                     return diff * diff;
                 }
@@ -93,7 +96,7 @@ public class RandomForestStock {
 
 
         System.out.println("Test Mean Squared Error: " + testMSE);
-        System.out.println("Learned regression forest model:\n" + model.toDebugString());
+        //System.out.println("Learned regression forest model:\n" + model.toDebugString());
 
         // Save and load model
         //model.save(sc.sc(), "myModelPath");

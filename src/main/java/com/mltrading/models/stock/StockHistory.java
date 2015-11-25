@@ -259,6 +259,14 @@ public class StockHistory extends Object{
 
     @Override
     public Object clone() throws CloneNotSupportedException {
-        return super.clone();
+        StockHistory copy = new StockHistory();
+        copy.setCodif(this.getCodif());
+        copy.setName(this.getName());
+        copy.setValue(this.value);
+        copy.setHighest(this.highest);
+        copy.setLowest(this.lowest);
+        copy.setVolume(this.volume);
+        copy.setAnalyse_tech((StockAnalyse) this.getAnalyse_tech().clone());
+        return copy;
     }
 }

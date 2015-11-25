@@ -1,6 +1,8 @@
 package com.mltrading.ml;
 
 import com.mltrading.models.stock.StockHistory;
+import scala.Serializable;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +10,7 @@ import java.util.List;
 /**
  * Created by gmo on 24/11/2015.
  */
-public class FeaturesStock {
+public class FeaturesStock implements Serializable {
 
     private double predictionValue;
 
@@ -117,7 +119,17 @@ public class FeaturesStock {
     }
 
     public double[] vectorize() {
-        return new double[8];
+        double[] vector = new double[9];
+        vector[0] = this.getValue();
+        vector[1] = this.getVolume();
+        vector[3] = this.getMm20();
+        vector[4] = this.getMma50();
+        vector[5] = this.getMme12();
+        vector[6] = this.getMme26();
+        vector[7] = this.getMomentum();
+        vector[8] = this.getStdDev();
+
+        return vector;
     }
 
     public  static List<FeaturesStock> transformList(List<StockHistory> shL) {

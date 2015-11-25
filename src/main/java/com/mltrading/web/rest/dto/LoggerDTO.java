@@ -1,6 +1,6 @@
 package com.mltrading.web.rest.dto;
 
-import ch.qos.logback.classic.Logger;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 public class LoggerDTO {
@@ -9,10 +9,10 @@ public class LoggerDTO {
 
     private String level;
 
-    public LoggerDTO(Logger logger) {
+    /*public LoggerDTO(Logger logger) {
         this.name = logger.getName();
         this.level = logger.getEffectiveLevel().toString();
-    }
+    }*/
 
     @JsonCreator
     public LoggerDTO() {

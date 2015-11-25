@@ -1,7 +1,6 @@
 package com.mltrading.web.rest;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.LoggerContext;
+
 import com.codahale.metrics.annotation.Timed;
 import com.mltrading.web.rest.dto.LoggerDTO;
 import org.slf4j.LoggerFactory;
@@ -24,12 +23,13 @@ public class LogsResource {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     public List<LoggerDTO> getList() {
-        LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
+        /*LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
         return context.getLoggerList()
             .stream()
             .map(LoggerDTO::new)
-            .collect(Collectors.toList());
-        
+            .collect(Collectors.toList());*/
+        return null;
+
     }
 
     @RequestMapping(value = "/logs",
@@ -37,7 +37,8 @@ public class LogsResource {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Timed
     public void changeLevel(@RequestBody LoggerDTO jsonLogger) {
-        LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
+        /*LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
         context.getLogger(jsonLogger.getName()).setLevel(Level.valueOf(jsonLogger.getLevel()));
+        */
     }
 }
