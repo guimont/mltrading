@@ -122,12 +122,12 @@ public class FeaturesStock implements Serializable {
         double[] vector = new double[9];
         vector[0] = this.getValue();
         vector[1] = this.getVolume();
-        vector[3] = this.getMm20();
-        vector[4] = this.getMma50();
-        vector[5] = this.getMme12();
-        vector[6] = this.getMme26();
-        vector[7] = this.getMomentum();
-        vector[8] = this.getStdDev();
+        vector[3] = 0;
+        vector[4] = 0;
+        vector[5] = 0;
+        vector[6] = 0;
+        vector[7] = 0;
+        vector[8] = 0;
 
         return vector;
     }

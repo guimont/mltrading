@@ -35,7 +35,7 @@ public class test {
         //ParserHistory.loader();
         //System.out.println("parsing ok");
         rtPrice.refreshCache();
-        //histParser.fetch();
+        histParser.fetch();
 
 
 
@@ -74,8 +74,8 @@ public class test {
         System.out.println(sh.toString());*/
 
 
-        RandomForestStock rf = new RandomForestStock();
-        rf.processRF();
+        //RandomForestStock rf = new RandomForestStock();
+        //rf.processRF();
 
 
 

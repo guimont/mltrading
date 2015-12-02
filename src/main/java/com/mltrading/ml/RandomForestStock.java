@@ -85,7 +85,7 @@ public class RandomForestStock implements Serializable {
                     System.out.println("estimate: " + pl._1());
                     System.out.println("result: " + pl._2());
                     Double diff = pl._1() - pl._2();
-                    return diff * diff;
+                    return Math.abs(diff/pl._2());
                 }
             }).reduce(new Function2<Double, Double, Double>() {
                 @Override

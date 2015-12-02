@@ -117,6 +117,12 @@ public class Analyse {
     }
 
 
+    /**
+     * cours du jour - cours du jour-12=> donne la vitesse de changement
+     * @param res
+     * @param index
+     * @return
+     */
     public Double momentum(QueryResult res, int index) {
         double val = Double.parseDouble(res.getResults().get(0).getSeries().get(0).getValues().get(index).get(1).toString());
         double valPast = Double.parseDouble(res.getResults().get(0).getSeries().get(0).getValues().get(index - 12).get(1).toString());
@@ -129,6 +135,14 @@ public class Analyse {
     }
 
 
+    /**
+     * ecart type sur une periode donné
+     * @param res
+     * @param code
+     * @param index
+     * @param range
+     * @return
+     */
     public String stddevRange(QueryResult res,String code, int index, int range) {
         List<Object> lStart = res.getResults().get(0).getSeries().get(0).getValues().get(index - range);
         List<Object> lEnd = res.getResults().get(0).getSeries().get(0).getValues().get(index);
