@@ -1,6 +1,7 @@
 package com.mltrading.models.parser;
 
 import com.google.inject.AbstractModule;
+import com.mltrading.models.parser.impl.HistoryLocalRawMaterials;
 import com.mltrading.models.parser.impl.HistoryParserYahoo;
 import com.mltrading.models.parser.impl.RealTimeParserBoursorama;
 import com.mltrading.models.parser.impl.RealTimeParserYahoo;
@@ -15,6 +16,7 @@ public class ServiceParser extends AbstractModule {
     protected void configure() {
         bind(RealTimeParser.class).to(RealTimeParserYahoo.class);
         bind(HistoryParser.class).to(HistoryParserYahoo.class);
+        bind(HistoryRawMaterialsParser.class).to(HistoryLocalRawMaterials.class);
     }
 
 

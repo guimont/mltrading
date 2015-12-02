@@ -33,6 +33,54 @@ public class HistoryParserYahoo implements HistoryParser {
     static String refCode = "tbody";
     static int MAXPAGE = 1518;
 
+
+    static String sectorTransport = "https://fr.finance.yahoo.com/q/hp?s=FRINT.PA";
+    static String sectorConstruction = "https://fr.finance.yahoo.com/q/hp?s=FRCM.PA";
+    static String sectorDefenseAero = "https://fr.finance.yahoo.com/q/hp?s=FRAD.PA";
+    static String sectorElecEquip = "https://fr.finance.yahoo.com/q/hp?s=FREEE.PA";
+    static String sectorIngIndus = "https://fr.finance.yahoo.com/q/hp?s=FRIE.PA";
+    static String sectorSupService = "https://fr.finance.yahoo.com/q/hp?s=FRSS.PA";
+
+    static String sectorProdPetrol = "https://fr.finance.yahoo.com/q/hp?s=FROGP.PA";
+
+    static String sectorBasicMat = "https://fr.finance.yahoo.com/q/hp?s=FRBM.PA";
+
+    static String sectorAutoEquip = "https://fr.finance.yahoo.com/q/hp?s=FRAP.PA";
+    static String sectorBoisson= "https://fr.finance.yahoo.com/q/hp?s=FRBEV.PA";
+    static String sectorAgro = "https://fr.finance.yahoo.com/q/hp?s=FRFPR.PA";
+    static String sectorProdMena = "https://fr.finance.yahoo.com/q/hp?s=FRHG.PA";
+    static String sectorLoisirEquip = "https://fr.finance.yahoo.com/q/hp?s=FRLEG.PA";
+    static String sectorArtPer = "https://fr.finance.yahoo.com/q/hp?s=FRPG.PA";
+
+    static String sectorSante = "https://fr.finance.yahoo.com/q/hp?s=FRHC.PA";
+    static String sectorPharma = "https://fr.finance.yahoo.com/q/hp?s=FRPB.PA";
+
+    static String sectorDistribAlim = "https://fr.finance.yahoo.com/q/hp?s=FRFDR.PA";
+    static String sectorDistribGen = "https://fr.finance.yahoo.com/q/hp?s=FRGR.PA";
+
+    static String sectorMediaPub = "https://fr.finance.yahoo.com/q/hp?s=FRMED.PA";
+    static String sectorVoyage = "https://fr.finance.yahoo.com/q/hp?s=FRTL.PA";
+
+    static String sectorTelecom = "https://fr.finance.yahoo.com/q/hp?s=FRTEL.PA";
+
+    static String sectorServiCollect = "https://fr.finance.yahoo.com/q/hp?s=FRUT.PA";
+    static String sectorGazEau = "https://fr.finance.yahoo.com/q/hp?s=FRGWM.PA";
+    static String sectorFinance = "https://fr.finance.yahoo.com/q/hp?s=FRFIN.PA";
+    static String sectorImmo = "https://fr.finance.yahoo.com/q/hp?s=FRRE.PA";
+    static String sectorSoftInfo = "https://fr.finance.yahoo.com/q/hp?s=FRSCS.PA";
+    static String sectorEquiInfo = "https://fr.finance.yahoo.com/q/hp?s=FRTHF.PA";
+
+    static String cac40 = "https://fr.finance.yahoo.com/q/hp?s=%5EFCHI";
+    static String dji = "https://fr.finance.yahoo.com/q/hp?s=%5EDJI";
+    static String nikkei = "https://fr.finance.yahoo.com/q/hp?s=%5EN225";
+    static String ftse = "https://fr.finance.yahoo.com/q/hp?s=%5EFTSE";
+
+
+
+
+
+
+
     public  void loader() {
 
         int numPage = 0;
