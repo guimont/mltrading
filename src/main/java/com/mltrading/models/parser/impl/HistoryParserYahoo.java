@@ -78,9 +78,6 @@ public class HistoryParserYahoo implements HistoryParser {
 
 
 
-
-
-
     public  void loader() {
 
         int numPage = 0;

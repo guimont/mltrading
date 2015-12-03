@@ -60,6 +60,7 @@ public class RealTimeParserYahoo implements RealTimeParser {
                             }
 
                             g.setCode(CacheStockGeneral.getCode(g.getCodif()));
+                            g.setPlace(CacheStockGeneral.getPlace(g.getCodif()));
 
                             CacheStockGeneral.getCache().put(g.getCode(),g);
                         }

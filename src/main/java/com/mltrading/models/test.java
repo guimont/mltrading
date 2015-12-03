@@ -18,9 +18,14 @@ public class test {
     public static void main(String[] args) {
 
         Injector injector = Guice.createInjector(new ServiceParser());
+
         RealTimeParser rtPrice = injector.getInstance( RealTimeParser.class );
         HistoryParser histParser = injector.getInstance(HistoryParser.class);
         HistoryRawMaterialsParser rawParser = injector.getInstance(HistoryRawMaterialsParser.class);
+
+        ConsensusParser consensus = injector.getInstance(ConsensusParser.class);
+
+
 
         //ScheduleParserGeneral g = new ScheduleParserGeneral();
         //g.start();
@@ -35,9 +40,10 @@ public class test {
         //ParserMain.loaderAll();
         //ParserHistory.loader();
         //System.out.println("parsing ok");
-        //rtPrice.refreshCache();
+        rtPrice.refreshCache();
         //histParser.fetch();
         rawParser.fetch();
+        consensus.fetch();
 
 
 
