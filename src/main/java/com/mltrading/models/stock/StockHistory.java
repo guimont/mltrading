@@ -13,6 +13,8 @@ import java.util.List;
  */
 public class StockHistory extends Object{
 
+    private String nameRef;
+
     private String code;
 
     private String name;
@@ -72,6 +74,25 @@ public class StockHistory extends Object{
      */
     private Double volume;
 
+    /**
+     * volatility Historic
+     */
+    private Double volatiltyHist;
+
+    /**
+     * volatility Implicite
+     */
+    private Double volatibiltyImpl;
+
+
+    public String getNameRef() {
+        return nameRef;
+    }
+
+    public void setNameRef(String nameRef) {
+        this.nameRef = nameRef;
+    }
+
     public StockHistory(StockGeneral g) {
         this.setCode(g.getCode());
         this.setName(g.getName());
@@ -85,6 +106,21 @@ public class StockHistory extends Object{
     }
 
 
+    public Double getVolatiltyHist() {
+        return volatiltyHist;
+    }
+
+    public void setVolatiltyHist(Double volatiltyHist) {
+        this.volatiltyHist = volatiltyHist;
+    }
+
+    public Double getVolatibiltyImpl() {
+        return volatibiltyImpl;
+    }
+
+    public void setVolatibiltyImpl(Double volatibiltyImpl) {
+        this.volatibiltyImpl = volatibiltyImpl;
+    }
 
     public Double getValue() {
         return value;
