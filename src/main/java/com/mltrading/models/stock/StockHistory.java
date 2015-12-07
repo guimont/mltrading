@@ -84,6 +84,8 @@ public class StockHistory extends Object{
      */
     private Double volatibiltyImpl;
 
+    private Double consensusNote;
+
 
     public String getNameRef() {
         return nameRef;
@@ -190,6 +192,15 @@ public class StockHistory extends Object{
 
     public String getDay() {
         return day;
+    }
+
+
+    public Double getConsensusNote() {
+        return consensusNote;
+    }
+
+    public void setConsensusNote(Double consensusNote) {
+        this.consensusNote = consensusNote;
     }
 
     public void setDay(String day) {

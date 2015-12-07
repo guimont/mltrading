@@ -1,11 +1,16 @@
 package com.mltrading.models.parser.impl;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import com.mltrading.dao.InfluxDaoConnector;
 import com.mltrading.influxdb.dto.BatchPoints;
+import com.mltrading.models.parser.ConsensusParser;
 import com.mltrading.models.parser.HistoryParser;
 import com.mltrading.models.parser.ParserCommon;
+import com.mltrading.models.parser.ServiceParser;
 import com.mltrading.models.stock.CacheStockGeneral;
+import com.mltrading.models.stock.Consensus;
 import com.mltrading.models.stock.StockGeneral;
 import com.mltrading.models.stock.StockHistory;
 import org.jsoup.Jsoup;
@@ -86,7 +91,8 @@ public class HistoryParserYahoo implements HistoryParser {
             for(numPage =0; numPage <= 150 ; numPage += PAGINATION) {
                 String url = startUrl + g.getCodif() +"." + g.getPlaceCodif() + endUrl+ numPage;
                 try {
-                    String text = null;
+                    String text;
+                    int loopPage = 0;
 
                     //inifinite loop
                     do {
@@ -99,6 +105,8 @@ public class HistoryParserYahoo implements HistoryParser {
                     Document doc = Jsoup.parse(text);
                     BatchPoints bp = InfluxDaoConnector.getBatchPoints();
 
+                    Consensus cnote = ConsensusParserInvestir.fetchStock(g.getCode());
+
                     Elements links = doc.select(refCode);
                     for (Element link : links) {
 
@@ -107,6 +115,7 @@ public class HistoryParserYahoo implements HistoryParser {
                             for (Element elt : sublinks) {
                                 Elements t = elt.select("td");
                                 if (t.size() > 3) {
+                                    loopPage ++;
                                     StockHistory hist = new StockHistory(g);
                                     hist.setDayYahoo(t.get(0).text());
                                     hist.setOpening(new Double(t.get(1).text().replace(",", ".")));
@@ -114,13 +123,14 @@ public class HistoryParserYahoo implements HistoryParser {
                                     hist.setLowest(new Double(t.get(3).text().replace(",", ".")));
                                     hist.setValue(new Double(t.get(4).text().replace(",", ".")));
                                     hist.setVolume(new Double(t.get(5).text().replaceAll(" ", "")));
+                                    hist.setConsensusNote(cnote.getNotation(loopPage+numPage).getAvg());
                                     HistoryParser.saveHistory(bp, hist);
                                     System.out.println(hist.toString());
                                 }
                             }
                         }
                     }
-                    InfluxDaoConnector.writePoints(bp);
+                    //InfluxDaoConnector.writePoints(bp);
 
 
                     /*for (Element link : links) {

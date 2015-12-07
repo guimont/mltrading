@@ -41,8 +41,8 @@ public class test {
         //ParserHistory.loader();
         //System.out.println("parsing ok");
         rtPrice.refreshCache();
-        //histParser.fetch();
-        rawParser.fetch();
+        histParser.fetch();
+        //rawParser.fetch();
         consensus.fetch();
 
 

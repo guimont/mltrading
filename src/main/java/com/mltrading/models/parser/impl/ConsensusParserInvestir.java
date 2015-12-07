@@ -30,6 +30,40 @@ public class ConsensusParserInvestir implements ConsensusParser {
         loader();
     }
 
+
+    public static Consensus fetchStock(String code) {
+        StockGeneral g = CacheStockGeneral.getIsinCache().get(code);
+
+        Consensus c = new Consensus();
+        String url = base + CacheStockGeneral.getIsinCache().get(g.getCode()).getName().toLowerCase().replaceAll(" ","-") + sep + g.getPlace().toLowerCase() + sep  + g.getCodif().toLowerCase() + sep + g.getCode().toLowerCase() +end;
+        try {
+            String text;
+
+            text = ParserCommon.loadUrl(new URL(url));
+
+            if (text != null) {
+                Document doc = Jsoup.parse(text);
+                Elements links = doc.select(refCode);
+                Elements sn = links.get(0).children();
+                for (int i = 1; i < 7; i++) {
+                    c.getNotation(i).setSell(new Integer(sn.get(i).children().get(3).children().get(0).children().get(0).children().get(0).child(0).text()));
+                    c.getNotation(i).setRelieve(new Integer(sn.get(i).children().get(3).children().get(0).children().get(0).children().get(0).child(1).text()));
+                    c.getNotation(i).setKeep(new Integer(sn.get(i).children().get(3).children().get(0).children().get(0).children().get(0).child(2).text()));
+                    c.getNotation(i).setReinforce(new Integer(sn.get(i).children().get(3).children().get(0).children().get(0).children().get(0).child(3).text()));
+                    c.getNotation(i).setBuy(new Integer(sn.get(i).children().get(3).children().get(0).children().get(0).children().get(0).child(4).text()));
+                }
+
+                System.out.println(c.toString());
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("ERROR for : " + g.getName());
+        }
+
+        return c;
+    }
+
     private void loader() {
 
         for (StockGeneral g: CacheStockGeneral.getCache().values()) {
@@ -59,7 +93,7 @@ public class ConsensusParserInvestir implements ConsensusParser {
                         c.getNotation(i).setBuy(new Integer(sn.get(i).children().get(3).children().get(0).children().get(0).children().get(0).child(4).text()));
                     }
 
-                    c.toString();
+                    System.out.println(c.toString());
                 }
 
             } catch (IOException e) {
