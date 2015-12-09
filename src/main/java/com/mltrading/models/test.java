@@ -43,7 +43,7 @@ public class test {
         rtPrice.refreshCache();
         histParser.fetch();
         //rawParser.fetch();
-        consensus.fetch();
+        //consensus.fetch();
 
 
 

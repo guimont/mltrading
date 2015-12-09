@@ -33,7 +33,7 @@ public class HistoryParserYahoo implements HistoryParser {
     }
 
     static String startUrl="https://fr.finance.yahoo.com/q/hp?s=";
-    static String endUrl ="&a=00&b=3&c=2010&d=10&e=23&f=2015&g=d&z=66&y=";
+    static String endUrl ="&a=00&b=3&c=2010&g=d&z=66&y=";
     static int PAGINATION = 66;
     static String refCode = "tbody";
     static int MAXPAGE = 1518;
@@ -123,62 +123,15 @@ public class HistoryParserYahoo implements HistoryParser {
                                     hist.setLowest(new Double(t.get(3).text().replace(",", ".")));
                                     hist.setValue(new Double(t.get(4).text().replace(",", ".")));
                                     hist.setVolume(new Double(t.get(5).text().replaceAll(" ", "")));
-                                    hist.setConsensusNote(cnote.getNotation(loopPage+numPage).getAvg());
+                                    hist.setConsensusNote(cnote.getNotation(cnote.getIndice(loopPage+numPage)).getAvg());
                                     HistoryParser.saveHistory(bp, hist);
                                     System.out.println(hist.toString());
                                 }
                             }
                         }
                     }
-                    //InfluxDaoConnector.writePoints(bp);
+                    InfluxDaoConnector.writePoints(bp);
 
-
-                    /*for (Element link : links) {
-                        //data-item="donneesHistoTr"
-                        BatchPoints bp = InfluxDaoConnector.getBatchPoints();
-                        String linkItem = link.attr("data-item");
-                        if ((!linkItem.isEmpty()) && linkItem.compareToIgnoreCase("donneesHistoTr") == 0) {
-                            StockHistory hist = new StockHistory();
-                            hist.setCode(g.getCode());
-                            hist.setName(g.getName());
-                            hist.setPlace(g.getPlace());
-
-                            Elements et = link.select("td");
-                            for (Element e : et) {
-                                String linkField = e.attr("data-field");
-
-                                if (!linkField.isEmpty() && linkField.compareToIgnoreCase("jour") == 0) {
-                                    hist.setDay(e.text());
-                                }
-                                if (!linkField.isEmpty() && linkField.compareToIgnoreCase("valorisation") == 0) {
-                                    String t = e.text().replace(',', '.');
-                                    hist.setValue(Float.parseFloat(t));
-                                }
-                                if (!linkField.isEmpty() && linkField.compareToIgnoreCase("high") == 0) {
-                                    String t = e.text().replace(',', '.');
-                                    hist.setHighest(Float.parseFloat(t));
-                                }
-                                if (!linkField.isEmpty() && linkField.compareToIgnoreCase("low") == 0) {
-                                    String t = e.text().replace(',', '.');
-                                    hist.setLowest(Float.parseFloat(t));
-                                }
-                                if (!linkField.isEmpty() && linkField.compareToIgnoreCase("open") == 0) {
-                                    String t = e.text().replace(',', '.');
-                                    hist.setOpening(Float.parseFloat(t));
-                                }
-                                if (!linkField.isEmpty() && linkField.compareToIgnoreCase("volume") == 0) {
-                                    String t = e.text().replace('�', ' ').replaceAll(" ", "");
-                                    hist.setVolume(Integer.parseInt(t));
-                                }
-                            }
-                            HistoryParser.saveHistory(bp, hist);
-                            System.out.println(hist.toString());
-
-                        }
-
-                        //InfluxDaoConnector.writePoints(bp);
-
-                    }*/
 
                 } catch (IOException e) {
                     e.printStackTrace();
