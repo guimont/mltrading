@@ -29,7 +29,8 @@ import java.net.URL;
 public class HistoryParserYahoo implements HistoryParser {
     @Override
     public void fetch() {
-       loader();
+        //loader();
+        loaderSector("FRINT","PA");
     }
 
     static String startUrl="https://fr.finance.yahoo.com/q/hp?s=";
@@ -139,6 +140,55 @@ public class HistoryParserYahoo implements HistoryParser {
                 }
             }
         }
+    }
+
+
+    public void loaderSector(String sector, String place) {
+        int numPage = 0;
+        for(numPage =0; numPage <= 150 ; numPage += PAGINATION) {
+            try {
+                String text;
+                String url = startUrl + sector + "." + place + endUrl + numPage;
+
+                text = ParserCommon.loadUrl(new URL(url));
+
+                Document doc = Jsoup.parse(text);
+                BatchPoints bp = InfluxDaoConnector.getBatchPoints();
+
+
+                Elements links = doc.select(refCode);
+                for (Element link : links) {
+
+                    if (link.children().size() > 40) {
+                        Elements sublinks = link.children().select("tr");
+                        for (Element elt : sublinks) {
+                            Elements t = elt.select("td");
+                            if (t.size() > 3) {
+
+                                StockHistory hist = new StockHistory();
+                                hist.setCode(sector);
+                                hist.setCodif(sector);
+                                hist.setPlaceCodif(place);
+                                hist.setDayYahoo(t.get(0).text());
+                                hist.setOpening(new Double(t.get(1).text().replaceAll(" ", "").replace(",", ".")));
+                                hist.setHighest(new Double(t.get(2).text().replaceAll(" ", "").replace(",", ".")));
+                                hist.setLowest(new Double(t.get(3).text().replaceAll(" ", "").replace(",", ".")));
+                                hist.setValue(new Double(t.get(4).text().replaceAll(" ", "").replace(",", ".")));
+                                HistoryParser.saveHistory(bp, hist);
+                                System.out.println(hist.toString());
+                            }
+                        }
+                    }
+                }
+                InfluxDaoConnector.writePoints(bp);
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.out.println("ERROR for : " + sector);
+            }
+        }
+
     }
 
 
