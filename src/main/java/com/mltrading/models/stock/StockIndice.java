@@ -5,5 +5,6 @@ package com.mltrading.models.stock;
  */
 public class StockIndice extends StockHistory {
 
-
+    public StockIndice() {
+    }
 }
