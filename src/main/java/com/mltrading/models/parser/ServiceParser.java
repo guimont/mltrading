@@ -16,6 +16,7 @@ public class ServiceParser extends AbstractModule {
         bind(HistoryRawMaterialsParser.class).to(HistoryLocalRawMaterials.class);
         bind(ConsensusParser.class).to(ConsensusParserInvestir.class);
         bind(VolatilityParser.class).to(VolatilityGoogle.class);
+        bind(HistorySectorParser.class).to(HistorySectorParserYahoo.class);
     }
 
 
