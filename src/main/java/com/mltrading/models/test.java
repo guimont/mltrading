@@ -22,8 +22,11 @@ public class test {
         RealTimeParser rtPrice = injector.getInstance( RealTimeParser.class );
         HistoryParser histParser = injector.getInstance(HistoryParser.class);
         HistoryRawMaterialsParser rawParser = injector.getInstance(HistoryRawMaterialsParser.class);
+        HistoryIndiceParser indiceParser= injector.getInstance(HistoryIndiceParser.class);
+        HistorySectorParser sectorParser = injector.getInstance(HistorySectorParser.class);
 
         ConsensusParser consensus = injector.getInstance(ConsensusParser.class);
+        VolatilityParser vola = injector.getInstance(VolatilityParser.class);
 
 
 
@@ -41,9 +44,12 @@ public class test {
         //ParserHistory.loader();
         //System.out.println("parsing ok");
         rtPrice.refreshCache();
-        histParser.fetch();
+        //histParser.fetch();
         //rawParser.fetch();
         //consensus.fetch();
+        //sectorParser.fetch();
+        //indiceParser.fetch();
+        vola.fetch();
 
 
 
@@ -72,9 +78,9 @@ public class test {
 
 
         /*Analyse a = new Analyse();
-        a.processAll();
+        a.processAll();*/
 
-        StockHistory sh = StockHistory.getStockHistory("FR0000045072", "2015-04-29T22:00:00Z");
+        /*StockHistory sh = StockHistory.getStockHistory("FR0000045072", "2015-04-29T22:00:00Z");
         List<StockHistory> shL = StockHistory.getStockHistoryList("FR0000045072");
 
         System.out.println(shL.size());

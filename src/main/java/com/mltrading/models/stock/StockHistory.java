@@ -221,6 +221,13 @@ public class StockHistory extends Object{
         timeInsert = new DateTime( YY + "-" + MM + "-" + DD);
     }
 
+    public void setDayGoogle(String day) {
+        String MM = convertGoolgeMont(day.substring(0, 3));
+        String DD = day.substring(4,6).replace(",", "");
+        String YY = day.substring(day.length()-4);
+        this.day = YY + "-" + MM + "-" + DD;
+        timeInsert = new DateTime( YY + "-" + MM + "-" + DD);
+    }
 
     private String convertYahooMont(String yahooMonth) {
         if (yahooMonth.equals("janv.")) return "01";
@@ -235,6 +242,23 @@ public class StockHistory extends Object{
         if (yahooMonth.equals("oct.")) return "10";
         if (yahooMonth.equals("nov.")) return "11";
         if (yahooMonth.equals("déc.")) return "12";
+
+        return null;
+    }
+
+    private String convertGoolgeMont(String yahooMonth) {
+        if (yahooMonth.equals("Jan")) return "01";
+        if (yahooMonth.equals("Feb")) return "02";
+        if (yahooMonth.equals("Mar")) return "03";
+        if (yahooMonth.equals("Apr")) return "04";
+        if (yahooMonth.equals("May")) return "05";
+        if (yahooMonth.equals("Jun")) return "06";
+        if (yahooMonth.equals("Jul")) return "07";
+        if (yahooMonth.equals("Aug")) return "08";
+        if (yahooMonth.equals("Sep")) return "09";
+        if (yahooMonth.equals("Oct")) return "10";
+        if (yahooMonth.equals("Nov")) return "11";
+        if (yahooMonth.equals("Dec")) return "12";
 
         return null;
     }

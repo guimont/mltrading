@@ -4,9 +4,7 @@ import com.mltrading.dao.InfluxDaoConnector;
 import com.mltrading.influxdb.dto.BatchPoints;
 import com.mltrading.influxdb.dto.Point;
 import com.mltrading.influxdb.dto.QueryResult;
-import com.mltrading.models.stock.CacheStockGeneral;
-import com.mltrading.models.stock.StockAnalyse;
-import com.mltrading.models.stock.StockGeneral;
+import com.mltrading.models.stock.*;
 import org.joda.time.DateTime;
 
 import java.util.ArrayList;
@@ -29,15 +27,23 @@ public class Analyse {
     private static String STDDEV = "stddev";
     private static String MOMENTUM = "momentum";
 
+    private static int columnSector = 1;
+    private static int columnStock = 5;
+    private static int columnIndice = 1;
+
 
     public void processAll() {
 
         for (StockGeneral g: CacheStockGeneral.getCache().values()) {
-            processAnalysisAll(g.getCode());
+            processAnalysisAll(g.getCode(), columnStock);
+        }
+
+        for (StockIndice g : CacheStockIndice.getIndiceCache().values()) {
+            processAnalysisAll(g.getCode(), columnIndice);
         }
     }
 
-    public void processAnalysisSpecific(String code, String date) {
+    public void processAnalysisSpecific(String code, String date, int column) {
 
         List<Container> cList = new ArrayList<>();
 
@@ -54,11 +60,11 @@ public class Analyse {
         c.indice.put(MM20,mmRange(res, code, index, 20));
         c.indice.put(MM50,mmRange(res, code, index, 50));
         c.indice.put(STDDEV,stddevRange(res, code, index, 20));
-        ref_mme26 = mmeRange(res, index, ref_mme26, 0.075);
-        ref_mme12 = mmeRange(res, index, ref_mme12, 0.15);
+        ref_mme26 = mmeRange(res, index, ref_mme26, 0.075, column);
+        ref_mme12 = mmeRange(res, index, ref_mme12, 0.15, column);
         c.indice.put(MME12, Double.toString(ref_mme12));
         c.indice.put(MME26, Double.toString(ref_mme26));
-        c.indice.put(MOMENTUM, Double.toString(momentum(res,index)));
+        c.indice.put(MOMENTUM, Double.toString(momentum(res,index, column)));
         saveAnalysis(code, c);
         cList.add(c);
 
@@ -67,7 +73,7 @@ public class Analyse {
 
 
 
-    public void processAnalysisAll(String code) {
+    public void processAnalysisAll(String code, int column) {
 
         List<Container> cList = new ArrayList<>();
 
@@ -86,11 +92,11 @@ public class Analyse {
             c.indice.put(MM20,mmRange(res, code, index, 20));
             c.indice.put(MM50,mmRange(res, code, index, 50));
             c.indice.put(STDDEV,stddevRange(res, code, index, 20));
-            ref_mme26 = mmeRange(res, index, ref_mme26, 0.075);
-            ref_mme12 = mmeRange(res, index, ref_mme12, 0.15);
+            ref_mme26 = mmeRange(res, index, ref_mme26, 0.075, column);
+            ref_mme12 = mmeRange(res, index, ref_mme12, 0.15, column);
             c.indice.put(MME12, Double.toString(ref_mme12));
             c.indice.put(MME26, Double.toString(ref_mme26));
-            c.indice.put(MOMENTUM, Double.toString(momentum(res,index)));
+            c.indice.put(MOMENTUM, Double.toString(momentum(res,index, column)));
             saveAnalysis(code, c);
             cList.add(c);
         }
@@ -123,14 +129,14 @@ public class Analyse {
      * @param index
      * @return
      */
-    public Double momentum(QueryResult res, int index) {
-        double val = Double.parseDouble(res.getResults().get(0).getSeries().get(0).getValues().get(index).get(1).toString());
-        double valPast = Double.parseDouble(res.getResults().get(0).getSeries().get(0).getValues().get(index - 12).get(1).toString());
+    public Double momentum(QueryResult res, int index, int column) {
+        double val = Double.parseDouble(res.getResults().get(0).getSeries().get(0).getValues().get(index).get(column).toString());
+        double valPast = Double.parseDouble(res.getResults().get(0).getSeries().get(0).getValues().get(index - 12).get(column).toString());
         return val-valPast;
     }
 
-    public Double mmeRange(QueryResult res, int index, double mme, double constant) {
-        double val = Double.parseDouble(res.getResults().get(0).getSeries().get(0).getValues().get(index).get(1).toString());
+    public Double mmeRange(QueryResult res, int index, double mme, double constant, int column) {
+        double val = Double.parseDouble(res.getResults().get(0).getSeries().get(0).getValues().get(index).get(column).toString());
         return val*(1-constant) + mme * constant;
     }
 
@@ -163,7 +169,6 @@ public class Analyse {
 
         String query = "SELECT mean(value) FROM "+code+" where time > '" + lStart.get(0) + "' and time < '"+ lEnd.get(0) + "'";
         QueryResult meanQ = InfluxDaoConnector.getPoints(query);
-
 
         return meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(1).toString();
     }

@@ -5,6 +5,8 @@ package com.mltrading.models.stock;
  */
 public class StockIndice extends StockHistory {
 
-    public StockIndice() {
+    public StockIndice(String code, String name) {
+        this.setCode(code);
+        this.setName(name);
     }
 }

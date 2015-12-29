@@ -57,15 +57,14 @@ public class HistorySectorParserYahoo implements HistorySectorParser {
                                 Elements t = elt.select("td");
                                 if (t.size() > 3) {
 
-                                    StockHistory hist = new StockHistory();
-                                    hist.setCode(g.getCode());
-                                    hist.setDayYahoo(t.get(0).text());
-                                    hist.setOpening(new Double(t.get(1).text().replaceAll(" ", "").replace(",", ".")));
-                                    hist.setHighest(new Double(t.get(2).text().replaceAll(" ", "").replace(",", ".")));
-                                    hist.setLowest(new Double(t.get(3).text().replaceAll(" ", "").replace(",", ".")));
-                                    hist.setValue(new Double(t.get(4).text().replaceAll(" ", "").replace(",", ".")));
-                                    HistoryParser.saveHistory(bp, hist);
-                                    System.out.println(hist.toString());
+                                    StockSector sect = new StockSector(g.getCode(), g.getName(), g.getPlace());
+                                    sect.setDayYahoo(t.get(0).text());
+                                    sect.setOpening(new Double(t.get(1).text().replaceAll(" ", "").replace(",", ".")));
+                                    sect.setHighest(new Double(t.get(2).text().replaceAll(" ", "").replace(",", ".")));
+                                    sect.setLowest(new Double(t.get(3).text().replaceAll(" ", "").replace(",", ".")));
+                                    sect.setValue(new Double(t.get(4).text().replaceAll(" ", "").replace(",", ".")));
+                                    HistorySectorParser.saveHistory(bp, sect);
+                                    System.out.println(sect.toString());
                                 }
                             }
                         }
