@@ -35,21 +35,13 @@ public class HistoryParserYahoo implements HistoryParser {
     static String refCode = "tbody";
     static int MAXPAGE = 1518;
 
-;
-
-    static String cac40 = "https://fr.finance.yahoo.com/q/hp?s=%5EFCHI";
-    static String dji = "https://fr.finance.yahoo.com/q/hp?s=%5EDJI";
-    static String nikkei = "https://fr.finance.yahoo.com/q/hp?s=%5EN225";
-    static String ftse = "https://fr.finance.yahoo.com/q/hp?s=%5EFTSE";
-
-
 
 
     public  void loader() {
 
         int numPage;
         boolean retry = false;
-        for (StockGeneral g: CacheStockGeneral.getCache().values()) {
+        for (StockGeneral g: CacheStockGeneral.getIsinCache().values()) {
             for(numPage =0; numPage <= 150 ; numPage += PAGINATION) {
                 String url = startUrl + g.getCodif() +"." + g.getPlaceCodif() + endUrl+ numPage;
                 try {

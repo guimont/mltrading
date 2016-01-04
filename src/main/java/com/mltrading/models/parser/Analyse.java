@@ -27,9 +27,9 @@ public class Analyse {
     private static String STDDEV = "stddev";
     private static String MOMENTUM = "momentum";
 
-    private static int columnSector = 1;
+    private static int columnSector = 5;
     private static int columnStock = 5;
-    private static int columnIndice = 1;
+    private static int columnIndice = 5;
 
 
     public void processAll() {
@@ -40,6 +40,10 @@ public class Analyse {
 
         for (StockIndice g : CacheStockIndice.getIndiceCache().values()) {
             processAnalysisAll(g.getCode(), columnIndice);
+        }
+
+        for (StockSector g : CacheStockSector.getSectorCache().values()) {
+            processAnalysisAll(g.getCode(), columnSector);
         }
     }
 
