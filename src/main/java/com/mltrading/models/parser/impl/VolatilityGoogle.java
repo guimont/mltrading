@@ -5,7 +5,7 @@ import com.mltrading.influxdb.dto.BatchPoints;
 import com.mltrading.models.parser.HistoryIndiceParser;
 import com.mltrading.models.parser.ParserCommon;
 import com.mltrading.models.parser.VolatilityParser;
-import com.mltrading.models.stock.CacheStockIndice;
+
 import com.mltrading.models.stock.StockIndice;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
