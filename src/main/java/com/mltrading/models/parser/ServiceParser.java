@@ -18,6 +18,7 @@ public class ServiceParser extends AbstractModule {
         bind(VolatilityParser.class).to(VolatilityGoogle.class);
         bind(HistorySectorParser.class).to(HistorySectorParserYahoo.class);
         bind(HistoryIndiceParser.class).to(HistoryIndiceParserYahoo.class);
+        bind(StockParser.class).to(StockParserInvestir.class);
     }
 
 

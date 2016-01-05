@@ -8,6 +8,7 @@ import com.mltrading.models.parser.impl.RealTimeParserBoursorama;
 import com.mltrading.models.stock.StockAnalyse;
 import com.mltrading.models.stock.StockHistory;
 import com.mltrading.service.ExtractionService;
+import com.mltrading.service.StockService;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -19,9 +20,11 @@ public class test {
 
     private static ExtractionService service = new ExtractionService();
 
+
     public static void main(String[] args) {
 
-        /*Injector injector = Guice.createInjector(new ServiceParser());
+
+        Injector injector = Guice.createInjector(new ServiceParser());
 
         RealTimeParser rtPrice = injector.getInstance( RealTimeParser.class );
         HistoryParser histParser = injector.getInstance(HistoryParser.class);
@@ -32,6 +35,8 @@ public class test {
         ConsensusParser consensus = injector.getInstance(ConsensusParser.class);
         VolatilityParser vola = injector.getInstance(VolatilityParser.class);
 
+        StockParser stock = injector.getInstance(StockParser.class);
+        stock.fetch();
 
 
         //ScheduleParserGeneral g = new ScheduleParserGeneral();
@@ -54,7 +59,6 @@ public class test {
         //sectorParser.fetch();
         //indiceParser.fetch();
         //vola.fetch();
-
 
 
 
@@ -96,7 +100,7 @@ public class test {
         //rf.processRF();
 
 
-        service.extractFull();
+        //service.extractFull();
 
 
     }

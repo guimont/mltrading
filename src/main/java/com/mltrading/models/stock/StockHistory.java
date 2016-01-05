@@ -294,7 +294,7 @@ public class StockHistory extends Object{
         return sh;
     }
 
-    public static List<StockHistory> getStockHistoryList(final String code) {
+    public static List<StockHistory> getStockAnalyseList(final String code) {
         List<StockHistory> stockList = new ArrayList<StockHistory>();
         String query = "SELECT * FROM "+code+ "T";
         QueryResult list = InfluxDaoConnector.getPoints(query);
@@ -302,6 +302,17 @@ public class StockHistory extends Object{
         for (int i =0;i<list.getResults().get(0).getSeries().get(0).getValues().size();i++)
             stockList.add(getStockHistory(code, (String) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(0)));
 
+        return stockList;
+    }
+
+
+    public static List<StockHistory> getStockHistoryList(final String code) {
+        List<StockHistory> stockList = new ArrayList<StockHistory>();
+        String query = "SELECT * FROM "+code;
+        QueryResult list = InfluxDaoConnector.getPoints(query);
+
+        for (int i =0;i<list.getResults().get(0).getSeries().get(0).getValues().size();i++)
+            stockList.add(getStockHistory(code, (String) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(0)));
 
         return stockList;
     }

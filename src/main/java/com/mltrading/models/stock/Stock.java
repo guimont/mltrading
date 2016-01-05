@@ -1,17 +1,25 @@
 package com.mltrading.models.stock;
 
+import com.mltrading.domain.AbstractAuditingEntity;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by gmo on 06/12/2015.
  */
-public class Stock extends StockHistory {
 
-    private Bilan bilan;
+@Document(collection = "JHI_STOCK")
+public class Stock  extends AbstractAuditingEntity implements Serializable {
+
+    @Id
     private Company company;
+    private Bilan bilan;
     private List<String> indice;
     private String sector;
-    private List<StockRawMat> rawMat;
+    private List<String> rawMat;
 
 
 
@@ -47,11 +55,11 @@ public class Stock extends StockHistory {
         this.sector = sector;
     }
 
-    public List<StockRawMat> getRawMat() {
+    public List<String> getRawMat() {
         return rawMat;
     }
 
-    public void setRawMat(List<StockRawMat> rawMat) {
+    public void setRawMat(List<String> rawMat) {
         this.rawMat = rawMat;
     }
 }
