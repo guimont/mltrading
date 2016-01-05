@@ -27,7 +27,7 @@ public class Analyse {
     private static String STDDEV = "stddev";
     private static String MOMENTUM = "momentum";
 
-    private static int columnSector = 5;
+    private static int columnSector = 2;
     private static int columnStock = 5;
     private static int columnIndice = 5;
 
