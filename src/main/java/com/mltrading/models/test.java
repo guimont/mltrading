@@ -2,6 +2,7 @@ package com.mltrading.models;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.mltrading.domain.User;
 import com.mltrading.ml.RandomForestStock;
 import com.mltrading.models.parser.*;
 import com.mltrading.models.parser.impl.RealTimeParserBoursorama;
@@ -9,6 +10,7 @@ import com.mltrading.models.stock.StockAnalyse;
 import com.mltrading.models.stock.StockHistory;
 import com.mltrading.service.ExtractionService;
 import com.mltrading.service.StockService;
+import com.mltrading.service.UserService;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -19,6 +21,9 @@ import java.util.List;
 public class test {
 
     private static ExtractionService service = new ExtractionService();
+
+    @Inject
+    private static UserService userService;
 
 
     public static void main(String[] args) {
@@ -36,10 +41,11 @@ public class test {
         VolatilityParser vola = injector.getInstance(VolatilityParser.class);
 
         StockParser stock = injector.getInstance(StockParser.class);
-        stock.fetch();
+        //stock.fetch();
 
+        User toto =userService.getUserWithAuthorities();
 
-        //ScheduleParserGeneral g = new ScheduleParserGeneral();
+        ScheduleParserGeneral g = new ScheduleParserGeneral();
         //g.start();
 
 
