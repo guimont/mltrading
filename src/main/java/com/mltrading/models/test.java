@@ -9,7 +9,7 @@ import com.mltrading.models.parser.impl.RealTimeParserBoursorama;
 import com.mltrading.models.stock.StockAnalyse;
 import com.mltrading.models.stock.StockHistory;
 import com.mltrading.service.ExtractionService;
-import com.mltrading.service.StockService;
+
 import com.mltrading.service.UserService;
 
 import javax.inject.Inject;

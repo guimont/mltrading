@@ -1,12 +1,12 @@
 package com.mltrading.models.parser.impl;
 
-import com.google.inject.Inject;
+
 import com.mltrading.models.parser.ParserCommon;
 import com.mltrading.models.parser.StockParser;
 import com.mltrading.models.stock.CacheStockGeneral;
 import com.mltrading.models.stock.Stock;
 import com.mltrading.models.stock.StockGeneral;
-import com.mltrading.service.StockService;
+import com.mltrading.repository.StockRepository;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -29,17 +29,15 @@ public class StockParserInvestir  implements StockParser{
 
     static String refCode = "tbody";
 
-    private StockService stockService = new StockService();
-
     //http://investir.lesechos.fr/cours/profil-societe-action-accor,xpar,ac,fr0000120404,isin.html
 
     @Override
-    public void fetch() {
-        loader();
+    public void fetch(StockRepository repository) {
+        loader(repository);
     }
 
 
-    private void loader() {
+    private void loader(StockRepository repository) {
         for (StockGeneral g: CacheStockGeneral.getIsinCache().values()) {
 
             String url = base + CacheStockGeneral.getIsinCache().get(g.getCode()).getName().toLowerCase().replaceAll(" ","-") + sep + g.getPlace().toLowerCase() + sep  + g.getCodif().toLowerCase() + sep + g.getCode().toLowerCase() +end;
@@ -87,7 +85,7 @@ public class StockParserInvestir  implements StockParser{
 
                     Stock stock = new Stock(marche, indice, codeif, code, bloomberg, reuters, eligib, titleNb, capitalization, ownFounds, debt, netDebt, sector);
 
-                    stockService.createStock(stock);
+                    repository.save(stock);
                     Thread.sleep(500);
                 }
             } catch (IOException e) {

@@ -26,7 +26,8 @@
                 "logs": "Logs",
                 "audits": "Audits",
                 "apidocs": "API",
-                "database": "Base de données"
+                "database": "Base de données",
+                "extraction": "Extraction"
             },
             "language": "Langue"
         },
@@ -67,7 +68,7 @@
                     "invalid": "Votre email n'est pas valide."
                 }
             }
-        }, 
+        },
         "field": {
             "id" : "ID"
         }

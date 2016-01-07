@@ -3,6 +3,7 @@ package com.mltrading.service;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.mltrading.models.parser.*;
+import com.mltrading.repository.StockRepository;
 import org.springframework.stereotype.Service;
 import javax.inject.Inject;
 
@@ -19,8 +20,12 @@ public class ExtractionService {
     HistoryIndiceParser indiceParser= injector.getInstance(HistoryIndiceParser.class);
     HistorySectorParser sectorParser = injector.getInstance(HistorySectorParser.class);
     VolatilityParser vola = injector.getInstance(VolatilityParser.class);
+    StockParser stock = injector.getInstance(StockParser.class);
 
 
+    public void extractStock(StockRepository stockRepository) {
+        stock.fetch(stockRepository);
+    }
 
     public void extractFull() {
         histParser.fetch();
