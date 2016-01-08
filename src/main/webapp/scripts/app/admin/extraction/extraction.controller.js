@@ -9,5 +9,11 @@ angular.module('mltradingApp')
             });
         }
 
+        $scope.extractionSeries = function () {
+            return $http.get('/api/extractionSeries').then(function (response) {
+                return response.data;
+            });
+        }
+
 
     });

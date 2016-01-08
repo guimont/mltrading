@@ -34,7 +34,7 @@ public class Analyse {
 
     public void processAll() {
 
-        for (StockGeneral g: CacheStockGeneral.getCache().values()) {
+        for (StockGeneral g: CacheStockGeneral.getIsinCache().values()) {
             processAnalysisAll(g.getCode(), columnStock);
         }
 

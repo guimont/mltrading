@@ -29,7 +29,7 @@ public class test {
     public static void main(String[] args) {
 
 
-        Injector injector = Guice.createInjector(new ServiceParser());
+        /*Injector injector = Guice.createInjector(new ServiceParser());
 
         RealTimeParser rtPrice = injector.getInstance( RealTimeParser.class );
         HistoryParser histParser = injector.getInstance(HistoryParser.class);
@@ -102,8 +102,8 @@ public class test {
         System.out.println(sh.toString());*/
 
 
-        //RandomForestStock rf = new RandomForestStock();
-        //rf.processRF();
+        RandomForestStock rf = new RandomForestStock();
+        rf.processRF();
 
 
         //service.extractFull();

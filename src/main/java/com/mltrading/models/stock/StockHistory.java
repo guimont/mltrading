@@ -317,6 +317,31 @@ public class StockHistory extends Object{
         return stockList;
     }
 
+    public static List<StockHistory> getStockHistoryListOffset(final String code, int offset) {
+        List<StockHistory> stockList = new ArrayList<>();
+        String query = "SELECT * FROM "+code;
+        QueryResult list = InfluxDaoConnector.getPoints(query);
+
+        if (list.getResults().get(0).getSeries().get(0).getValues().size()< offset)
+            return null;
+
+        for (int i = offset; i < list.getResults().get(0).getSeries().get(0).getValues().size(); i++) {
+            StockHistory sh = new StockHistory();
+            String date = (String) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(0);
+            sh.setCode(code);
+            sh.setDay(date);
+            sh.setHighest((Double) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(1));
+            sh.setLowest((Double) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(2));
+            sh.setOpening((Double) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(3));
+            sh.setValue((Double) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(4));
+            sh.setVolume((Double) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(5));
+            sh.setAnalyse_tech(StockAnalyse.getAnalyse(code, date));
+            stockList.add(sh);
+        }
+
+        return stockList;
+    }
+
 
 
 

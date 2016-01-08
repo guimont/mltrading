@@ -1,5 +1,6 @@
 package com.mltrading.ml;
 
+import com.mltrading.models.stock.Stock;
 import com.mltrading.models.stock.StockHistory;
 import scala.Serializable;
 
@@ -13,6 +14,8 @@ import java.util.List;
 public class FeaturesStock implements Serializable {
 
     private double predictionValue;
+
+    private Double vector[];
 
     private double value;
 
@@ -134,17 +137,48 @@ public class FeaturesStock implements Serializable {
 
     public  static List<FeaturesStock> transformList(List<StockHistory> shL) {
         List<FeaturesStock> fsL = new ArrayList<>();
-        StockHistory feature = null;
 
-        for (StockHistory sh:shL) {
-            if (feature != null)
+        for (int i = 0; i< shL.size()-1; i++) {
+            fsL.add(transform(shL.get(i), shL.get(i+1).getValue()));
+        }
+
+
+        //for (StockHistory sh:shL) {
+
+
+            /*if (feature != null)
                 fsL.add(transform(feature,sh.getValue()));
             try {
                 feature = (StockHistory) sh.clone();
             } catch (CloneNotSupportedException e) {
                 e.printStackTrace();
             }
-        }
+        }*/
+        return fsL;
+    }
+
+    public  static List<FeaturesStock> create(Stock stock) {
+        //Xt,Xt-1,...,Xn ,Consensus AT => StockHistory
+        //Indice Xt,..Xn, AT => StockIndice
+        //Secteur Xt,..Xn, AT => StockSecteur
+        //Vola Cac Xt,..Xn, AT
+        //indice etranger
+
+
+        List<FeaturesStock> fsL = new ArrayList<>();
+
+
+        //for (StockHistory sh:shL) {
+
+
+            /*if (feature != null)
+                fsL.add(transform(feature,sh.getValue()));
+            try {
+                feature = (StockHistory) sh.clone();
+            } catch (CloneNotSupportedException e) {
+                e.printStackTrace();
+            }
+        }*/
         return fsL;
     }
 }
