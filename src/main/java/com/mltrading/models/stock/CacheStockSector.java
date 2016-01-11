@@ -14,21 +14,23 @@ public class CacheStockSector {
         Map<String, StockSector> aMap = new HashMap<>();
         aMap.put("FRINT", new StockSector("FRINT", "sectorTransport", "PA"));
         aMap.put("FRCM", new StockSector("FRCM", "sectorConstruction", "PA"));
-        aMap.put("FRAD", new StockSector("FRAD", "sectorDefenseAero", "PA"));
+        aMap.put("FRAD", new StockSector("FRAD", "Aérospatiale", "PA"));
         aMap.put("FREEE", new StockSector("FREEE", "sectorElecEquip", "PA"));
         aMap.put("FRIE", new StockSector("FRIE", "sectorIngIndus", "PA"));
         aMap.put("FRSS", new StockSector("FRSS", "sectorSupService", "PA"));
 
-        aMap.put("FROGP", new StockSector("FROGP", "sectorProdPetrol", "PA"));
+        aMap.put("FROGP", new StockSector("FROGP", "PETROLE ET GAZ", "PA"));
 
-        aMap.put("FRBM", new StockSector("FRBM", "sectorBasicMat", "PA"));
+        aMap.put("FRBM", new StockSector("FRBM", "MATERIAUX DE BASE", "PA"));
 
-        aMap.put("FRAP", new StockSector("FRAP", "sectorAutoEquip", "PA"));
+
+        aMap.put("FRCG", new StockSector("FRCG", "Biens de Consommation", "PA"));
+        aMap.put("FRAP", new StockSector("FRAP", "Automobiles", "PA"));
         aMap.put("FRBEV", new StockSector("FRBEV", "sectorBoisson", "PA"));
-        aMap.put("FRFPR", new StockSector("FRFPR", "sectorAgro", "PA"));
+        aMap.put("FRFPR", new StockSector("FRFPR", "Agro-alimentaire", "PA"));
         aMap.put("FRHG", new StockSector("FRHG", "sectorProdMena", "PA"));
         aMap.put("FRLEG", new StockSector("FRLEG", "sectorLoisirEquip", "PA"));
-        aMap.put("FRPG", new StockSector("FRPG", "sectorArtPer", "PA"));
+        aMap.put("FRPG", new StockSector("FRPG", "Articles Personnels", "PA"));
 
         aMap.put("FRHC", new StockSector("FRHC", "sectorSante", "PA"));
         aMap.put("FRPB", new StockSector("FRPB", "sectorPharma", "PA"));
@@ -37,7 +39,7 @@ public class CacheStockSector {
         aMap.put("FRGR", new StockSector("FRGR", "sectorDistribGen", "PA"));
 
         aMap.put("FRMED", new StockSector("FRMED", "sectorMediaPub", "PA"));
-        aMap.put("FRTL", new StockSector("FRTL", "sectorVoyage", "PA"));
+        aMap.put("FRTL", new StockSector("FRTL", "SERVICES AUX CONSOMMATEURS", "PA"));
 
         aMap.put("FRTEL", new StockSector("FRTEL", "sectorTelecom", "PA"));
 

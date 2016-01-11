@@ -10,4 +10,10 @@ public class StockSector extends StockHistory{
         this.setPlace(place);
         this.setName(name);
     }
+
+
+    static public String translate(String investir) {
+
+        return null;
+    }
 }

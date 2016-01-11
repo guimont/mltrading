@@ -165,6 +165,8 @@ public class FeaturesStock implements Serializable {
         //indice etranger
 
 
+
+
         List<FeaturesStock> fsL = new ArrayList<>();
 
 
