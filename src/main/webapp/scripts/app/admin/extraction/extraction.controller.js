@@ -14,6 +14,10 @@ angular.module('mltradingApp')
                 return response.data;
             });
         }
-
+        $scope.processML = function () {
+            return $http.get('/api/processML').then(function (response) {
+                return response.data;
+            });
+        }
 
     });

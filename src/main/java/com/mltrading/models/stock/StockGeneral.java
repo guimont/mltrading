@@ -15,6 +15,15 @@ public class StockGeneral {
 
     private String placeCodif;
 
+    private String sector;
+
+    public String getSector() {
+        return sector;
+    }
+
+    public void setSector(String sector) {
+        this.sector = sector;
+    }
 
     public String getPlaceCodif() {
         return placeCodif;
@@ -78,6 +87,14 @@ public class StockGeneral {
         this.place = place;
         this.codif = codif;
         this.placeCodif = placeCodif;
+    }
+    public StockGeneral(String code, String name,  String codif, String place, String placeCodif, String sector) {
+        this.code = code;
+        this.name = name;
+        this.place = place;
+        this.codif = codif;
+        this.placeCodif = placeCodif;
+        this.sector = sector;
     }
 
     public StockGeneral(Float value, Float variation, Float opening, Float highest, Float lowest, Float firstJanuaryVaraition, Integer volume) {

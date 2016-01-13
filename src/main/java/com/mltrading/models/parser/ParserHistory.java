@@ -62,7 +62,7 @@ public class ParserHistory {
                                 String linkField = e.attr("data-field");
 
                                 if (!linkField.isEmpty() && linkField.compareToIgnoreCase("jour") == 0) {
-                                    hist.setDay(e.text());
+                                    hist.setDayInvestir(e.text());
                                 }
                                 if (!linkField.isEmpty() && linkField.compareToIgnoreCase("valorisation") == 0) {
                                     String t = e.text().replace(',', '.');

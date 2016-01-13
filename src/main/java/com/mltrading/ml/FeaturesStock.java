@@ -1,7 +1,7 @@
 package com.mltrading.ml;
 
-import com.mltrading.models.stock.Stock;
-import com.mltrading.models.stock.StockHistory;
+import com.mltrading.models.parser.Analyse;
+import com.mltrading.models.stock.*;
 import scala.Serializable;
 
 
@@ -164,10 +164,22 @@ public class FeaturesStock implements Serializable {
         //Vola Cac Xt,..Xn, AT
         //indice etranger
 
-
-
-
         List<FeaturesStock> fsL = new ArrayList<>();
+        List<String> rangeDate = StockHistory.getDateHistoryListOffset(stock.getCode(),50);
+
+        for (String date: rangeDate) {
+            FeaturesStock fs = new FeaturesStock();
+            StockHistory  res = StockHistory.getStockHistoryDayAfter(stock.getCode(), date);
+
+            List<StockHistory> sh = StockHistory.getStockHistoryDateInvert(stock.getCode(), date, 20);
+            StockAnalyse a = StockAnalyse.getAnalyse(stock.getCode(), date);
+            List<StockSector> ss = StockSector.getStockSectorDateInvert(stock.getSector(), date, 20);
+            String codeIndice = StockIndice.translate(stock.getIndice());
+            StockIndice.getStockIndiceDateInvert(codeIndice, date, 20);
+        }
+
+
+
 
 
         //for (StockHistory sh:shL) {

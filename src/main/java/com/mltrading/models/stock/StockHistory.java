@@ -203,7 +203,14 @@ public class StockHistory extends Object{
         this.consensusNote = consensusNote;
     }
 
+
     public void setDay(String day) {
+        this.day = day;
+    }
+
+
+
+    public void setDayInvestir(String day) {
 
         this.day = day;
         String DD = day.substring(0, 2);
@@ -294,6 +301,25 @@ public class StockHistory extends Object{
         return sh;
     }
 
+    public static StockHistory getStockHistoryDayAfter(final String code, String date) {
+        StockHistory sh = new StockHistory();
+
+        String query = "SELECT * FROM "+code+" where time > '" + date + "' limit 1";
+        QueryResult meanQ = InfluxDaoConnector.getPoints(query);
+
+        sh.setCode(code);
+        sh.setDay(date);
+        sh.setHighest((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(1));
+        sh.setLowest((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(2));
+        sh.setOpening((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(3));
+        sh.setValue((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(4));
+        sh.setVolume((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(5));
+
+        sh.setAnalyse_tech(StockAnalyse.getAnalyse(code, date));
+
+        return sh;
+    }
+
     public static List<StockHistory> getStockAnalyseList(final String code) {
         List<StockHistory> stockList = new ArrayList<StockHistory>();
         String query = "SELECT * FROM "+code+ "T";
@@ -317,15 +343,17 @@ public class StockHistory extends Object{
         return stockList;
     }
 
-    public static List<StockHistory> getStockHistoryListOffset(final String code, int offset) {
+    public static List<StockHistory> getStockHistoryListOffsetWithAT(final String code, int offset) {
         List<StockHistory> stockList = new ArrayList<>();
         String query = "SELECT * FROM "+code;
         QueryResult list = InfluxDaoConnector.getPoints(query);
 
-        if (list.getResults().get(0).getSeries().get(0).getValues().size()< offset)
+        int size = list.getResults().get(0).getSeries().get(0).getValues().size();
+
+        if (size < offset)
             return null;
 
-        for (int i = offset; i < list.getResults().get(0).getSeries().get(0).getValues().size(); i++) {
+        for (int i = size-1; i < list.getResults().get(0).getSeries().get(0).getValues().size(); i++) {
             StockHistory sh = new StockHistory();
             String date = (String) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(0);
             sh.setCode(code);
@@ -340,6 +368,50 @@ public class StockHistory extends Object{
         }
 
         return stockList;
+    }
+
+
+    public static List<String> getDateHistoryListOffset(final String code, int offset) {
+        List<String> dateList = new ArrayList<>();
+        String query = "SELECT * FROM "+code;
+        QueryResult list = InfluxDaoConnector.getPoints(query);
+
+        if (list.getResults().get(0).getSeries().get(0).getValues().size()< offset)
+            return null;
+
+        for (int i = offset; i < list.getResults().get(0).getSeries().get(0).getValues().size(); i++) {
+            StockHistory sh = new StockHistory();
+            dateList.add((String) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(0));
+
+        }
+        return dateList;
+    }
+
+
+    public static List<StockHistory> getStockHistoryDateInvert(final String code, final String date, int offset) {
+
+        List<StockHistory> stockList = new ArrayList<>();
+        //offset is mult by 2 because it is no dense data
+        String query = "SELECT * FROM " + code + " where time <= '" + date + "' and time > '"+ date + "' - "+  Integer.toString(offset*2) +"d";
+        QueryResult list = InfluxDaoConnector.getPoints(query);
+
+        if (list.getResults().get(0).getSeries().get(0).getValues().size()< offset)
+            return null;
+
+        for (int i = offset; stockList.size() < offset; i--) {
+            StockHistory sh = new StockHistory();
+            sh.setCode(code);
+            sh.setDay((String) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(0));
+            sh.setHighest((Double) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(2));
+            sh.setLowest((Double) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(3));
+            sh.setOpening((Double) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(4));
+            sh.setValue((Double) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(5));
+            sh.setVolume((Double) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(6));
+            stockList.add(sh);
+        }
+
+        return stockList;
+
     }
 
 

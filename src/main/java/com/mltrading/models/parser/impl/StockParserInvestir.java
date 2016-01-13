@@ -56,10 +56,8 @@ public class StockParserInvestir  implements StockParser{
                 if (text != null) {
                     Document doc = Jsoup.parse(text);
 
-                    String sector="";
-                    if ( doc.select("#sectorLink").size() != 0) {
-                        sector = doc.select("#sectorLink").get(0).text();
-                    }
+                    String sector=g.getSector();
+
                     String marche = doc.select("div.bloc-tabs2").get(0).getAllElements().get(3).text();
                     String indice = doc.select("div.bloc-tabs2").get(0).getAllElements().get(6).text();
                     String codeif = doc.select("div.bloc-tabs2").get(0).getAllElements().get(9).text();

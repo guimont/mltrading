@@ -12,7 +12,7 @@ public class CacheStockIndice {
     private static final Map<String, StockIndice> IndiceMap;
     static {
         Map<String, StockIndice> aMap = new HashMap<>();
-        aMap.put("EFCHI", new StockIndice("EFCHI", "cac40"));
+        aMap.put("EFCHI", new StockIndice("EFCHI", "cac 40"));
         aMap.put("EDJI", new StockIndice("EDJI", "dji"));
 
         aMap.put("EN225", new StockIndice("EN225", "nikkei"));
@@ -25,5 +25,6 @@ public class CacheStockIndice {
     public static Map<String,StockIndice> getIndiceCache() {
         return IndiceMap;
     }
+
 
 }

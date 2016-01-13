@@ -26,7 +26,7 @@ public class RandomForestStock implements Serializable {
     static int featuresLength = 8;
 
     public JavaRDD<LabeledPoint> createRDD(JavaSparkContext sc) {
-        List<StockHistory> shL  = StockHistory.getStockHistoryListOffset("FR0000045072",50);
+        List<StockHistory> shL  = StockHistory.getStockHistoryListOffsetWithAT("FR0000045072",50);
         List<FeaturesStock> fsL  = FeaturesStock.transformList(shL);
         JavaRDD<FeaturesStock> data = sc.parallelize(fsL);
 
