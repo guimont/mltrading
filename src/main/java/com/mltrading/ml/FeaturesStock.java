@@ -2,6 +2,7 @@ package com.mltrading.ml;
 
 import com.mltrading.models.parser.Analyse;
 import com.mltrading.models.stock.*;
+import org.apache.commons.lang.ArrayUtils;
 import scala.Serializable;
 
 
@@ -17,21 +18,9 @@ public class FeaturesStock implements Serializable {
 
     private Double vector[];
 
-    private double value;
+    int currentVectorPos = 0;
 
-    private double volume;
 
-    private double mm20;
-
-    private double mma50;
-
-    private double mme12;
-
-    private double mme26;
-
-    private double momentum;
-
-    private double stdDev;
 
     public double getPredictionValue() {
         return predictionValue;
@@ -41,98 +30,19 @@ public class FeaturesStock implements Serializable {
         this.predictionValue = predictionValue;
     }
 
-    public double getValue() {
-        return value;
-    }
-
-    public void setValue(double value) {
-        this.value = value;
-    }
-
-    public double getVolume() {
-        return volume;
-    }
-
-    public void setVolume(double volume) {
-        this.volume = volume;
-    }
-
-    public double getMm20() {
-        return mm20;
-    }
-
-    public void setMm20(double mm20) {
-        this.mm20 = mm20;
-    }
-
-    public double getMma50() {
-        return mma50;
-    }
-
-    public void setMma50(double mma50) {
-        this.mma50 = mma50;
-    }
-
-    public double getMme12() {
-        return mme12;
-    }
-
-    public void setMme12(double mme12) {
-        this.mme12 = mme12;
-    }
-
-    public double getMme26() {
-        return mme26;
-    }
-
-    public void setMme26(double mme26) {
-        this.mme26 = mme26;
-    }
-
-    public double getMomentum() {
-        return momentum;
-    }
-
-    public void setMomentum(double momentum) {
-        this.momentum = momentum;
-    }
-
-    public double getStdDev() {
-        return stdDev;
-    }
-
-    public void setStdDev(double stdDev) {
-        this.stdDev = stdDev;
-    }
 
 
     public static FeaturesStock transform(StockHistory sh,double value) {
         FeaturesStock fs = new FeaturesStock();
 
         fs.setPredictionValue(value);
-        fs.setMm20(sh.getAnalyse_tech().getMma20());
-        fs.setMma50(sh.getAnalyse_tech().getMma50());
-        fs.setMme12(sh.getAnalyse_tech().getMme12());
-        fs.setMme26(sh.getAnalyse_tech().getMme26());
-        fs.setMomentum(sh.getAnalyse_tech().getMomentum());
-        fs.setStdDev(sh.getAnalyse_tech().getStdDev());
-        fs.setValue(sh.getValue());
-        fs.setVolume(sh.getVolume());
+
         return fs;
     }
 
     public double[] vectorize() {
-        double[] vector = new double[9];
-        vector[0] = this.getValue();
-        vector[1] = this.getVolume();
-        vector[3] = 0;
-        vector[4] = 0;
-        vector[5] = 0;
-        vector[6] = 0;
-        vector[7] = 0;
-        vector[8] = 0;
 
-        return vector;
+        return ArrayUtils.toPrimitive(vector);
     }
 
     public  static List<FeaturesStock> transformList(List<StockHistory> shL) {
@@ -157,7 +67,33 @@ public class FeaturesStock implements Serializable {
         return fsL;
     }
 
-    public  static List<FeaturesStock> create(Stock stock) {
+    public void linearize(StockHistory sh) {
+        this.vector[currentVectorPos++] = sh.getValue();
+    }
+
+    public void linearize(StockAnalyse sa) {
+        this.vector[currentVectorPos++] = sa.getMme12();
+        this.vector[currentVectorPos++] = sa.getMme26();
+        this.vector[currentVectorPos++] = sa.getMomentum();
+        this.vector[currentVectorPos++] = sa.getStdDev();
+    }
+
+    public void linearizeSH(List<StockHistory> shl) {
+        for (StockHistory sh:shl)
+            this.vector[currentVectorPos++] = sh.getValue();
+    }
+
+    public void linearizeSS(List<StockSector> shl) {
+        for (StockSector sh:shl)
+            this.vector[currentVectorPos++] = sh.getValue();
+    }
+
+    public void linearizeSI(List<StockIndice> shl) {
+        for (StockIndice sh:shl)
+            this.vector[currentVectorPos++] = sh.getValue();
+    }
+
+    public  List<FeaturesStock> create(Stock stock) {
         //Xt,Xt-1,...,Xn ,Consensus AT => StockHistory
         //Indice Xt,..Xn, AT => StockIndice
         //Secteur Xt,..Xn, AT => StockSecteur
@@ -172,10 +108,18 @@ public class FeaturesStock implements Serializable {
             StockHistory  res = StockHistory.getStockHistoryDayAfter(stock.getCode(), date);
 
             List<StockHistory> sh = StockHistory.getStockHistoryDateInvert(stock.getCode(), date, 20);
-            StockAnalyse a = StockAnalyse.getAnalyse(stock.getCode(), date);
+            this.linearizeSH(sh);
+            StockAnalyse ash = StockAnalyse.getAnalyse(stock.getCode(), date);
+            this.linearize(ash);
             List<StockSector> ss = StockSector.getStockSectorDateInvert(stock.getSector(), date, 20);
+            this.linearizeSS(ss);
+            StockAnalyse ass = StockAnalyse.getAnalyse(stock.getSector(), date);
+            this.linearize(ass);
             String codeIndice = StockIndice.translate(stock.getIndice());
-            StockIndice.getStockIndiceDateInvert(codeIndice, date, 20);
+            List<StockIndice> si = StockIndice.getStockIndiceDateInvert(codeIndice, date, 20);
+            this.linearizeSI(si);
+            StockAnalyse asi = StockAnalyse.getAnalyse(codeIndice, date);
+            this.linearize(asi);
         }
 
 
