@@ -29,7 +29,7 @@ public class Analyse {
 
     private static int columnSector = 2;
     private static int columnStock = 5;
-    private static int columnIndice = 5;
+    private static int columnIndice = 4;
 
 
     public void processAll() {
@@ -45,6 +45,8 @@ public class Analyse {
         for (StockSector g : CacheStockSector.getSectorCache().values()) {
             processAnalysisAll(g.getCode(), columnSector);
         }
+
+        processAnalysisAll("VCAC", columnSector);
     }
 
     public void processAnalysisSpecific(String code, String date, int column) {
@@ -86,6 +88,11 @@ public class Analyse {
         if (res.getResults().get(0).getSeries() == null || res.getResults().get(0).getSeries().get(0).getValues() == null) return; //resultat empry
 
         int len = res.getResults().get(0).getSeries().get(0).getValues().size();
+
+        if (len < 50) {
+            System.out.println("Not enough element in code "+ code +". Cannot launch AT parser");
+            return;
+        }
 
         double ref_mme12 = Double.parseDouble(mmRange(res, code, 50, 12));
         double ref_mme26 = Double.parseDouble(mmRange(res, code, 50, 26));

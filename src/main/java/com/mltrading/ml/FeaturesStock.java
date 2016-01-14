@@ -21,6 +21,9 @@ public class FeaturesStock implements Serializable {
     int currentVectorPos = 0;
 
 
+    public FeaturesStock() {
+        vector = new Double[20000];
+    }
 
     public double getPredictionValue() {
         return predictionValue;
@@ -69,6 +72,8 @@ public class FeaturesStock implements Serializable {
 
     public void linearize(StockHistory sh) {
         this.vector[currentVectorPos++] = sh.getValue();
+        this.vector[currentVectorPos++] = sh.getConsensusNote();
+        this.vector[currentVectorPos++] = sh.getVolume();
     }
 
     public void linearize(StockAnalyse sa) {
@@ -93,7 +98,11 @@ public class FeaturesStock implements Serializable {
             this.vector[currentVectorPos++] = sh.getValue();
     }
 
-    public  List<FeaturesStock> create(Stock stock) {
+    static int OFFSET_BASE = 50;
+    static int RANGE_MAX = 300;
+    static int XT_PERIOD = 20;
+
+    public  static List<FeaturesStock> create(Stock stock) {
         //Xt,Xt-1,...,Xn ,Consensus AT => StockHistory
         //Indice Xt,..Xn, AT => StockIndice
         //Secteur Xt,..Xn, AT => StockSecteur
@@ -101,42 +110,50 @@ public class FeaturesStock implements Serializable {
         //indice etranger
 
         List<FeaturesStock> fsL = new ArrayList<>();
-        List<String> rangeDate = StockHistory.getDateHistoryListOffset(stock.getCode(),50);
+        List<String> rangeDate = StockHistory.getDateHistoryListOffsetLimit(stock.getCode(), OFFSET_BASE,RANGE_MAX);
 
         for (String date: rangeDate) {
             FeaturesStock fs = new FeaturesStock();
             StockHistory  res = StockHistory.getStockHistoryDayAfter(stock.getCode(), date);
+            fs.setPredictionValue(res.getValue());
 
-            List<StockHistory> sh = StockHistory.getStockHistoryDateInvert(stock.getCode(), date, 20);
-            this.linearizeSH(sh);
+            /**
+             * stock
+             */
+            List<StockHistory> sh = StockHistory.getStockHistoryDateInvert(stock.getCode(), date, XT_PERIOD);
+            fs.linearizeSH(sh);
+            StockHistory current = StockHistory.getStockHistory(stock.getCode(), date);
+            fs.linearize(current);
             StockAnalyse ash = StockAnalyse.getAnalyse(stock.getCode(), date);
-            this.linearize(ash);
-            List<StockSector> ss = StockSector.getStockSectorDateInvert(stock.getSector(), date, 20);
-            this.linearizeSS(ss);
+            fs.linearize(ash);
+
+            /**
+             * sector
+             */
+            List<StockSector> ss = StockSector.getStockSectorDateInvert(stock.getSector(), date, XT_PERIOD);
+            fs.linearizeSS(ss);
             StockAnalyse ass = StockAnalyse.getAnalyse(stock.getSector(), date);
-            this.linearize(ass);
+            fs.linearize(ass);
+
+            /**
+             * indice
+             */
             String codeIndice = StockIndice.translate(stock.getIndice());
-            List<StockIndice> si = StockIndice.getStockIndiceDateInvert(codeIndice, date, 20);
-            this.linearizeSI(si);
+            List<StockIndice> si = StockIndice.getStockIndiceDateInvert(codeIndice, date, XT_PERIOD);
+            fs.linearizeSI(si);
             StockAnalyse asi = StockAnalyse.getAnalyse(codeIndice, date);
-            this.linearize(asi);
+            fs.linearize(asi);
+
+            /**
+             * volatility cac
+             */
+            List<StockHistory> sVCac = StockHistory.getStockHistoryDateInvert("VCAC", date, XT_PERIOD);
+            fs.linearizeSH(sVCac);
+
+
+            fsL.add(fs);
         }
 
-
-
-
-
-        //for (StockHistory sh:shL) {
-
-
-            /*if (feature != null)
-                fsL.add(transform(feature,sh.getValue()));
-            try {
-                feature = (StockHistory) sh.clone();
-            } catch (CloneNotSupportedException e) {
-                e.printStackTrace();
-            }
-        }*/
         return fsL;
     }
 }

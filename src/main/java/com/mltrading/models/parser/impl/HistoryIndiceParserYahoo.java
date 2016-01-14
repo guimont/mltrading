@@ -39,7 +39,7 @@ public class HistoryIndiceParserYahoo implements HistoryIndiceParser {
 
         for (StockIndice g : CacheStockIndice.getIndiceCache().values()) {
 
-            for (int numPage = 0; numPage <= 150; numPage += PAGINATION) {
+            for (int numPage = 0; numPage <= MAXPAGE; numPage += PAGINATION) {
                 try {
                     String text;
                     String url = startUrl + g.getCode()  + endUrl + numPage;

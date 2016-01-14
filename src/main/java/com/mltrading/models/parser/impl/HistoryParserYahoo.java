@@ -42,7 +42,8 @@ public class HistoryParserYahoo implements HistoryParser {
         int numPage;
         boolean retry = false;
         for (StockGeneral g: CacheStockGeneral.getIsinCache().values()) {
-            for(numPage =0; numPage <= 150 ; numPage += PAGINATION) {
+            Consensus cnote = ConsensusParserInvestir.fetchStock(g.getCode());
+            for(numPage =0; numPage <= MAXPAGE ; numPage += PAGINATION) {
                 String url = startUrl + g.getCodif() +"." + g.getPlaceCodif() + endUrl+ numPage;
                 try {
                     String text;
@@ -58,8 +59,6 @@ public class HistoryParserYahoo implements HistoryParser {
 
                     Document doc = Jsoup.parse(text);
                     BatchPoints bp = InfluxDaoConnector.getBatchPoints();
-
-                    Consensus cnote = ConsensusParserInvestir.fetchStock(g.getCode());
 
                     Elements links = doc.select(refCode);
                     for (Element link : links) {

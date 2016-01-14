@@ -2,6 +2,7 @@ package com.mltrading.ml;
 
 import java.util.*;
 
+import com.mltrading.models.stock.Stock;
 import com.mltrading.models.stock.StockHistory;
 import org.apache.spark.mllib.linalg.Vectors;
 import scala.Serializable;
@@ -25,9 +26,9 @@ public class RandomForestStock implements Serializable {
 
     static int featuresLength = 8;
 
-    public JavaRDD<LabeledPoint> createRDD(JavaSparkContext sc) {
-        List<StockHistory> shL  = StockHistory.getStockHistoryListOffsetWithAT("FR0000045072",50);
-        List<FeaturesStock> fsL  = FeaturesStock.transformList(shL);
+    public JavaRDD<LabeledPoint> createRDD(JavaSparkContext sc, Stock stock) {
+
+        List<FeaturesStock> fsL = FeaturesStock.create(stock);
         JavaRDD<FeaturesStock> data = sc.parallelize(fsL);
 
         JavaRDD<LabeledPoint> parsedData = data.map(
@@ -42,14 +43,14 @@ public class RandomForestStock implements Serializable {
         return parsedData;
     }
 
-    public void processRF() {
+    public void processRF(Stock stock) {
 
         SparkConf conf = new SparkConf().setAppName("JavaRandomForest").setMaster("local[*]");
         JavaSparkContext sc = new JavaSparkContext(conf);
 
 
         // Load and parse the data file.
-        JavaRDD<LabeledPoint> data = createRDD(sc);
+        JavaRDD<LabeledPoint> data = createRDD(sc, stock);
         // Split the data into training and test sets (30% held out for testing)
 
         JavaRDD<LabeledPoint>[] splits = data.randomSplit(new double[]{0.7, 0.3});

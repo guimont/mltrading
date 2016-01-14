@@ -20,7 +20,6 @@ public interface VolatilityParser {
             .field("low",hist.getLowest())
             .field("volume", hist.getVolume())
             .field("value",hist.getValue())
-            .field("consensus",hist.getConsensusNote())
             .build();
         bp.point(pt);
     }

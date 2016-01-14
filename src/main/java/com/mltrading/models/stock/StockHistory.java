@@ -388,6 +388,24 @@ public class StockHistory extends Object{
     }
 
 
+    public static List<String> getDateHistoryListOffsetLimit(final String code, int offset, int max) {
+        List<String> dateList = new ArrayList<>();
+        String query = "SELECT * FROM "+code;
+        QueryResult list = InfluxDaoConnector.getPoints(query);
+
+        int series = max + offset;
+        int size = list.getResults().get(0).getSeries().get(0).getValues().size();
+
+        if (size< series)
+            return null;
+
+        for (int i = size-max; i < size; i++) {
+            dateList.add((String) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(0));
+        }
+        return dateList;
+    }
+
+
     public static List<StockHistory> getStockHistoryDateInvert(final String code, final String date, int offset) {
 
         List<StockHistory> stockList = new ArrayList<>();
@@ -425,7 +443,7 @@ public class StockHistory extends Object{
             ", place='" + place + '\'' +
             ", day='" + day + '\'' +
             ", timeInsert=" + timeInsert +
-            ", analyse_tech=" + analyse_tech +
+            ", consensus=" + consensusNote +
             ", codif='" + codif + '\'' +
             ", placeCodif='" + placeCodif + '\'' +
             ", value=" + value +

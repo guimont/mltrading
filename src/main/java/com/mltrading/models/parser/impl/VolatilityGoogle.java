@@ -34,7 +34,7 @@ public class VolatilityGoogle implements VolatilityParser {
 
     public void loader() {
 
-        for (int numPage = 0; numPage <= 1; numPage += PAGINATION) {
+        for (int numPage = 0; numPage <= MAXPAGE; numPage += PAGINATION) {
             try {
                 String text;
                 String url = vol + numPage;

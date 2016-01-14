@@ -38,8 +38,9 @@ public class Consensus {
         if(indice > 1 && indice <=7) return 2;
         if(indice > 1 && indice <=7) return 2;
         if(indice > 7 && indice <=31) return 3;
-        if(indice > 31 && indice <=62) return 2;
-        if(indice > 62 && indice <=300) return 2;
+        if(indice > 31 && indice <=62) return 4;
+        if(indice > 62 && indice <=93) return 5;
+        if(indice > 93 && indice <=300) return 6;
 
         return 0; //max
     }
@@ -137,6 +138,7 @@ public class Consensus {
 
         public Double getAvg() {
             try {
+                if (buy+reinforce+keep+relieve+sell == 0) return new Double(0);
                 return new Double(buy*BUY_COEF+reinforce*REINFORCE_COEF+keep*KEEP_COEF+relieve*RELIEVE_COEF+sell*SELL_COEF)
                     /new Double(buy+reinforce+keep+relieve+sell);
             } catch (Exception e) {

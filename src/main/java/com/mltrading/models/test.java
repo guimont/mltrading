@@ -103,7 +103,7 @@ public class test {
 
 
         RandomForestStock rf = new RandomForestStock();
-        rf.processRF();
+        //rf.processRF();
 
 
         //service.extractFull();

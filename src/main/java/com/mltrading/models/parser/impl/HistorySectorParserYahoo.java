@@ -37,7 +37,7 @@ public class HistorySectorParserYahoo implements HistorySectorParser {
 
         for (StockSector g : CacheStockSector.getSectorCache().values()) {
 
-            for (int numPage = 0; numPage <= 150; numPage += PAGINATION) {
+            for (int numPage = 0; numPage <= MAXPAGE; numPage += PAGINATION) {
                 try {
                     String text;
                     String url = startUrl + g.getCode() + "." + g.getPlace() + endUrl + numPage;
