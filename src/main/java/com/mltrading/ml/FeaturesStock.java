@@ -45,7 +45,17 @@ public class FeaturesStock implements Serializable {
 
     public double[] vectorize() {
 
-        return ArrayUtils.toPrimitive(vector);
+        double[] result = new double[currentVectorPos];
+
+        for(int i = 0; i < currentVectorPos; ++i) {
+            try {
+                result[i] = vector[i].doubleValue();
+            } catch (NullPointerException npe) {
+                result[i] = 0;
+            }
+        }
+
+        return result;
     }
 
     public  static List<FeaturesStock> transformList(List<StockHistory> shL) {
@@ -114,8 +124,14 @@ public class FeaturesStock implements Serializable {
 
         for (String date: rangeDate) {
             FeaturesStock fs = new FeaturesStock();
+
+            try {
             StockHistory  res = StockHistory.getStockHistoryDayAfter(stock.getCode(), date);
             fs.setPredictionValue(res.getValue());
+            } catch (Exception e) {
+                System.out.println(e);
+                continue;
+            }
 
             /**
              * stock
@@ -130,10 +146,15 @@ public class FeaturesStock implements Serializable {
             /**
              * sector
              */
-            List<StockSector> ss = StockSector.getStockSectorDateInvert(stock.getSector(), date, XT_PERIOD);
-            fs.linearizeSS(ss);
-            StockAnalyse ass = StockAnalyse.getAnalyse(stock.getSector(), date);
-            fs.linearize(ass);
+            try {
+                List<StockSector> ss = StockSector.getStockSectorDateInvert(stock.getSector(), date, XT_PERIOD);
+                fs.linearizeSS(ss);
+                StockAnalyse ass = StockAnalyse.getAnalyse(stock.getSector(), date);
+                fs.linearize(ass);
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+
 
             /**
              * indice
@@ -147,8 +168,12 @@ public class FeaturesStock implements Serializable {
             /**
              * volatility cac
              */
-            List<StockHistory> sVCac = StockHistory.getStockHistoryDateInvert("VCAC", date, XT_PERIOD);
-            fs.linearizeSH(sVCac);
+            try {
+                List<StockIndice> sVCac = StockIndice.getStockIndiceDateInvert("VCAC", date, XT_PERIOD);
+                fs.linearizeSI(sVCac);
+            } catch (Exception e) {
+                System.out.println(e);
+            }
 
 
             fsL.add(fs);

@@ -77,7 +77,7 @@ public class HistoryParserYahoo implements HistoryParser {
                                     hist.setValue(new Double(t.get(4).text().replace(",", ".")));
                                     hist.setVolume(new Double(t.get(5).text().replaceAll(" ", "")));
                                     hist.setConsensusNote(cnote.getNotation(cnote.getIndice(loopPage+numPage)).getAvg());
-                                    HistoryParser.saveHistory(bp, hist);
+                                    if (hist.getVolume() > 0) HistoryParser.saveHistory(bp, hist); //dont save no trading day
                                     System.out.println(hist.toString());
                                 }
                             }

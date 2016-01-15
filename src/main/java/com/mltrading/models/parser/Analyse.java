@@ -46,7 +46,15 @@ public class Analyse {
             processAnalysisAll(g.getCode(), columnSector);
         }
 
-        processAnalysisAll("VCAC", columnSector);
+        processAnalysisAll("VCAC", columnIndice);
+    }
+
+    public void processSectorAll() {
+
+        for (StockSector g : CacheStockSector.getSectorCache().values()) {
+            processAnalysisAll(g.getCode(), columnSector);
+        }
+
     }
 
     public void processAnalysisSpecific(String code, String date, int column) {

@@ -29,18 +29,19 @@ public class test {
     public static void main(String[] args) {
 
 
-        /*Injector injector = Guice.createInjector(new ServiceParser());
+        Injector injector = Guice.createInjector(new ServiceParser());
+        HistorySectorParser sectorParser = injector.getInstance(HistorySectorParser.class);
 
-        RealTimeParser rtPrice = injector.getInstance( RealTimeParser.class );
+        /*RealTimeParser rtPrice = injector.getInstance( RealTimeParser.class );
         HistoryParser histParser = injector.getInstance(HistoryParser.class);
         HistoryRawMaterialsParser rawParser = injector.getInstance(HistoryRawMaterialsParser.class);
         HistoryIndiceParser indiceParser= injector.getInstance(HistoryIndiceParser.class);
         HistorySectorParser sectorParser = injector.getInstance(HistorySectorParser.class);
 
-        ConsensusParser consensus = injector.getInstance(ConsensusParser.class);
-        VolatilityParser vola = injector.getInstance(VolatilityParser.class);
+        ConsensusParser consensus = injector.getInstance(ConsensusParser.class);*/
+        //VolatilityParser vola = injector.getInstance(VolatilityParser.class);
 
-        StockParser stock = injector.getInstance(StockParser.class);
+        /*StockParser stock = injector.getInstance(StockParser.class);
         //stock.fetch();
 
         User toto =userService.getUserWithAuthorities();
@@ -91,8 +92,8 @@ public class test {
         System.out.print(meanQ);*/
 
 
-        /*Analyse a = new Analyse();
-        a.processAll();*/
+        Analyse a = new Analyse();
+        a.processSectorAll();
 
         /*StockHistory sh = StockHistory.getStockHistory("FR0000045072", "2015-04-29T22:00:00Z");
         List<StockHistory> shL = StockHistory.getStockHistoryList("FR0000045072");
@@ -101,8 +102,9 @@ public class test {
 
         System.out.println(sh.toString());*/
 
+        //sectorParser.fetch();
 
-        RandomForestStock rf = new RandomForestStock();
+        //RandomForestStock rf = new RandomForestStock();
         //rf.processRF();
 
 

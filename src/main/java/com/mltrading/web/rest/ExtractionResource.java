@@ -4,6 +4,7 @@ import com.codahale.metrics.annotation.Timed;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.mltrading.ml.FeaturesStock;
+import com.mltrading.ml.RandomForestStock;
 import com.mltrading.models.parser.ServiceParser;
 import com.mltrading.models.parser.StockParser;
 import com.mltrading.models.stock.Stock;
@@ -57,8 +58,10 @@ public class ExtractionResource {
 
         List<Stock> sl = stockRepository.findAll();
 
+        RandomForestStock rf = new RandomForestStock();
+        rf.processRF(sl.get(0));
 
-        FeaturesStock.create(sl.get(0));
+        //FeaturesStock.create(sl.get(0));
 
         return "ok";
     }

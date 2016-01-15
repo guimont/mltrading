@@ -85,15 +85,19 @@ public class StockAnalyse extends Object{
     public static StockAnalyse getAnalyse(String code, String date) {
         StockAnalyse a = new StockAnalyse();
 
-        String query = "SELECT * FROM "+code+"T where time = '" + date + "'";
-        QueryResult meanQ = InfluxDaoConnector.getPoints(query);
+        try {
+            String query = "SELECT * FROM " + code + "T where time = '" + date + "'";
+            QueryResult meanQ = InfluxDaoConnector.getPoints(query);
 
-        a.setMma20((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(1));
-        a.setMma50((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(2));
-        a.setMme12((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(3));
-        a.setMme26((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(4));
-        a.setMomentum((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(5));
-        a.setStdDev((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(6));
+            a.setMma20((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(1));
+            a.setMma50((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(2));
+            a.setMme12((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(3));
+            a.setMme26((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(4));
+            a.setMomentum((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(5));
+            a.setStdDev((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(6));
+        } catch (Exception e) {
+            System.out.println("error in analyse: " +e);
+        }
 
         return a;
     }
