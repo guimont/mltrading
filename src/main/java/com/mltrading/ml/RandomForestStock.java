@@ -26,9 +26,8 @@ public class RandomForestStock implements Serializable {
 
     static int featuresLength = 8;
 
-    public JavaRDD<LabeledPoint> createRDD(JavaSparkContext sc, Stock stock) {
+    public JavaRDD<LabeledPoint> createRDD(JavaSparkContext sc,  List<FeaturesStock> fsL) {
 
-        List<FeaturesStock> fsL = FeaturesStock.create(stock);
         JavaRDD<FeaturesStock> data = sc.parallelize(fsL);
 
         JavaRDD<LabeledPoint> parsedData = data.map(
@@ -37,6 +36,7 @@ public class RandomForestStock implements Serializable {
                     return new LabeledPoint(fs.getPredictionValue(), Vectors.dense(fs.vectorize()));
                 }
             }
+
         );
 
         parsedData.cache();
@@ -45,17 +45,23 @@ public class RandomForestStock implements Serializable {
 
     public void processRF(Stock stock) {
 
+        List<FeaturesStock> fsL = FeaturesStock.create(stock);
+        List<FeaturesStock> fsLTrain =fsL.subList(0,(int)(fsL.size()*0.7));
+        List<FeaturesStock> fsLTest =fsL.subList((int)(fsL.size()*0.7), fsL.size());
+
         SparkConf conf = new SparkConf().setAppName("JavaRandomForest").setMaster("local[*]");
         JavaSparkContext sc = new JavaSparkContext(conf);
 
 
         // Load and parse the data file.
-        JavaRDD<LabeledPoint> data = createRDD(sc, stock);
+        JavaRDD<LabeledPoint> trainingData = createRDD(sc, fsLTrain);
+
+        JavaRDD<FeaturesStock> testData = sc.parallelize(fsLTest);
         // Split the data into training and test sets (30% held out for testing)
 
-        JavaRDD<LabeledPoint>[] splits = data.randomSplit(new double[]{0.7, 0.3});
+        /*JavaRDD<LabeledPoint>[] splits = data.randomSplit(new double[]{0.7, 0.3});
         JavaRDD<LabeledPoint> trainingData = splits[0];
-        JavaRDD<LabeledPoint> testData = splits[1];
+        JavaRDD<LabeledPoint> testData = splits[1];*/
 
 
         // Set parameters.
@@ -71,8 +77,41 @@ public class RandomForestStock implements Serializable {
         final RandomForestModel model = RandomForest.trainRegressor(trainingData,
             categoricalFeaturesInfo, numTrees, featureSubsetStrategy, impurity, maxDepth, maxBins, maxBins);
 
+
+
+        JavaRDD<FeaturesStock> predictionAndLabel = testData.map(
+            new Function<FeaturesStock, FeaturesStock>() {
+                public FeaturesStock call(FeaturesStock fs) {
+                    LabeledPoint p = new LabeledPoint(fs.getPredictionValue(), Vectors.dense(fs.vectorize()));
+                    return new FeaturesStock(fs, model.predict(p.features()));
+                }
+            }
+        );
+
+
+
+        JavaRDD<MLYield> res =
+            predictionAndLabel.map(new Function <FeaturesStock, MLYield>() {
+                public MLYield call(FeaturesStock pl) {
+                    System.out.println("estimate: " + pl.getPredictionValue());
+                    System.out.println("result: " + pl.getResultValue());
+                    Double diff = pl.getPredictionValue() - pl.getResultValue();
+                    return MLYield.calculYields(pl.getPredictionValue(), pl.getResultValue(), pl.getCurrentValue());
+                }
+            });
+
+        res.collect();
+
+        //System.out.println("Test Mean Squared Error: " + testMSE);
+        //System.out.println("Learned regression forest model:\n" + model.toDebugString());
+
+        // Save and load model
+        //model.save(sc.sc(), "myModelPath");
+        //RandomForestModel sameModel = RandomForestModel.load(sc.sc(), "myModelPath");
+
+
         // Evaluate model on test instances and compute test error
-        JavaPairRDD<Double, Double> predictionAndLabel =
+        /*JavaPairRDD<Double, Double> predictionAndLabel =
             testData.mapToPair(new PairFunction<LabeledPoint, Double, Double>() {
                 @Override
                 public Tuple2<Double, Double> call(LabeledPoint p) {
@@ -96,7 +135,7 @@ public class RandomForestStock implements Serializable {
             }) / testData.count();
 
 
-        System.out.println("Test Mean Squared Error: " + testMSE);
+        System.out.println("Test Mean Squared Error: " + testMSE);*/
         //System.out.println("Learned regression forest model:\n" + model.toDebugString());
 
         // Save and load model

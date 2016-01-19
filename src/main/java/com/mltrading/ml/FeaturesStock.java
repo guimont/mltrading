@@ -14,7 +14,9 @@ import java.util.List;
  */
 public class FeaturesStock implements Serializable {
 
+    private double resultValue;
     private double predictionValue;
+    private double currentValue;
 
     private Double vector[];
 
@@ -25,8 +27,20 @@ public class FeaturesStock implements Serializable {
         vector = new Double[20000];
     }
 
-    public double getPredictionValue() {
-        return predictionValue;
+    public FeaturesStock(FeaturesStock fs, double predictRes) {
+        this.predictionValue = fs.getPredictionValue();
+        this.currentVectorPos = fs.currentVectorPos;
+        this.vector = fs.vector.clone();
+        this.predictionValue = predictRes;
+    }
+
+
+    public Double[] getVector() {
+        return vector;
+    }
+
+    public int getCurrentVectorPos() {
+        return currentVectorPos;
     }
 
     public void setPredictionValue(double predictionValue) {
@@ -34,6 +48,25 @@ public class FeaturesStock implements Serializable {
     }
 
 
+    public double getCurrentValue() {
+        return currentValue;
+    }
+
+    public double getResultValue() {
+        return resultValue;
+    }
+
+    public void setResultValue(double resultValue) {
+        this.resultValue = resultValue;
+    }
+
+    public double getPredictionValue() {
+        return predictionValue;
+    }
+
+    public void setCurrentValue(double currentValue) {
+        this.currentValue = currentValue;
+    }
 
     public static FeaturesStock transform(StockHistory sh,double value) {
         FeaturesStock fs = new FeaturesStock();
@@ -56,6 +89,11 @@ public class FeaturesStock implements Serializable {
         }
 
         return result;
+    }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 
     public  static List<FeaturesStock> transformList(List<StockHistory> shL) {
