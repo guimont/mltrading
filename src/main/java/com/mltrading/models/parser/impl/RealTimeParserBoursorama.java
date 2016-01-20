@@ -31,7 +31,8 @@ public class RealTimeParserBoursorama implements RealTimeParser {
 
     }
 
-    public int loaderStock(String url) {
+    //TODO
+    private  int loaderStock(String url) {
 
         try {
             String text = ParserCommon.loadUrl(new URL(url));
@@ -43,10 +44,7 @@ public class RealTimeParserBoursorama implements RealTimeParser {
 
             for (Element link : sublinks) {
 
-                for (int i = 0; i<40;i++) {
-                    Element ligne = link.child(i);
 
-                }
                 Elements sl = link.select("td");
                 StockGeneral g = new StockGeneral();
                 for (Element e : sl) {

@@ -43,7 +43,7 @@ public class RandomForestStock implements Serializable {
         return parsedData;
     }
 
-    public void processRF(Stock stock) {
+    public List<MLYield> processRF(Stock stock) {
 
         List<FeaturesStock> fsL = FeaturesStock.create(stock);
         List<FeaturesStock> fsLTrain =fsL.subList(0,(int)(fsL.size()*0.7));
@@ -100,7 +100,7 @@ public class RandomForestStock implements Serializable {
                 }
             });
 
-        res.collect();
+        return res.collect();
 
         //System.out.println("Test Mean Squared Error: " + testMSE);
         //System.out.println("Learned regression forest model:\n" + model.toDebugString());

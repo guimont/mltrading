@@ -6,6 +6,7 @@ import com.mltrading.domain.User;
 import com.mltrading.ml.RandomForestStock;
 import com.mltrading.models.parser.*;
 import com.mltrading.models.parser.impl.RealTimeParserBoursorama;
+import com.mltrading.models.parser.impl.RealTimeParserYahoo;
 import com.mltrading.models.stock.StockAnalyse;
 import com.mltrading.models.stock.StockHistory;
 import com.mltrading.service.ExtractionService;
@@ -91,9 +92,11 @@ public class test {
 
         System.out.print(meanQ);*/
 
+        RealTimeParserYahoo rt = new RealTimeParserYahoo();
+        rt.refreshCache();
 
-        Analyse a = new Analyse();
-        a.processSectorAll();
+        /*Analyse a = new Analyse();
+        a.processSectorAll();*/
 
         /*StockHistory sh = StockHistory.getStockHistory("FR0000045072", "2015-04-29T22:00:00Z");
         List<StockHistory> shL = StockHistory.getStockHistoryList("FR0000045072");

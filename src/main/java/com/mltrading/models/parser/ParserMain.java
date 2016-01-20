@@ -16,6 +16,8 @@ import java.net.URL;
 /**
  * Created by gmo on 17/06/2015.
  */
+
+@Deprecated
 public class ParserMain {
 
     //static String cac40 = "http://bourse.lesechos.fr/bourse/actions/cours_az.jsp?select_fMARCHE_COURS=ind_FR0003500008&col=&ord=&page=&lettre=A";
