@@ -1,9 +1,11 @@
 package com.mltrading.ml;
 
+import java.io.Serializable;
+
 /**
  * Created by gmo on 19/01/2016.
  */
-public class MLYield {
+public class MLYield implements Serializable{
     private double yield_1D;
     private double realyield_1D;
     private boolean sign;

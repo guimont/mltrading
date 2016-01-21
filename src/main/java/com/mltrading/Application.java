@@ -1,6 +1,7 @@
 package com.mltrading;
 
 import com.mltrading.config.Constants;
+import com.mltrading.models.parser.ScheduleParserGeneral;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -68,6 +69,8 @@ public class Application {
         SimpleCommandLinePropertySource source = new SimpleCommandLinePropertySource(args);
         addDefaultProfile(app, source);
         Environment env = app.run(args).getEnvironment();
+        ScheduleParserGeneral g = new ScheduleParserGeneral();
+        g.start();
         log.info("Access URLs:\n----------------------------------------------------------\n\t" +
             "Local: \t\thttp://127.0.0.1:{}\n\t" +
             "External: \thttp://{}:{}\n----------------------------------------------------------",

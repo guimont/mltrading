@@ -24,13 +24,13 @@ public class RealTimeParserYahoo implements RealTimeParser {
     static String cac40 = "https://fr.finance.yahoo.com/q/cp?s=%5EFCHI";
     static String refCode = "tbody";
 
-    @Override
-    public int refreshCache() {
+
+    public static int refreshCache() {
         return loaderStock(cac40);
 
     }
 
-    public int loaderStock(String url) {
+    public static int loaderStock(String url) {
 
         try {
             String text = ParserCommon.loadUrl(new URL(url));
@@ -50,13 +50,13 @@ public class RealTimeParserYahoo implements RealTimeParser {
                             g.setPlaceCodif(refSplit[1]);
                             g.setCodif(refSplit[0]);
                             g.setValue(new Float(t.get(2).child(0).text().replace(",", ".")));
-                            System.out.println(g.getName());
+                            //System.out.println(g.getName());
                             try {
                                 g.setVariation(new Float(t.get(3).child(0).child(1).text().replace(",", ".")));
                                 g.setVolume(new Integer(t.get(4).child(0).text().replaceAll(" ", "")));
                             }
                             catch (IndexOutOfBoundsException e){
-                               //System.out.println(e);
+                                System.out.println(e);
                             }
 
                             g.setCode(CacheStockGeneral.getCode(g.getCodif()));
@@ -72,9 +72,9 @@ public class RealTimeParserYahoo implements RealTimeParser {
             System.out.println(CacheStockGeneral.getCache().size());
 
 
-            for (StockGeneral g: CacheStockGeneral.getCache().values()) {
+            /*for (StockGeneral g: CacheStockGeneral.getCache().values()) {
                 System.out.println(g.getCode());
-            }
+            }*/
 
         } catch (IOException e) {
             e.printStackTrace();

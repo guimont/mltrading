@@ -5,6 +5,5 @@ package com.mltrading.models.parser;
  */
 public interface RealTimeParser {
 
-    public int refreshCache();
 
 }

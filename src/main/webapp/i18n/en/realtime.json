@@ -1,23 +1,15 @@
 {
-    "audits": {
-        "title": "Audits",
-        "filter": {
-            "title": "Filter per date",
-            "from": "from",
-            "to": "to",
-            "button": {
-                "weeks": "Weeks",
-                "today": "today",
-                "clear": "clear",
-                "close": "close"
-            }
-        },
+    "realtime": {
+        "title": "Real time Stock market",
+
         "table": {
             "header": {
-                "principal": "User",
-                "date": "Date",
-                "status": "State",
-                "data": "Extra data"
+                "principal": "Name",
+                "code": "Code",
+                "codeIsin": "Code Isin",
+                "value": "Value",
+                "volume": "Volume",
+                "variation" : "Variation"
             },
             "data": {
                 "remoteAddress": "Remote Address:"

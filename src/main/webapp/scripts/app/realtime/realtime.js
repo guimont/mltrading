@@ -15,7 +15,7 @@ angular.module('mltradingApp')
                 views: {
                     'content@': {
                         templateUrl: 'scripts/app/realtime/realtime.html',
-                        controller: 'RealTimeController'
+                        controller: 'RealtimeController'
                     }
                 },
                 resolve: {

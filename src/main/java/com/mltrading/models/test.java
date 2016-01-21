@@ -92,7 +92,7 @@ public class test {
 
         System.out.print(meanQ);*/
 
-        RealTimeParserYahoo rt = new RealTimeParserYahoo();
+        /*RealTimeParserYahoo rt = new RealTimeParserYahoo();
         rt.refreshCache();
 
         /*Analyse a = new Analyse();

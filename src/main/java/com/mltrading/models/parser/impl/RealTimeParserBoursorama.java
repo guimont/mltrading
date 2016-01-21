@@ -25,14 +25,14 @@ public class RealTimeParserBoursorama implements RealTimeParser {
 
     static String refCode = "tbody";
 
-    @Override
-    public int refreshCache() {
+
+    public static int refreshCache() {
         return loaderStock(cac40);
 
     }
 
     //TODO
-    private  int loaderStock(String url) {
+    private static int loaderStock(String url) {
 
         try {
             String text = ParserCommon.loadUrl(new URL(url));

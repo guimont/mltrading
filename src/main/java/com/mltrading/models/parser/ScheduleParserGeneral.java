@@ -4,6 +4,8 @@ package com.mltrading.models.parser;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import com.mltrading.models.parser.impl.RealTimeParserYahoo;
 import com.mltrading.models.util.ThreadFactory;
 
 /**
@@ -57,7 +59,7 @@ public class ScheduleParserGeneral  {
 
 
     protected void runExtraction() {
-        ParserMain.loaderAll();
+        RealTimeParserYahoo.refreshCache();
     }
 
 
