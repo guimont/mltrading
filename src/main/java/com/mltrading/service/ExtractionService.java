@@ -37,8 +37,13 @@ public class ExtractionService {
     }
 
 
-    public void extractionCurrent(String date) {
-        //TODO
+    public void extractionCurrent() {
+        /*histParser.fetchDaily();
+        indiceParser.fetchDaily();
+        sectorParser.fetchDaily();
+        vola.fetchDaily();*/
+        Analyse a = new Analyse();
+        a.processDaily();
     }
 
 

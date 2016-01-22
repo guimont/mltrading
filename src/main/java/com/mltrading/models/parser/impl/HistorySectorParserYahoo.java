@@ -11,6 +11,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
 import java.net.URL;
@@ -26,11 +27,22 @@ public class HistorySectorParserYahoo implements HistorySectorParser {
         loader();
     }
 
+    @Override
+    public void fetchDaily() {
+       throw  new NotImplementedException();
+    }
+
+    @Override
+    public void fetchMonthly() {
+        throw  new NotImplementedException();
+    }
+
     static String startUrl="https://fr.finance.yahoo.com/q/hp?s=";
     static String endUrl ="&a=00&b=3&c=2010&g=d&z=66&y=";
     static int PAGINATION = 66;
     static String refCode = "tbody";
     static int MAXPAGE = 1518;
+
 
 
     public void loader() {

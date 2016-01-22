@@ -22,10 +22,7 @@ import java.net.URL;
 
 @Singleton
 public class HistoryIndiceParserYahoo implements HistoryIndiceParser {
-    @Override
-    public void fetch() {
-        loader();
-    }
+
 
     static String startUrl="https://fr.finance.yahoo.com/q/hp?s=%5";
     static String endUrl ="&a=00&b=3&c=2010&g=d&z=66&y=";
@@ -33,9 +30,82 @@ public class HistoryIndiceParserYahoo implements HistoryIndiceParser {
     static String refCode = "tbody";
     static int MAXPAGE = 1518;
 
+    @Override
+    public void fetch() {
+        loader();
+    }
+
+    @Override
+    public void fetchDaily() {
+        loaderFrom(2);
+    }
+
+    @Override
+    public void fetchMonthly() {
+        loaderFrom(20);
+    }
 
 
-    public void loader() {
+    /**
+     * not very nice .. code duplicate and exit not nice
+     * @param range
+     */
+    private void loaderFrom(int range) {
+        for (StockIndice g : CacheStockIndice.getIndiceCache().values()) {
+
+            try {
+                String text;
+                String url = startUrl + g.getCode()  + endUrl + 0;
+
+                text = ParserCommon.loadUrl(new URL(url));
+
+                Document doc = Jsoup.parse(text);
+                BatchPoints bp = InfluxDaoConnector.getBatchPoints();
+
+
+                Elements links = doc.select(refCode);
+                int count = 0;
+                for (Element link : links) {
+
+                    if (link.children().size() > 40) {
+                        Elements sublinks = link.children().select("tr");
+                        for (Element elt : sublinks) {
+                            Elements t = elt.select("td");
+                            if (t.size() > 3) {
+                                StockIndice ind = new StockIndice(g.getCode(), g.getName());
+                                ind.setDayYahoo(t.get(0).text());
+                                ind.setOpening(new Double(t.get(1).text().replaceAll(" ", "").replace(",", ".")));
+                                ind.setHighest(new Double(t.get(2).text().replaceAll(" ", "").replace(",", ".")));
+                                ind.setLowest(new Double(t.get(3).text().replaceAll(" ", "").replace(",", ".")));
+                                ind.setValue(new Double(t.get(4).text().replaceAll(" ", "").replace(",", ".")));
+                                ind.setVolume(new Double(t.get(5).text().replaceAll(" ", "")));
+                                HistoryIndiceParser.saveHistory(bp, ind);
+
+                                System.out.println(ind.toString());
+                                if (count++ >= range)
+                                    break;
+                            }
+                        }
+                    }
+                }
+                InfluxDaoConnector.writePoints(bp);
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.out.println("ERROR for : " + g.getCode());
+            }
+        }
+
+
+
+    }
+
+
+    /**
+     * load all history form cac40 on yahoo for maxpage 1518 .. means near 7 years
+     */
+    private void loader() {
 
         for (StockIndice g : CacheStockIndice.getIndiceCache().values()) {
 
@@ -82,5 +152,10 @@ public class HistoryIndiceParserYahoo implements HistoryIndiceParser {
             }
 
         }
+    }
+
+    private void extract() {
+
+
     }
 }

@@ -32,6 +32,67 @@ public class VolatilityGoogle implements VolatilityParser {
         loader();
     }
 
+    @Override
+    public void fetchDaily() {
+        loaderFrom(2);
+    }
+
+    @Override
+    public void fetchMonthly() {
+        loaderFrom(20);
+    }
+
+
+    /**
+     * not very nice .. code duplicate and exit not nice
+     * @param range
+     */
+    public void loaderFrom(int range) {
+
+        try {
+            String text;
+            String url = vol + 0;
+
+            text = ParserCommon.loadUrl(new URL(url));
+
+            Document doc = Jsoup.parse(text);
+            BatchPoints bp = InfluxDaoConnector.getBatchPoints();
+
+            Elements links = doc.select(refCode);
+            int count = 0;
+            for (Element link : links) {
+
+                if (link.children().size() > 40) {
+                    Elements sublinks = link.children().select("tr");
+                    for (Element elt : sublinks) {
+                        Elements t = elt.select("td");
+                        if (t.size() > 3) {
+
+                            StockIndice ind = new StockIndice(code, name);
+                            ind.setDayGoogle(t.get(0).text());
+                            ind.setOpening(new Double(t.get(1).text().replaceAll(" ", "").replace(",", ".")));
+                            ind.setHighest(new Double(t.get(2).text().replaceAll(" ", "").replace(",", ".")));
+                            ind.setLowest(new Double(t.get(3).text().replaceAll(" ", "").replace(",", ".")));
+                            ind.setValue(new Double(t.get(4).text().replaceAll(" ", "").replace(",", ".")));
+                            ind.setVolume(new Double(0));
+                            HistoryIndiceParser.saveHistory(bp, ind);
+                            System.out.println(ind.toString());
+                            if (count++ >= range)
+                                break;
+                        }
+                    }
+                }
+            }
+            InfluxDaoConnector.writePoints(bp);
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("ERROR for : " + code);
+        }
+    }
+
+
     public void loader() {
 
         for (int numPage = 0; numPage <= MAXPAGE; numPage += PAGINATION) {

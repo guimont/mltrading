@@ -20,6 +20,7 @@ public class Analyse {
 
     HashMap<String,List<Container>> list = new HashMap<>();
 
+    private static String VALUE = "value";
     private static String MM20 = "mm20";
     private static String MM50 = "mm50";
     private static String MME12 = "mme12";
@@ -49,6 +50,43 @@ public class Analyse {
         processAnalysisAll("VCAC", columnIndice);
     }
 
+
+    public void processDaily() {
+        List<String> dateList = null;
+
+        for (StockGeneral g: CacheStockGeneral.getIsinCache().values()) {
+            if (dateList == null) {
+                dateList = StockHistory.getDateHistoryListOffsetLimit(g.getCode(),50,5);
+            }
+
+            for (String date:dateList) {
+                processAnalysisSpecific(g.getCode(), date, columnStock);
+            }
+        }
+
+        for (StockIndice g : CacheStockIndice.getIndiceCache().values()) {
+            processAnalysisDaily(g.getCode(), columnIndice);
+            for (String date:dateList) {
+                processAnalysisSpecific(g.getCode(), date, columnIndice);
+            }
+        }
+
+        for (StockSector g : CacheStockSector.getSectorCache().values()) {
+
+            for (String date:dateList) {
+                processAnalysisSpecific(g.getCode(), date, columnSector);
+            }
+        }
+
+
+        for (String date:dateList) {
+            processAnalysisSpecific("VCAC", date, columnIndice);
+        }
+
+
+    }
+
+
     public void processSectorAll() {
 
         for (StockSector g : CacheStockSector.getSectorCache().values()) {
@@ -61,8 +99,9 @@ public class Analyse {
 
         List<Container> cList = new ArrayList<>();
 
-        QueryResult res = InfluxDaoConnector.getPoints("SELECT * FROM " + code+" where date = "+date +" - 20d limit 12");
-        QueryResult resTech = InfluxDaoConnector.getPoints("SELECT * FROM " + code+"T where date = "+date);
+
+        QueryResult res = InfluxDaoConnector.getPoints("SELECT * FROM " + code+" where time = "+date +" - 20d limit 12");
+        QueryResult resTech = InfluxDaoConnector.getPoints("SELECT * FROM " + code+"T where time = "+date);
 
         int len = res.getResults().get(0).getSeries().get(0).getValues().size();
         int index = len-1;
@@ -86,6 +125,12 @@ public class Analyse {
     }
 
 
+    public void processAnalysisDaily(String code, int column) {
+
+
+    }
+
+
 
     public void processAnalysisAll(String code, int column) {
 
@@ -106,8 +151,10 @@ public class Analyse {
         double ref_mme26 = Double.parseDouble(mmRange(res, code, 50, 26));
 
 
+        //TODO not always 1 for value => consensus or other
         for (int index = 50; index <len;index++ ) {
             Container c = new Container(res.getResults().get(0).getSeries().get(0).getValues().get(index).get(0).toString());
+            c.indice.put(VALUE, res.getResults().get(0).getSeries().get(0).getValues().get(index).get(column).toString());
             c.indice.put(MM20,mmRange(res, code, index, 20));
             c.indice.put(MM50,mmRange(res, code, index, 50));
             c.indice.put(STDDEV,stddevRange(res, code, index, 20));
@@ -128,13 +175,14 @@ public class Analyse {
         BatchPoints bp = InfluxDaoConnector.getBatchPoints();
 
         Point pt = Point.measurement(code+"T").time(new DateTime(c.getDate()).getMillis(), TimeUnit.MILLISECONDS)
-                .field(MM20, c.getIndice().get(MM20))
-                .field(MM50, c.getIndice().get(MM50))
-                .field(STDDEV, c.getIndice().get(STDDEV))
-                .field(MME12, c.getIndice().get(MME12))
-                .field(MME26, c.getIndice().get(MME26))
-                .field(MOMENTUM, c.getIndice().get(MOMENTUM))
-                .build();
+            .field(VALUE, c.getIndice().get(VALUE))
+            .field(MM20, c.getIndice().get(MM20))
+            .field(MM50, c.getIndice().get(MM50))
+            .field(STDDEV, c.getIndice().get(STDDEV))
+            .field(MME12, c.getIndice().get(MME12))
+            .field(MME26, c.getIndice().get(MME26))
+            .field(MOMENTUM, c.getIndice().get(MOMENTUM))
+            .build();
         bp.point(pt);
 
         InfluxDaoConnector.writePoints(bp);

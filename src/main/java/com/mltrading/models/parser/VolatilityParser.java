@@ -13,6 +13,10 @@ public interface VolatilityParser {
 
     void fetch();
 
+    public void fetchDaily();
+
+    public void fetchMonthly();
+
     public static void saveHistory(BatchPoints bp, StockHistory hist) {
         Point pt = Point.measurement(hist.getCode()).time(hist.getTimeInsert().getMillis(), TimeUnit.MILLISECONDS)
             .field("open", hist.getOpening())

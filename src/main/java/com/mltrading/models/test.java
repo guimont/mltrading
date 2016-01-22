@@ -32,6 +32,14 @@ public class test {
 
         Injector injector = Guice.createInjector(new ServiceParser());
         HistorySectorParser sectorParser = injector.getInstance(HistorySectorParser.class);
+        HistoryParser histParser = injector.getInstance(HistoryParser.class);
+
+        //HistoryIndiceParser indiceParser= injector.getInstance(HistoryIndiceParser.class);
+        //indiceParser.fetchMonthly();
+
+        //histParser.fetchMonthly();
+
+        service.extractionCurrent();
 
         /*RealTimeParser rtPrice = injector.getInstance( RealTimeParser.class );
         HistoryParser histParser = injector.getInstance(HistoryParser.class);
