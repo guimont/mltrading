@@ -38,10 +38,10 @@ public class ExtractionService {
 
 
     public void extractionCurrent() {
-        /*histParser.fetchDaily();
+        histParser.fetchDaily();
         indiceParser.fetchDaily();
         sectorParser.fetchDaily();
-        vola.fetchDaily();*/
+        vola.fetchDaily();
         Analyse a = new Analyse();
         a.processDaily();
     }

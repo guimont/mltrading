@@ -4,6 +4,7 @@ import java.util.*;
 
 import com.mltrading.models.stock.Stock;
 import com.mltrading.models.stock.StockHistory;
+import org.apache.spark.SparkContext;
 import org.apache.spark.mllib.linalg.Vectors;
 import scala.Serializable;
 import scala.Tuple2;
@@ -77,6 +78,7 @@ public class RandomForestStock implements Serializable {
         final RandomForestModel model = RandomForest.trainRegressor(trainingData,
             categoricalFeaturesInfo, numTrees, featureSubsetStrategy, impurity, maxDepth, maxBins, maxBins);
 
+       model.save(sc.sc(),"myModelPath");
 
 
         JavaRDD<FeaturesStock> predictionAndLabel = testData.map(

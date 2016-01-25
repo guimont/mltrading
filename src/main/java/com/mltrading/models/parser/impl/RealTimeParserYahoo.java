@@ -26,11 +26,62 @@ public class RealTimeParserYahoo implements RealTimeParser {
 
 
     public static int refreshCache() {
+        return refreshStock(cac40);
+
+    }
+
+    public static int loaderCache() {
         return loaderStock(cac40);
 
     }
 
-    public static int loaderStock(String url) {
+    private static int refreshStock(String url) {
+
+        try {
+            String text = ParserCommon.loadUrl(new URL(url));
+
+            Document doc = Jsoup.parse(text);
+
+            Elements links = doc.select(refCode);
+            for (Element link : links) {
+                if (link.children().size() > 40) {
+                    Elements sublinks  = link.children().select("tr");
+                    for (Element elt : sublinks) {
+                        Elements t = elt.select("td");
+                        if (t.size() > 3) {
+                            try {
+                                String[] refSplit = t.get(0).text().split(Pattern.quote("."));
+
+                                String codif = refSplit[0];
+                                Float value = new Float(t.get(2).child(0).text().replace(",", "."));
+                                //System.out.println(g.getName());
+
+                                Float variation = new Float(t.get(3).child(0).child(1).text().replace(",", "."));
+                                Integer volume = new Integer(t.get(4).child(0).text().replaceAll(" ", ""));
+
+                                StockGeneral g = CacheStockGeneral.getCache().get(CacheStockGeneral.getCode(codif));
+                                g.setValue(value);
+                                g.setVariation(variation);
+                                g.setVolume(volume);
+                            }
+                            catch (IndexOutOfBoundsException e){
+                                System.out.println(e);
+                            }
+                        }
+                    }
+                }
+            }
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
+
+    private static int loaderStock(String url) {
 
         try {
             String text = ParserCommon.loadUrl(new URL(url));

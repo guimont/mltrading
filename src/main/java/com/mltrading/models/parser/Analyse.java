@@ -6,6 +6,8 @@ import com.mltrading.influxdb.dto.Point;
 import com.mltrading.influxdb.dto.QueryResult;
 import com.mltrading.models.stock.*;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,6 +20,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class Analyse {
 
+    private static final Logger log = LoggerFactory.getLogger(Analyse.class);
     HashMap<String,List<Container>> list = new HashMap<>();
 
     private static String VALUE = "value";
@@ -99,12 +102,17 @@ public class Analyse {
 
         List<Container> cList = new ArrayList<>();
 
+        QueryResult res = InfluxDaoConnector.getPoints("SELECT * FROM " + code + " where time > '" + date +"' - 90d and time <= '" + date +"'");
 
-        QueryResult res = InfluxDaoConnector.getPoints("SELECT * FROM " + code+" where time = "+date +" - 20d limit 12");
-        QueryResult resTech = InfluxDaoConnector.getPoints("SELECT * FROM " + code+"T where time = "+date);
+        if (res.getResults().get(0).getSeries() == null || res.getResults().get(0).getSeries().get(0).getValues() == null) return; //resultat empry
 
         int len = res.getResults().get(0).getSeries().get(0).getValues().size();
         int index = len-1;
+
+        if (len < 50) {
+            log.warn("Not enough element in code "+ code +". Cannot launch AT parser");
+            return;
+        }
 
         double ref_mme26 = 0;
         double ref_mme12 = 0;
@@ -143,7 +151,7 @@ public class Analyse {
         int len = res.getResults().get(0).getSeries().get(0).getValues().size();
 
         if (len < 50) {
-            System.out.println("Not enough element in code "+ code +". Cannot launch AT parser");
+            log.warn("Not enough element in code "+ code +". Cannot launch AT parser");
             return;
         }
 
@@ -228,6 +236,11 @@ public class Analyse {
 
 
     public String mmRange(QueryResult res, String code, int index, int range) {
+
+        if (index < range) {
+            log.error("index could not be less than range");
+            return null;
+        }
 
         List<Object> lStart = res.getResults().get(0).getSeries().get(0).getValues().get(index - range);
         List<Object> lEnd = res.getResults().get(0).getSeries().get(0).getValues().get(index);

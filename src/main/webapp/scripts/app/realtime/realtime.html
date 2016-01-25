@@ -11,16 +11,18 @@
             <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="realtime.table.header.value"></span></th>
             <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="realtime.table.header.volume"></span></th>
             <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="realtime.table.header.variation"></span></th>
+            <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="realtime.table.header.prediction"></span></th>
         </tr>
         </thead>
 
-        <tr ng-repeat="rt in rts | filter:filter | orderBy:predicate:reverse" ng-hide="audit.filtered">
+        <tr ng-repeat="rt in rts | filter:filter | orderBy:'-name':true" ng-hide="audit.filtered">
             <td><span>{{rt.name}}</span></td>
             <td><small>{{rt.code}}</small></td>
             <td><small>{{rt.codif}}</small></td>
             <td>{{rt.value}}</td>
             <td>{{rt.volume}}</td>
-            <td>{{rt.variation}}</td>
+            <td style="color: darkred">{{rt.variation}}</td>
+            <td>{{rt.prediction}}</td>
         </tr>
     </table>
         </tr>

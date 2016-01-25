@@ -9,7 +9,8 @@
                 "codeIsin": "Code Isin",
                 "value": "Value",
                 "volume": "Volume",
-                "variation" : "Variation"
+                "variation" : "Variation",
+                "prediction" : "Prediction"
             },
             "data": {
                 "remoteAddress": "Remote Address:"

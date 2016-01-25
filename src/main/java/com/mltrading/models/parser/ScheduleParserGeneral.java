@@ -64,6 +64,7 @@ public class ScheduleParserGeneral  {
 
 
     public void start() {
+        RealTimeParserYahoo.loaderCache();
         this.extractionCycleInMs =  30000;
         this.timer = new Timer("ExtractionProcess", true);
         this.timerTask = new GlobalTimerTask();
