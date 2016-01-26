@@ -3,6 +3,8 @@ package com.mltrading.ml;
 import com.mltrading.models.parser.Analyse;
 import com.mltrading.models.stock.*;
 import org.apache.commons.lang.ArrayUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import scala.Serializable;
 
 
@@ -13,6 +15,9 @@ import java.util.List;
  * Created by gmo on 24/11/2015.
  */
 public class FeaturesStock implements Serializable {
+
+    private static final Logger log = LoggerFactory.getLogger(Analyse.class);
+
 
     private double resultValue;
     private double predictionValue;
@@ -158,7 +163,13 @@ public class FeaturesStock implements Serializable {
         //indice etranger
 
         List<FeaturesStock> fsL = new ArrayList<>();
-        List<String> rangeDate = StockHistory.getDateHistoryListOffsetLimit(stock.getCode(), OFFSET_BASE,RANGE_MAX);
+        List<String> rangeDate = null;
+        try {
+            rangeDate = StockHistory.getDateHistoryListOffsetLimit(stock.getCode(), OFFSET_BASE, RANGE_MAX);
+        } catch (Exception e) {
+            log.error("Cannot get date list for: " + stock.getCode() + "  //exception:" + e);
+            return null;
+        }
 
         for (String date: rangeDate) {
             FeaturesStock fs = new FeaturesStock();

@@ -39,7 +39,10 @@ public class test {
 
         //histParser.fetchMonthly();
 
-        service.extractionCurrent();
+        //service.extractionCurrent();
+
+        //RealTimeParserBoursorama.loaderCache();
+RealTimeParserYahoo.loaderCache();
 
         /*RealTimeParser rtPrice = injector.getInstance( RealTimeParser.class );
         HistoryParser histParser = injector.getInstance(HistoryParser.class);

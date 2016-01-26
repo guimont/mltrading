@@ -4,6 +4,7 @@ import com.codahale.metrics.annotation.Timed;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.mltrading.ml.FeaturesStock;
+import com.mltrading.ml.MlForecast;
 import com.mltrading.ml.RandomForestStock;
 import com.mltrading.models.parser.ServiceParser;
 import com.mltrading.models.parser.StockParser;
@@ -28,6 +29,9 @@ public class ExtractionResource {
 
     @javax.inject.Inject
     private StockRepository stockRepository;
+
+    @javax.inject.Inject
+    private  MlForecast forecast;
 
 
     private static ExtractionService service = new ExtractionService();
@@ -58,10 +62,12 @@ public class ExtractionResource {
 
         List<Stock> sl = stockRepository.findAll();
 
-        RandomForestStock rf = new RandomForestStock();
+        /*RandomForestStock rf = new RandomForestStock();
         rf.processRF(sl.get(0));
 
-        //FeaturesStock.create(sl.get(0));
+        //FeaturesStock.create(sl.get(0));*/
+
+        forecast.processList(sl);
 
         return "ok";
     }

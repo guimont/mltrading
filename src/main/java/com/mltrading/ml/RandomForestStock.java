@@ -3,17 +3,11 @@ package com.mltrading.ml;
 import java.util.*;
 
 import com.mltrading.models.stock.Stock;
-import com.mltrading.models.stock.StockHistory;
-import org.apache.spark.SparkContext;
 import org.apache.spark.mllib.linalg.Vectors;
 import scala.Serializable;
-import scala.Tuple2;
-import org.apache.spark.api.java.function.Function2;
-import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
-import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.mllib.regression.LabeledPoint;
 import org.apache.spark.mllib.tree.RandomForest;
 import org.apache.spark.mllib.tree.model.RandomForestModel;
@@ -24,8 +18,6 @@ import org.apache.spark.SparkConf;
  */
 public class RandomForestStock implements Serializable {
 
-
-    static int featuresLength = 8;
 
     public JavaRDD<LabeledPoint> createRDD(JavaSparkContext sc,  List<FeaturesStock> fsL) {
 
@@ -44,20 +36,21 @@ public class RandomForestStock implements Serializable {
         return parsedData;
     }
 
-    public List<MLYield> processRF(Stock stock) {
+    public MLStock processRF(Stock stock) {
 
         List<FeaturesStock> fsL = FeaturesStock.create(stock);
+
+        if (null == fsL) return null;
+
         List<FeaturesStock> fsLTrain =fsL.subList(0,(int)(fsL.size()*0.7));
         List<FeaturesStock> fsLTest =fsL.subList((int)(fsL.size()*0.7), fsL.size());
 
-        SparkConf conf = new SparkConf().setAppName("JavaRandomForest").setMaster("local[*]");
-        JavaSparkContext sc = new JavaSparkContext(conf);
-
+        JavaSparkContext sc = CacheMLStock.getJavaSparkContext();
 
         // Load and parse the data file.
         JavaRDD<LabeledPoint> trainingData = createRDD(sc, fsLTrain);
-
         JavaRDD<FeaturesStock> testData = sc.parallelize(fsLTest);
+
         // Split the data into training and test sets (30% held out for testing)
 
         /*JavaRDD<LabeledPoint>[] splits = data.randomSplit(new double[]{0.7, 0.3});
@@ -78,8 +71,11 @@ public class RandomForestStock implements Serializable {
         final RandomForestModel model = RandomForest.trainRegressor(trainingData,
             categoricalFeaturesInfo, numTrees, featureSubsetStrategy, impurity, maxDepth, maxBins, maxBins);
 
-       model.save(sc.sc(),"myModelPath");
+        //model.save(sc.sc(),"Model"+stock.getCode());
 
+        MLStock mls = new MLStock();
+        mls.setCodif(stock.getCodeif());
+        mls.setModel(model);
 
         JavaRDD<FeaturesStock> predictionAndLabel = testData.map(
             new Function<FeaturesStock, FeaturesStock>() {
@@ -90,58 +86,22 @@ public class RandomForestStock implements Serializable {
             }
         );
 
+        predictionAndLabel.cache();
+        mls.setTestData(predictionAndLabel);
 
-
-        JavaRDD<MLYield> res =
-            predictionAndLabel.map(new Function <FeaturesStock, MLYield>() {
-                public MLYield call(FeaturesStock pl) {
+        JavaRDD<MLPerformance> res =
+            predictionAndLabel.map(new Function <FeaturesStock, MLPerformance>() {
+                public MLPerformance call(FeaturesStock pl) {
                     System.out.println("estimate: " + pl.getPredictionValue());
                     System.out.println("result: " + pl.getResultValue());
                     Double diff = pl.getPredictionValue() - pl.getResultValue();
-                    return MLYield.calculYields(pl.getPredictionValue(), pl.getResultValue(), pl.getCurrentValue());
+                    return MLPerformance.calculYields(pl.getPredictionValue(), pl.getResultValue(), pl.getCurrentValue());
                 }
             });
 
-        return res.collect();
+        mls.setPerfList(res.collect());
 
-        //System.out.println("Test Mean Squared Error: " + testMSE);
-        //System.out.println("Learned regression forest model:\n" + model.toDebugString());
+        return mls;
 
-        // Save and load model
-        //model.save(sc.sc(), "myModelPath");
-        //RandomForestModel sameModel = RandomForestModel.load(sc.sc(), "myModelPath");
-
-
-        // Evaluate model on test instances and compute test error
-        /*JavaPairRDD<Double, Double> predictionAndLabel =
-            testData.mapToPair(new PairFunction<LabeledPoint, Double, Double>() {
-                @Override
-                public Tuple2<Double, Double> call(LabeledPoint p) {
-                    return new Tuple2<Double, Double>(model.predict(p.features()), p.label());
-                }
-            });
-        Double testMSE =
-            predictionAndLabel.map(new Function<Tuple2<Double, Double>, Double>() {
-                @Override
-                public Double call(Tuple2<Double, Double> pl) {
-                    System.out.println("estimate: " + pl._1());
-                    System.out.println("result: " + pl._2());
-                    Double diff = pl._1() - pl._2();
-                    return Math.abs(diff/pl._2());
-                }
-            }).reduce(new Function2<Double, Double, Double>() {
-                @Override
-                public Double call(Double a, Double b) {
-                    return a + b;
-                }
-            }) / testData.count();
-
-
-        System.out.println("Test Mean Squared Error: " + testMSE);*/
-        //System.out.println("Learned regression forest model:\n" + model.toDebugString());
-
-        // Save and load model
-        //model.save(sc.sc(), "myModelPath");
-        //RandomForestModel sameModel = RandomForestModel.load(sc.sc(), "myModelPath");
     }
 }

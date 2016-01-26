@@ -26,7 +26,7 @@ public class RealTimeParserBoursorama implements RealTimeParser {
     static String refCode = "tbody";
 
 
-    public static int refreshCache() {
+    public static int loaderCache() {
         return loaderStock(cac40);
 
     }
@@ -44,26 +44,13 @@ public class RealTimeParserBoursorama implements RealTimeParser {
 
             for (Element link : sublinks) {
 
-
-                Elements sl = link.select("td");
                 StockGeneral g = new StockGeneral();
-                for (Element e : sl) {
+                String name = link.child(1).text();
+                String value = link.child(3).text();
+                String variation = link.child(4).text();
+                String open = link.child(5).text();
+                String volume = link.child(9).text();
 
-                    Elements s = e.getElementsByClass("tdv-libelle");
-                    Element t = s.first();
-
-                    if (t != null){
-                        Element n = t.child(1);
-                        String linkItem = n.attr("title");
-                        if ((!linkItem.isEmpty())) {
-                            g.setCode(linkItem);
-                        }
-                    }
-                    String linkField = e.attr("tdv-libelle");
-                    if (!linkField.isEmpty() && linkField.compareToIgnoreCase("name") == 0)
-                        g.setName(e.text());
-
-                }
 
                 CacheStockGeneral.getCache().put(g.getCode(),g);
             }
