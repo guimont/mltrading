@@ -183,7 +183,7 @@ public class Analyse {
         BatchPoints bp = InfluxDaoConnector.getBatchPoints();
 
         Point pt = Point.measurement(code+"T").time(new DateTime(c.getDate()).getMillis(), TimeUnit.MILLISECONDS)
-            .field(VALUE, c.getIndice().get(VALUE))
+            //.field(VALUE, c.getIndice().get(VALUE))
             .field(MM20, c.getIndice().get(MM20))
             .field(MM50, c.getIndice().get(MM50))
             .field(STDDEV, c.getIndice().get(STDDEV))

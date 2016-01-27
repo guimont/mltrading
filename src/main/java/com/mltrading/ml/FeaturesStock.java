@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class FeaturesStock implements Serializable {
 
-    private static final Logger log = LoggerFactory.getLogger(Analyse.class);
+    private static final Logger log = LoggerFactory.getLogger(FeaturesStock.class);
 
 
     private double resultValue;
@@ -162,7 +162,10 @@ public class FeaturesStock implements Serializable {
         //Vola Cac Xt,..Xn, AT
         //indice etranger
 
+        log.info("create FeaturesStock for: " + stock.getCodeif());
+
         List<FeaturesStock> fsL = new ArrayList<>();
+
         List<String> rangeDate = null;
         try {
             rangeDate = StockHistory.getDateHistoryListOffsetLimit(stock.getCode(), OFFSET_BASE, RANGE_MAX);
@@ -178,19 +181,33 @@ public class FeaturesStock implements Serializable {
             StockHistory  res = StockHistory.getStockHistoryDayAfter(stock.getCode(), date);
             fs.setPredictionValue(res.getValue());
             } catch (Exception e) {
-                System.out.println(e);
+                log.error("Cannot get date for: " + stock.getCode() + " and date: " + date +  " //exception:" + e);
                 continue;
             }
 
             /**
              * stock
              */
+            try {
             List<StockHistory> sh = StockHistory.getStockHistoryDateInvert(stock.getCode(), date, XT_PERIOD);
             fs.linearizeSH(sh);
             StockHistory current = StockHistory.getStockHistory(stock.getCode(), date);
             fs.linearize(current);
-            StockAnalyse ash = StockAnalyse.getAnalyse(stock.getCode(), date);
-            fs.linearize(ash);
+
+            } catch (Exception e) {
+                log.error("Cannot get stock history for: " + stock.getCode() + " and date: " + date +  " //exception:" + e);
+                continue;
+            }
+
+
+            try {
+                StockAnalyse ash = StockAnalyse.getAnalyse(stock.getCode(), date);
+                fs.linearize(ash);
+
+            } catch (Exception e) {
+                log.error("Cannot get analyse stock for: " + stock.getCode() + " and date: " + date +  " //exception:" + e);
+                continue;
+            }
 
             /**
              * sector
@@ -201,18 +218,25 @@ public class FeaturesStock implements Serializable {
                 StockAnalyse ass = StockAnalyse.getAnalyse(stock.getSector(), date);
                 fs.linearize(ass);
             } catch (Exception e) {
-                System.out.println(e);
+                log.error("Cannot get sector/analyse stock for: " + stock.getSector() + " and date: " + date + " //exception:" + e);
+                continue;
             }
 
 
             /**
              * indice
              */
-            String codeIndice = StockIndice.translate(stock.getIndice());
-            List<StockIndice> si = StockIndice.getStockIndiceDateInvert(codeIndice, date, XT_PERIOD);
-            fs.linearizeSI(si);
-            StockAnalyse asi = StockAnalyse.getAnalyse(codeIndice, date);
-            fs.linearize(asi);
+            try {
+                String codeIndice = StockIndice.translate(stock.getIndice());
+                List<StockIndice> si = StockIndice.getStockIndiceDateInvert(codeIndice, date, XT_PERIOD);
+                fs.linearizeSI(si);
+                StockAnalyse asi = StockAnalyse.getAnalyse(codeIndice, date);
+                fs.linearize(asi);
+            } catch (Exception e) {
+                log.error("Cannot get indice/analyse stock for: " + stock.getIndice() + " and date: " + date +  " //exception:" + e);
+                continue;
+            }
+
 
             /**
              * volatility cac
@@ -221,7 +245,8 @@ public class FeaturesStock implements Serializable {
                 List<StockIndice> sVCac = StockIndice.getStockIndiceDateInvert("VCAC", date, XT_PERIOD);
                 fs.linearizeSI(sVCac);
             } catch (Exception e) {
-                System.out.println(e);
+                log.error("Cannot get vcac stock for: " + stock.getCodeif() + " and date: " + date +  " //exception:" + e);
+                continue;
             }
 
 
