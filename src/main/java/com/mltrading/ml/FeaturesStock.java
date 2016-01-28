@@ -169,6 +169,10 @@ public class FeaturesStock implements Serializable {
         List<String> rangeDate = null;
         try {
             rangeDate = StockHistory.getDateHistoryListOffsetLimit(stock.getCode(), OFFSET_BASE, RANGE_MAX);
+            if (rangeDate.size() < 200) {
+                log.error("Cannot get date list for: " + stock.getCode() + " not enough element");
+                return null;
+            }
         } catch (Exception e) {
             log.error("Cannot get date list for: " + stock.getCode() + "  //exception:" + e);
             return null;
@@ -181,7 +185,7 @@ public class FeaturesStock implements Serializable {
             StockHistory  res = StockHistory.getStockHistoryDayAfter(stock.getCode(), date);
             fs.setPredictionValue(res.getValue());
             } catch (Exception e) {
-                log.error("Cannot get date for: " + stock.getCode() + " and date: " + date +  " //exception:" + e);
+                log.error("Cannot get date for: " + stock.getCode() + " and date: " + date + " //exception:" + e);
                 continue;
             }
 
@@ -245,7 +249,7 @@ public class FeaturesStock implements Serializable {
                 List<StockIndice> sVCac = StockIndice.getStockIndiceDateInvert("VCAC", date, XT_PERIOD);
                 fs.linearizeSI(sVCac);
             } catch (Exception e) {
-                log.error("Cannot get vcac stock for: " + stock.getCodeif() + " and date: " + date +  " //exception:" + e);
+                log.error("Cannot get vcac stock for: " + stock.getCodeif() + " and date: " + date + " //exception:" + e);
                 continue;
             }
 

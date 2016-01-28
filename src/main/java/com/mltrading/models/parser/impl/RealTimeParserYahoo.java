@@ -56,13 +56,25 @@ public class RealTimeParserYahoo implements RealTimeParser {
                                 Float value = new Float(t.get(2).child(0).text().replace(",", "."));
                                 //System.out.println(g.getName());
 
-                                Float variation = new Float(t.get(3).child(0).child(1).text().replace(",", "."));
-                                Integer volume = new Integer(t.get(4).child(0).text().replaceAll(" ", ""));
-
                                 StockGeneral g = CacheStockGeneral.getCache().get(CacheStockGeneral.getCode(codif));
                                 g.setValue(value);
-                                g.setVariation(variation);
-                                g.setVolume(volume);
+                                try {
+                                    g.setVariation(new Float(t.get(3).child(0).child(1).text().replace(",", ".")));
+                                    g.setVolume(new Integer(t.get(4).child(0).text().replaceAll(" ", "")));
+                                }
+                                catch (IndexOutOfBoundsException e){
+
+                                    //g.setVariation(new Float(t.get(3).child(1).text().replace(",", ".")));
+                                    g.setVolume(new Integer(t.get(4).text().replaceAll(" ", "")));
+                                   /* try {
+
+                                        g.setVariation(new Float(t.get(3).child(1).text().replace(",", ".")));
+                                        g.setVolume(new Integer(t.get(4).text().replaceAll(" ", "")));
+                                    }  catch (IndexOutOfBoundsException e1){
+                                        g.setVariation(new Float(t.get(3).child(0).text().replace(",", ".")));
+                                        g.setVolume(new Integer(t.get(4).text().replaceAll(" ", "")));
+                                    }*/
+                                }
                             }
                             catch (IndexOutOfBoundsException e){
                                 System.out.println(e);
@@ -107,7 +119,8 @@ public class RealTimeParserYahoo implements RealTimeParser {
                                 g.setVolume(new Integer(t.get(4).child(0).text().replaceAll(" ", "")));
                             }
                             catch (IndexOutOfBoundsException e){
-                                System.out.println(e);
+                                //g.setVariation(new Float(t.get(3).child(1).text().replace(",", ".")));
+                                g.setVolume(new Integer(t.get(4).text().replaceAll(" ", "")));
                             }
 
                             g.setCode(CacheStockGeneral.getCode(g.getCodif()));

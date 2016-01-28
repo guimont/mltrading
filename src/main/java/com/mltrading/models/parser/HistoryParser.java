@@ -2,6 +2,7 @@ package com.mltrading.models.parser;
 
 import com.mltrading.influxdb.dto.BatchPoints;
 import com.mltrading.influxdb.dto.Point;
+import com.mltrading.models.stock.StockGeneral;
 import com.mltrading.models.stock.StockHistory;
 
 import java.util.concurrent.TimeUnit;
@@ -12,6 +13,8 @@ import java.util.concurrent.TimeUnit;
 public interface HistoryParser {
 
     void fetch();
+
+    public void fetchSpecific(StockGeneral g);
 
     public void fetchDaily();
 

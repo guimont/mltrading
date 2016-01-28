@@ -168,7 +168,7 @@ public class InfluxDBImpl implements InfluxDB {
 				this.password,
 				query.getDatabase(),
 				query.getCommand());
-		System.out.println(response);
+		//System.out.println(response);
 		// FIXME
 		return response;
 	}

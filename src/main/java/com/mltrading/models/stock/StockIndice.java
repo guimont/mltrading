@@ -20,11 +20,12 @@ public class StockIndice extends StockHistory {
         this.setCode(code);
     }
 
-
+//TODO update this for real indice
+    //probleme with belgium indice
     static public String translate(String investir) {
 
         for (StockIndice si:CacheStockIndice.getIndiceCache().values()) {
-            if (investir.equalsIgnoreCase(si.getName()))
+            if ("cac 40".equalsIgnoreCase(si.getName()))
                 return si.getCode();
         }
 

@@ -5,9 +5,12 @@ import com.google.inject.Injector;
 import com.mltrading.domain.User;
 import com.mltrading.ml.RandomForestStock;
 import com.mltrading.models.parser.*;
+import com.mltrading.models.parser.impl.CheckConsistency;
 import com.mltrading.models.parser.impl.RealTimeParserBoursorama;
 import com.mltrading.models.parser.impl.RealTimeParserYahoo;
+import com.mltrading.models.stock.CacheStockGeneral;
 import com.mltrading.models.stock.StockAnalyse;
+import com.mltrading.models.stock.StockGeneral;
 import com.mltrading.models.stock.StockHistory;
 import com.mltrading.service.ExtractionService;
 
@@ -33,6 +36,7 @@ public class test {
         Injector injector = Guice.createInjector(new ServiceParser());
         HistorySectorParser sectorParser = injector.getInstance(HistorySectorParser.class);
         HistoryParser histParser = injector.getInstance(HistoryParser.class);
+        ConsensusParser consensus = injector.getInstance(ConsensusParser.class);
 
         //HistoryIndiceParser indiceParser= injector.getInstance(HistoryIndiceParser.class);
         //indiceParser.fetchMonthly();
@@ -42,7 +46,13 @@ public class test {
         //service.extractionCurrent();
 
         //RealTimeParserBoursorama.loaderCache();
-RealTimeParserYahoo.loaderCache();
+        //RealTimeParserYahoo.loaderCache();
+
+        StockGeneral g = CacheStockGeneral.getIsinCache().get("BE0003470755");
+        histParser.fetchSpecific(g);
+
+        //histParser.fetch();
+        //CheckConsistency.countfrom();
 
         /*RealTimeParser rtPrice = injector.getInstance( RealTimeParser.class );
         HistoryParser histParser = injector.getInstance(HistoryParser.class);

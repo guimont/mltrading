@@ -390,9 +390,9 @@ public class StockHistory extends Object{
 
     public static List<String> getDateHistoryListOffsetLimit(final String code, int offset, int max) {
         List<String> dateList = new ArrayList<>();
-        String query = "SELECT * FROM "+code;
+        //bug .. dont get all data .. so make filter to have date only since 2013
+        String query = "SELECT * FROM "+code +" where time > '2013-06-01T00:00:00Z'";
         QueryResult list = InfluxDaoConnector.getPoints(query);
-
         int series = max + offset;
         int size = list.getResults().get(0).getSeries().get(0).getValues().size();
 
