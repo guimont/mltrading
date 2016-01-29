@@ -15,5 +15,10 @@ angular.module('mltradingApp')
         $scope.onChangeDate();
 
 
+        $scope.showPrediction = function(codif) {
+            $('#showHealthModal').modal('show');
+        };
+
+
 
     });

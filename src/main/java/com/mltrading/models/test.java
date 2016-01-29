@@ -48,11 +48,11 @@ public class test {
         //RealTimeParserBoursorama.loaderCache();
         //RealTimeParserYahoo.loaderCache();
 
-        StockGeneral g = CacheStockGeneral.getIsinCache().get("BE0003470755");
+        /*StockGeneral g = CacheStockGeneral.getIsinCache().get("BE0003470755");
         histParser.fetchSpecific(g);
 
-        //histParser.fetch();
-        //CheckConsistency.countfrom();
+        //histParser.fetch();*/
+        CheckConsistency.countfrom();
 
         /*RealTimeParser rtPrice = injector.getInstance( RealTimeParser.class );
         HistoryParser histParser = injector.getInstance(HistoryParser.class);

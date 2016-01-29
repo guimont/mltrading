@@ -71,6 +71,10 @@ public class StockGeneral {
 
 
     public String getCodif() {
+        //specific case quick fixe
+        if (codif.equalsIgnoreCase("SOL"))
+            return "SOLB";
+
         return codif;
     }
 

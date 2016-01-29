@@ -148,6 +148,7 @@ public class HistoryParserGoogle implements HistoryParser {
                         for (Element elt : sublinks) {
                             Elements t = elt.select("td");
                             if (t.size() > 3) {
+                                loopPage ++;
                                 StockHistory hist = new StockHistory(g);
                                 hist.setDayGoogle(t.get(0).text());
 
@@ -156,7 +157,7 @@ public class HistoryParserGoogle implements HistoryParser {
                                 hist.setLowest(new Double(t.get(3).text().replaceAll(" ", "").replace(",", "").replace("-","0")));
                                 hist.setValue(new Double(t.get(4).text().replaceAll(" ", "").replace(",", "").replace("-","0")));
                                 hist.setVolume(new Double(t.get(5).text().replaceAll(" ", "").replace(",", "").replace("-","0")));
-                                hist.setConsensusNote(cnote.getNotation(cnote.getIndice(loopPage + 0)).getAvg());
+                                hist.setConsensusNote(cnote.getNotation(cnote.getIndice(loopPage + numPage)).getAvg());
 
                                 HistoryParser.saveHistory(bp, hist); //dont save no trading day
                                 System.out.println(hist.toString());
@@ -210,7 +211,7 @@ public class HistoryParserGoogle implements HistoryParser {
                             for (Element elt : sublinks) {
                                 Elements t = elt.select("td");
                                 if (t.size() > 3) {
-
+                                    loopPage ++;
                                     StockHistory hist = new StockHistory(g);
                                     hist.setDayGoogle(t.get(0).text());
                                     hist.setOpening(new Double(t.get(1).text().replaceAll(" ", "").replace(",", "")));
