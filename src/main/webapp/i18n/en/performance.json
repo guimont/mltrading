@@ -1,0 +1,17 @@
+{
+    "performance": {
+        "title": "Real time Stock market",
+
+        "table": {
+            "header": {
+                "principal": "Name",
+                "code": "Code",
+                "codeIsin": "Code Isin",
+                "value": "Value"
+            },
+            "data": {
+                "remoteAddress": "Remote Address:"
+            }
+        }
+    }
+}

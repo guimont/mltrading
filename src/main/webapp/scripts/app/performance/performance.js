@@ -12,6 +12,9 @@ angular.module('mltradingApp')
                 data: {
                     roles: []
                 },
+                params: {
+                    code: null
+                },
                 views: {
                     'content@': {
                         templateUrl: 'scripts/app/performance/performance.html',
