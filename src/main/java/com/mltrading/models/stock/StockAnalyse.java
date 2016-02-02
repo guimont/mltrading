@@ -85,7 +85,7 @@ public class StockAnalyse extends Object{
     public static StockAnalyse getAnalyse(String code, String date) {
         StockAnalyse a = new StockAnalyse();
 
-        try {
+        //try {
             String query = "SELECT * FROM " + code + "T where time = '" + date + "'";
             QueryResult meanQ = InfluxDaoConnector.getPoints(query);
 
@@ -95,9 +95,9 @@ public class StockAnalyse extends Object{
             a.setMme26((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(4));
             a.setMomentum((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(5));
             a.setStdDev((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(6));
-        } catch (Exception e) {
+        /*} catch (Exception e) {
             System.out.println("error in analyse: " +e);
-        }
+        }*/
 
         return a;
     }

@@ -8,6 +8,7 @@ import com.mltrading.ml.MlForecast;
 import com.mltrading.ml.RandomForestStock;
 import com.mltrading.models.parser.ServiceParser;
 import com.mltrading.models.parser.StockParser;
+import com.mltrading.models.parser.impl.CheckConsistency;
 import com.mltrading.models.stock.Stock;
 import com.mltrading.repository.StockRepository;
 import com.mltrading.service.ExtractionService;
@@ -66,8 +67,11 @@ public class ExtractionResource {
         rf.processRF(sl.get(0));
 
         //FeaturesStock.create(sl.get(0));*/
+        for (Stock s : sl) {
+            CheckConsistency.consistency(s);
+        }
 
-        forecast.processList(sl);
+        //forecast.processList(sl);
 
         return "ok";
     }
