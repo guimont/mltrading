@@ -2,16 +2,25 @@
     <h2 translate="performance.title">Performance</h2>
 
 
+    <span id="kinetic"></span>
+
     <table class="table table-condensed table-striped table-bordered table-responsive">
         <thead>
         <tr>
-            <th ng-click="predicate = 'timestamp'; reverse=!reverse"><span translate="performance.table.header.principal">Name</span></th>
-            <th ng-click="predicate = 'principal'; reverse=!reverse"><span translate="performance.table.header.code">Code</span></th>
-            <th ng-click="predicate = 'type'; reverse=!reverse"><span translate="performance.table.header.codeIsin">Code Isin</span></th>
-            <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="performance.table.header.value"></span></th>
+            <th ng-click="predicate = 'timestamp'; reverse=!reverse"><span translate="performance.table.header.date">Date</span></th>
+            <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="performance.table.header.sign">Sign</span></th>
+            <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="performance.table.header.pred">Prediction</span></th>
+            <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="performance.table.header.perf">Performance</span></th>
 
         </tr>
         </thead>
+
+        <tr ng-repeat="pred in preds | filter:filter | orderBy:'-name':true" ng-hide="audit.filtered">
+            <td><span>{{pred.date}}</span></td>
+            <td>{{pred.sign}}</td>
+            <td>{{pred.yield_1D}}</td>
+            <td>{{pred.realyield_1D}}</td>
+        </tr>
 
 
     </table>

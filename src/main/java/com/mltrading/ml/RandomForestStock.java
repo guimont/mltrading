@@ -26,7 +26,7 @@ public class RandomForestStock implements Serializable {
         JavaRDD<LabeledPoint> parsedData = data.map(
             new Function<FeaturesStock, LabeledPoint>() {
                 public LabeledPoint call(FeaturesStock fs) {
-                    return new LabeledPoint(fs.getPredictionValue(), Vectors.dense(fs.vectorize()));
+                    return new LabeledPoint(fs.getResultValue(), Vectors.dense(fs.vectorize()));
                 }
             }
 
@@ -71,7 +71,6 @@ public class RandomForestStock implements Serializable {
         final RandomForestModel model = RandomForest.trainRegressor(trainingData,
             categoricalFeaturesInfo, numTrees, featureSubsetStrategy, impurity, maxDepth, maxBins, maxBins);
 
-        //model.save(sc.sc(),"Model"+stock.getCode());
 
         MLStock mls = new MLStock();
         mls.setCodif(stock.getCodeif());
@@ -80,8 +79,8 @@ public class RandomForestStock implements Serializable {
         JavaRDD<FeaturesStock> predictionAndLabel = testData.map(
             new Function<FeaturesStock, FeaturesStock>() {
                 public FeaturesStock call(FeaturesStock fs) {
-                    LabeledPoint p = new LabeledPoint(fs.getPredictionValue(), Vectors.dense(fs.vectorize()));
-                    return new FeaturesStock(fs, model.predict(p.features()));
+                    double pred = model.predict(Vectors.dense(fs.vectorize()));
+                    return new FeaturesStock(fs, pred);
                 }
             }
         );
@@ -94,7 +93,7 @@ public class RandomForestStock implements Serializable {
                 public MLPerformance call(FeaturesStock pl) {
                     System.out.println("estimate: " + pl.getPredictionValue());
                     System.out.println("result: " + pl.getResultValue());
-                    Double diff = pl.getPredictionValue() - pl.getResultValue();
+                    //Double diff = pl.getPredictionValue() - pl.getResultValue();
                     return MLPerformance.calculYields(pl.getPredictionValue(), pl.getResultValue(), pl.getCurrentValue());
                 }
             });

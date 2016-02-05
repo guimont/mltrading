@@ -123,7 +123,7 @@ public class test {
 
 
         Analyse a = new Analyse();
-        a.processSectorAll();
+        a.processAll();
 
         /*StockHistory sh = StockHistory.getStockHistory("FR0000045072", "2015-04-29T22:00:00Z");
         List<StockHistory> shL = StockHistory.getStockHistoryList("FR0000045072");

@@ -20,4 +20,10 @@ angular.module('mltradingApp')
             });
         }
 
+        $scope.checkML = function () {
+            return $http.get('/api/checkML').then(function (response) {
+                return response.data;
+            });
+        }
+
     });

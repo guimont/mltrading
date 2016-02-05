@@ -27,11 +27,6 @@ public class MlForecast {
         }
 
         //check
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
         log.info("result mlf size: " + CacheMLStock.getMLStockCache().size());
 

@@ -55,23 +55,33 @@ public class ExtractionResource {
     }
 
 
+    @RequestMapping(value = "/checkML",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    public String checkProcessML() {
+
+        List<Stock> sl = stockRepository.findAll();
+
+        for (Stock s : sl) {
+            CheckConsistency.consistency(s);
+        }
+
+        return "ok";
+    }
+
+
     @RequestMapping(value = "/processML",
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String processML() {
 
-
         List<Stock> sl = stockRepository.findAll();
 
-        /*RandomForestStock rf = new RandomForestStock();
-        rf.processRF(sl.get(0));
-
+        RandomForestStock rf = new RandomForestStock();
+        //rf.processRF(sl.get(0));
         //FeaturesStock.create(sl.get(0));*/
-        for (Stock s : sl) {
-            CheckConsistency.consistency(s);
-        }
 
-        //forecast.processList(sl);
+        forecast.processList(sl);
 
         return "ok";
     }

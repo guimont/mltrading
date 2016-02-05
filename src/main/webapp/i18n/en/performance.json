@@ -5,9 +5,10 @@
         "table": {
             "header": {
                 "principal": "Name",
-                "code": "Code",
-                "codeIsin": "Code Isin",
-                "value": "Value"
+                "date": "Date",
+                "sign": "Sign",
+                "pred": "Prediction",
+                "perf": "Performance"
             },
             "data": {
                 "remoteAddress": "Remote Address:"

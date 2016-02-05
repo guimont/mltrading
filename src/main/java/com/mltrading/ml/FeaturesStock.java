@@ -1,12 +1,10 @@
 package com.mltrading.ml;
 
-import com.mltrading.models.parser.Analyse;
+
 import com.mltrading.models.stock.*;
-import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.Serializable;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +16,7 @@ public class FeaturesStock implements Serializable {
 
     private static final Logger log = LoggerFactory.getLogger(FeaturesStock.class);
 
+    private String date;
 
     private double resultValue;
     private double predictionValue;
@@ -33,12 +32,21 @@ public class FeaturesStock implements Serializable {
     }
 
     public FeaturesStock(FeaturesStock fs, double predictRes) {
-        this.predictionValue = fs.getPredictionValue();
+        this.date = fs.date;
+        this.resultValue = fs.resultValue;
+        this.currentValue = fs.getCurrentValue();
         this.currentVectorPos = fs.currentVectorPos;
         this.vector = fs.vector.clone();
         this.predictionValue = predictRes;
     }
 
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
 
     public Double[] getVector() {
         return vector;
@@ -108,18 +116,6 @@ public class FeaturesStock implements Serializable {
             fsL.add(transform(shL.get(i), shL.get(i+1).getValue()));
         }
 
-
-        //for (StockHistory sh:shL) {
-
-
-            /*if (feature != null)
-                fsL.add(transform(feature,sh.getValue()));
-            try {
-                feature = (StockHistory) sh.clone();
-            } catch (CloneNotSupportedException e) {
-                e.printStackTrace();
-            }
-        }*/
         return fsL;
     }
 
@@ -154,6 +150,7 @@ public class FeaturesStock implements Serializable {
     static int OFFSET_BASE = 50;
     static int RANGE_MAX = 300;
     static int XT_PERIOD = 20;
+    static int XT_OFFSET = 20;
 
     public  static List<FeaturesStock> create(Stock stock) {
         //Xt,Xt-1,...,Xn ,Consensus AT => StockHistory
@@ -180,10 +177,11 @@ public class FeaturesStock implements Serializable {
 
         for (String date: rangeDate) {
             FeaturesStock fs = new FeaturesStock();
+            fs.setDate(date);
 
             try {
             StockHistory  res = StockHistory.getStockHistoryDayAfter(stock.getCode(), date);
-            fs.setPredictionValue(res.getValue());
+            fs.setResultValue(res.getValue());
             } catch (Exception e) {
                 log.error("Cannot get date for: " + stock.getCode() + " and date: " + date + " //exception:" + e);
                 continue;
@@ -197,6 +195,7 @@ public class FeaturesStock implements Serializable {
             fs.linearizeSH(sh);
             StockHistory current = StockHistory.getStockHistory(stock.getCode(), date);
             fs.linearize(current);
+            fs.setCurrentValue(current.getValue());
 
             } catch (Exception e) {
                 log.error("Cannot get stock history for: " + stock.getCode() + " and date: " + date +  " //exception:" + e);

@@ -10,11 +10,11 @@ angular.module('mltradingApp')
 
         $scope.showPrediction = function(codif) {
             PerformanceService.find(codif).then(function (data) {
-                $scope.pred = data;
+                $scope.preds = data;
+                load($scope.preds);
             });
         };
 
         $scope.showPrediction(code);
-
 
     });
