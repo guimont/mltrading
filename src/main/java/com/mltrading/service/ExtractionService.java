@@ -46,5 +46,14 @@ public class ExtractionService {
         a.processDaily();
     }
 
+    public void extractionMonthly() {
+        histParser.fetchMonthly();
+        indiceParser.fetchMonthly();
+        sectorParser.fetchMonthly();
+        vola.fetchMonthly();
+        Analyse a = new Analyse();
+        a.processDaily();
+    }
+
 
 }

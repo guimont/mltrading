@@ -150,7 +150,7 @@ public class Analyse {
 
         int len = res.getResults().get(0).getSeries().get(0).getValues().size();
 
-        if (len < 50) {
+        if (len < 51) {
             log.warn("Not enough element in code "+ code +". Cannot launch AT parser");
             return;
         }

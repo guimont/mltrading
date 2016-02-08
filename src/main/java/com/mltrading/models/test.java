@@ -39,7 +39,9 @@ public class test {
         HistoryParser histParser = injector.getInstance(HistoryParser.class);
         ConsensusParser consensus = injector.getInstance(ConsensusParser.class);
 
-        //HistoryIndiceParser indiceParser= injector.getInstance(HistoryIndiceParser.class);
+        HistoryIndiceParser indiceParser= injector.getInstance(HistoryIndiceParser.class);
+        VolatilityParser vola = injector.getInstance(VolatilityParser.class);
+
         //indiceParser.fetchMonthly();
 
         //histParser.fetchMonthly();
@@ -54,6 +56,13 @@ public class test {
 
         //histParser.fetch();*/
         CheckConsistency.countfrom();
+
+        /*histParser.fetchMonthly();
+        indiceParser.fetchMonthly();
+        sectorParser.fetchMonthly();
+        vola.fetchMonthly();     */
+        Analyse a = new Analyse();
+        a.processAll();
 
         /*HistorySectorParserYahoo hspy = new HistorySectorParserYahoo();
 
@@ -122,8 +131,7 @@ public class test {
         rt.refreshCache();*/
 
 
-        Analyse a = new Analyse();
-        a.processAll();
+
 
         /*StockHistory sh = StockHistory.getStockHistory("FR0000045072", "2015-04-29T22:00:00Z");
         List<StockHistory> shL = StockHistory.getStockHistoryList("FR0000045072");
