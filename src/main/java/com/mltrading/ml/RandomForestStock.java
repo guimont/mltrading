@@ -94,7 +94,7 @@ public class RandomForestStock implements Serializable {
                     System.out.println("estimate: " + pl.getPredictionValue());
                     System.out.println("result: " + pl.getResultValue());
                     //Double diff = pl.getPredictionValue() - pl.getResultValue();
-                    return MLPerformance.calculYields(pl.getPredictionValue(), pl.getResultValue(), pl.getCurrentValue());
+                    return MLPerformance.calculYields(pl.getDate(), pl.getPredictionValue(), pl.getResultValue(), pl.getCurrentValue());
                 }
             });
 

@@ -17,19 +17,21 @@ public class MLPerformance implements Serializable{
     private String date;
 
 
-    public MLPerformance(double yield_1D) {
-        this.yield_1D = yield_1D;
+    public String getDate() {
+        return date;
     }
 
-    public MLPerformance(double yield_1D, boolean sign) {
-        this.yield_1D = yield_1D;
-        this.sign = sign;
+    public void setDate(String date) {
+        this.date = date;
     }
 
-    public MLPerformance(double yield_1D, double realyield_1D, boolean sign) {
+
+
+    public MLPerformance(String date, double yield_1D, double realyield_1D, boolean sign) {
         this.yield_1D = yield_1D;
         this.realyield_1D = realyield_1D;
         this.sign = sign;
+        this.date = date;
     }
 
     public double getYield_1D() {
@@ -60,18 +62,18 @@ public class MLPerformance implements Serializable{
         return (p-v)/v;
     }
 
-    public static MLPerformance calculYields(double prediction, double  value, double currentValue) {
+    public static MLPerformance calculYields(String date, double prediction, double  value, double currentValue) {
         //sign : value - currentValue
         boolean sign =(int) Math.signum(value - currentValue) == (int) Math.signum(prediction - currentValue);
         double yield_1D = calculYield(prediction, currentValue);
         double realyield_1D = calculYield(value, currentValue);
 
-        return new MLPerformance(yield_1D, realyield_1D, sign);
+        return new MLPerformance(date, yield_1D, realyield_1D, sign);
 
     }
 
     public void savePerformance(BatchPoints bp, String code) {
-        Point pt = Point.measurement(code).time(new DateTime(date).getMillis()+3600000, TimeUnit.MILLISECONDS)
+        Point pt = Point.measurement(code).time(new DateTime(date).getMillis() + 3600000, TimeUnit.MILLISECONDS)
             .field("sign", sign)
             .field("yield_1D", yield_1D)
             .field("realyield_1D", realyield_1D)
