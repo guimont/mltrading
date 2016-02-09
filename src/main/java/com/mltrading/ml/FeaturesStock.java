@@ -18,7 +18,9 @@ public class FeaturesStock implements Serializable {
 
     private String date;
 
-    private double resultValue;
+    private double resultValueD1;
+    private double resultValueD5 = 0;
+    private double resultValueD20 = 0;
     private double predictionValue;
     private double currentValue;
 
@@ -26,19 +28,58 @@ public class FeaturesStock implements Serializable {
 
     int currentVectorPos = 0;
 
+    /** Controls the level of logging of the REST layer. */
+    public enum PredictionPeriodicity {
+        /** No logging. */
+        D1,
+        /** Log only the request method and URL and the response status code and execution time. */
+        D5,
+        /** Log the basic information along with request and response headers. */
+        D20
+    }
+
+
+
 
     public FeaturesStock() {
         vector = new Double[20000];
     }
 
-    public FeaturesStock(FeaturesStock fs, double predictRes) {
+    public FeaturesStock(FeaturesStock fs, double predictRes,PredictionPeriodicity t) {
         this.date = fs.date;
-        this.resultValue = fs.resultValue;
+        setResultValue(fs.getResultValue(t), t);
         this.currentValue = fs.getCurrentValue();
         this.currentVectorPos = fs.currentVectorPos;
         this.vector = fs.vector.clone();
         this.predictionValue = predictRes;
     }
+
+    public double getResultValue(PredictionPeriodicity t) {
+        switch (t) {
+            case D1 :
+                return resultValueD1;
+            case D5:
+                return resultValueD5;
+            case D20:
+                return resultValueD20;
+        }
+
+        //default
+        return 0;
+    }
+
+    public void setResultValue(double resultValue, PredictionPeriodicity t) {
+        switch (t) {
+            case D1 :
+                resultValueD1 = resultValue;
+            case D5:
+                resultValueD5 = resultValue;
+            case D20:
+                resultValueD20 = resultValue;
+        }
+    }
+
+
 
     public String getDate() {
         return date;
@@ -65,13 +106,7 @@ public class FeaturesStock implements Serializable {
         return currentValue;
     }
 
-    public double getResultValue() {
-        return resultValue;
-    }
 
-    public void setResultValue(double resultValue) {
-        this.resultValue = resultValue;
-    }
 
     public double getPredictionValue() {
         return predictionValue;
@@ -180,8 +215,14 @@ public class FeaturesStock implements Serializable {
             fs.setDate(date);
 
             try {
-            StockHistory  res = StockHistory.getStockHistoryDayAfter(stock.getCode(), date);
-            fs.setResultValue(res.getValue());
+                StockHistory  res = StockHistory.getStockHistoryDayAfter(stock.getCode(), date);
+                fs.setResultValue(res.getValue(),PredictionPeriodicity.D1);
+
+                //cannot catch exception for this perdiod
+                res = StockHistory.getStockHistoryDayOffset(stock.getCode(), date, 5);
+                if (res != null) fs.setResultValue(res.getValue(),PredictionPeriodicity.D5);
+                res = StockHistory.getStockHistoryDayOffset(stock.getCode(), date, 20);
+                if (res != null) fs.setResultValue(res.getValue(),PredictionPeriodicity.D20);
             } catch (Exception e) {
                 log.error("Cannot get date for: " + stock.getCode() + " and date: " + date + " //exception:" + e);
                 continue;

@@ -11,28 +11,26 @@ import org.apache.spark.api.java.function.Function;
 import org.apache.spark.mllib.regression.LabeledPoint;
 import org.apache.spark.mllib.tree.RandomForest;
 import org.apache.spark.mllib.tree.model.RandomForestModel;
-import org.apache.spark.SparkConf;
-
+import com.mltrading.ml.FeaturesStock.PredictionPeriodicity;
 /**
  * Created by gmo on 14/11/2015.
  */
 public class RandomForestStock implements Serializable {
 
 
-    public JavaRDD<LabeledPoint> createRDD(JavaSparkContext sc,  List<FeaturesStock> fsL) {
+    public JavaRDD<LabeledPoint> createRDD(JavaSparkContext sc,  List<FeaturesStock> fsL, PredictionPeriodicity type) {
 
         JavaRDD<FeaturesStock> data = sc.parallelize(fsL);
 
         JavaRDD<LabeledPoint> parsedData = data.map(
             new Function<FeaturesStock, LabeledPoint>() {
                 public LabeledPoint call(FeaturesStock fs) {
-                    return new LabeledPoint(fs.getResultValue(), Vectors.dense(fs.vectorize()));
+                    return new LabeledPoint(fs.getResultValue(type), Vectors.dense(fs.vectorize()));
                 }
             }
 
         );
 
-        parsedData.cache();
         return parsedData;
     }
 
@@ -48,7 +46,7 @@ public class RandomForestStock implements Serializable {
         JavaSparkContext sc = CacheMLStock.getJavaSparkContext();
 
         // Load and parse the data file.
-        JavaRDD<LabeledPoint> trainingData = createRDD(sc, fsLTrain);
+        JavaRDD<LabeledPoint> trainingData = createRDD(sc, fsLTrain, PredictionPeriodicity.D1);
         JavaRDD<FeaturesStock> testData = sc.parallelize(fsLTest);
 
         // Split the data into training and test sets (30% held out for testing)
@@ -68,19 +66,19 @@ public class RandomForestStock implements Serializable {
         String featureSubsetStrategy = "auto"; // Let the algorithm choose.
 
         // Train a RandomForest model.
-        final RandomForestModel model = RandomForest.trainRegressor(trainingData,
+        final RandomForestModel model1D = RandomForest.trainRegressor(trainingData,
             categoricalFeaturesInfo, numTrees, featureSubsetStrategy, impurity, maxDepth, maxBins, maxBins);
 
 
         MLStock mls = new MLStock();
         mls.setCodif(stock.getCodeif());
-        mls.setModel(model);
+        mls.setModel(model1D);
 
         JavaRDD<FeaturesStock> predictionAndLabel = testData.map(
             new Function<FeaturesStock, FeaturesStock>() {
                 public FeaturesStock call(FeaturesStock fs) {
-                    double pred = model.predict(Vectors.dense(fs.vectorize()));
-                    return new FeaturesStock(fs, pred);
+                    double pred = model1D.predict(Vectors.dense(fs.vectorize()));
+                    return new FeaturesStock(fs, pred, PredictionPeriodicity.D1);
                 }
             }
         );
@@ -92,9 +90,9 @@ public class RandomForestStock implements Serializable {
             predictionAndLabel.map(new Function <FeaturesStock, MLPerformance>() {
                 public MLPerformance call(FeaturesStock pl) {
                     System.out.println("estimate: " + pl.getPredictionValue());
-                    System.out.println("result: " + pl.getResultValue());
+                    System.out.println("result: " + pl.getResultValue(PredictionPeriodicity.D1));
                     //Double diff = pl.getPredictionValue() - pl.getResultValue();
-                    return MLPerformance.calculYields(pl.getDate(), pl.getPredictionValue(), pl.getResultValue(), pl.getCurrentValue());
+                    return MLPerformance.calculYields(pl.getDate(), pl.getPredictionValue(), pl.getResultValue(PredictionPeriodicity.D1), pl.getCurrentValue());
                 }
             });
 

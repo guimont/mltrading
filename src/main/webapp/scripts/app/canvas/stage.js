@@ -39,8 +39,8 @@ function load (data) {
 
 
 
-    chartRun({x:60,y:75}, layerChart, 'yield_1D', 'grey');
-    chartRun({x:620,y:75}, layerChart, 'realyield_1D', '#76E383');
+    chartRun({x:60,y:75}, layerChart, 'yield_1D', 'grey' , true);
+    chartRun({x:620,y:75}, layerChart, 'realyield_1D', '#96B399', false);
 
     stagePrediction.add(layerChart);
 
@@ -62,24 +62,6 @@ var fontSize = 18;
  *
  * @param list
  * @param f
- * @returns {number}
- */
-
-function getMean( list, f) {
-    var mean = 0; var sizeNotNull = 0;
-    for (var i=0;i<list.length;i++) {
-        if (list[i].dataDay[f] != 0) {
-            mean += list[i].dataDay[f];
-            sizeNotNull ++;
-        }
-    }
-    return mean / sizeNotNull;
-}
-
-/**
- *
- * @param list
- * @param f
  * @param h
  * @returns {number}
  */
@@ -90,21 +72,6 @@ function getMeanRun( list, f) {
         sizeNotNull ++;
     }
     return mean / sizeNotNull;
-}
-
-/**
- *
- * @param list
- * @param f
- * @returns {number}
- */
-function getmax( list,f) {
-    var max = 0;
-    for (var i=0;i<list.length;i++) {
-        var v = abs(list[i][f]);
-        if (v > max) max = v;
-    }
-    return max;
 }
 
 /**
@@ -132,7 +99,7 @@ function getmaxRun( list,f) {
  * @param pos position in page
  * @param layer : add group to layer
  */
-function chartRun(pos, layer, key, color) {
+function chartRun(pos, layer, key, color, dyn) {
 
     var group = new Kinetic.Group();
     var eltLength = perf.length;
@@ -141,7 +108,10 @@ function chartRun(pos, layer, key, color) {
     var heightM = (SIZEY-60)/max;
 
     for (var i=0; i<perf.length;i++) {
-        drawChart(group, pos, perf[i][key], heightM, eltSize, i, perf[i].date, layer, color );
+        var dyncolor = color;
+        if (dyn === true && perf[i].sign === false)
+            dyncolor = 'red'
+        drawChart(group, pos, perf[i][key], heightM, eltSize, i, perf[i].date, layer, dyncolor );
     }
 
     drawChartMax(group, pos, max, getMeanRun(perf, key), heightM, marginX);
@@ -209,10 +179,10 @@ function drawChart(group, pos, elt ,heightM, eltSize, i, text , layer, color) {
 
     var rectBack = new Kinetic.Rect({
         x: pos.x+i*(eltSize+2),
-        y: pos.y,
+        y: pos.y*2+10,
         width: eltSize,
-        height: -marginInverseFrameY+20,
-        fill: '#F5F5F5'
+        height: -SIZEY,
+        fill: '#EDEAE6'
     });
 
     group.add(rectBack);
@@ -259,8 +229,6 @@ function drawChart(group, pos, elt ,heightM, eltSize, i, text , layer, color) {
     group.add(rectLayer);
 
     var chartGroup = new Kinetic.Group();
-
-/*
     rectLayer.on('mouseover', function() {
         dist = 0;
         anim.start();
@@ -272,6 +240,49 @@ function drawChart(group, pos, elt ,heightM, eltSize, i, text , layer, color) {
         anim.stop();
         chartGroup.remove();
         layer.draw();
-    });*/
+    });
+
+
+
+    var dist =  0;
+    var anim = new Kinetic.Animation(function() {
+        chartGroup.destroyChildren();
+
+        var spos = {x:pos.x-18,y:pos.y};
+        if (i>14) spos.x-=100;
+
+
+
+        dist += 35;
+        if (dist >= 360) {
+            anim.stop();
+            dist = 370;
+        }
+
+
+        tooltip = new Kinetic.Label({
+            x: spos.x+i*(eltSize+2)+4,
+            y: 50,
+            height: 85
+        });
+
+
+        var rect = new Kinetic.Rect({
+            x:spos.x,
+            y: 80,
+            width: 170,
+            height: -110,
+            fill: 'white',
+            shadowOffset: {x:1,y:1}
+        });
+
+        tooltip.add(rect);
+
+        //drawRunPie(tooltip, spos, elt,dist);
+
+        chartGroup.add(tooltip);
+
+        layer.draw();
+    });
 
 }

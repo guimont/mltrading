@@ -61,8 +61,8 @@ public class test {
         indiceParser.fetchMonthly();
         sectorParser.fetchMonthly();
         vola.fetchMonthly();     */
-        Analyse a = new Analyse();
-        a.processAll();
+        /*Analyse a = new Analyse();
+        a.processAll();*/
 
         /*HistorySectorParserYahoo hspy = new HistorySectorParserYahoo();
 
@@ -133,12 +133,13 @@ public class test {
 
 
 
-        /*StockHistory sh = StockHistory.getStockHistory("FR0000045072", "2015-04-29T22:00:00Z");
-        List<StockHistory> shL = StockHistory.getStockHistoryList("FR0000045072");
+        //StockHistory sh = StockHistory.getStockHistory("FR0000045072", "2015-04-29T22:00:00Z");
+        StockHistory sh = StockHistory.getStockHistoryDayOffset("FR0000045072", "2015-04-29T22:00:00Z", 10);
+        //List<StockHistory> shL = StockHistory.getStockHistoryList("FR0000045072");
 
-        System.out.println(shL.size());
+        //System.out.println(shL.size());
 
-        System.out.println(sh.toString());*/
+        System.out.println(sh.toString());
 
         //sectorParser.fetch();
 
