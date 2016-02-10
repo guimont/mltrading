@@ -39,8 +39,8 @@ function load (data) {
 
 
 
-    chartRun({x:60,y:75}, layerChart, 'yield_1D', 'grey' , true);
-    chartRun({x:620,y:75}, layerChart, 'realyield_1D', '#96B399', false);
+    chartRun({x:60,y:75}, layerChart, 'yield', 'grey' , true);
+    chartRun({x:620,y:75}, layerChart, 'realyield', '#96B399', false);
 
     stagePrediction.add(layerChart);
 

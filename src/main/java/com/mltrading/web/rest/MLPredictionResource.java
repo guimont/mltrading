@@ -28,6 +28,6 @@ public class MLPredictionResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     @RolesAllowed(AuthoritiesConstants.ADMIN)
     public List<MLPerformance> findAll(@RequestParam(value = "key") String key) {
-        return  new ArrayList(CacheMLStock.getMLStockCache().get(key).getPerfList());
+        return  new ArrayList(CacheMLStock.getMLStockCache().get(key).getMlD1().getPerfList());
     }
 }

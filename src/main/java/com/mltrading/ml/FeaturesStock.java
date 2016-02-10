@@ -21,7 +21,9 @@ public class FeaturesStock implements Serializable {
     private double resultValueD1;
     private double resultValueD5 = 0;
     private double resultValueD20 = 0;
-    private double predictionValue;
+    private double predictionValueD1;
+    private double predictionValueD5 = 0;
+    private double predictionValueD20 = 0;
     private double currentValue;
 
     private Double vector[];
@@ -40,7 +42,6 @@ public class FeaturesStock implements Serializable {
 
 
 
-
     public FeaturesStock() {
         vector = new Double[20000];
     }
@@ -51,7 +52,7 @@ public class FeaturesStock implements Serializable {
         this.currentValue = fs.getCurrentValue();
         this.currentVectorPos = fs.currentVectorPos;
         this.vector = fs.vector.clone();
-        this.predictionValue = predictRes;
+        setPredictionValue(predictRes, t);
     }
 
     public double getResultValue(PredictionPeriodicity t) {
@@ -79,6 +80,32 @@ public class FeaturesStock implements Serializable {
         }
     }
 
+    public void setPredictionValue(double predictionValue, PredictionPeriodicity t) {
+        switch (t) {
+            case D1 :
+                predictionValueD1 = predictionValue;
+            case D5:
+                predictionValueD5 = predictionValue;
+            case D20:
+                predictionValueD20 = predictionValue;
+        }
+    }
+
+
+    public double getPredictionValue( PredictionPeriodicity t) {
+        switch (t) {
+            case D1 :
+                return predictionValueD1;
+            case D5:
+                return predictionValueD5;
+            case D20:
+                return predictionValueD20;
+        }
+
+        //default
+        return 0;
+    }
+
 
 
     public String getDate() {
@@ -97,9 +124,6 @@ public class FeaturesStock implements Serializable {
         return currentVectorPos;
     }
 
-    public void setPredictionValue(double predictionValue) {
-        this.predictionValue = predictionValue;
-    }
 
 
     public double getCurrentValue() {
@@ -108,18 +132,15 @@ public class FeaturesStock implements Serializable {
 
 
 
-    public double getPredictionValue() {
-        return predictionValue;
-    }
 
     public void setCurrentValue(double currentValue) {
         this.currentValue = currentValue;
     }
 
-    public static FeaturesStock transform(StockHistory sh,double value) {
+    public static FeaturesStock transform(StockHistory sh, double value, PredictionPeriodicity t) {
         FeaturesStock fs = new FeaturesStock();
 
-        fs.setPredictionValue(value);
+        fs.setPredictionValue(value, t);
 
         return fs;
     }
@@ -144,15 +165,6 @@ public class FeaturesStock implements Serializable {
         return super.clone();
     }
 
-    public  static List<FeaturesStock> transformList(List<StockHistory> shL) {
-        List<FeaturesStock> fsL = new ArrayList<>();
-
-        for (int i = 0; i< shL.size()-1; i++) {
-            fsL.add(transform(shL.get(i), shL.get(i+1).getValue()));
-        }
-
-        return fsL;
-    }
 
     public void linearize(StockHistory sh) {
         this.vector[currentVectorPos++] = sh.getValue();

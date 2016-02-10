@@ -21,7 +21,7 @@ public class MlForecast {
 
         for (Stock s : l) {
             RandomForestStock rfs = new RandomForestStock();
-            MLStock mls = rfs.processRF(s);
+            MLStocks mls = rfs.processRF(s);
             if (null != mls)
                 CacheMLStock.getMLStockCache().put(mls.getCodif(),mls);
         }
@@ -30,8 +30,9 @@ public class MlForecast {
 
         log.info("result mlf size: " + CacheMLStock.getMLStockCache().size());
 
-        for (MLStock mls:CacheMLStock.getMLStockCache().values()) {
-            log.info("perf list result size: " + mls.getPerfList().size());
+        for (MLStocks mls:CacheMLStock.getMLStockCache().values()) {
+            log.info("perf list 1D result size: " + mls.getMlD1().getPerfList().size());
+            log.info("perf list 5D result size: " + mls.getMlD5().getPerfList().size());
             //log.info("test data count: " + mls.getTestData().count()); too verbous spark log for count function
         }
 

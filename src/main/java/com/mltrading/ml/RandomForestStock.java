@@ -4,6 +4,7 @@ import java.util.*;
 
 import com.mltrading.models.stock.Stock;
 import org.apache.spark.mllib.linalg.Vectors;
+import org.apache.spark.storage.StorageLevel;
 import scala.Serializable;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -34,7 +35,7 @@ public class RandomForestStock implements Serializable {
         return parsedData;
     }
 
-    public MLStock processRF(Stock stock) {
+    public MLStocks processRF(Stock stock) {
 
         List<FeaturesStock> fsL = FeaturesStock.create(stock);
 
@@ -46,15 +47,13 @@ public class RandomForestStock implements Serializable {
         JavaSparkContext sc = CacheMLStock.getJavaSparkContext();
 
         // Load and parse the data file.
-        JavaRDD<LabeledPoint> trainingData = createRDD(sc, fsLTrain, PredictionPeriodicity.D1);
+        JavaRDD<LabeledPoint> trainingDataD1 = createRDD(sc, fsLTrain, PredictionPeriodicity.D1);
+        JavaRDD<LabeledPoint> trainingDataD5 = createRDD(sc, fsLTrain, PredictionPeriodicity.D5);
+        JavaRDD<LabeledPoint> trainingDataD20 = createRDD(sc, fsLTrain, PredictionPeriodicity.D20);
+
         JavaRDD<FeaturesStock> testData = sc.parallelize(fsLTest);
 
         // Split the data into training and test sets (30% held out for testing)
-
-        /*JavaRDD<LabeledPoint>[] splits = data.randomSplit(new double[]{0.7, 0.3});
-        JavaRDD<LabeledPoint> trainingData = splits[0];
-        JavaRDD<LabeledPoint> testData = splits[1];*/
-
 
         // Set parameters.
         //  Empty categoricalFeaturesInfo indicates all features are continuous.
@@ -66,37 +65,65 @@ public class RandomForestStock implements Serializable {
         String featureSubsetStrategy = "auto"; // Let the algorithm choose.
 
         // Train a RandomForest model.
-        final RandomForestModel model1D = RandomForest.trainRegressor(trainingData,
+        final RandomForestModel modelD1 = RandomForest.trainRegressor(trainingDataD1,
+            categoricalFeaturesInfo, numTrees, featureSubsetStrategy, impurity, maxDepth, maxBins, maxBins);
+
+        // Train a RandomForest model.
+        final RandomForestModel modelD5 = RandomForest.trainRegressor(trainingDataD5,
+            categoricalFeaturesInfo, numTrees, featureSubsetStrategy, impurity, maxDepth, maxBins, maxBins);
+
+        // Train a RandomForest model.
+        final RandomForestModel modelD20 = RandomForest.trainRegressor(trainingDataD20,
             categoricalFeaturesInfo, numTrees, featureSubsetStrategy, impurity, maxDepth, maxBins, maxBins);
 
 
-        MLStock mls = new MLStock();
-        mls.setCodif(stock.getCodeif());
-        mls.setModel(model1D);
+        MLStocks mls = new MLStocks(stock.getCodeif());
+
+        mls.getMlD1().setModel(modelD1);
+        mls.getMlD5().setModel(modelD5);
+        mls.getMlD20().setModel(modelD20);
+
 
         JavaRDD<FeaturesStock> predictionAndLabel = testData.map(
             new Function<FeaturesStock, FeaturesStock>() {
                 public FeaturesStock call(FeaturesStock fs) {
-                    double pred = model1D.predict(Vectors.dense(fs.vectorize()));
-                    return new FeaturesStock(fs, pred, PredictionPeriodicity.D1);
+                    double pred = modelD1.predict(Vectors.dense(fs.vectorize()));
+                    FeaturesStock fsResult = new FeaturesStock(fs, pred, PredictionPeriodicity.D1);
+                    if (fs.getResultValue(PredictionPeriodicity.D5) != 0) {
+                        pred = modelD5.predict(Vectors.dense(fs.vectorize()));
+                        fsResult.setPredictionValue(pred,PredictionPeriodicity.D5);
+                    }
+
+                    return fsResult;
                 }
             }
         );
 
-        predictionAndLabel.cache();
+
         mls.setTestData(predictionAndLabel);
 
         JavaRDD<MLPerformance> res =
             predictionAndLabel.map(new Function <FeaturesStock, MLPerformance>() {
                 public MLPerformance call(FeaturesStock pl) {
-                    System.out.println("estimate: " + pl.getPredictionValue());
+                    System.out.println("estimate: " + pl.getPredictionValue(PredictionPeriodicity.D1));
                     System.out.println("result: " + pl.getResultValue(PredictionPeriodicity.D1));
                     //Double diff = pl.getPredictionValue() - pl.getResultValue();
-                    return MLPerformance.calculYields(pl.getDate(), pl.getPredictionValue(), pl.getResultValue(PredictionPeriodicity.D1), pl.getCurrentValue());
+                    List<MLPerformance> perfList = new ArrayList<MLPerformance>();
+
+                   return  MLPerformance.calculYields(pl.getDate(), pl.getPredictionValue(PredictionPeriodicity.D1), pl.getResultValue(PredictionPeriodicity.D1), pl.getCurrentValue());
+
+                    /*if (pl.getResultValue(PredictionPeriodicity.D5) != 0)
+                        perfList.add(MLPerformance.calculYields(pl.getDate(), pl.getPredictionValue(PredictionPeriodicity.D5), pl.getResultValue(PredictionPeriodicity.D5), pl.getCurrentValue()));
+
+                    //perfList.add();
+                    return perfList;*/
                 }
             });
 
-        mls.setPerfList(res.collect());
+
+
+        mls.getMlD1().setPerfList(res.collect());
+        //mls.getMlD5().setPerfList(res.collect().get(1));
 
         return mls;
 

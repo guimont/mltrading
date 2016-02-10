@@ -11,8 +11,8 @@ import java.util.concurrent.TimeUnit;
  * Created by gmo on 19/01/2016.
  */
 public class MLPerformance implements Serializable{
-    private double yield_1D;
-    private double realyield_1D;
+    private double yield;
+    private double realyield;
     private boolean sign;
     private String date;
 
@@ -27,27 +27,27 @@ public class MLPerformance implements Serializable{
 
 
 
-    public MLPerformance(String date, double yield_1D, double realyield_1D, boolean sign) {
-        this.yield_1D = yield_1D;
-        this.realyield_1D = realyield_1D;
+    public MLPerformance(String date, double yield, double realyield, boolean sign) {
+        this.yield = yield;
+        this.realyield = realyield;
         this.sign = sign;
         this.date = date;
     }
 
-    public double getYield_1D() {
-        return yield_1D;
+    public double getYield() {
+        return yield;
     }
 
-    public void setYield_1D(double yield_1D) {
-        this.yield_1D = yield_1D;
+    public void setYield(double yield) {
+        this.yield = yield;
     }
 
-    public double getRealyield_1D() {
-        return realyield_1D;
+    public double getRealyield() {
+        return realyield;
     }
 
-    public void setRealyield_1D(double realyield_1D) {
-        this.realyield_1D = realyield_1D;
+    public void setRealyield(double realyield) {
+        this.realyield = realyield;
     }
 
     public boolean isSign() {
@@ -75,8 +75,8 @@ public class MLPerformance implements Serializable{
     public void savePerformance(BatchPoints bp, String code) {
         Point pt = Point.measurement(code).time(new DateTime(date).getMillis() + 3600000, TimeUnit.MILLISECONDS)
             .field("sign", sign)
-            .field("yield_1D", yield_1D)
-            .field("realyield_1D", realyield_1D)
+            .field("yield", yield)
+            .field("realyield", realyield)
             .build();
         bp.point(pt);
     }
