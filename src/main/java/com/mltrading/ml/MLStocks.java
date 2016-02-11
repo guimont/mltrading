@@ -7,6 +7,8 @@ package com.mltrading.ml;
 import com.mltrading.ml.FeaturesStock.PredictionPeriodicity;
 import org.apache.spark.api.java.JavaRDD;
 
+import java.util.List;
+
 
 public class MLStocks {
     private String codif;
@@ -14,12 +16,22 @@ public class MLStocks {
     private MLStock mlD5;
     private MLStock mlD20;
 
+    private List<MLPerformances> perfList;
+
     JavaRDD<FeaturesStock> testData;
 
     public MLStocks(String codif) {
         mlD1 = new MLStock(codif, PredictionPeriodicity.D1);
         mlD5 = new MLStock(codif, PredictionPeriodicity.D5);
         mlD20 = new MLStock(codif, PredictionPeriodicity.D20);
+    }
+
+    public List<MLPerformances> getPerfList() {
+        return perfList;
+    }
+
+    public void setPerfList(List<MLPerformances> perfList) {
+        this.perfList = perfList;
     }
 
     public String getCodif() {

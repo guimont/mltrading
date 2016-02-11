@@ -102,16 +102,17 @@ public class RandomForestStock implements Serializable {
 
         mls.setTestData(predictionAndLabel);
 
-        JavaRDD<MLPerformance> res =
-            predictionAndLabel.map(new Function <FeaturesStock, MLPerformance>() {
-                public MLPerformance call(FeaturesStock pl) {
+        JavaRDD<MLPerformances> res =
+            predictionAndLabel.map(new Function <FeaturesStock, MLPerformances>() {
+                public MLPerformances call(FeaturesStock pl) {
                     System.out.println("estimate: " + pl.getPredictionValue(PredictionPeriodicity.D1));
                     System.out.println("result: " + pl.getResultValue(PredictionPeriodicity.D1));
                     //Double diff = pl.getPredictionValue() - pl.getResultValue();
-                    List<MLPerformance> perfList = new ArrayList<MLPerformance>();
+                    MLPerformances perf = new MLPerformances();
 
-                   return  MLPerformance.calculYields(pl.getDate(), pl.getPredictionValue(PredictionPeriodicity.D1), pl.getResultValue(PredictionPeriodicity.D1), pl.getCurrentValue());
+                    perf.setMlD1(MLPerformance.calculYields(pl.getDate(), pl.getPredictionValue(PredictionPeriodicity.D1), pl.getResultValue(PredictionPeriodicity.D1), pl.getCurrentValue()));
 
+                   return perf;
                     /*if (pl.getResultValue(PredictionPeriodicity.D5) != 0)
                         perfList.add(MLPerformance.calculYields(pl.getDate(), pl.getPredictionValue(PredictionPeriodicity.D5), pl.getResultValue(PredictionPeriodicity.D5), pl.getCurrentValue()));
 
@@ -122,7 +123,7 @@ public class RandomForestStock implements Serializable {
 
 
 
-        mls.getMlD1().setPerfList(res.collect());
+        mls.setPerfList(res.collect());
         //mls.getMlD5().setPerfList(res.collect().get(1));
 
         return mls;
