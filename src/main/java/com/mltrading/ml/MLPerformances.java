@@ -1,15 +1,27 @@
 package com.mltrading.ml;
 
+import java.io.Serializable;
+
 /**
  * Created by gmo on 10/02/2016.
  */
-public class MLPerformances {
+public class MLPerformances  implements Serializable, Comparable<MLPerformances> {
 
+    private String date;
     private MLPerformance mlD1;
     private MLPerformance mlD5;
     private MLPerformance mlD20;
 
-    public MLPerformances() {
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public MLPerformances(String date) {
+        this.date = date;
     }
 
     public MLPerformance getMlD1() {
@@ -34,5 +46,11 @@ public class MLPerformances {
 
     public void setMlD20(MLPerformance mlD20) {
         this.mlD20 = mlD20;
+    }
+
+
+    @Override
+    public int compareTo(MLPerformances o) {
+        return o.getDate().compareTo(this.date)*-1;
     }
 }

@@ -94,6 +94,11 @@ public class RandomForestStock implements Serializable {
                         fsResult.setPredictionValue(pred,PredictionPeriodicity.D5);
                     }
 
+                    if (fs.getResultValue(PredictionPeriodicity.D20) != 0) {
+                        pred = modelD20.predict(Vectors.dense(fs.vectorize()));
+                        fsResult.setPredictionValue(pred,PredictionPeriodicity.D20);
+                    }
+
                     return fsResult;
                 }
             }
@@ -108,16 +113,19 @@ public class RandomForestStock implements Serializable {
                     System.out.println("estimate: " + pl.getPredictionValue(PredictionPeriodicity.D1));
                     System.out.println("result: " + pl.getResultValue(PredictionPeriodicity.D1));
                     //Double diff = pl.getPredictionValue() - pl.getResultValue();
-                    MLPerformances perf = new MLPerformances();
+                    MLPerformances perf = new MLPerformances(pl.getDate());
 
                     perf.setMlD1(MLPerformance.calculYields(pl.getDate(), pl.getPredictionValue(PredictionPeriodicity.D1), pl.getResultValue(PredictionPeriodicity.D1), pl.getCurrentValue()));
 
-                   return perf;
-                    /*if (pl.getResultValue(PredictionPeriodicity.D5) != 0)
-                        perfList.add(MLPerformance.calculYields(pl.getDate(), pl.getPredictionValue(PredictionPeriodicity.D5), pl.getResultValue(PredictionPeriodicity.D5), pl.getCurrentValue()));
+                    if (pl.getResultValue(PredictionPeriodicity.D5) != 0)
+                        perf.setMlD5(MLPerformance.calculYields(pl.getDate(), pl.getPredictionValue(PredictionPeriodicity.D5), pl.getResultValue(PredictionPeriodicity.D5), pl.getCurrentValue()));
 
-                    //perfList.add();
-                    return perfList;*/
+                    if (pl.getResultValue(PredictionPeriodicity.D20) != 0)
+                        perf.setMlD20(MLPerformance.calculYields(pl.getDate(), pl.getPredictionValue(PredictionPeriodicity.D20), pl.getResultValue(PredictionPeriodicity.D20), pl.getCurrentValue()));
+
+
+                    return perf;
+
                 }
             });
 

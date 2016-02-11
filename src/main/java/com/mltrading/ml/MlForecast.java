@@ -31,8 +31,7 @@ public class MlForecast {
         log.info("result mlf size: " + CacheMLStock.getMLStockCache().size());
 
         for (MLStocks mls:CacheMLStock.getMLStockCache().values()) {
-            log.info("perf list 1D result size: " + mls.getMlD1().getPerfList().size());
-            log.info("perf list 5D result size: " + mls.getMlD5().getPerfList().size());
+            log.info("perf list result size: " + mls.getPerfList().size());
             //log.info("test data count: " + mls.getTestData().count()); too verbous spark log for count function
         }
 

@@ -21,6 +21,7 @@ public class MLStocks {
     JavaRDD<FeaturesStock> testData;
 
     public MLStocks(String codif) {
+        this.codif = codif;
         mlD1 = new MLStock(codif, PredictionPeriodicity.D1);
         mlD5 = new MLStock(codif, PredictionPeriodicity.D5);
         mlD20 = new MLStock(codif, PredictionPeriodicity.D20);

@@ -6,9 +6,12 @@
             "header": {
                 "principal": "Name",
                 "date": "Date",
-                "sign": "Sign",
-                "pred": "Prediction",
-                "perf": "Performance"
+                "sign1D": "Sign 1 Day",
+                "pred1D": "Prediction 1 Day",
+                "perf1D": "Performance 1 Day",
+                "sign5D": "Sign 5 Day",
+                "pred5D": "Prediction 5 Day",
+                "perf5D": "Performance 5 Day"
             },
             "data": {
                 "remoteAddress": "Remote Address:"

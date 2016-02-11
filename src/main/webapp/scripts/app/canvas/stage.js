@@ -25,24 +25,44 @@ var perf = [];
 function load (data) {
 
 
-    var stagePrediction = new Kinetic.Stage({
-        container: "kinetic",
+    var stagePredictionD1 = new Kinetic.Stage({
+        container: "kinetic1D",
+        width: 1120,
+        height: 200
+    });
+
+    var stagePredictionD5 = new Kinetic.Stage({
+        container: "kinetic5D",
+        width: 1120,
+        height: 200
+    });
+
+    var stagePredictionD20 = new Kinetic.Stage({
+        container: "kinetic20D",
         width: 1120,
         height: 200
     });
 
 
     var layerChart = new Kinetic.Layer();
+    var layerChartD5 = new Kinetic.Layer();
+    var layerChartD20 = new Kinetic.Layer();
 
 
     perf = data;
 
+    chartRun({x:60,y:75}, layerChart, 'mlD1', 'yield', 'grey' , true);
+    chartRun({x:620,y:75}, layerChart, 'mlD1', 'realyield', '#96B399', false);
 
+    chartRun({x:60,y:75}, layerChartD5, 'mlD5', 'yield', 'grey' , true);
+    chartRun({x:620,y:75}, layerChartD5, 'mlD5', 'realyield', '#96B399', false);
 
-    chartRun({x:60,y:75}, layerChart, 'yield', 'grey' , true);
-    chartRun({x:620,y:75}, layerChart, 'realyield', '#96B399', false);
+    chartRun({x:60,y:75}, layerChartD20, 'mlD20', 'yield', 'grey' , true);
+    chartRun({x:620,y:75}, layerChartD20, 'mlD20', 'realyield', '#96B399', false);
 
-    stagePrediction.add(layerChart);
+    stagePredictionD1.add(layerChart);
+    stagePredictionD5.add(layerChartD5);
+    stagePredictionD20.add(layerChartD20);
 
 };
 
@@ -65,11 +85,13 @@ var fontSize = 18;
  * @param h
  * @returns {number}
  */
-function getMeanRun( list, f) {
+function getMeanRun( list, f, c) {
     var mean = 0; var sizeNotNull = 0;
     for (var i=0;i<list.length;i++) {
-        mean += list[i][f]
-        sizeNotNull ++;
+        if (list[i][c]) {
+            mean += list[i][c][f]
+            sizeNotNull++;
+        }
     }
     return mean / sizeNotNull;
 }
@@ -82,11 +104,13 @@ function getMeanRun( list, f) {
  * @returns {number}
  */
 
-function getmaxRun( list,f) {
+function getmaxRun( list,f,c) {
     var max = 0;
     for (var i=0;i<list.length;i++) {
-        var v = Math.abs(list[i][f]);
-        if (v > max) max = v;
+        if (list[i][c]) {
+            var v = Math.abs(list[i][c][f]);
+            if (v > max) max = v;
+        }
     }
     return max;
 }
@@ -99,22 +123,26 @@ function getmaxRun( list,f) {
  * @param pos position in page
  * @param layer : add group to layer
  */
-function chartRun(pos, layer, key, color, dyn) {
+function chartRun(pos, layer, col, key, color, dyn) {
 
     var group = new Kinetic.Group();
     var eltLength = perf.length;
     var eltSize = 3;
-    var max = getmaxRun(perf, key);
-    var heightM = (SIZEY-60)/max;
+    var max = getmaxRun(perf, key, col);
+    var heightM = (SIZEY/2)/max;
 
     for (var i=0; i<perf.length;i++) {
         var dyncolor = color;
-        if (dyn === true && perf[i].sign === false)
-            dyncolor = 'red'
-        drawChart(group, pos, perf[i][key], heightM, eltSize, i, perf[i].date, layer, dyncolor );
+
+        if (perf[i][col]) {
+            if (dyn === true && perf[i][col].sign === false)
+                dyncolor = 'red'
+            drawChart(group, pos, perf[i][col][key], heightM, eltSize, i, perf[i][col].date, layer, dyncolor );
+        }
+
     }
 
-    drawChartMax(group, pos, max, getMeanRun(perf, key), heightM, marginX);
+    drawChartMax(group, pos, max, getMeanRun(perf, key , col), heightM, marginX);
 
     layer.add(group);
 }

@@ -18,10 +18,10 @@ public class FeaturesStock implements Serializable {
 
     private String date;
 
-    private double resultValueD1;
+    private double resultValueD1 = 0;
     private double resultValueD5 = 0;
     private double resultValueD20 = 0;
-    private double predictionValueD1;
+    private double predictionValueD1 = 0;
     private double predictionValueD5 = 0;
     private double predictionValueD20 = 0;
     private double currentValue;
@@ -30,13 +30,13 @@ public class FeaturesStock implements Serializable {
 
     int currentVectorPos = 0;
 
-    /** Controls the level of logging of the REST layer. */
+    /** Controls the perdiod */
     public enum PredictionPeriodicity {
-        /** No logging. */
+        /** 1 day */
         D1,
-        /** Log only the request method and URL and the response status code and execution time. */
+        /** 5 days    mid range */
         D5,
-        /** Log the basic information along with request and response headers. */
+        /** 20 days   long range */
         D20
     }
 
@@ -48,7 +48,9 @@ public class FeaturesStock implements Serializable {
 
     public FeaturesStock(FeaturesStock fs, double predictRes,PredictionPeriodicity t) {
         this.date = fs.date;
-        setResultValue(fs.getResultValue(t), t);
+        setResultValue(fs.getResultValue(PredictionPeriodicity.D1), PredictionPeriodicity.D1);
+        setResultValue(fs.getResultValue(PredictionPeriodicity.D5), PredictionPeriodicity.D5);
+        setResultValue(fs.getResultValue(PredictionPeriodicity.D20), PredictionPeriodicity.D20);
         this.currentValue = fs.getCurrentValue();
         this.currentVectorPos = fs.currentVectorPos;
         this.vector = fs.vector.clone();
@@ -73,10 +75,13 @@ public class FeaturesStock implements Serializable {
         switch (t) {
             case D1 :
                 resultValueD1 = resultValue;
+                break;
             case D5:
                 resultValueD5 = resultValue;
+                break;
             case D20:
                 resultValueD20 = resultValue;
+                break;
         }
     }
 
@@ -84,10 +89,13 @@ public class FeaturesStock implements Serializable {
         switch (t) {
             case D1 :
                 predictionValueD1 = predictionValue;
+                break;
             case D5:
                 predictionValueD5 = predictionValue;
+                break;
             case D20:
                 predictionValueD20 = predictionValue;
+                break;
         }
     }
 
@@ -165,6 +173,15 @@ public class FeaturesStock implements Serializable {
         return super.clone();
     }
 
+    public  static List<FeaturesStock> transformList(List<StockHistory> shL, PredictionPeriodicity t) {
+        List<FeaturesStock> fsL = new ArrayList<>();
+
+        for (int i = 0; i< shL.size()-1; i++) {
+            fsL.add(transform(shL.get(i), shL.get(i+1).getValue(), t));
+        }
+
+        return fsL;
+    }
 
     public void linearize(StockHistory sh) {
         this.vector[currentVectorPos++] = sh.getValue();

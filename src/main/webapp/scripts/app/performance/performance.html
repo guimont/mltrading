@@ -2,24 +2,32 @@
     <h2 style="margin-bottom: 60px" translate="performance.title">Performance</h2>
 
 
-    <span id="kinetic"></span>
+    <span id="kinetic1D"></span>
+    <span id="kinetic5D"></span>
+    <span id="kinetic20D"></span>
 
     <table style="margin-top: 40px" class="table table-condensed table-striped table-bordered table-responsive">
         <thead>
         <tr>
             <th ng-click="predicate = 'timestamp'; reverse=!reverse"><span translate="performance.table.header.date">Date</span></th>
-            <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="performance.table.header.sign">Sign</span></th>
-            <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="performance.table.header.pred">Prediction</span></th>
-            <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="performance.table.header.perf">Performance</span></th>
+            <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="performance.table.header.sign1D">Sign 1 Day</span></th>
+            <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="performance.table.header.pred1D">Prediction 1 Day</span></th>
+            <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="performance.table.header.perf1D">Performance 1 Day</span></th>
+            <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="performance.table.header.sign5D">Sign 5 Day</span></th>
+            <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="performance.table.header.pred5D">Prediction 5 Day</span></th>
+            <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="performance.table.header.perf5D">Performance 5 Day</span></th>
 
         </tr>
         </thead>
 
         <tr ng-repeat="pred in preds | filter:filter | orderBy:'-name':true" ng-hide="audit.filtered">
-            <td><span>{{pred.date}}</span></td>
-            <td>{{pred.sign}}</td>
-            <td>{{pred.yield_1D}}</td>
-            <td>{{pred.realyield_1D}}</td>
+            <td><span>{{pred.mlD1.date}}</span></td>
+            <td>{{pred.mlD1.sign}}</td>
+            <td>{{pred.mlD1.yield}}</td>
+            <td>{{pred.mlD1.realyield}}</td>
+            <td>{{pred.mlD5.sign}}</td>
+            <td>{{pred.mlD5.yield}}</td>
+            <td>{{pred.mlD5.realyield}}</td>
         </tr>
 
 

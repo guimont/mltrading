@@ -1,8 +1,6 @@
 package com.mltrading.web.rest;
 
-import com.mltrading.ml.CacheMLStock;
-import com.mltrading.ml.MLPerformance;
-import com.mltrading.ml.MLStock;
+import com.mltrading.ml.*;
 import com.mltrading.models.stock.CacheStockGeneral;
 import com.mltrading.models.stock.StockGeneral;
 import com.mltrading.security.AuthoritiesConstants;
@@ -14,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.security.RolesAllowed;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -27,7 +26,12 @@ public class MLPredictionResource {
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @RolesAllowed(AuthoritiesConstants.ADMIN)
-    public List<MLPerformance> findAll(@RequestParam(value = "key") String key) {
-        return  new ArrayList(CacheMLStock.getMLStockCache().get(key).getMlD1().getPerfList());
+    public List<MLPerformances> findAll(@RequestParam(value = "key") String key) {
+        MLStocks ms = CacheMLStock.getMLStockCache().get(key);
+        List<MLPerformances> l = ms.getPerfList();
+
+        Collections.sort(l);
+
+        return l;
     }
 }
