@@ -297,7 +297,7 @@ public class FeaturesStock implements Serializable {
 
 
             /**
-             * indice
+             * indice cac
              */
             try {
                 String codeIndice = StockIndice.translate(stock.getIndice());
@@ -309,6 +309,44 @@ public class FeaturesStock implements Serializable {
                 log.error("Cannot get indice/analyse stock for: " + stock.getIndice() + " and date: " + date +  " //exception:" + e);
                 continue;
             }
+
+            /**
+             * indice down jons
+             */
+            try {
+
+                List<StockIndice> si = StockIndice.getStockIndiceDateInvert("EDJI", date, XT_PERIOD);
+                fs.linearizeSI(si);
+            } catch (Exception e) {
+                log.error("Cannot get indice/analyse stock for: " + "EDJI" + " and date: " + date +  " //exception:" + e);
+                continue;
+            }
+
+            /**
+             * indice nikkei
+             */
+            try {
+
+                List<StockIndice> si = StockIndice.getStockIndiceDateInvert("EN225", date, XT_PERIOD);
+                fs.linearizeSI(si);
+            } catch (Exception e) {
+                log.error("Cannot get indice/analyse stock for: " + "EN225" + " and date: " + date +  " //exception:" + e);
+                continue;
+            }
+
+            /**
+             * indice FTSE london
+             */
+            try {
+
+                List<StockIndice> si = StockIndice.getStockIndiceDateInvert("EFTSE", date, XT_PERIOD);
+                fs.linearizeSI(si);
+
+            } catch (Exception e) {
+                log.error("Cannot get indice/analyse stock for: " + "EFTSE" + " and date: " + date +  " //exception:" + e);
+                continue;
+            }
+
 
 
             /**

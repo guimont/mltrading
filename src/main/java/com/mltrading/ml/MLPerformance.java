@@ -15,6 +15,10 @@ public class MLPerformance implements Serializable{
     private double realyield;
     private boolean sign;
     private String date;
+    private double prediction;
+    private double realvalue;
+    private double currentValue;
+    private double error;
 
 
     public String getDate() {
@@ -27,11 +31,48 @@ public class MLPerformance implements Serializable{
 
 
 
-    public MLPerformance(String date, double yield, double realyield, boolean sign) {
+    public MLPerformance(String date, double prediction, double  value, double realvalue,double yield, double realyield, boolean sign) {
         this.yield = yield;
         this.realyield = realyield;
         this.sign = sign;
         this.date = date;
+        this.prediction = prediction;
+        this.realvalue = realvalue;
+        this.currentValue = value;
+        this.error = realvalue - prediction;
+    }
+
+
+    public double getError() {
+        return error;
+    }
+
+    public void setError(double error) {
+        this.error = error;
+    }
+
+    public double getPrediction() {
+        return prediction;
+    }
+
+    public void setPrediction(double prediction) {
+        this.prediction = prediction;
+    }
+
+    public double getRealvalue() {
+        return realvalue;
+    }
+
+    public void setRealvalue(double realvalue) {
+        this.realvalue = realvalue;
+    }
+
+    public double getCurrentValue() {
+        return currentValue;
+    }
+
+    public void setCurrentValue(double currentValue) {
+        this.currentValue = currentValue;
     }
 
     public double getYield() {
@@ -62,13 +103,13 @@ public class MLPerformance implements Serializable{
         return (p-v)/v;
     }
 
-    public static MLPerformance calculYields(String date, double prediction, double  value, double currentValue) {
+    public static MLPerformance calculYields(String date, double prediction, double  realvalue, double currentValue) {
         //sign : value - currentValue
-        boolean sign =(int) Math.signum(value - currentValue) == (int) Math.signum(prediction - currentValue);
+        boolean sign =(int) Math.signum(realvalue - currentValue) == (int) Math.signum(prediction - currentValue);
         double yield_1D = calculYield(prediction, currentValue);
-        double realyield_1D = calculYield(value, currentValue);
+        double realyield_1D = calculYield(realvalue, currentValue);
 
-        return new MLPerformance(date, yield_1D, realyield_1D, sign);
+        return new MLPerformance(date,prediction, realvalue, currentValue, yield_1D, realyield_1D, sign);
 
     }
 

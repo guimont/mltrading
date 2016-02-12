@@ -39,7 +39,7 @@ function load (data) {
 
     var stagePredictionD20 = new Kinetic.Stage({
         container: "kinetic20D",
-        width: 1120,
+        width: 1220,
         height: 200
     });
 
@@ -51,14 +51,17 @@ function load (data) {
 
     perf = data;
 
-    chartRun({x:60,y:75}, layerChart, 'mlD1', 'yield', 'grey' , true);
-    chartRun({x:620,y:75}, layerChart, 'mlD1', 'realyield', '#96B399', false);
+    chartRun({x:20,y:75}, layerChart, 'mlD1', 'yield', 'grey' , true);
+    chartRun({x:390,y:75}, layerChart, 'mlD1', 'realyield', '#96B399', false);
+    chartRun({x:760,y:75}, layerChart, 'mlD1', 'error', 'orange', false);
 
-    chartRun({x:60,y:75}, layerChartD5, 'mlD5', 'yield', 'grey' , true);
-    chartRun({x:620,y:75}, layerChartD5, 'mlD5', 'realyield', '#96B399', false);
+    chartRun({x:20,y:75}, layerChartD5, 'mlD5', 'yield', 'grey' , true);
+    chartRun({x:390,y:75}, layerChartD5, 'mlD5', 'realyield', '#96B399', false);
+    chartRun({x:760,y:75}, layerChartD5, 'mlD5', 'error', 'orange', false);
 
-    chartRun({x:60,y:75}, layerChartD20, 'mlD20', 'yield', 'grey' , true);
-    chartRun({x:620,y:75}, layerChartD20, 'mlD20', 'realyield', '#96B399', false);
+    chartRun({x:20,y:75}, layerChartD20, 'mlD20', 'yield', 'grey' , true);
+    chartRun({x:390,y:75}, layerChartD20, 'mlD20', 'realyield', '#96B399', false);
+    chartRun({x:760,y:75}, layerChartD20, 'mlD20', 'error', 'orange', false);
 
     stagePredictionD1.add(layerChart);
     stagePredictionD5.add(layerChartD5);
@@ -127,7 +130,7 @@ function chartRun(pos, layer, col, key, color, dyn) {
 
     var group = new Kinetic.Group();
     var eltLength = perf.length;
-    var eltSize = 3;
+    var eltSize = 2;
     var max = getmaxRun(perf, key, col);
     var heightM = (SIZEY/2)/max;
 
@@ -214,7 +217,7 @@ function drawChart(group, pos, elt ,heightM, eltSize, i, text , layer, color) {
     });
 
     group.add(rectBack);
-    if  (i%10==0) {
+    if  (i%30==0) {
 
         group.add(new Kinetic.Rect({
             x: pos.x+i*(eltSize+2)+4,

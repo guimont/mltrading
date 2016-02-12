@@ -14,7 +14,6 @@ public class CacheStockIndice {
         Map<String, StockIndice> aMap = new HashMap<>();
         aMap.put("EFCHI", new StockIndice("EFCHI", "cac 40"));
         aMap.put("EDJI", new StockIndice("EDJI", "dji"));
-
         aMap.put("EN225", new StockIndice("EN225", "nikkei"));
         aMap.put("EFTSE", new StockIndice("EFTSE", "ftse"));
 

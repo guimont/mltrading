@@ -27,6 +27,22 @@ public class MLStocks {
         mlD20 = new MLStock(codif, PredictionPeriodicity.D20);
     }
 
+
+    public void calculeAvgPrd() {
+        double avgD1 = 0, avgD5 =0, avgD20 =0;
+        for (MLPerformances p : perfList) {
+            if (p.getMlD1() != null) {avgD1 += p.getMlD1().getRealyield() - p.getMlD1().getYield();}
+            if (p.getMlD5() != null) {avgD5 += p.getMlD5().getRealyield() - p.getMlD5().getYield();}
+                 if (p.getMlD20() != null) {avgD20 += p.getMlD20().getRealyield() - p.getMlD20().getYield();}
+        }
+
+        perfList.get(0).setAvgD1(avgD1/90*100);
+        perfList.get(0).setAvgD5(avgD5/85*100);
+        perfList.get(0).setAvgD20(avgD20/70*100);
+
+    }
+
+
     public List<MLPerformances> getPerfList() {
         return perfList;
     }

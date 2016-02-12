@@ -12,6 +12,35 @@ public class MLPerformances  implements Serializable, Comparable<MLPerformances>
     private MLPerformance mlD5;
     private MLPerformance mlD20;
 
+    private double avgD1 = 0;
+    private double avgD5 = 0;
+    private double avgD20 = 0;
+
+
+    public double getAvgD1() {
+        return avgD1;
+    }
+
+    public void setAvgD1(double avgD1) {
+        this.avgD1 = avgD1;
+    }
+
+    public double getAvgD5() {
+        return avgD5;
+    }
+
+    public void setAvgD5(double avgD5) {
+        this.avgD5 = avgD5;
+    }
+
+    public double getAvgD20() {
+        return avgD20;
+    }
+
+    public void setAvgD20(double avgD20) {
+        this.avgD20 = avgD20;
+    }
+
     public String getDate() {
         return date;
     }
