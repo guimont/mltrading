@@ -25,6 +25,9 @@ import java.net.URL;
 public class HistorySectorParserGoogle implements HistorySectorParser {
 
     public void fetch() {
+        /*fix problem for specific day*/
+        HistorySectorParserYahoo hspy = new HistorySectorParserYahoo();
+        hspy.loaderSpecific("");
         loader();
     }
 

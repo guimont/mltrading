@@ -29,6 +29,17 @@ public class StockSector extends StockHistory{
     }
 
 
+    static public int DATE_COLUMN = 0;
+    static public int OPENING_COLUMN_SECT = 2;
+    static public int VALUE_COLUMN_SECT = 3;
+
+    public static void populate(StockSector sh, QueryResult meanQ, int i) {
+        sh.setDay((String) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(DATE_COLUMN));
+        sh.setOpening((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(OPENING_COLUMN_SECT));
+        sh.setValue((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(VALUE_COLUMN_SECT));
+    }
+
+
     public static List<StockSector> getStockSectorDateInvert(final String code, final String date, int offset) {
 
         List<StockSector> stockList = new ArrayList<>();
@@ -42,9 +53,7 @@ public class StockSector extends StockHistory{
 
         for (int i = size-1; stockList.size() < offset; i--) {
             StockSector ss = new StockSector(code);
-            ss.setDay((String) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(0));
-            ss.setOpening((Double) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(1));
-            ss.setValue((Double) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(2));
+            populate(ss, list, i);
             stockList.add(ss);
         }
 

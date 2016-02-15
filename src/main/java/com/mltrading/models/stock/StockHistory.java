@@ -274,6 +274,23 @@ public class StockHistory extends Object{
         return timeInsert;
     }
 
+    static public int DATE_COLUMN = 0;
+    static public int CONSENSUS_COLUMN_HIST = 2;
+    static public int HIGHEST_COLUMN_HIST = 3;
+    static public int LOWEST_COLUMN_HIST = 4;
+    static public int OPENING_COLUMN_HIST = 5;
+    static public int VALUE_COLUMN_HIST = 6;
+    static public int VOLUME_COLUMN_HIST = 7;
+
+    public static void populate(StockHistory sh, QueryResult meanQ, int i) {
+        sh.setDay((String) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(DATE_COLUMN));
+        sh.setConsensusNote((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(CONSENSUS_COLUMN_HIST));
+        sh.setHighest((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(HIGHEST_COLUMN_HIST));
+        sh.setLowest((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(LOWEST_COLUMN_HIST));
+        sh.setOpening((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(OPENING_COLUMN_HIST));
+        sh.setValue((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(VALUE_COLUMN_HIST));
+        sh.setVolume((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(VOLUME_COLUMN_HIST));
+    }
 
     public StockAnalyse getAnalyse_tech() {
         return analyse_tech;
@@ -290,12 +307,7 @@ public class StockHistory extends Object{
         QueryResult meanQ = InfluxDaoConnector.getPoints(query);
 
         sh.setCode(code);
-        sh.setHighest((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(1));
-        sh.setLowest((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(2));
-        sh.setOpening((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(3));
-        sh.setValue((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(4));
-        sh.setVolume((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(5));
-
+        populate(sh, meanQ, 0);
         sh.setAnalyse_tech(StockAnalyse.getAnalyse(code, date));
 
         return sh;
@@ -308,13 +320,7 @@ public class StockHistory extends Object{
         QueryResult meanQ = InfluxDaoConnector.getPoints(query);
 
         sh.setCode(code);
-        sh.setDay(date);
-        sh.setHighest((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(1));
-        sh.setLowest((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(2));
-        sh.setOpening((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(3));
-        sh.setValue((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(4));
-        sh.setVolume((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(5));
-
+        populate(sh, meanQ, 0);
         sh.setAnalyse_tech(StockAnalyse.getAnalyse(code, date));
 
         return sh;
@@ -333,13 +339,7 @@ public class StockHistory extends Object{
             return null;
 
         sh.setCode(code);
-        sh.setDay((String) meanQ.getResults().get(0).getSeries().get(0).getValues().get(offset-1).get(0));
-        sh.setHighest((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(offset-1).get(1));
-        sh.setLowest((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(offset-1).get(2));
-        sh.setOpening((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(offset-1).get(3));
-        sh.setValue((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(offset-1).get(4));
-        sh.setVolume((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(offset-1).get(5));
-
+        populate(sh, meanQ, 0);
         return sh;
     }
 
@@ -380,13 +380,7 @@ public class StockHistory extends Object{
             StockHistory sh = new StockHistory();
             String date = (String) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(0);
             sh.setCode(code);
-            sh.setDay(date);
-            sh.setHighest((Double) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(1));
-            sh.setLowest((Double) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(2));
-            sh.setOpening((Double) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(3));
-            sh.setValue((Double) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(4));
-            sh.setVolume((Double) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(5));
-            sh.setAnalyse_tech(StockAnalyse.getAnalyse(code, date));
+            populate(sh, list, i);  sh.setAnalyse_tech(StockAnalyse.getAnalyse(code, date));
             stockList.add(sh);
         }
 
@@ -442,20 +436,13 @@ public class StockHistory extends Object{
         for (int i = offset; stockList.size() < offset; i--) {
             StockHistory sh = new StockHistory();
             sh.setCode(code);
-            sh.setDay((String) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(0));
-            sh.setHighest((Double) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(2));
-            sh.setLowest((Double) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(3));
-            sh.setOpening((Double) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(4));
-            sh.setValue((Double) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(5));
-            sh.setVolume((Double) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(6));
+            populate(sh, list, i);
             stockList.add(sh);
         }
 
         return stockList;
 
     }
-
-
 
 
     @Override
@@ -482,10 +469,12 @@ public class StockHistory extends Object{
         StockHistory copy = new StockHistory();
         copy.setCodif(this.getCodif());
         copy.setName(this.getName());
+        copy.setConsensusNote(this.consensusNote);
         copy.setValue(this.value);
         copy.setHighest(this.highest);
         copy.setLowest(this.lowest);
         copy.setVolume(this.volume);
+        copy.setOpening(this.opening);
         copy.setAnalyse_tech((StockAnalyse) this.getAnalyse_tech().clone());
         return copy;
     }

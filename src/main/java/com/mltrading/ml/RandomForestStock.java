@@ -35,7 +35,7 @@ public class RandomForestStock implements Serializable {
         return parsedData;
     }
 
-    public MLStocks processRF(Stock stock) {
+    public MLStocks processRF(Stock stock, boolean generate) {
 
         List<FeaturesStock> fsL = FeaturesStock.create(stock);
 
@@ -57,27 +57,41 @@ public class RandomForestStock implements Serializable {
 
         // Set parameters.
         //  Empty categoricalFeaturesInfo indicates all features are continuous.
-        Map<Integer, Integer> categoricalFeaturesInfo = new HashMap<Integer, Integer>();
+        Map<Integer, Integer> categoricalFeaturesInfoD1 = new HashMap<Integer, Integer>();
+        Map<Integer, Integer> categoricalFeaturesInfoD5 = new HashMap<Integer, Integer>();
+        Map<Integer, Integer> categoricalFeaturesInfoD20 = new HashMap<Integer, Integer>();
         String impurity = "variance";
-        Integer maxDepth = 6;
-        Integer maxBins = 32;
-        Integer numTrees = 60; // Use more in practice.
+
         String featureSubsetStrategy = "auto"; // Let the algorithm choose.
+
+        MLStocks mls = new MLStocks(stock.getCodeif());
+
+        if (generate) {
+            mls.getMlD1().getValidator().generate();
+            mls.getMlD5().getValidator().generate();
+            mls.getMlD20().getValidator().generate();
+        }
 
         // Train a RandomForest model.
         final RandomForestModel modelD1 = RandomForest.trainRegressor(trainingDataD1,
-            categoricalFeaturesInfo, numTrees, featureSubsetStrategy, impurity, maxDepth, maxBins, maxBins);
+            categoricalFeaturesInfoD1, mls.getMlD1().getValidator().getNumTrees(), featureSubsetStrategy, impurity,
+            mls.getMlD1().getValidator().getMaxDepth(), mls.getMlD1().getValidator().getMaxBins(),
+            mls.getMlD1().getValidator().getSeed());
 
         // Train a RandomForest model.
         final RandomForestModel modelD5 = RandomForest.trainRegressor(trainingDataD5,
-            categoricalFeaturesInfo, numTrees, featureSubsetStrategy, impurity, maxDepth, maxBins, maxBins);
+            categoricalFeaturesInfoD5,  mls.getMlD5().getValidator().getNumTrees(), featureSubsetStrategy, impurity,
+            mls.getMlD5().getValidator().getMaxDepth(), mls.getMlD5().getValidator().getMaxBins(),
+            mls.getMlD5().getValidator().getSeed());
 
         // Train a RandomForest model.
         final RandomForestModel modelD20 = RandomForest.trainRegressor(trainingDataD20,
-            categoricalFeaturesInfo, numTrees, featureSubsetStrategy, impurity, maxDepth, maxBins, maxBins);
+            categoricalFeaturesInfoD20, mls.getMlD20().getValidator().getNumTrees(), featureSubsetStrategy, impurity,
+            mls.getMlD20().getValidator().getMaxDepth(), mls.getMlD20().getValidator().getMaxBins(),
+            mls.getMlD20().getValidator().getSeed());
 
 
-        MLStocks mls = new MLStocks(stock.getCodeif());
+
 
         mls.getMlD1().setModel(modelD1);
         mls.getMlD5().setModel(modelD5);

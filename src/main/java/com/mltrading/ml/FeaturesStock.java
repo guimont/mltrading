@@ -304,7 +304,7 @@ public class FeaturesStock implements Serializable {
                 List<StockIndice> si = StockIndice.getStockIndiceDateInvert(codeIndice, date, XT_PERIOD);
                 fs.linearizeSI(si);
                 StockAnalyse asi = StockAnalyse.getAnalyse(codeIndice, date);
-                fs.linearize(asi);
+                //fs.linearize(asi);
             } catch (Exception e) {
                 log.error("Cannot get indice/analyse stock for: " + stock.getIndice() + " and date: " + date +  " //exception:" + e);
                 continue;
@@ -316,7 +316,7 @@ public class FeaturesStock implements Serializable {
             try {
 
                 List<StockIndice> si = StockIndice.getStockIndiceDateInvert("EDJI", date, XT_PERIOD);
-                fs.linearizeSI(si);
+                //fs.linearizeSI(si);
             } catch (Exception e) {
                 log.error("Cannot get indice/analyse stock for: " + "EDJI" + " and date: " + date +  " //exception:" + e);
                 continue;
@@ -328,7 +328,7 @@ public class FeaturesStock implements Serializable {
             try {
 
                 List<StockIndice> si = StockIndice.getStockIndiceDateInvert("EN225", date, XT_PERIOD);
-                fs.linearizeSI(si);
+                //fs.linearizeSI(si);
             } catch (Exception e) {
                 log.error("Cannot get indice/analyse stock for: " + "EN225" + " and date: " + date +  " //exception:" + e);
                 continue;
@@ -340,7 +340,7 @@ public class FeaturesStock implements Serializable {
             try {
 
                 List<StockIndice> si = StockIndice.getStockIndiceDateInvert("EFTSE", date, XT_PERIOD);
-                fs.linearizeSI(si);
+                //fs.linearizeSI(si);
 
             } catch (Exception e) {
                 log.error("Cannot get indice/analyse stock for: " + "EFTSE" + " and date: " + date +  " //exception:" + e);

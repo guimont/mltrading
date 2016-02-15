@@ -15,14 +15,25 @@ public class MLStock {
     private PredictionPeriodicity period;
     private RandomForestModel model;
     private List<Double> previsionList;
+    private Validator validator;
 
 
     private MLStock() {
+        validator = new Validator();
     }
 
     public MLStock(String codif, PredictionPeriodicity period) {
         this.period = period;
         this.codif = codif;
+        validator = new Validator();
+    }
+
+    public Validator getValidator() {
+        return validator;
+    }
+
+    public void setValidator(Validator validator) {
+        this.validator = validator;
     }
 
     public String getCodif() {

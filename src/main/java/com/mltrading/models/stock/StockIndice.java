@@ -32,6 +32,20 @@ public class StockIndice extends StockHistory {
         return null;
     }
 
+    static public int DATE_COLUMN = 0;
+    static public int HIGHEST_COLUMN_IND = 2;
+    static public int LOWEST_COLUMN_IND = 3;
+    static public int OPENING_COLUMN_IND = 4;
+    static public int VALUE_COLUMN_IND = 5;
+
+    public static void populate(StockIndice sh, QueryResult meanQ, int i) {
+        sh.setDay((String) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(DATE_COLUMN));
+        sh.setHighest((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(HIGHEST_COLUMN_IND));
+        sh.setLowest((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(LOWEST_COLUMN_IND));
+        sh.setOpening((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(OPENING_COLUMN_IND));
+        sh.setValue((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(VALUE_COLUMN_IND));
+    }
+
 
     public static List<StockIndice> getStockIndiceDateInvert(final String code, final String date, int offset) {
 
@@ -46,11 +60,7 @@ public class StockIndice extends StockHistory {
 
         for (int i = size-1; stockList.size() < offset; i--) {
             StockIndice si = new StockIndice(code);
-            si.setDay((String) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(0));
-            si.setHighest((Double) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(1));
-            si.setLowest((Double) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(2));
-            si.setOpening((Double) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(3));
-            si.setValue((Double) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(4));
+            populate(si, list, i);
             stockList.add(si);
         }
 
