@@ -21,7 +21,7 @@ public class MlForecast {
 
         for (Stock s : l) {
             RandomForestStock rfs = new RandomForestStock();
-            MLStocks mls = rfs.processRF(s);
+            MLStocks mls = rfs.processRF(s, true);
 
             if (null != mls) {
                 mls.calculeAvgPrd();

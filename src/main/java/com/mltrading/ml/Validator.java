@@ -17,7 +17,7 @@ public class Validator {
 
 
     public void generate() {
-        maxDepth = (int) (Math.random()*(64-2));
+        maxDepth = (int) (Math.random()*(30-2));
         maxBins = (int) (Math.random()*(200-1));
         numTrees = (int) (Math.random()*(400-5));
         seed = (int) (Math.random()*(20000-5));

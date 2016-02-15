@@ -89,12 +89,12 @@ public class StockAnalyse extends Object{
             String query = "SELECT * FROM " + code + "T where time = '" + date + "'";
             QueryResult meanQ = InfluxDaoConnector.getPoints(query);
 
-            a.setMma20((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(2));
-            a.setMma50((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(3));
-            a.setMme12((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(4));
-            a.setMme26((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(5));
-            a.setMomentum((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(6));
-            a.setStdDev((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(7));
+        a.setMma20(new Double(meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(2).toString()));
+        a.setMma50(new Double(meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(3).toString()));
+        a.setMme12(new Double(meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(4).toString()));
+        a.setMme26(new Double(meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(5).toString()));
+        a.setMomentum(new Double(meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(6).toString()));
+        a.setStdDev(new Double(meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(7).toString()));
         /*} catch (Exception e) {
             System.out.println("error in analyse: " +e);
         }*/
