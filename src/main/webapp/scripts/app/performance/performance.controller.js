@@ -11,7 +11,6 @@ angular.module('mltradingApp')
         $scope.showPrediction = function(codif) {
             PerformanceService.find(codif).then(function (data) {
                 $scope.preds = data;
-                $scope.avgD1 = data[0].mlD1.avg;
                 load($scope.preds);
             });
         };

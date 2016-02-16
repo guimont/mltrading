@@ -35,9 +35,23 @@ public class RandomForestStock implements Serializable {
         return parsedData;
     }
 
-    public MLStocks processRF(Stock stock, boolean generate) {
+    public MLStocks processRF(Stock stock, boolean generate, boolean randomFeature) {
 
-        List<FeaturesStock> fsL = FeaturesStock.create(stock);
+        MLStocks mls = new MLStocks(stock.getCodeif());
+
+        //TODO refactor this code, not nice
+        if (randomFeature) {
+            mls.getMlD1().getValidator().generateFeature();
+        }
+
+        if (generate) {
+            mls.getMlD1().getValidator().generate();
+            mls.getMlD5().getValidator().generate();
+            mls.getMlD20().getValidator().generate();
+        }
+
+
+        List<FeaturesStock> fsL = FeaturesStock.create(stock, mls.getMlD1().getValidator());
 
         if (null == fsL) return null;
 
@@ -64,13 +78,6 @@ public class RandomForestStock implements Serializable {
 
         String featureSubsetStrategy = "auto"; // Let the algorithm choose.
 
-        MLStocks mls = new MLStocks(stock.getCodeif());
-
-        if (generate) {
-            mls.getMlD1().getValidator().generate();
-            mls.getMlD5().getValidator().generate();
-            mls.getMlD20().getValidator().generate();
-        }
 
         // Train a RandomForest model.
         final RandomForestModel modelD1 = RandomForest.trainRegressor(trainingDataD1,
@@ -145,7 +152,7 @@ public class RandomForestStock implements Serializable {
 
 
 
-        mls.setPerfList(res.collect());
+        mls.getStatus().setPerfList(res.collect());
         //mls.getMlD5().setPerfList(res.collect().get(1));
 
         return mls;

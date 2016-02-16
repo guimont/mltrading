@@ -129,23 +129,23 @@ function getmaxRun( list,f,c) {
 function chartRun(pos, layer, col, key, color, dyn) {
 
     var group = new Kinetic.Group();
-    var eltLength = perf.length;
+    var eltLength = perf.perfList.length;
     var eltSize = 2;
-    var max = getmaxRun(perf, key, col);
+    var max = getmaxRun(perf.perfList, key, col);
     var heightM = (SIZEY/2)/max;
 
-    for (var i=0; i<perf.length;i++) {
+    for (var i=0; i<perf.perfList.length;i++) {
         var dyncolor = color;
 
-        if (perf[i][col]) {
-            if (dyn === true && perf[i][col].sign === false)
+        if (perf.perfList[i][col]) {
+            if (dyn === true && perf.perfList[i][col].sign === false)
                 dyncolor = 'red'
-            drawChart(group, pos, perf[i][col][key], heightM, eltSize, i, perf[i][col].date, layer, dyncolor );
+            drawChart(group, pos, perf.perfList[i][col][key], heightM, eltSize, i, perf.perfList[i][col].date, layer, dyncolor );
         }
 
     }
 
-    drawChartMax(group, pos, max, getMeanRun(perf, key , col), heightM, marginX);
+    drawChartMax(group, pos, max, getMeanRun(perf.perfList, key , col), heightM, marginX);
 
     layer.add(group);
 }

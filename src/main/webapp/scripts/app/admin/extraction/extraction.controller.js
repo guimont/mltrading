@@ -26,4 +26,10 @@ angular.module('mltradingApp')
             });
         }
 
+        $scope.optimizeML = function () {
+            return $http.get('/api/optimizeML').then(function (response) {
+                return response.data;
+            });
+        }
+
     });

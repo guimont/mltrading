@@ -183,17 +183,17 @@ public class FeaturesStock implements Serializable {
         return fsL;
     }
 
-    public void linearize(StockHistory sh) {
+    public void linearize(StockHistory sh, Validator validator) {
         this.vector[currentVectorPos++] = sh.getValue();
-        this.vector[currentVectorPos++] = sh.getConsensusNote();
-        this.vector[currentVectorPos++] = sh.getVolume();
+        if (validator.historyConsensus) this.vector[currentVectorPos++] = sh.getConsensusNote();
+        if (validator.historyVolume)  this.vector[currentVectorPos++] = sh.getVolume();
     }
 
-    public void linearize(StockAnalyse sa) {
-        this.vector[currentVectorPos++] = sa.getMme12();
-        this.vector[currentVectorPos++] = sa.getMme26();
-        this.vector[currentVectorPos++] = sa.getMomentum();
-        this.vector[currentVectorPos++] = sa.getStdDev();
+    public void linearize(StockAnalyse sa,  Validator validator) {
+        if (validator.analyseMme12) this.vector[currentVectorPos++] = sa.getMme12();
+        if (validator.analyseMme26) this.vector[currentVectorPos++] = sa.getMme26();
+        if (validator.analyseMomentum) this.vector[currentVectorPos++] = sa.getMomentum();
+        if (validator.analyseStdDev) this.vector[currentVectorPos++] = sa.getStdDev();
     }
 
     public void linearizeSH(List<StockHistory> shl) {
@@ -216,7 +216,7 @@ public class FeaturesStock implements Serializable {
     static int XT_PERIOD = 20;
     static int XT_OFFSET = 20;
 
-    public  static List<FeaturesStock> create(Stock stock) {
+    public  static List<FeaturesStock> create(Stock stock, Validator validator) {
         //Xt,Xt-1,...,Xn ,Consensus AT => StockHistory
         //Indice Xt,..Xn, AT => StockIndice
         //Secteur Xt,..Xn, AT => StockSecteur
@@ -261,10 +261,10 @@ public class FeaturesStock implements Serializable {
              * stock
              */
             try {
-            List<StockHistory> sh = StockHistory.getStockHistoryDateInvert(stock.getCode(), date, XT_PERIOD);
+            List<StockHistory> sh = StockHistory.getStockHistoryDateInvert(stock.getCode(), date, validator.perdiodHist);
             fs.linearizeSH(sh);
             StockHistory current = StockHistory.getStockHistory(stock.getCode(), date);
-            fs.linearize(current);
+            fs.linearize(current, validator);
             fs.setCurrentValue(current.getValue());
 
             } catch (Exception e) {
@@ -275,7 +275,7 @@ public class FeaturesStock implements Serializable {
 
             try {
                 StockAnalyse ash = StockAnalyse.getAnalyse(stock.getCode(), date);
-                fs.linearize(ash);
+                fs.linearize(ash, validator);
 
             } catch (Exception e) {
                 log.error("Cannot get analyse stock for: " + stock.getCode() + " and date: " + date +  " //exception:" + e);
@@ -286,25 +286,34 @@ public class FeaturesStock implements Serializable {
              * sector
              */
             try {
-                List<StockSector> ss = StockSector.getStockSectorDateInvert(stock.getSector(), date, XT_PERIOD);
+                List<StockSector> ss = StockSector.getStockSectorDateInvert(stock.getSector(), date, validator.perdiodSector);
                 fs.linearizeSS(ss);
-                StockAnalyse ass = StockAnalyse.getAnalyse(stock.getSector(), date);
-                fs.linearize(ass);
+                if (validator.sectorAT) {
+                    StockAnalyse ass = StockAnalyse.getAnalyse(stock.getSector(), date);
+                    fs.linearize(ass, validator);
+                }
             } catch (Exception e) {
                 log.error("Cannot get sector/analyse stock for: " + stock.getSector() + " and date: " + date + " //exception:" + e);
                 continue;
             }
 
+            String codeIndice = StockIndice.translate(stock.getIndice());
 
             /**
              * indice cac
              */
             try {
-                String codeIndice = StockIndice.translate(stock.getIndice());
-                List<StockIndice> si = StockIndice.getStockIndiceDateInvert(codeIndice, date, XT_PERIOD);
-                fs.linearizeSI(si);
-                StockAnalyse asi = StockAnalyse.getAnalyse(codeIndice, date);
-                //fs.linearize(asi);
+
+
+                if (validator.cac) {
+                    List<StockIndice> si = StockIndice.getStockIndiceDateInvert(codeIndice, date, validator.perdiodCac);
+                    fs.linearizeSI(si);
+                }
+
+                if (validator.cacAT) {
+                    StockAnalyse asi = StockAnalyse.getAnalyse(codeIndice, date);
+                    fs.linearize(asi, validator);
+                }
             } catch (Exception e) {
                 log.error("Cannot get indice/analyse stock for: " + stock.getIndice() + " and date: " + date +  " //exception:" + e);
                 continue;
@@ -313,38 +322,55 @@ public class FeaturesStock implements Serializable {
             /**
              * indice down jons
              */
-            try {
+            if (validator.indiceDJI) {
+                try {
 
-                List<StockIndice> si = StockIndice.getStockIndiceDateInvert("EDJI", date, XT_PERIOD);
-                //fs.linearizeSI(si);
-            } catch (Exception e) {
-                log.error("Cannot get indice/analyse stock for: " + "EDJI" + " and date: " + date +  " //exception:" + e);
-                continue;
+                    List<StockIndice> si = StockIndice.getStockIndiceDateInvert("EDJI", date, validator.perdiodDJI);
+                    fs.linearizeSI(si);
+                    if (validator.DJIAT) {
+                        StockAnalyse asi = StockAnalyse.getAnalyse("EDJI", si.get(0).getDay());
+                        fs.linearize(asi, validator);
+                    }
+                } catch (Exception e) {
+                    log.error("Cannot get indice/analyse stock for: " + "EDJI" + " and date: " + date + " //exception:" + e);
+                    continue;
+                }
             }
 
             /**
              * indice nikkei
              */
-            try {
+            if (validator.indiceN225) {
+                try {
 
-                List<StockIndice> si = StockIndice.getStockIndiceDateInvert("EN225", date, XT_PERIOD);
-                //fs.linearizeSI(si);
-            } catch (Exception e) {
-                log.error("Cannot get indice/analyse stock for: " + "EN225" + " and date: " + date +  " //exception:" + e);
-                continue;
+                    List<StockIndice> si = StockIndice.getStockIndiceDateInvert("EN225", date, validator.perdiodN225);
+                    fs.linearizeSI(si);
+                    if (validator.N225AT) {
+                        StockAnalyse asi = StockAnalyse.getAnalyse("EN225", si.get(0).getDay());
+                        fs.linearize(asi, validator);
+                    }
+                } catch (Exception e) {
+                    log.error("Cannot get indice/analyse stock for: " + "EN225" + " and date: " + date + " //exception:" + e);
+                    continue;
+                }
             }
 
             /**
              * indice FTSE london
              */
-            try {
+            if (validator.indiceFTSE) {
+                try {
 
-                List<StockIndice> si = StockIndice.getStockIndiceDateInvert("EFTSE", date, XT_PERIOD);
-                //fs.linearizeSI(si);
-
-            } catch (Exception e) {
-                log.error("Cannot get indice/analyse stock for: " + "EFTSE" + " and date: " + date +  " //exception:" + e);
-                continue;
+                    List<StockIndice> si = StockIndice.getStockIndiceDateInvert("EFTSE", date, validator.perdiodFTSE);
+                    fs.linearizeSI(si);
+                    if (validator.FTSEAT) {
+                        StockAnalyse asi = StockAnalyse.getAnalyse("EFTSE", si.get(0).getDay());
+                        fs.linearize(asi, validator);
+                    }
+                } catch (Exception e) {
+                    log.error("Cannot get indice/analyse stock for: " + "EFTSE" + " and date: " + date + " //exception:" + e);
+                    continue;
+                }
             }
 
 
@@ -352,12 +378,15 @@ public class FeaturesStock implements Serializable {
             /**
              * volatility cac
              */
-            try {
-                List<StockIndice> sVCac = StockIndice.getStockIndiceDateInvert("VCAC", date, XT_PERIOD);
-                fs.linearizeSI(sVCac);
-            } catch (Exception e) {
-                log.error("Cannot get vcac stock for: " + stock.getCodeif() + " and date: " + date + " //exception:" + e);
-                continue;
+            if (validator.cacVola) {
+                try {
+                    List<StockIndice> sVCac = StockIndice.getStockIndiceDateInvert("VCAC", date, validator.perdiodcacVola);
+                    fs.linearizeSI(sVCac);
+
+                } catch (Exception e) {
+                    log.error("Cannot get vcac stock for: " + stock.getCodeif() + " and date: " + date + " //exception:" + e);
+                    continue;
+                }
             }
 
 

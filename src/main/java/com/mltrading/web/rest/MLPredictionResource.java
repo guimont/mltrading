@@ -26,12 +26,24 @@ public class MLPredictionResource {
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @RolesAllowed(AuthoritiesConstants.ADMIN)
-    public List<MLPerformances> findAll(@RequestParam(value = "key") String key) {
+    /*public List<MLPerformances> findAll(@RequestParam(value = "key") String key) {
         MLStocks ms = CacheMLStock.getMLStockCache().get(key);
         List<MLPerformances> l = ms.getPerfList();
 
         Collections.sort(l);
 
         return l;
+    }*/
+
+    public MLStatus findAll(@RequestParam(value = "key") String key) {
+        MLStocks ms = CacheMLStock.getMLStockCache().get(key);
+        MLStatus l = ms.getStatus();
+
+        Collections.sort(l.getPerfList());
+
+        return l;
     }
+
+
+
 }

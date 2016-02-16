@@ -21,11 +21,20 @@ public class MlForecast {
 
         for (Stock s : l) {
             RandomForestStock rfs = new RandomForestStock();
-            MLStocks mls = rfs.processRF(s, true);
+            MLStocks mls = rfs.processRF(s, true , false);
 
             if (null != mls) {
-                mls.calculeAvgPrd();
-                CacheMLStock.getMLStockCache().put(mls.getCodif(),mls);
+                mls.getStatus().calculeAvgPrd();
+                MLStocks ref = CacheMLStock.getMLStockCache().get(mls.getCodif());
+
+                if (ref != null) {
+                    if (mls.getStatus().getErrorRateD1() < ref.getStatus().getErrorRateD1()) {
+                        //TODO dont replace all
+                        CacheMLStock.getMLStockCache().put(mls.getCodif(), mls);
+                    }
+                } else {
+                    CacheMLStock.getMLStockCache().put(mls.getCodif(), mls);
+                }
             }
 
         }
@@ -35,10 +44,56 @@ public class MlForecast {
         log.info("result mlf size: " + CacheMLStock.getMLStockCache().size());
 
         for (MLStocks mls:CacheMLStock.getMLStockCache().values()) {
-            log.info("perf list result size: " + mls.getPerfList().size());
+            log.info("perf list result size: " + mls.getStatus().getPerfList().size());
             //log.info("test data count: " + mls.getTestData().count()); too verbous spark log for count function
         }
 
     }
 
+
+    public void optimize(Stock s, int loop) {
+
+        for (int i = 0; i< loop; i++) {
+            RandomForestStock rfs = new RandomForestStock();
+            MLStocks mls = rfs.processRF(s, true, false);
+
+            if (null != mls) {
+                mls.getStatus().calculeAvgPrd();
+                mls.getMlD1().getValidator().save(mls.getCodif(), mls.getStatus().getErrorRateD1());
+                MLStocks ref = CacheMLStock.getMLStockCache().get(mls.getCodif());
+
+                if (ref != null) {
+                    if (mls.getStatus().getErrorRateD1() < ref.getStatus().getErrorRateD1()) {
+                        //TODO dont replace all
+                        CacheMLStock.getMLStockCache().put(mls.getCodif(), mls);
+                    }
+                } else {
+                    CacheMLStock.getMLStockCache().put(mls.getCodif(), mls);
+                }
+            }
+        }
+    }
+
+    public void optimizeFeature(Stock s, int loop) {
+
+        for (int i = 0; i< loop; i++) {
+            RandomForestStock rfs = new RandomForestStock();
+            MLStocks mls = rfs.processRF(s, false, true);
+
+            if (null != mls) {
+                mls.getStatus().calculeAvgPrd();
+                mls.getMlD1().getValidator().save(mls.getCodif(), mls.getStatus().getErrorRateD1());
+                MLStocks ref = CacheMLStock.getMLStockCache().get(mls.getCodif());
+
+                if (ref != null) {
+                    if (mls.getStatus().getErrorRateD1() < ref.getStatus().getErrorRateD1()) {
+                        //TODO dont replace all
+                        CacheMLStock.getMLStockCache().put(mls.getCodif(), mls);
+                    }
+                } else {
+                    CacheMLStock.getMLStockCache().put(mls.getCodif(), mls);
+                }
+            }
+        }
+    }
 }

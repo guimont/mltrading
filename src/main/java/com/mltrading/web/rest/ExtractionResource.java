@@ -77,12 +77,22 @@ public class ExtractionResource {
 
         List<Stock> sl = stockRepository.findAll();
 
-        RandomForestStock rf = new RandomForestStock();
-        //rf.processRF(sl.get(0));
-        //FeaturesStock.create(sl.get(0));*/
-
         forecast.processList(sl);
 
         return "ok";
     }
+
+    @RequestMapping(value = "/optimizeML",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    public String optimizeML() {
+
+        List<Stock> sl = stockRepository.findAll();
+
+        forecast.optimizeFeature(sl.get(0), 100);
+
+        return "ok";
+    }
+
+
 }

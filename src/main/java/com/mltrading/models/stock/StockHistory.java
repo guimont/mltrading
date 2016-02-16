@@ -427,7 +427,7 @@ public class StockHistory extends Object{
 
         List<StockHistory> stockList = new ArrayList<>();
         //offset is mult by 2 because it is no dense data
-        String query = "SELECT * FROM " + code + " where time <= '" + date + "' and time > '"+ date + "' - "+  Integer.toString(offset*2) +"d";
+        String query = "SELECT * FROM " + code + " where time <= '" + date + "' and time > '"+ date + "' - "+  Integer.toString(offset*4) +"d";
         QueryResult list = InfluxDaoConnector.getPoints(query);
 
         if (list.getResults().get(0).getSeries().get(0).getValues().size()< offset)

@@ -1,11 +1,14 @@
 <div class="container">
     <h2 style="margin-bottom: 60px" translate="performance.title">Performance</h2>
 
-    <span class="label label-warning">{{preds[0].avgD1}}</span>
+    <span class="label label-danger">{{preds.errorRateD1}} / 90</span>
+    <span class="label label-warning">{{preds.avgD1}}</span>
     <span id="kinetic1D"></span>
-    <span class="label label-warning">{{preds[0].avgD5}}</span>
+    <span class="label label-danger">{{preds.errorRateD5}} / 85</span>
+    <span class="label label-warning">{{preds.avgD5}}</span>
     <span id="kinetic5D"></span>
-    <span class="label label-warning">{{preds[0].avgD20}}</span>
+    <span class="label label-danger">{{preds.errorRateD20}} / 70</span>
+    <span class="label label-warning">{{preds.avgD20}}</span>
     <span id="kinetic20D"></span>
 
     <table style="margin-top: 40px" class="table table-condensed table-striped table-bordered table-responsive">
@@ -18,11 +21,14 @@
             <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="performance.table.header.sign5D">Sign 5 Day</span></th>
             <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="performance.table.header.pred5D">Prediction 5 Day</span></th>
             <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="performance.table.header.perf5D">Performance 5 Day</span></th>
+            <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="performance.table.header.sign20D">Sign 20 Day</span></th>
+            <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="performance.table.header.pred20D">Prediction 20 Day</span></th>
+            <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="performance.table.header.perf20D">Performance 20 Day</span></th>
 
         </tr>
         </thead>
 
-        <tr ng-repeat="pred in preds | filter:filter | orderBy:'-name':true" ng-hide="audit.filtered">
+        <tr ng-repeat="pred in preds.perfList | filter:filter | orderBy:'-name':true" ng-hide="audit.filtered">
             <td><span>{{pred.mlD1.date}}</span></td>
             <td>{{pred.mlD1.sign}}</td>
             <td>{{pred.mlD1.yield}}</td>
@@ -30,6 +36,9 @@
             <td>{{pred.mlD5.sign}}</td>
             <td>{{pred.mlD5.yield}}</td>
             <td>{{pred.mlD5.realyield}}</td>
+            <td>{{pred.mlD20.sign}}</td>
+            <td>{{pred.mlD20.yield}}</td>
+            <td>{{pred.mlD20.realyield}}</td>
         </tr>
 
 
