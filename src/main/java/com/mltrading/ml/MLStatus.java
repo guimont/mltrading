@@ -101,6 +101,21 @@ public class MLStatus implements Serializable{
         return perfList;
     }
 
+    public void replaceElementList(List<MLPerformances> rep, int col) throws Exception {
+        for (int i = 0; i< this.getPerfList().size(); i++) {
+            switch (col) {
+                case 1 : this.getPerfList().get(i).setMlD1(rep.get(i).getMlD1());
+                        break;
+                case 5 : this.getPerfList().get(i).setMlD5(rep.get(i).getMlD5());
+                    break;
+                case 20 : this.getPerfList().get(i).setMlD20(rep.get(i).getMlD20());
+                    break;
+                default: throw new Exception("replaement imossible, perdio unknown");
+            }
+        }
+
+    }
+
     public void setPerfList(List<MLPerformances> perfList) {
         this.perfList = perfList;
     }

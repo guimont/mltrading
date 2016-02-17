@@ -89,7 +89,7 @@ public class ExtractionResource {
 
         List<Stock> sl = stockRepository.findAll();
 
-        forecast.optimizeFeature(sl.get(0), 1000);
+        forecast.optimizeFeature(sl.get(0), 100);
 
         return "ok";
     }

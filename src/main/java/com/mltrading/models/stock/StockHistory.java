@@ -339,7 +339,7 @@ public class StockHistory extends Object{
             return null;
 
         sh.setCode(code);
-        populate(sh, meanQ, 0);
+        populate(sh, meanQ, offset-1);
         return sh;
     }
 

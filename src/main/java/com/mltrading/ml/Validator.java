@@ -122,18 +122,18 @@ public class Validator {
         this.seed = seed;
     }
 
-    public void save(String code, int error) {
+    public void save(String code, int error, double rate) {
         BatchPoints bp = InfluxDaoConnector.getBatchPoints();
 
-        Point pt = Point.measurement(code + 'V')
+        Point pt = Point.measurement(code)
             .field("maxDepth", maxDepth)
-            .field("maxBins",maxBins)
+            .field("maxBins", maxBins)
             .field("numTrees", numTrees)
             .field("seed",seed)
 
             .field("perdiodHist", perdiodHist)
-            .field("historyAT",historyAT)
-            .field("historyConsensus",historyConsensus)
+            .field("historyAT", historyAT)
+            .field("historyConsensus", historyConsensus)
             .field("perdiodSector", perdiodSector)
             .field("sectorAT",sectorAT)
             .field("perdiodCac",perdiodCac)
@@ -146,18 +146,19 @@ public class Validator {
             .field("indiceFTSE",indiceFTSE)
             .field("perdiodFTSE",perdiodFTSE)
             .field("cacVola", cacVola)
-            .field("perdiodcacVola", seed)
+            .field("perdiodcacVola", perdiodcacVola)
 
             .field("historyVolume", historyVolume)
-            .field("analyseMme12",analyseMme12)
-            .field("analyseMme26",analyseMme26)
+            .field("analyseMme12", analyseMme12)
+            .field("analyseMme26", analyseMme26)
             .field("analyseMomentum",analyseMomentum)
             .field("analyseStdDev",analyseStdDev)
             .field("DJIAT",DJIAT)
             .field("N225AT",N225AT)
             .field("FTSEAT",FTSEAT)
 
-            .field("error",error)
+            .field("error", error)
+            .field("rate", rate)
             .build();
         bp.point(pt);
 
