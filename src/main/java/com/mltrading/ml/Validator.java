@@ -131,7 +131,7 @@ public class Validator {
             .field("numTrees", numTrees)
             .field("seed",seed)
 
-            .field("perdiodHist", perdiodHist)
+           /* .field("perdiodHist", perdiodHist)
             .field("historyAT", historyAT)
             .field("historyConsensus", historyConsensus)
             .field("perdiodSector", perdiodSector)
@@ -155,7 +155,7 @@ public class Validator {
             .field("analyseStdDev",analyseStdDev)
             .field("DJIAT",DJIAT)
             .field("N225AT",N225AT)
-            .field("FTSEAT",FTSEAT)
+            .field("FTSEAT",FTSEAT)*/
 
             .field("error", error)
             .field("rate", rate)

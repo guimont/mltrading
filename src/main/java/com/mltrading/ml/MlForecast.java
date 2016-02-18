@@ -82,7 +82,7 @@ public class MlForecast {
 
             if (null != mls) {
                 mls.getStatus().calculeAvgPrd();
-                //mls.getMlD1().getValidator().save(mls.getCodif()+"VD1", mls.getStatus().getErrorRateD1(), mls.getStatus().getAvgD1());
+                mls.getMlD1().getValidator().save(mls.getCodif()+"VD1", mls.getStatus().getErrorRateD1(), mls.getStatus().getAvgD1());
                 //mls.getMlD5().getValidator().save(mls.getCodif()+"VD5", mls.getStatus().getErrorRateD5(), mls.getStatus().getAvgD5());
                 //mls.getMlD20().getValidator().save(mls.getCodif()+"VD20", mls.getStatus().getErrorRateD5(), mls.getStatus().getAvgD20());
                 MLStocks ref = CacheMLStock.getMLStockCache().get(mls.getCodif());

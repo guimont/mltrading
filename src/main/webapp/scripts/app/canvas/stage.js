@@ -140,7 +140,7 @@ function chartRun(pos, layer, col, key, color, dyn) {
         if (perf.perfList[i][col]) {
             if (dyn === true && perf.perfList[i][col].sign === false)
                 dyncolor = 'red'
-            drawChart(group, pos, perf.perfList[i][col][key], heightM, eltSize, i, perf.perfList[i][col].date, layer, dyncolor );
+            drawChart(group, pos, perf.perfList[i][col],key,  heightM, eltSize, i, perf.perfList[i][col].date, layer, dyncolor );
         }
 
     }
@@ -205,7 +205,7 @@ function drawChartMax(group, pos, max ,mean, heightM, width) {
  * @param layer
  * @param color
  */
-function drawChart(group, pos, elt ,heightM, eltSize, i, text , layer, color) {
+function drawChart(group, pos, elt ,key , heightM, eltSize, i, text , layer, color) {
     var tooltip;
 
     var rectBack = new Kinetic.Rect({
@@ -244,7 +244,7 @@ function drawChart(group, pos, elt ,heightM, eltSize, i, text , layer, color) {
         x: pos.x+i*(eltSize+2),
         y: pos.y,
         width: eltSize,
-        height: -elt*heightM,
+        height: -elt[key]*heightM,
         fill: color
     });
 
@@ -279,24 +279,22 @@ function drawChart(group, pos, elt ,heightM, eltSize, i, text , layer, color) {
     var anim = new Kinetic.Animation(function() {
         chartGroup.destroyChildren();
 
-        var spos = {x:pos.x-18,y:pos.y};
-        if (i>14) spos.x-=100;
+        var spos = {x:pos.x/2,y:pos.y};
+        if (i<42) spos.x+=90;
 
-
-
-        dist += 35;
+        /*dist += 35;
         if (dist >= 360) {
             anim.stop();
             dist = 370;
-        }
+        }*/
 
+        anim.stop();
 
         tooltip = new Kinetic.Label({
-            x: spos.x+i*(eltSize+2)+4,
+            x: spos.x,
             y: 50,
             height: 85
         });
-
 
         var rect = new Kinetic.Rect({
             x:spos.x,
@@ -309,11 +307,144 @@ function drawChart(group, pos, elt ,heightM, eltSize, i, text , layer, color) {
 
         tooltip.add(rect);
 
-        //drawRunPie(tooltip, spos, elt,dist);
+        drawRunPie(tooltip, spos, elt);
 
         chartGroup.add(tooltip);
 
         layer.draw();
     });
+
+
+    function drawRunPie(tooltip, pos, elt) {
+
+
+        tooltip.add(new Kinetic.Text({
+            x:pos.x+10,
+            y: -23,
+            text: 'date:',
+            fontFamily: 'Calibri',
+            fontSize: 12,
+            fill: 'black'
+        }));
+
+        tooltip.add(new Kinetic.Text({
+            x:pos.x+40,
+            y: -23,
+            text: elt.date,
+            fontFamily: 'Calibri',
+            fontSize: 11,
+            fill: 'black'
+        }));
+
+
+
+        tooltip.add(new Kinetic.Text({
+            x:pos.x+10,
+            y: -8,
+            text: 'day value:',
+            fontFamily: 'Calibri',
+            fontSize: 12,
+            fill: 'black'
+        }));
+
+        tooltip.add(new Kinetic.Text({
+            x:pos.x+100,
+            y: -8,
+            text: elt.realvalue.toFixed(5),
+            fontFamily: 'Calibri',
+            fontSize: 12,
+            fill: 'grey'
+        }));
+
+
+        var colorR  = elt.realyield < 0 ? 'red' : 'green'
+
+        tooltip.add(new Kinetic.Text({
+            x:pos.x+10,
+            y: 7,
+            text: 'real perf:',
+            fontFamily: 'Calibri',
+            fontSize: 12,
+            fill: 'black'
+        }));
+
+        tooltip.add(new Kinetic.Text({
+            x:pos.x+100,
+            y: 7,
+            text: elt.realyield.toFixed(5),
+            fontFamily: 'Calibri',
+            fontSize: 11,
+            fill: colorR
+        }));
+
+
+
+        var colorP  = elt.yield < 0 ? 'red' : 'green'
+        tooltip.add(new Kinetic.Text({
+            x:pos.x+10,
+            y: 22,
+            text: 'prev perf:',
+            fontFamily: 'Calibri',
+            fontSize: 12,
+            fill: 'black'
+        }));
+
+        tooltip.add(new Kinetic.Text({
+            x:pos.x+100,
+            y: 22,
+            text: elt.yield.toFixed(5),
+            fontFamily: 'Calibri',
+            fontSize: 11,
+            fill: colorP
+        }));
+
+
+
+        tooltip.add(new Kinetic.Text({
+            x:pos.x+10,
+            y: 37,
+            text: 'real value:',
+            fontFamily: 'Calibri',
+            fontSize: 12,
+            fill: 'black'
+        }));
+
+        tooltip.add(new Kinetic.Text({
+            x:pos.x+100,
+            y: 37,
+            text: elt.currentValue.toFixed(5),
+            fontFamily: 'Calibri',
+            fontSize: 11,
+            fill: colorR
+        }));
+
+        tooltip.add(new Kinetic.Text({
+            x:pos.x+10,
+            y: 52,
+            text: 'prediction:',
+            fontFamily: 'Calibri',
+            fontSize: 12,
+            fill: 'black'
+        }));
+
+        tooltip.add(new Kinetic.Text({
+            x:pos.x+100,
+            y: 52,
+            text: elt.prediction.toFixed(5),
+            fontFamily: 'Calibri',
+            fontSize: 11,
+            fill: colorP
+        }));
+
+
+/*
+
+        private boolean sign;
+        private double prediction;
+        private double realvalue;
+        private double currentValue;
+        private double error;*/
+
+    }
 
 }
