@@ -82,7 +82,7 @@ public class HistoryIndiceParserYahoo implements HistoryIndiceParser {
                                 HistoryIndiceParser.saveHistory(bp, ind);
 
                                 System.out.println(ind.toString());
-                                if (count++ >= range)
+                                if (++count >= range)
                                     break;
                             }
                         }

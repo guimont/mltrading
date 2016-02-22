@@ -54,6 +54,17 @@ public class ExtractionResource {
         return "ok";
     }
 
+    @RequestMapping(value = "/extractionSeriesDailly",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    public String getExtractionSeriesDailly() {
+        service.extractionCurrent();
+        return "ok";
+    }
+
+
+
+
 
     @RequestMapping(value = "/checkML",
         method = RequestMethod.GET,
@@ -89,7 +100,9 @@ public class ExtractionResource {
 
         List<Stock> sl = stockRepository.findAll();
 
-        forecast.optimizeFeature(sl.get(0), 100);
+        for (Stock s : sl) {
+            forecast.optimizeFeature(s, 100);
+        }
 
         return "ok";
     }

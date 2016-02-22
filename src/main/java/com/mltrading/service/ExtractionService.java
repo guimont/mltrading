@@ -43,7 +43,7 @@ public class ExtractionService {
         sectorParser.fetchDaily();
         vola.fetchDaily();
         Analyse a = new Analyse();
-        a.processDaily();
+        a.processDaily(2);
     }
 
     public void extractionMonthly() {
@@ -52,7 +52,7 @@ public class ExtractionService {
         sectorParser.fetchMonthly();
         vola.fetchMonthly();
         Analyse a = new Analyse();
-        a.processDaily();
+        a.processDaily(20);
     }
 
 

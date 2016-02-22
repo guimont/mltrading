@@ -4,6 +4,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.mltrading.domain.User;
 import com.mltrading.ml.RandomForestStock;
+import com.mltrading.ml.Validator;
 import com.mltrading.models.parser.*;
 import com.mltrading.models.parser.impl.CheckConsistency;
 import com.mltrading.models.parser.impl.HistorySectorParserYahoo;
@@ -55,14 +56,14 @@ public class test {
         histParser.fetchSpecific(g);
 
         //histParser.fetch();*/
-        CheckConsistency.countfrom();
+        //CheckConsistency.countfrom();
 
         /*histParser.fetchMonthly();
         indiceParser.fetchMonthly();
         sectorParser.fetchMonthly();
         vola.fetchMonthly();     */
-        Analyse a = new Analyse();
-        a.processAll();
+        /*Analyse a = new Analyse();
+        a.processSectorAll();
 
         /*HistorySectorParserYahoo hspy = new HistorySectorParserYahoo();
 
@@ -148,6 +149,10 @@ public class test {
 
 
         //service.extractFull();
+
+
+        Validator v = new Validator();
+        v.loadValidator("ORAVD1");
 
 
     }

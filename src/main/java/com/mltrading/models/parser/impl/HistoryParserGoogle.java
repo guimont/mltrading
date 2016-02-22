@@ -60,7 +60,7 @@ public class HistoryParserGoogle implements HistoryParser {
         for (StockGeneral g : CacheStockGeneral.getIsinCache().values()) {
             Consensus cnote = ConsensusParserInvestir.fetchStock(g.getCode());
 
-            String url = startUrl + g.getCodif() + "." + g.getPlaceCodif() + endUrl + 0;
+            String url = startUrl + g.getCodif()  + endUrl + 0;
             try {
                 String text;
                 int loopPage = 0;
@@ -88,17 +88,18 @@ public class HistoryParserGoogle implements HistoryParser {
                             if (t.size() > 3) {
                                 loopPage++;
                                 StockHistory hist = new StockHistory(g);
-                                hist.setDayYahoo(t.get(0).text());
-                                hist.setOpening(new Double(t.get(1).text().replace(",", ".")));
-                                hist.setHighest(new Double(t.get(2).text().replace(",", ".")));
-                                hist.setLowest(new Double(t.get(3).text().replace(",", ".")));
-                                hist.setValue(new Double(t.get(4).text().replace(",", ".")));
-                                hist.setVolume(new Double(t.get(5).text().replaceAll(" ", "")));
+                                hist.setDayGoogle(t.get(0).text());
+
+                                hist.setOpening(new Double(t.get(1).text().replaceAll(" ", "").replace(",", "").replace("-","0")));
+                                hist.setHighest(new Double(t.get(2).text().replaceAll(" ", "").replace(",", "").replace("-","0")));
+                                hist.setLowest(new Double(t.get(3).text().replaceAll(" ", "").replace(",", "").replace("-","0")));
+                                hist.setValue(new Double(t.get(4).text().replaceAll(" ", "").replace(",", "").replace("-","0")));
+                                hist.setVolume(new Double(t.get(5).text().replaceAll(" ", "").replace(",", "").replace("-", "0")));
                                 hist.setConsensusNote(cnote.getNotation(cnote.getIndice(loopPage + 0)).getAvg());
-                                if (hist.getVolume() > 0)
-                                    HistoryParser.saveHistory(bp, hist); //dont save no trading day
+
+                                HistoryParser.saveHistory(bp, hist);
                                 System.out.println(hist.toString());
-                                if (count++ >= range)
+                                if (++count >= range)
                                     break;
                             }
                         }

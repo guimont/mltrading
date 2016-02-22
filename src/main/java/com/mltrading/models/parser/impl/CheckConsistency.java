@@ -81,6 +81,7 @@ public class CheckConsistency {
             try {
                 List<StockSector> ss = StockSector.getStockSectorDateInvert(stock.getSector(), date, XT_PERIOD);
                 //Check date equals
+
                 if (!ss.get(0).getDay().equalsIgnoreCase(date))
                     log.error("Cannot get sector correct stock for: " + stock.getSector() + " and date: " + date);
                 StockAnalyse ass = StockAnalyse.getAnalyse(stock.getSector(), date);

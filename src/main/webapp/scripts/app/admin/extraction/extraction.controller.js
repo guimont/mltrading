@@ -9,11 +9,18 @@ angular.module('mltradingApp')
             });
         }
 
-        $scope.extractionSeries = function () {
+        $scope.extractSeriesFull = function () {
             return $http.get('/api/extractionSeries').then(function (response) {
                 return response.data;
             });
         }
+
+        $scope.extractSeriesDailly = function () {
+            return $http.get('/api/extractionSeriesDailly').then(function (response) {
+                return response.data;
+            });
+        }
+
         $scope.processML = function () {
             return $http.get('/api/processML').then(function (response) {
                 return response.data;

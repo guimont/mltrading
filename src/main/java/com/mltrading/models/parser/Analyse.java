@@ -54,12 +54,12 @@ public class Analyse {
     }
 
 
-    public void processDaily() {
+    public void processDaily(int period) {
         List<String> dateList = null;
 
         for (StockGeneral g: CacheStockGeneral.getIsinCache().values()) {
             if (dateList == null) {
-                dateList = StockHistory.getDateHistoryListOffsetLimit(g.getCode(),50,5);
+                dateList = StockHistory.getDateHistoryListOffsetLimit(g.getCode(),50,period);
             }
 
             for (String date:dateList) {

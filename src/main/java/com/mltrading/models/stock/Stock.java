@@ -85,7 +85,8 @@ public class Stock  implements Serializable {
     }*/
 
     public String getSector() {
-        return sector;
+        return CacheStockGeneral.getIsinCache().get(code).getSector();
+        //return sector;
     }
 
     public void setSector(String sector) {

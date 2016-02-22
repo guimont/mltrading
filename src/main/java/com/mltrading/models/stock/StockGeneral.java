@@ -92,7 +92,7 @@ public class StockGeneral {
         this.codif = codif;
         this.placeCodif = placeCodif;
     }
-    public StockGeneral(String code, String name,  String codif, String place, String placeCodif, String sector) {
+    public StockGeneral(String code, String name,  String codif, String place, String placeCodif, String sector, String subsector) {
         this.code = code;
         this.name = name;
         this.place = place;

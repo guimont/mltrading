@@ -33,7 +33,7 @@ public class HistorySectorParserGoogle implements HistorySectorParser {
 
     @Override
     public void fetchDaily() {
-
+        loaderFrom(2);
     }
 
     @Override
@@ -86,7 +86,7 @@ public class HistorySectorParserGoogle implements HistorySectorParser {
                                 sect.setVolume(new Double(0));
                                 HistorySectorParser.saveHistory(bp, sect);
                                 System.out.println(sect.toString());
-                                if (count++ >= range)
+                                if (++count >= range)
                                     break;
                             }
                         }

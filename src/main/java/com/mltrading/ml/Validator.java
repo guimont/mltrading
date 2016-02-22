@@ -3,6 +3,7 @@ package com.mltrading.ml;
 import com.mltrading.dao.InfluxDaoConnector;
 import com.mltrading.influxdb.dto.BatchPoints;
 import com.mltrading.influxdb.dto.Point;
+import com.mltrading.influxdb.dto.QueryResult;
 
 import java.util.concurrent.TimeUnit;
 
@@ -43,6 +44,55 @@ public class Validator {
     public boolean FTSEAT = true;
 
 
+
+    public void loadValidator(String code) {
+        String query = "SELECT min(error) FROM " + code;
+        QueryResult result = InfluxDaoConnector.getPoints(query);
+
+        double minError = (double) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(1);
+
+        query = "SELECT min(rate) FROM " + code+ " where error="+ minError ;
+        result = InfluxDaoConnector.getPoints(query);
+
+        double minRate = (double) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(1);
+
+        query = "SELECT * FROM " + code + " where error="+ minError +" and rate="+minRate;
+        result = InfluxDaoConnector.getPoints(query);
+
+        this.DJIAT = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(1);
+        this.FTSEAT = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(2);
+        this.N225AT = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(3);
+        this.analyseMme12 = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(4);
+        this.analyseMme26 = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(5);
+        this.analyseMomentum = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(6);
+        this.analyseStdDev = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(7);
+        //async = result.getResults().get(0).getSeries().get(0).getValues().get(0).get(8);
+        this.cac = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(9);
+        this.cacAT = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(10);
+        this.cacVola = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(11);
+        //error = result.getResults().get(0).getSeries().get(0).getValues().get(0).get(12);
+        this.historyAT = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(13);
+        this.historyConsensus = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(14);
+        this.historyVolume = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(15);
+        this.indiceDJI = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(16);
+        this.indiceFTSE = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(17);
+        this.indiceN225 = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(18);
+        this.maxBins = new Integer(((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(0).get(19))).intValue());
+        this.maxDepth = new Integer(((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(0).get(20))).intValue());
+        this.numTrees = new Integer(((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(0).get(21))).intValue());
+        this.perdiodCac = ((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(0).get(22))).intValue();
+        this.perdiodDJI = ((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(0).get(23))).intValue();
+        this.perdiodFTSE = ((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(0).get(24))).intValue();
+        this.perdiodHist = ((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(0).get(25))).intValue();
+        this.perdiodN225 = ((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(0).get(26))).intValue();
+        this.perdiodSector = ((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(0).get(27))).intValue();
+        this.perdiodcacVola = ((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(0).get(28))).intValue();
+        //rate = result.getResults().get(0).getSeries().get(0).getValues().get(0).get(29);
+        this.sectorAT = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(30);
+        this.seed = new Integer(((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(0).get(31))).intValue());
+
+
+    }
 
 
 
@@ -131,7 +181,7 @@ public class Validator {
             .field("numTrees", numTrees)
             .field("seed",seed)
 
-           /* .field("perdiodHist", perdiodHist)
+            .field("perdiodHist", perdiodHist)
             .field("historyAT", historyAT)
             .field("historyConsensus", historyConsensus)
             .field("perdiodSector", perdiodSector)
@@ -155,7 +205,7 @@ public class Validator {
             .field("analyseStdDev",analyseStdDev)
             .field("DJIAT",DJIAT)
             .field("N225AT",N225AT)
-            .field("FTSEAT",FTSEAT)*/
+            .field("FTSEAT",FTSEAT)
 
             .field("error", error)
             .field("rate", rate)

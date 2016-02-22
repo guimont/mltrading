@@ -37,11 +37,14 @@ public class MLPredictionResource {
 
     public MLStatus findAll(@RequestParam(value = "key") String key) {
         MLStocks ms = CacheMLStock.getMLStockCache().get(key);
-        MLStatus l = ms.getStatus();
+        if (ms != null) {
+            MLStatus l = ms.getStatus();
+            Collections.sort(l.getPerfList());
 
-        Collections.sort(l.getPerfList());
+            return l;
+        } else
+            return null;
 
-        return l;
     }
 
 
