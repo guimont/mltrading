@@ -1,12 +1,15 @@
 package com.mltrading.models.parser;
 
 
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.mltrading.models.parser.impl.RealTimeParserYahoo;
+import com.mltrading.models.stock.StockHistory;
 import com.mltrading.models.util.ThreadFactory;
+import com.mltrading.service.ExtractionService;
 
 /**
  * Created by gmo on 19/06/2015.
@@ -20,6 +23,7 @@ public class ScheduleParserGeneral  {
 
     protected Timer timer;
     protected TimerTask timerTask;
+    private static ExtractionService service = new ExtractionService();
 
 
     protected class GlobalTimerTask extends TimerTask {
@@ -64,6 +68,7 @@ public class ScheduleParserGeneral  {
 
 
     public void start() {
+        updateBase();
         RealTimeParserYahoo.loaderCache();
         this.extractionCycleInMs =  30000;
         this.timer = new Timer("ExtractionProcess", true);
@@ -85,6 +90,15 @@ public class ScheduleParserGeneral  {
 
     public AtomicBoolean getExtractionIsRunning() {
         return extractionIsRunning;
+    }
+
+
+    void updateBase() {
+
+        List<String> l = StockHistory.getDateHistoryListOffsetLimit("",0,1);
+
+        service.extractionCurrent();
+
     }
 
 }

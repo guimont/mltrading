@@ -85,8 +85,6 @@ public class Analyse {
         for (String date:dateList) {
             processAnalysisSpecific("VCAC", date, columnIndice);
         }
-
-
     }
 
 
@@ -94,6 +92,15 @@ public class Analyse {
 
         for (StockSector g : CacheStockSector.getSectorCache().values()) {
             processAnalysisAll(g.getCode(), columnSector);
+        }
+
+    }
+
+
+    public void processIndiceAll() {
+
+        for (StockIndice g : CacheStockIndice.getIndiceCache().values()) {
+            processAnalysisAll(g.getCode(), columnIndice);
         }
 
     }

@@ -21,7 +21,7 @@ public class StockHistory extends Object{
 
     private String place;
 
-    private String day;
+    protected String day;
 
     DateTime timeInsert;
 

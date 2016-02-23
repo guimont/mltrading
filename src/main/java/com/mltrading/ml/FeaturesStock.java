@@ -211,10 +211,14 @@ public class FeaturesStock implements Serializable {
             this.vector[currentVectorPos++] = sh.getValue();
     }
 
+    public void linearizeSR(List<StockRawMat> shl) {
+        for (StockRawMat sh:shl)
+            this.vector[currentVectorPos++] = sh.getValue();
+    }
+
     static int OFFSET_BASE = 50;
     static int RANGE_MAX = 300;
-    static int XT_PERIOD = 20;
-    static int XT_OFFSET = 20;
+
 
     public  static List<FeaturesStock> create(Stock stock, Validator validator) {
         //Xt,Xt-1,...,Xn ,Consensus AT => StockHistory
@@ -373,6 +377,42 @@ public class FeaturesStock implements Serializable {
                 }
             }
 
+            /**
+             * indice DAX london
+             */
+            if (validator.indiceDAX) {
+                try {
+
+                    List<StockIndice> si = StockIndice.getStockIndiceDateInvert("EGDAXI", date, validator.perdiodDAX);
+                    fs.linearizeSI(si);
+                    if (validator.DAXIAT) {
+                        StockAnalyse asi = StockAnalyse.getAnalyse("EGDAXI", si.get(0).getDay());
+                        fs.linearize(asi, validator);
+                    }
+                } catch (Exception e) {
+                    log.error("Cannot get indice/analyse stock for: " + "EGDAXI" + " and date: " + date + " //exception:" + e);
+                    continue;
+                }
+            }
+
+            /**
+             * indice STOXX50 london
+             */
+            if (validator.indiceSTOXX50) {
+                try {
+
+                    List<StockIndice> si = StockIndice.getStockIndiceDateInvert("ESTOXX50E", date, validator.perdiodSTOXX50);
+                    fs.linearizeSI(si);
+                    if (validator.STOXX50AT) {
+                        StockAnalyse asi = StockAnalyse.getAnalyse("ESTOXX50E", si.get(0).getDay());
+                        fs.linearize(asi, validator);
+                    }
+                } catch (Exception e) {
+                    log.error("Cannot get indice/analyse stock for: " + "EGDAXI" + " and date: " + date + " //exception:" + e);
+                    continue;
+                }
+            }
+
 
 
             /**
@@ -382,6 +422,20 @@ public class FeaturesStock implements Serializable {
                 try {
                     List<StockIndice> sVCac = StockIndice.getStockIndiceDateInvert("VCAC", date, validator.perdiodcacVola);
                     fs.linearizeSI(sVCac);
+
+                } catch (Exception e) {
+                    log.error("Cannot get vcac stock for: " + stock.getCodeif() + " and date: " + date + " //exception:" + e);
+                    continue;
+                }
+            }
+
+            /**
+             * taux de change $/€
+             */
+            if (validator.DOLLAR) {
+                try {
+                    List<StockRawMat> sDE = StockRawMat.getStockRawDateInvert("DTOE", date, validator.perdiodDOLLAR);
+                    fs.linearizeSR(sDE);
 
                 } catch (Exception e) {
                     log.error("Cannot get vcac stock for: " + stock.getCodeif() + " and date: " + date + " //exception:" + e);

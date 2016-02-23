@@ -3,6 +3,7 @@ package com.mltrading.models.parser;
 import com.mltrading.influxdb.dto.BatchPoints;
 import com.mltrading.influxdb.dto.Point;
 import com.mltrading.models.stock.StockHistory;
+import com.mltrading.models.stock.StockRawMat;
 
 import java.util.concurrent.TimeUnit;
 
@@ -13,13 +14,12 @@ public interface HistoryRawMaterialsParser {
 
     void fetch();
 
-    public static void saveHistory(BatchPoints bp, StockHistory hist) {
-        Point pt = Point.measurement(hist.getCode()).time(hist.getTimeInsert().getMillis()+3600000, TimeUnit.MILLISECONDS)
-            .field("open", hist.getOpening())
-            .field("high", hist.getHighest())
-            .field("low",hist.getLowest())
-            .field("volume", hist.getVolume())
-            .field("value",hist.getValue())
+    public static void saveHistory(BatchPoints bp, StockRawMat raw) {
+        Point pt = Point.measurement(raw.getCode()).time(raw.getTimeInsert().getMillis() + 3600000, TimeUnit.MILLISECONDS)
+            .field("open", raw.getOpening())
+            .field("high", raw.getHighest())
+            .field("low",raw.getLowest())
+            .field("value", raw.getValue())
             .build();
         bp.point(pt);
     }

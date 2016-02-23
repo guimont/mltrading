@@ -39,15 +39,21 @@ public class RandomForestStock implements Serializable {
 
         MLStocks mls = new MLStocks(stock.getCodeif());
 
-        //TODO refactor this code, not nice
-        if (randomFeature) {
-            mls.getMlD1().getValidator().generateFeature();
-        }
-
         if (generate) {
             mls.getMlD1().getValidator().generate();
             mls.getMlD5().getValidator().generate();
             mls.getMlD20().getValidator().generate();
+        }
+
+        //TODO refactor this code, not nice
+        /**
+         only one generator for FeaturesStock.create
+         better execution time
+         */
+        if (randomFeature) {
+            mls.getMlD1().getValidator().generateFeature();
+            mls.getMlD5().setValidator(mls.getMlD1().getValidator());
+            mls.getMlD20().setValidator(mls.getMlD1().getValidator());
         }
 
 
@@ -151,9 +157,7 @@ public class RandomForestStock implements Serializable {
             });
 
 
-
-        mls.getStatus().setPerfList(res.collect());
-        //mls.getMlD5().setPerfList(res.collect().get(1));
+        mls.getStatus().setPerfList(res.collect());;
 
         return mls;
 

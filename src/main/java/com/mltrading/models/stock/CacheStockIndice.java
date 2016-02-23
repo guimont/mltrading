@@ -16,6 +16,8 @@ public class CacheStockIndice {
         aMap.put("EDJI", new StockIndice("EDJI", "dji"));
         aMap.put("EN225", new StockIndice("EN225", "nikkei"));
         aMap.put("EFTSE", new StockIndice("EFTSE", "ftse"));
+        aMap.put("EGDAXI", new StockIndice("EGDAXI", "dax"));
+        aMap.put("ESTOXX50E", new StockIndice("ESTOXX50E", "stoxx 50"));
 
         IndiceMap = Collections.unmodifiableMap(aMap);
     }

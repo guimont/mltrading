@@ -151,8 +151,17 @@ public class test {
         //service.extractFull();
 
 
-        Validator v = new Validator();
-        v.loadValidator("ORAVD1");
+       /* Validator v = new Validator();
+        v.loadValidator("ORAVD1");*/
+
+        /*HistoryRawMaterialsParser rawParser = injector.getInstance(HistoryRawMaterialsParser.class);
+        rawParser.fetch();*/
+
+        //List<String> l = StockHistory.getDateHistoryListOffsetLimit("",0,1);
+
+        indiceParser.fetch();
+        Analyse a = new Analyse();
+        a.processIndiceAll();
 
 
     }

@@ -100,7 +100,7 @@ public class ParserMain {
                     CacheStockGeneral.getCache().put(g.getCode(),g);
                 }
 
-                if ((!linkItem.isEmpty()) && linkItem.compareToIgnoreCase("matieresPetroleTr") == 0) {
+                /*if ((!linkItem.isEmpty()) && linkItem.compareToIgnoreCase("matieresPetroleTr") == 0) {
                     StockGeneral g = new StockGeneral();
                     g.setCode(link.attr("data-code"));
                     g.setPlace(link.attr("data-place"));
@@ -117,7 +117,7 @@ public class ParserMain {
 
                     }
                     CacheRawMaterial.getCache().put(g.getCode(),g);
-                }
+                }*/
 
             }
 
@@ -134,7 +134,7 @@ public class ParserMain {
     }
 
 
-
+/*
     public static void loaderRawMaterials(String url) {
         try {
             String text = ParserCommon.loadUrl(new URL(url));
@@ -183,6 +183,6 @@ public class ParserMain {
             e.printStackTrace();
         }
 
-    }
+    }*/
 
 }

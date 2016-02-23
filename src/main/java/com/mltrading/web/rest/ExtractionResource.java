@@ -101,7 +101,7 @@ public class ExtractionResource {
         List<Stock> sl = stockRepository.findAll();
 
         for (Stock s : sl) {
-            forecast.optimizeFeature(s, 100);
+            forecast.optimizeFeature(s, 10);
         }
 
         return "ok";

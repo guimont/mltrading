@@ -30,8 +30,17 @@ public class Validator {
     public int perdiodN225 = 20;
     public boolean indiceFTSE = true;
     public int perdiodFTSE = 20;
+
+    public boolean indiceDAX = true;
+    public int perdiodDAX = 20;
+    public boolean indiceSTOXX50 = true;
+    public int perdiodSTOXX50= 20;
+    public boolean DOLLAR = true;
+    public int perdiodDOLLAR = 20;
+
     public boolean cacVola = true;
     public int perdiodcacVola = 20;
+
 
     public boolean historyVolume = true;
     public boolean analyseMme12 = true;
@@ -42,6 +51,8 @@ public class Validator {
     public boolean DJIAT = true;
     public boolean N225AT = true;
     public boolean FTSEAT = true;
+    public boolean DAXIAT = true;
+    public boolean STOXX50AT = true;
 
 
 
@@ -125,6 +136,14 @@ public class Validator {
         FTSEAT = randomBool();
         cacVola =  randomBool();
         perdiodcacVola = randomPeriod();
+        DAXIAT = randomBool();
+        indiceDAX = randomBool();
+        perdiodDAX = randomPeriod();
+        STOXX50AT  = randomBool();
+        indiceSTOXX50 = randomBool();
+        perdiodSTOXX50= randomPeriod();
+        DOLLAR = randomBool();
+        perdiodDOLLAR = randomPeriod();
 
         historyVolume = randomBool();
         analyseMme12 = randomBool();
@@ -179,33 +198,45 @@ public class Validator {
             .field("maxDepth", maxDepth)
             .field("maxBins", maxBins)
             .field("numTrees", numTrees)
-            .field("seed",seed)
+            .field("seed", seed)
 
             .field("perdiodHist", perdiodHist)
             .field("historyAT", historyAT)
             .field("historyConsensus", historyConsensus)
             .field("perdiodSector", perdiodSector)
-            .field("sectorAT",sectorAT)
+            .field("sectorAT", sectorAT)
             .field("perdiodCac",perdiodCac)
-            .field("cac",cac)
+            .field("cac", cac)
             .field("cacAT",cacAT)
             .field("indiceDJI", indiceDJI)
-            .field("perdiodDJI",perdiodDJI)
+            .field("perdiodDJI", perdiodDJI)
             .field("indiceN225",indiceN225)
-            .field("perdiodN225",perdiodN225)
+            .field("perdiodN225", perdiodN225)
             .field("indiceFTSE",indiceFTSE)
             .field("perdiodFTSE",perdiodFTSE)
             .field("cacVola", cacVola)
             .field("perdiodcacVola", perdiodcacVola)
 
+
+
+            .field("DAXIAT",DAXIAT)
+            .field("indiceDAX",indiceDAX)
+            .field("perdiodDAX", perdiodDAX)
+            .field("STOXX50AT",STOXX50AT)
+            .field("indiceSTOXX50",indiceSTOXX50)
+            .field("perdiodSTOXX50", perdiodSTOXX50)
+            .field("DOLLAR", DOLLAR)
+            .field("perdiodDOLLAR", perdiodDOLLAR)
+
             .field("historyVolume", historyVolume)
             .field("analyseMme12", analyseMme12)
             .field("analyseMme26", analyseMme26)
             .field("analyseMomentum",analyseMomentum)
-            .field("analyseStdDev",analyseStdDev)
+            .field("analyseStdDev", analyseStdDev)
             .field("DJIAT",DJIAT)
-            .field("N225AT",N225AT)
+            .field("N225AT", N225AT)
             .field("FTSEAT",FTSEAT)
+
 
             .field("error", error)
             .field("rate", rate)

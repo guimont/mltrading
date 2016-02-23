@@ -42,6 +42,7 @@ public class ExtractionService {
         indiceParser.fetchDaily();
         sectorParser.fetchDaily();
         vola.fetchDaily();
+        //rawParser.fetchDaily();
         Analyse a = new Analyse();
         a.processDaily(2);
     }
