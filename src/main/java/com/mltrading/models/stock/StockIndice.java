@@ -65,6 +65,6 @@ public class StockIndice extends StockHistory {
         }
 
         return stockList;
-
     }
+
 }

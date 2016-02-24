@@ -422,6 +422,19 @@ public class StockHistory extends Object{
         return dateList;
     }
 
+    public static String getLastDateHistory(final String code) {
+
+        //suppose base is filled
+        String query = "SELECT * FROM "+code +" where time > '2015-06-01T00:00:00Z'";
+        QueryResult list = InfluxDaoConnector.getPoints(query);
+
+        int size = list.getResults().get(0).getSeries().get(0).getValues().size();
+
+
+        return (String) list.getResults().get(0).getSeries().get(0).getValues().get(size-1).get(0);
+
+    }
+
 
     public static List<StockHistory> getStockHistoryDateInvert(final String code, final String date, int offset) {
 

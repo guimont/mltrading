@@ -14,9 +14,8 @@ public interface HistoryIndiceParser {
 
     void fetch();
 
-    public void fetchDaily();
+    public void fetchCurrent(int period);
 
-    public void fetchMonthly();
 
     public static void saveHistory(BatchPoints bp, StockIndice hist) {
         Point pt = Point.measurement(hist.getCode()).time(hist.getTimeInsert().getMillis()+3600000, TimeUnit.MILLISECONDS)

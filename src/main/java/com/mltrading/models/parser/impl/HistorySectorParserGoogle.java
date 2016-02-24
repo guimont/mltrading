@@ -32,14 +32,10 @@ public class HistorySectorParserGoogle implements HistorySectorParser {
     }
 
     @Override
-    public void fetchDaily() {
-        loaderFrom(2);
+    public void fetchCurrent(int period) {
+        loaderFrom(period);
     }
 
-    @Override
-    public void fetchMonthly() {
-
-    }
 
     //http://www.google.com/finance/historical?q=INDEXEURO%3AFRAD&num=200&start=0
     static String startUrl="http://www.google.com/finance/historical?q=INDEXEURO%3A";

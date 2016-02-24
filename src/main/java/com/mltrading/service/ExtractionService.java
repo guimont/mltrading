@@ -37,24 +37,17 @@ public class ExtractionService {
     }
 
 
-    public void extractionCurrent() {
-        histParser.fetchDaily();
-        indiceParser.fetchDaily();
-        sectorParser.fetchDaily();
-        vola.fetchDaily();
+    public void extractionCurrent(int period) {
+        histParser.fetchCurrent(period);
+        indiceParser.fetchCurrent(period);
+        sectorParser.fetchCurrent(period);
+        vola.fetchCurrent(period);
         //rawParser.fetchDaily();
         Analyse a = new Analyse();
-        a.processDaily(2);
+        a.processDaily(period);
     }
 
-    public void extractionMonthly() {
-        histParser.fetchMonthly();
-        indiceParser.fetchMonthly();
-        sectorParser.fetchMonthly();
-        vola.fetchMonthly();
-        Analyse a = new Analyse();
-        a.processDaily(20);
-    }
+
 
 
 }

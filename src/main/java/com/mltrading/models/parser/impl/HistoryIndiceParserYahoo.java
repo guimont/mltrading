@@ -36,13 +36,8 @@ public class HistoryIndiceParserYahoo implements HistoryIndiceParser {
     }
 
     @Override
-    public void fetchDaily() {
-        loaderFrom(2);
-    }
-
-    @Override
-    public void fetchMonthly() {
-        loaderFrom(20);
+    public void fetchCurrent(int period) {
+        loaderFrom(period);
     }
 
 

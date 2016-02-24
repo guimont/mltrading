@@ -28,14 +28,11 @@ public class HistorySectorParserYahoo implements HistorySectorParser {
     }
 
     @Override
-    public void fetchDaily() {
+    public void fetchCurrent(int period) {
        throw  new NotImplementedException();
     }
 
-    @Override
-    public void fetchMonthly() {
-        throw  new NotImplementedException();
-    }
+
 
     //https://fr.finance.yahoo.com/q/hp?s=FRCM.PA&b=2&a=00&c=2015&e=2&d=00&f=2015&g=d
 

@@ -35,14 +35,10 @@ public class HistoryParserYahoo implements HistoryParser {
     }
 
     @Override
-    public void fetchDaily() {
-        loaderFrom(2);
+    public void fetchCurrent(int period) {
+        loaderFrom(period);
     }
 
-    @Override
-    public void fetchMonthly() {
-        loaderFrom(20);
-    }
 
     static String startUrl="https://fr.finance.yahoo.com/q/hp?s=";
     static String endUrl ="&a=00&b=3&c=2010&g=d&z=66&y=";

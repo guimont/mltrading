@@ -32,14 +32,10 @@ public class HistoryParserGoogle implements HistoryParser {
     }
 
     @Override
-    public void fetchDaily() {
-        loaderFrom(2);
+    public void fetchCurrent(int period) {
+        loaderFrom(period);
     }
 
-    @Override
-    public void fetchMonthly() {
-        loaderFrom(20);
-    }
 
 // http://www.google.com/finance/historical?q=EPA%3AAC&startdate=Jan%2029%2C%202011&num=50&start=0
     static String startUrl="http://www.google.com/finance/historical?q=EPA%3A";

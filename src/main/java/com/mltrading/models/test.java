@@ -17,6 +17,7 @@ import com.mltrading.models.stock.StockHistory;
 import com.mltrading.service.ExtractionService;
 
 import com.mltrading.service.UserService;
+import org.joda.time.DateTime;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -157,11 +158,26 @@ public class test {
         /*HistoryRawMaterialsParser rawParser = injector.getInstance(HistoryRawMaterialsParser.class);
         rawParser.fetch();*/
 
-        //List<String> l = StockHistory.getDateHistoryListOffsetLimit("",0,1);
+        String l = StockHistory.getLastDateHistory("FR0000045072");
+        DateTime timeInsert = new DateTime(l);
+        DateTime timeNow = new DateTime(System.currentTimeMillis());
 
-        indiceParser.fetch();
+        int diff =
+            timeNow.getDayOfMonth() - timeInsert.getDayOfMonth();
+
+        l = StockHistory.getLastDateHistory("FRIN");
+        timeInsert = new DateTime(l);
+        diff = Math.max(diff, timeNow.getDayOfMonth() - timeInsert.getDayOfMonth());
+
+        l = StockHistory.getLastDateHistory("EFCHI");
+        timeInsert = new DateTime(l);
+        diff = Math.max(diff, timeNow.getDayOfMonth() - timeInsert.getDayOfMonth());
+
+        System.out.print(diff);
+
+        /*sectorParser.fetch();
         Analyse a = new Analyse();
-        a.processIndiceAll();
+        a.processSectorAll();*/
 
 
     }

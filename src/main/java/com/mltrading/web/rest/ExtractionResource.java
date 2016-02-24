@@ -41,6 +41,7 @@ public class ExtractionResource {
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String getExtractionAction() {
+        stockRepository.deleteAll();
         service.extractStock(stockRepository);
         return "ok";
     }
@@ -58,7 +59,7 @@ public class ExtractionResource {
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String getExtractionSeriesDailly() {
-        service.extractionCurrent();
+        service.extractionCurrent(2);
         return "ok";
     }
 

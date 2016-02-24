@@ -33,14 +33,10 @@ public class VolatilityGoogle implements VolatilityParser {
     }
 
     @Override
-    public void fetchDaily() {
-        loaderFrom(2);
+    public void fetchCurrent(int period) {
+        loaderFrom(period);
     }
 
-    @Override
-    public void fetchMonthly() {
-        loaderFrom(20);
-    }
 
 
     /**
