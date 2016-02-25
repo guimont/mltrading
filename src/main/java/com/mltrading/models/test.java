@@ -25,6 +25,8 @@ import java.util.List;
 /**
  * Created by gmo on 18/06/2015.
  */
+
+
 public class test {
 
     private static ExtractionService service = new ExtractionService();
@@ -43,6 +45,10 @@ public class test {
 
         HistoryIndiceParser indiceParser= injector.getInstance(HistoryIndiceParser.class);
         VolatilityParser vola = injector.getInstance(VolatilityParser.class);
+        HistoryRawMaterialsParser rawParser = injector.getInstance(HistoryRawMaterialsParser.class);
+
+        rawParser.fetch();
+        //rawParser.fetchCurrent(2);
 
         //indiceParser.fetchMonthly();
 
@@ -156,7 +162,7 @@ public class test {
         v.loadValidator("ORAVD1");*/
 
         /*HistoryRawMaterialsParser rawParser = injector.getInstance(HistoryRawMaterialsParser.class);
-        rawParser.fetch();*/
+        rawParser.fetch();
 
         String l = StockHistory.getLastDateHistory("FR0000045072");
         DateTime timeInsert = new DateTime(l);

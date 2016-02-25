@@ -22,39 +22,88 @@ import java.net.URL;
  */
 public class HistoryLocalRawMaterials implements HistoryRawMaterialsParser {
 
+    final static String localUrl = "http://localhost:8090/raw/";
+
+
     @Override
     public void fetch() {
-
-        for (StockRawMat r: CacheRawMaterial.getCache().values())
-            loader(r);
+        loader();
     }
+
+    @Override
+    public void fetchCurrent(int period) {
+        loaderCurrent(period);
+    }
+
 
     final String refCode = "tbody";
 
-    public  void loader(StockRawMat r) {
-        try {
-            String text = ParserCommon.loadUrl(new URL(r.getUrl()));
-            Document doc = Jsoup.parse(text);
-            Elements links = doc.select(refCode);
+    public  void loader() {
+        for (StockRawMat r: CacheRawMaterial.getCache().values()) {
+            try {
+                String url = localUrl + r.getName() + ".html";
+                String text = ParserCommon.loadUrl(new URL(url));
+                Document doc = Jsoup.parse(text);
+                Elements links = doc.select(refCode);
 
-            Element e = links.get(1);
+                Element e = null;
+                if (links.get(1).children().size() > 100)
+                    e = links.get(1);
+                else
+                    e = links.get(2);
 
-            BatchPoints bp = InfluxDaoConnector.getBatchPoints();
+                BatchPoints bp = InfluxDaoConnector.getBatchPoints();
 
-            for (Element t :  e.children()) {
-                StockRawMat raw = new StockRawMat(r);
-                raw.setDayInvest(t.children().get(0).text());
-                raw.setValue(new Double(t.children().get(1).text().replaceAll(" ", "").replace(",", "").replace("-","0")));
-                raw.setOpening(new Double(t.children().get(2).text().replaceAll(" ", "").replace(",", "").replace("-","0")));
-                raw.setHighest(new Double(t.children().get(3).text().replaceAll(" ", "").replace(",", "").replace("-","0")));
-                raw.setLowest(new Double(t.children().get(4).text().replaceAll(" ", "").replace(",", "").replace("-","0")));
+                for (Element t : e.children()) {
+                    StockRawMat raw = new StockRawMat(r);
+                    raw.setDayInvest(t.children().get(0).text());
+                    raw.setValue(new Double(t.children().get(1).text().replaceAll(" ", "").replace(",", "").replace("-", "0")));
+                    raw.setOpening(new Double(t.children().get(2).text().replaceAll(" ", "").replace(",", "").replace("-", "0")));
+                    raw.setHighest(new Double(t.children().get(3).text().replaceAll(" ", "").replace(",", "").replace("-", "0")));
+                    raw.setLowest(new Double(t.children().get(4).text().replaceAll(" ", "").replace(",", "").replace("-", "0")));
 
-                HistoryRawMaterialsParser.saveHistory(bp, raw);
+                    HistoryRawMaterialsParser.saveHistory(bp, raw);
+                }
+                InfluxDaoConnector.writePoints(bp);
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
             }
-            InfluxDaoConnector.writePoints(bp);
+        }
+    }
 
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
+
+    public  void loaderCurrent(int range) {
+
+        for (StockRawMat r: CacheRawMaterial.getCache().values()) {
+            try {
+
+                String text = ParserCommon.loadUrl(new URL(r.getUrl()));
+                Document doc = Jsoup.parse(text);
+                Elements links = doc.select(refCode);
+
+                Element e = links.get(1);
+
+                BatchPoints bp = InfluxDaoConnector.getBatchPoints();
+
+                int count = 0;
+                for (Element t : e.children()) {
+                    StockRawMat raw = new StockRawMat(r);
+                    raw.setDayInvest(t.children().get(0).text());
+                    raw.setValue(new Double(t.children().get(1).text().replaceAll(" ", "").replace(",", "").replace("-", "0")));
+                    raw.setOpening(new Double(t.children().get(2).text().replaceAll(" ", "").replace(",", "").replace("-", "0")));
+                    raw.setHighest(new Double(t.children().get(3).text().replaceAll(" ", "").replace(",", "").replace("-", "0")));
+                    raw.setLowest(new Double(t.children().get(4).text().replaceAll(" ", "").replace(",", "").replace("-", "0")));
+
+                    HistoryRawMaterialsParser.saveHistory(bp, raw);
+                    if (++count >= range)
+                        break;
+                }
+                InfluxDaoConnector.writePoints(bp);
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
         }
     }
 

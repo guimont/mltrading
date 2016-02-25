@@ -93,8 +93,9 @@ public class MlForecast {
 
                     if (ref != null) {
                         /**for 1 day prevision*/
-                        if (mls.getStatus().getErrorRateD1() <= ref.getStatus().getErrorRateD1()) {
-                            if (mls.getStatus().getAvgD1() < ref.getStatus().getAvgD1()) {
+                        if (mls.getStatus().getErrorRateD1() <= ref.getStatus().getErrorRateD1() ||
+                            (mls.getStatus().getErrorRateD1() == ref.getStatus().getErrorRateD1() &&
+                                mls.getStatus().getAvgD1() < ref.getStatus().getAvgD1())) {
                                 ref.getMlD1().setValidator(mls.getMlD1().getValidator());
                                 ref.getMlD1().setModel(mls.getMlD1().getModel());
                                 ref.getStatus().setAvgD1(mls.getStatus().getAvgD1());
@@ -105,11 +106,12 @@ public class MlForecast {
                                 } catch (Exception e) {
                                 }
                             }
-                        }
+
 
                         /**for 5 day prevision*/
-                        if (mls.getStatus().getErrorRateD5() < ref.getStatus().getErrorRateD5()) {
-                            if (mls.getStatus().getAvgD5() < ref.getStatus().getAvgD5()) {
+                        if (mls.getStatus().getErrorRateD5() < ref.getStatus().getErrorRateD5() ||
+                            (mls.getStatus().getErrorRateD5() == ref.getStatus().getErrorRateD5() &&
+                                mls.getStatus().getAvgD5() < ref.getStatus().getAvgD5())) {
                                 ref.getMlD5().setValidator(mls.getMlD5().getValidator());
                                 ref.getMlD5().setModel(mls.getMlD5().getModel());
                                 ref.getStatus().setAvgD5(mls.getStatus().getAvgD5());
@@ -120,11 +122,12 @@ public class MlForecast {
                                     log.error("Cannot replace element for period 5 days" + e);
                                 }
                             }
-                        }
+
 
                         /**for 20 day prevision*/
-                        if (mls.getStatus().getErrorRateD20() < ref.getStatus().getErrorRateD20()) {
-                            if (mls.getStatus().getAvgD20() < ref.getStatus().getAvgD20()) {
+                        if (mls.getStatus().getErrorRateD20() < ref.getStatus().getErrorRateD20() ||
+                            (mls.getStatus().getErrorRateD20() == ref.getStatus().getErrorRateD20() &&
+                                mls.getStatus().getAvgD20() < ref.getStatus().getAvgD20())) {
                                 ref.getMlD20().setValidator(mls.getMlD20().getValidator());
                                 ref.getMlD20().setModel(mls.getMlD20().getModel());
                                 ref.getStatus().setAvgD20(mls.getStatus().getAvgD20());
@@ -135,7 +138,7 @@ public class MlForecast {
                                     log.error("Cannot replace element for period 20 days" + e);
                                 }
                             }
-                        }
+
                     } else {
                         CacheMLStock.getMLStockCache().put(mls.getCodif(), mls);
                     }

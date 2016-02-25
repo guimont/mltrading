@@ -1,6 +1,7 @@
 package com.mltrading.ml;
 
 import com.mltrading.dao.InfluxDaoConnector;
+import com.mltrading.dao.InfluxDaoConnectorPerf;
 import com.mltrading.influxdb.dto.BatchPoints;
 import com.mltrading.influxdb.dto.Point;
 import com.mltrading.influxdb.dto.QueryResult;
@@ -37,6 +38,9 @@ public class Validator {
     public int perdiodSTOXX50= 20;
     public boolean DOLLAR = true;
     public int perdiodDOLLAR = 20;
+    public boolean PETROL = true;
+    public int perdiodPETROL = 20;
+
 
     public boolean cacVola = true;
     public int perdiodcacVola = 20;
@@ -53,6 +57,21 @@ public class Validator {
     public boolean FTSEAT = true;
     public boolean DAXIAT = true;
     public boolean STOXX50AT = true;
+
+    public boolean EURI1M = true;
+    public int perdiodEURI1M = 20;
+    public boolean EURI1Y = true;
+    public int perdiodEURI1Y = 20;
+    public boolean EURI10Y = true;
+    public int perdiodEURI10Y = 20;
+
+    public boolean USRI1M = true;
+    public int perdiodUSRI1M = 20;
+    public boolean USRI1Y = true;
+    public int perdiodUSRI1Y = 20;
+    public boolean USRI10Y = true;
+    public int perdiodUSRI10Y = 20;
+
 
 
 
@@ -144,6 +163,22 @@ public class Validator {
         perdiodSTOXX50= randomPeriod();
         DOLLAR = randomBool();
         perdiodDOLLAR = randomPeriod();
+        PETROL = randomBool();
+        perdiodPETROL = randomPeriod();
+
+        EURI1M = randomBool();
+        perdiodEURI1M = randomPeriod();
+        EURI1Y = randomBool();
+        perdiodEURI1Y = randomPeriod();
+        EURI10Y = randomBool();
+        perdiodEURI10Y = randomPeriod();
+
+        USRI1M = randomBool();
+        perdiodUSRI1M = randomPeriod();
+        USRI1Y = randomBool();
+        perdiodUSRI1Y = randomPeriod();
+        USRI10Y = randomBool();
+        perdiodUSRI10Y = randomPeriod();
 
         historyVolume = randomBool();
         analyseMme12 = randomBool();
@@ -192,7 +227,7 @@ public class Validator {
     }
 
     public void save(String code, int error, double rate) {
-        BatchPoints bp = InfluxDaoConnector.getBatchPoints();
+        BatchPoints bp = InfluxDaoConnectorPerf.getBatchPoints();
 
         Point pt = Point.measurement(code)
             .field("maxDepth", maxDepth)
@@ -212,21 +247,21 @@ public class Validator {
             .field("perdiodDJI", perdiodDJI)
             .field("indiceN225",indiceN225)
             .field("perdiodN225", perdiodN225)
-            .field("indiceFTSE",indiceFTSE)
+            .field("indiceFTSE", indiceFTSE)
             .field("perdiodFTSE",perdiodFTSE)
             .field("cacVola", cacVola)
             .field("perdiodcacVola", perdiodcacVola)
 
-
-
-            .field("DAXIAT",DAXIAT)
-            .field("indiceDAX",indiceDAX)
+            .field("DAXIAT", DAXIAT)
+            .field("indiceDAX", indiceDAX)
             .field("perdiodDAX", perdiodDAX)
             .field("STOXX50AT",STOXX50AT)
             .field("indiceSTOXX50",indiceSTOXX50)
             .field("perdiodSTOXX50", perdiodSTOXX50)
             .field("DOLLAR", DOLLAR)
             .field("perdiodDOLLAR", perdiodDOLLAR)
+            .field("PETROL", DOLLAR)
+            .field("perdiodPETROL", perdiodDOLLAR)
 
             .field("historyVolume", historyVolume)
             .field("analyseMme12", analyseMme12)
@@ -237,13 +272,26 @@ public class Validator {
             .field("N225AT", N225AT)
             .field("FTSEAT",FTSEAT)
 
+            .field("EURI1M", EURI1M)
+            .field("perdiodEURI1M", perdiodEURI1M)
+            .field("EURI1Y", EURI1Y)
+            .field("perdiodEURI1Y", perdiodEURI1Y)
+            .field("EURI10Y", EURI10Y)
+            .field("perdiodEURI10Y", perdiodEURI10Y)
+
+            .field("USRI1M", USRI1M)
+            .field("perdiodUSRI1M", perdiodUSRI1M)
+            .field("USRI1Y", USRI1Y)
+            .field("perdiodUSRI1Y", perdiodUSRI1Y)
+            .field("USRI10Y", USRI10Y)
+            .field("perdiodUSRI10Y", perdiodUSRI10Y)
 
             .field("error", error)
             .field("rate", rate)
             .build();
         bp.point(pt);
 
-        InfluxDaoConnector.writePoints(bp);
+        InfluxDaoConnectorPerf.writePoints(bp);
 
     }
 

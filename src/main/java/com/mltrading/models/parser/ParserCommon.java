@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
 
@@ -22,7 +23,9 @@ public class ParserCommon {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            stream = url.openStream();
+            HttpURLConnection httpcon = (HttpURLConnection) url.openConnection();
+            httpcon.addRequestProperty("User-Agent", "Mozilla/4.0");
+            stream =  httpcon.getInputStream();
             return loadStream(stream);
         } catch (IOException e) {
             e.printStackTrace();
