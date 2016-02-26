@@ -438,10 +438,111 @@ public class FeaturesStock implements Serializable {
                     fs.linearizeSR(sDE);
 
                 } catch (Exception e) {
-                    log.error("Cannot get vcac stock for: " + stock.getCodeif() + " and date: " + date + " //exception:" + e);
+                    log.error("Cannot get dollar stock for: " + stock.getCodeif() + " and date: " + date + " //exception:" + e);
                     continue;
                 }
             }
+
+            /**
+             * prix du petrole
+             */
+            if (validator.PETROL) {
+                try {
+                    List<StockRawMat> sDE = StockRawMat.getStockRawDateInvert("PETB", date, validator.perdiodPETROL);
+                    fs.linearizeSR(sDE);
+
+                } catch (Exception e) {
+                    log.error("Cannot get petrol stock for: " + stock.getCodeif() + " and date: " + date + " //exception:" + e);
+                    continue;
+                }
+            }
+
+
+            /**
+             * Euribor 1 mois
+             */
+            if (validator.EURI1M) {
+                try {
+                    List<StockRawMat> sDE = StockRawMat.getStockRawDateInvert("EURI1M", date, validator.perdiodEURI1M);
+                    fs.linearizeSR(sDE);
+
+                } catch (Exception e) {
+                    log.error("Cannot get euribord 1 month stock for: " + stock.getCodeif() + " and date: " + date + " //exception:" + e);
+                    continue;
+                }
+            }
+
+            /**
+             * Euribor 1 année
+             */
+            if (validator.EURI1Y) {
+                try {
+                    List<StockRawMat> sDE = StockRawMat.getStockRawDateInvert("EURI1Y", date, validator.perdiodEURI1Y);
+                    fs.linearizeSR(sDE);
+
+                } catch (Exception e) {
+                    log.error("Cannot get euribord 1 year stock for: " + stock.getCodeif() + " and date: " + date + " //exception:" + e);
+                    continue;
+                }
+            }
+
+            /**
+             * Euribor 10 année
+             */
+            if (validator.EURI10Y) {
+                try {
+                    List<StockRawMat> sDE = StockRawMat.getStockRawDateInvert("EURI10Y", date, validator.perdiodEURI10Y);
+                    fs.linearizeSR(sDE);
+
+                } catch (Exception e) {
+                    log.error("Cannot get euribord 10 years stock for: " + stock.getCodeif() + " and date: " + date + " //exception:" + e);
+                    continue;
+                }
+            }
+
+
+            /**
+             * Usribor 1 mois
+             */
+            if (validator.USRI1M) {
+                try {
+                    List<StockRawMat> sDE = StockRawMat.getStockRawDateInvert("USRI1M", date, validator.perdiodUSRI1M);
+                    fs.linearizeSR(sDE);
+
+                } catch (Exception e) {
+                    log.error("Cannot get usribord 1 month stock for: " + stock.getCodeif() + " and date: " + date + " //exception:" + e);
+                    continue;
+                }
+            }
+
+            /**
+             * Usribor 1 année
+             */
+            if (validator.USRI1Y) {
+                try {
+                    List<StockRawMat> sDE = StockRawMat.getStockRawDateInvert("USRI1Y", date, validator.perdiodUSRI1Y);
+                    fs.linearizeSR(sDE);
+
+                } catch (Exception e) {
+                    log.error("Cannot get usribord 1 year stock for: " + stock.getCodeif() + " and date: " + date + " //exception:" + e);
+                    continue;
+                }
+            }
+
+            /**
+             * Usribor 10 année
+             */
+            if (validator.USRI10Y) {
+                try {
+                    List<StockRawMat> sDE = StockRawMat.getStockRawDateInvert("USRI10Y", date, validator.perdiodUSRI10Y);
+                    fs.linearizeSR(sDE);
+
+                } catch (Exception e) {
+                    log.error("Cannot get usribord 10 years stock for: " + stock.getCodeif() + " and date: " + date + " //exception:" + e);
+                    continue;
+                }
+            }
+
 
 
             fsL.add(fs);

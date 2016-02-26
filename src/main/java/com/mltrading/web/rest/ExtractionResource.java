@@ -101,9 +101,15 @@ public class ExtractionResource {
 
         List<Stock> sl = stockRepository.findAll();
 
+
+
         for (Stock s : sl) {
-            forecast.optimizeFeature(s, 10);
+           if (s.getCodeif().equalsIgnoreCase("VIV")) {
+               forecast.optimizeFeature(s, 40);
+           }
         }
+
+
 
         return "ok";
     }

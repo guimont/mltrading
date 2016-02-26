@@ -46,7 +46,7 @@ public class HistoryLocalRawMaterials implements HistoryRawMaterialsParser {
                 Document doc = Jsoup.parse(text);
                 Elements links = doc.select(refCode);
 
-                Element e = null;
+                Element e;
                 if (links.get(1).children().size() > 100)
                     e = links.get(1);
                 else
@@ -82,7 +82,11 @@ public class HistoryLocalRawMaterials implements HistoryRawMaterialsParser {
                 Document doc = Jsoup.parse(text);
                 Elements links = doc.select(refCode);
 
-                Element e = links.get(1);
+                Element e;
+                if (links.get(1).children().size() > 20)
+                    e = links.get(1);
+                else
+                    e = links.get(2);
 
                 BatchPoints bp = InfluxDaoConnector.getBatchPoints();
 

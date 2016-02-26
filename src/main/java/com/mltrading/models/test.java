@@ -47,7 +47,7 @@ public class test {
         VolatilityParser vola = injector.getInstance(VolatilityParser.class);
         HistoryRawMaterialsParser rawParser = injector.getInstance(HistoryRawMaterialsParser.class);
 
-        rawParser.fetch();
+        //rawParser.fetch();
         //rawParser.fetchCurrent(2);
 
         //indiceParser.fetchMonthly();
@@ -161,10 +161,10 @@ public class test {
        /* Validator v = new Validator();
         v.loadValidator("ORAVD1");*/
 
-        /*HistoryRawMaterialsParser rawParser = injector.getInstance(HistoryRawMaterialsParser.class);
-        rawParser.fetch();
 
-        String l = StockHistory.getLastDateHistory("FR0000045072");
+        rawParser.fetchCurrent(2);
+
+        /*String l = StockHistory.getLastDateHistory("FR0000045072");
         DateTime timeInsert = new DateTime(l);
         DateTime timeNow = new DateTime(System.currentTimeMillis());
 
