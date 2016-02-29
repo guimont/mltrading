@@ -73,6 +73,10 @@ public class Validator {
     public int perdiodUSRI10Y = 20;
 
 
+    private double error;
+    private double rate;
+
+
 
 
     public void loadValidator(String code) {
@@ -100,7 +104,7 @@ public class Validator {
         this.cac = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(9);
         this.cacAT = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(10);
         this.cacVola = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(11);
-        //error = result.getResults().get(0).getSeries().get(0).getValues().get(0).get(12);
+        this.error = (double) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(12);
         this.historyAT = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(13);
         this.historyConsensus = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(14);
         this.historyVolume = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(15);

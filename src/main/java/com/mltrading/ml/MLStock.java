@@ -1,20 +1,17 @@
 package com.mltrading.ml;
 
-import com.mltrading.dao.InfluxDaoConnector;
-import com.mltrading.influxdb.dto.BatchPoints;
+
 import com.mltrading.ml.FeaturesStock.PredictionPeriodicity;
-import org.apache.spark.api.java.JavaRDD;
 
 import org.apache.spark.mllib.tree.model.RandomForestModel;
 
-import java.util.List;
+
 
 
 public class MLStock {
     private String codif;
     private PredictionPeriodicity period;
     private RandomForestModel model;
-    private List<Double> previsionList;
     private Validator validator;
 
 
@@ -52,14 +49,6 @@ public class MLStock {
         this.model = model;
     }
 
-    public List<Double> getPrevisionList() {
-        return previsionList;
-    }
-
-    public void setPrevisionList(List<Double> previsionList) {
-        this.previsionList = previsionList;
-    }
-
 
 
     public void saveModel() {
@@ -70,16 +59,10 @@ public class MLStock {
         this.model = RandomForestModel.load(CacheMLStock.getJavaSparkContext().sc(), "Model"+period.toString()+codif);
     }
 
-    /*public void savePerformance() {
-        BatchPoints bp = InfluxDaoConnector.getBatchPoints();
-        for (MLPerformances p : perfList) {
-            p.savePerformance(bp, codif+"P");
-        }
-    }   */
+
 
     public void save() {
-        saveModel();
-        //savePerformance();
+        saveModel();//savePerformance();
     }
 
 

@@ -75,28 +75,36 @@ public class ScheduleParserGeneral  {
      */
     void updateBase() {
 
-        String l = StockHistory.getLastDateHistory("FR0000045072");
-        DateTime timeInsert = new DateTime(l);
-        DateTime timeNow = new DateTime(System.currentTimeMillis());
+        try {
+            String l = StockHistory.getLastDateHistory("FR0000045072");
+            DateTime timeInsert = new DateTime(l);
+            DateTime timeNow = new DateTime(System.currentTimeMillis());
 
-        int diff =
-            timeNow.getDayOfMonth() - timeInsert.getDayOfMonth();
+            int diff =
+                timeNow.getDayOfMonth() - timeInsert.getDayOfMonth();
 
-        l = StockHistory.getLastDateHistory("FRIN");
-        timeInsert = new DateTime(l);
-        diff = Math.max(diff, timeNow.getDayOfMonth() - timeInsert.getDayOfMonth());
+            l = StockHistory.getLastDateHistory("FRIN");
+            timeInsert = new DateTime(l);
+            diff = Math.max(diff, timeNow.getDayOfMonth() - timeInsert.getDayOfMonth());
 
-        l = StockHistory.getLastDateHistory("EFCHI");
-        timeInsert = new DateTime(l);
-        diff = Math.max(diff, timeNow.getDayOfMonth() - timeInsert.getDayOfMonth());
+            l = StockHistory.getLastDateHistory("EFCHI");
+            timeInsert = new DateTime(l);
+            diff = Math.max(diff, timeNow.getDayOfMonth() - timeInsert.getDayOfMonth());
 
-        diff -=1;
+            diff -=1;
 
 
-        log.info("Have to extract " +  diff + " days in influxdb base");
+            log.info("Have to extract " +  diff + " days in influxdb base");
 
-        if (diff > 0)
-            service.extractionCurrent(diff);
+            if (diff > 0)
+                service.extractionCurrent(diff);
+        } catch (Exception e) {
+            log.error("cannot get history last date, base perhaps empty: " +e);
+            return;
+        }
+
+
+
 
     }
 

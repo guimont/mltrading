@@ -35,7 +35,7 @@ public class test {
     private static UserService userService;
 
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
 
 
         Injector injector = Guice.createInjector(new ServiceParser());
@@ -159,7 +159,7 @@ public class test {
 
 
        /* Validator v = new Validator();
-        v.loadValidator("ORAVD1");*/
+        v.loadValidator("ORAVD1");*
 
 
         rawParser.fetchCurrent(2);
@@ -183,9 +183,9 @@ public class test {
 
         /*sectorParser.fetch();
         Analyse a = new Analyse();
-        a.processSectorAll();*/
+        a.processSectorAll();*
 
 
-    }
+    }         */
 
 }
