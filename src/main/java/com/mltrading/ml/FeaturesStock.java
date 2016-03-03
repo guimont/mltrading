@@ -218,23 +218,24 @@ public class FeaturesStock implements Serializable {
 
     static int OFFSET_BASE = 50;
     static int RANGE_MAX = 300;
+    static int RANGE_TEST = 90;
 
 
-    public  static List<FeaturesStock> create(Stock stock, Validator validator) {
+    public  static List<FeaturesStock> create(StockGeneral stock, Validator validator, int range) {
         //Xt,Xt-1,...,Xn ,Consensus AT => StockHistory
         //Indice Xt,..Xn, AT => StockIndice
         //Secteur Xt,..Xn, AT => StockSecteur
         //Vola Cac Xt,..Xn, AT
         //indice etranger
 
-        log.info("create FeaturesStock for: " + stock.getCodeif());
+        log.info("create FeaturesStock for: " + stock.getCodif());
 
         List<FeaturesStock> fsL = new ArrayList<>();
 
         List<String> rangeDate = null;
         try {
-            rangeDate = StockHistory.getDateHistoryListOffsetLimit(stock.getCode(), OFFSET_BASE, RANGE_MAX);
-            if (rangeDate.size() < 200) {
+            rangeDate = StockHistory.getDateHistoryListOffsetLimit(stock.getCode(), OFFSET_BASE, range);
+            if (rangeDate.size() < range * 0.7) { //why this code ????
                 log.error("Cannot get date list for: " + stock.getCode() + " not enough element");
                 return null;
             }
@@ -301,7 +302,6 @@ public class FeaturesStock implements Serializable {
                 continue;
             }
 
-            String codeIndice = StockIndice.translate(stock.getIndice());
 
             /**
              * indice cac
@@ -310,16 +310,16 @@ public class FeaturesStock implements Serializable {
 
 
                 if (validator.cac) {
-                    List<StockIndice> si = StockIndice.getStockIndiceDateInvert(codeIndice, date, validator.perdiodCac);
+                    List<StockIndice> si = StockIndice.getStockIndiceDateInvert("EFCHI", date, validator.perdiodCac);
                     fs.linearizeSI(si);
                 }
 
                 if (validator.cacAT) {
-                    StockAnalyse asi = StockAnalyse.getAnalyse(codeIndice, date);
+                    StockAnalyse asi = StockAnalyse.getAnalyse("EFCHI", date);
                     fs.linearize(asi, validator);
                 }
             } catch (Exception e) {
-                log.error("Cannot get indice/analyse stock for: " + stock.getIndice() + " and date: " + date +  " //exception:" + e);
+                log.error("Cannot get indice/analyse stock for: " + "EFCHI" + " and date: " + date +  " //exception:" + e);
                 continue;
             }
 
@@ -403,12 +403,14 @@ public class FeaturesStock implements Serializable {
 
                     List<StockIndice> si = StockIndice.getStockIndiceDateInvert("ESTOXX50E", date, validator.perdiodSTOXX50);
                     fs.linearizeSI(si);
+                    //log.info("find " + si.size() + " ESTOXX50E for " + validator.perdiodSTOXX50 + " and date: " + date);
                     if (validator.STOXX50AT) {
                         StockAnalyse asi = StockAnalyse.getAnalyse("ESTOXX50E", si.get(0).getDay());
+                        //log.info("find " + asi.toString() + " ESTOXX50E for " + validator.perdiodSTOXX50 + " and date: " + si.get(0).getDay());
                         fs.linearize(asi, validator);
                     }
                 } catch (Exception e) {
-                    log.error("Cannot get indice/analyse stock for: " + "EGDAXI" + " and date: " + date + " //exception:" + e);
+                    log.error("Cannot get indice/analyse stock for: " + "ESTOXX50E" + " and date: " + date + " //exception:" + e);
                     continue;
                 }
             }
@@ -424,7 +426,7 @@ public class FeaturesStock implements Serializable {
                     fs.linearizeSI(sVCac);
 
                 } catch (Exception e) {
-                    log.error("Cannot get vcac stock for: " + stock.getCodeif() + " and date: " + date + " //exception:" + e);
+                    log.error("Cannot get vcac stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
                     continue;
                 }
             }
@@ -438,7 +440,7 @@ public class FeaturesStock implements Serializable {
                     fs.linearizeSR(sDE);
 
                 } catch (Exception e) {
-                    log.error("Cannot get dollar stock for: " + stock.getCodeif() + " and date: " + date + " //exception:" + e);
+                    log.error("Cannot get dollar stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
                     continue;
                 }
             }
@@ -452,7 +454,7 @@ public class FeaturesStock implements Serializable {
                     fs.linearizeSR(sDE);
 
                 } catch (Exception e) {
-                    log.error("Cannot get petrol stock for: " + stock.getCodeif() + " and date: " + date + " //exception:" + e);
+                    log.error("Cannot get petrol stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
                     continue;
                 }
             }
@@ -467,7 +469,7 @@ public class FeaturesStock implements Serializable {
                     fs.linearizeSR(sDE);
 
                 } catch (Exception e) {
-                    log.error("Cannot get euribord 1 month stock for: " + stock.getCodeif() + " and date: " + date + " //exception:" + e);
+                    log.error("Cannot get euribord 1 month stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
                     continue;
                 }
             }
@@ -481,7 +483,7 @@ public class FeaturesStock implements Serializable {
                     fs.linearizeSR(sDE);
 
                 } catch (Exception e) {
-                    log.error("Cannot get euribord 1 year stock for: " + stock.getCodeif() + " and date: " + date + " //exception:" + e);
+                    log.error("Cannot get euribord 1 year stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
                     continue;
                 }
             }
@@ -495,7 +497,7 @@ public class FeaturesStock implements Serializable {
                     fs.linearizeSR(sDE);
 
                 } catch (Exception e) {
-                    log.error("Cannot get euribord 10 years stock for: " + stock.getCodeif() + " and date: " + date + " //exception:" + e);
+                    log.error("Cannot get euribord 10 years stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
                     continue;
                 }
             }
@@ -510,7 +512,7 @@ public class FeaturesStock implements Serializable {
                     fs.linearizeSR(sDE);
 
                 } catch (Exception e) {
-                    log.error("Cannot get usribord 1 month stock for: " + stock.getCodeif() + " and date: " + date + " //exception:" + e);
+                    log.error("Cannot get usribord 1 month stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
                     continue;
                 }
             }
@@ -524,7 +526,7 @@ public class FeaturesStock implements Serializable {
                     fs.linearizeSR(sDE);
 
                 } catch (Exception e) {
-                    log.error("Cannot get usribord 1 year stock for: " + stock.getCodeif() + " and date: " + date + " //exception:" + e);
+                    log.error("Cannot get usribord 1 year stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
                     continue;
                 }
             }
@@ -538,7 +540,7 @@ public class FeaturesStock implements Serializable {
                     fs.linearizeSR(sDE);
 
                 } catch (Exception e) {
-                    log.error("Cannot get usribord 10 years stock for: " + stock.getCodeif() + " and date: " + date + " //exception:" + e);
+                    log.error("Cannot get usribord 10 years stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
                     continue;
                 }
             }
@@ -549,5 +551,300 @@ public class FeaturesStock implements Serializable {
         }
 
         return fsL;
+    }
+
+
+    public  static FeaturesStock createRT(StockGeneral stock, Validator validator, String date) {
+        //Xt,Xt-1,...,Xn ,Consensus AT => StockHistory
+        //Indice Xt,..Xn, AT => StockIndice
+        //Secteur Xt,..Xn, AT => StockSecteur
+        //Vola Cac Xt,..Xn, AT
+        //indice etranger
+
+        log.info("create FeaturesStock for: " + stock.getCodif());
+
+
+        FeaturesStock fs = new FeaturesStock();
+        fs.setDate(date);
+
+        /**
+         * stock
+         */
+        try {
+            List<StockHistory> sh = StockHistory.getStockHistoryDateInvert(stock.getCode(), date, validator.perdiodHist);
+            fs.linearizeSH(sh);
+            StockHistory current = StockHistory.getStockHistory(stock.getCode(), date);
+            fs.linearize(current, validator);
+            fs.setCurrentValue(current.getValue());
+
+        } catch (Exception e) {
+            log.error("Cannot get stock history for: " + stock.getCode() + " and date: " + date +  " //exception:" + e);
+            return null;
+        }
+
+
+        try {
+            StockAnalyse ash = StockAnalyse.getAnalyse(stock.getCode(), date);
+            fs.linearize(ash, validator);
+
+        } catch (Exception e) {
+            log.error("Cannot get analyse stock for: " + stock.getCode() + " and date: " + date +  " //exception:" + e);
+            return null;
+        }
+
+        /**
+         * sector
+         */
+        try {
+            List<StockSector> ss = StockSector.getStockSectorDateInvert(stock.getSector(), date, validator.perdiodSector);
+            fs.linearizeSS(ss);
+            if (validator.sectorAT) {
+                StockAnalyse ass = StockAnalyse.getAnalyse(stock.getSector(), date);
+                fs.linearize(ass, validator);
+            }
+        } catch (Exception e) {
+            log.error("Cannot get sector/analyse stock for: " + stock.getSector() + " and date: " + date + " //exception:" + e);
+            return null;
+        }
+
+        /**
+         * indice cac
+         */
+        try {
+            if (validator.cac) {
+                List<StockIndice> si = StockIndice.getStockIndiceDateInvert("EFCHI", date, validator.perdiodCac);
+                fs.linearizeSI(si);
+            }
+
+            if (validator.cacAT) {
+                StockAnalyse asi = StockAnalyse.getAnalyse("EFCHI", date);
+                fs.linearize(asi, validator);
+            }
+        } catch (Exception e) {
+            log.error("Cannot get indice/analyse stock for: " + "EFCHI" + " and date: " + date +  " //exception:" + e);
+            return null;
+        }
+
+        /**
+         * indice down jons
+         */
+        if (validator.indiceDJI) {
+            try {
+
+                List<StockIndice> si = StockIndice.getStockIndiceDateInvert("EDJI", date, validator.perdiodDJI);
+                fs.linearizeSI(si);
+                if (validator.DJIAT) {
+                    StockAnalyse asi = StockAnalyse.getAnalyse("EDJI", si.get(0).getDay());
+                    fs.linearize(asi, validator);
+                }
+            } catch (Exception e) {
+                log.error("Cannot get indice/analyse stock for: " + "EDJI" + " and date: " + date + " //exception:" + e);
+                return null;
+            }
+        }
+
+        /**
+         * indice nikkei
+         */
+        if (validator.indiceN225) {
+            try {
+
+                List<StockIndice> si = StockIndice.getStockIndiceDateInvert("EN225", date, validator.perdiodN225);
+                fs.linearizeSI(si);
+                if (validator.N225AT) {
+                    StockAnalyse asi = StockAnalyse.getAnalyse("EN225", si.get(0).getDay());
+                    fs.linearize(asi, validator);
+                }
+            } catch (Exception e) {
+                log.error("Cannot get indice/analyse stock for: " + "EN225" + " and date: " + date + " //exception:" + e);
+                return null;
+            }
+        }
+
+        /**
+         * indice FTSE london
+         */
+        if (validator.indiceFTSE) {
+            try {
+
+                List<StockIndice> si = StockIndice.getStockIndiceDateInvert("EFTSE", date, validator.perdiodFTSE);
+                fs.linearizeSI(si);
+                if (validator.FTSEAT) {
+                    StockAnalyse asi = StockAnalyse.getAnalyse("EFTSE", si.get(0).getDay());
+                    fs.linearize(asi, validator);
+                }
+            } catch (Exception e) {
+                log.error("Cannot get indice/analyse stock for: " + "EFTSE" + " and date: " + date + " //exception:" + e);
+                return null;
+            }
+        }
+
+        /**
+         * indice DAX london
+         */
+        if (validator.indiceDAX) {
+            try {
+
+                List<StockIndice> si = StockIndice.getStockIndiceDateInvert("EGDAXI", date, validator.perdiodDAX);
+                fs.linearizeSI(si);
+                if (validator.DAXIAT) {
+                    StockAnalyse asi = StockAnalyse.getAnalyse("EGDAXI", si.get(0).getDay());
+                    fs.linearize(asi, validator);
+                }
+            } catch (Exception e) {
+                log.error("Cannot get indice/analyse stock for: " + "EGDAXI" + " and date: " + date + " //exception:" + e);
+                return null;
+            }
+        }
+
+        /**
+         * indice STOXX50 london
+         */
+        if (validator.indiceSTOXX50) {
+            try {
+
+                List<StockIndice> si = StockIndice.getStockIndiceDateInvert("ESTOXX50E", date, validator.perdiodSTOXX50);
+                fs.linearizeSI(si);
+                if (validator.STOXX50AT) {
+                    StockAnalyse asi = StockAnalyse.getAnalyse("ESTOXX50E", si.get(0).getDay());
+                    fs.linearize(asi, validator);
+                }
+            } catch (Exception e) {
+                log.error("Cannot get indice/analyse stock for: " + "EGDAXI" + " and date: " + date + " //exception:" + e);
+                return null;
+            }
+        }
+
+
+
+        /**
+         * volatility cac
+         */
+        if (validator.cacVola) {
+            try {
+                List<StockIndice> sVCac = StockIndice.getStockIndiceDateInvert("VCAC", date, validator.perdiodcacVola);
+                fs.linearizeSI(sVCac);
+
+            } catch (Exception e) {
+                log.error("Cannot get vcac stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
+                return null;
+            }
+        }
+
+        /**
+         * taux de change $/€
+         */
+        if (validator.DOLLAR) {
+            try {
+                List<StockRawMat> sDE = StockRawMat.getStockRawDateInvert("DTOE", date, validator.perdiodDOLLAR);
+                fs.linearizeSR(sDE);
+
+            } catch (Exception e) {
+                log.error("Cannot get dollar stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
+                return null;
+            }
+        }
+
+        /**
+         * prix du petrole
+         */
+        if (validator.PETROL) {
+            try {
+                List<StockRawMat> sDE = StockRawMat.getStockRawDateInvert("PETB", date, validator.perdiodPETROL);
+                fs.linearizeSR(sDE);
+
+            } catch (Exception e) {
+                log.error("Cannot get petrol stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
+                return null;
+            }
+        }
+
+
+        /**
+         * Euribor 1 mois
+         */
+        if (validator.EURI1M) {
+            try {
+                List<StockRawMat> sDE = StockRawMat.getStockRawDateInvert("EURI1M", date, validator.perdiodEURI1M);
+                fs.linearizeSR(sDE);
+
+            } catch (Exception e) {
+                log.error("Cannot get euribord 1 month stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
+                return  null;
+            }
+        }
+
+        /**
+         * Euribor 1 année
+         */
+        if (validator.EURI1Y) {
+            try {
+                List<StockRawMat> sDE = StockRawMat.getStockRawDateInvert("EURI1Y", date, validator.perdiodEURI1Y);
+                fs.linearizeSR(sDE);
+
+            } catch (Exception e) {
+                log.error("Cannot get euribord 1 year stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
+                return null;
+            }
+        }
+
+        /**
+         * Euribor 10 année
+         */
+        if (validator.EURI10Y) {
+            try {
+                List<StockRawMat> sDE = StockRawMat.getStockRawDateInvert("EURI10Y", date, validator.perdiodEURI10Y);
+                fs.linearizeSR(sDE);
+
+            } catch (Exception e) {
+                log.error("Cannot get euribord 10 years stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
+                return null;
+            }
+        }
+
+
+        /**
+         * Usribor 1 mois
+         */
+        if (validator.USRI1M) {
+            try {
+                List<StockRawMat> sDE = StockRawMat.getStockRawDateInvert("USRI1M", date, validator.perdiodUSRI1M);
+                fs.linearizeSR(sDE);
+
+            } catch (Exception e) {
+                log.error("Cannot get usribord 1 month stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
+                return null;
+            }
+        }
+
+        /**
+         * Usribor 1 année
+         */
+        if (validator.USRI1Y) {
+            try {
+                List<StockRawMat> sDE = StockRawMat.getStockRawDateInvert("USRI1Y", date, validator.perdiodUSRI1Y);
+                fs.linearizeSR(sDE);
+
+            } catch (Exception e) {
+                log.error("Cannot get usribord 1 year stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
+                return null;
+            }
+        }
+
+        /**
+         * Usribor 10 année
+         */
+        if (validator.USRI10Y) {
+            try {
+                List<StockRawMat> sDE = StockRawMat.getStockRawDateInvert("USRI10Y", date, validator.perdiodUSRI10Y);
+                fs.linearizeSR(sDE);
+
+            } catch (Exception e) {
+                log.error("Cannot get usribord 10 years stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
+                return null;
+            }
+        }
+
+        return fs;
     }
 }

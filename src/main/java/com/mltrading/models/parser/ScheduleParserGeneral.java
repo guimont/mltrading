@@ -1,14 +1,19 @@
 package com.mltrading.models.parser;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.mltrading.ml.CacheMLStock;
+import com.mltrading.ml.MLPredictor;
+import com.mltrading.ml.MlForecast;
 import com.mltrading.models.parser.impl.RealTimeParserYahoo;
-import com.mltrading.models.stock.StockHistory;
+import com.mltrading.models.stock.*;
 import com.mltrading.models.util.ThreadFactory;
+import com.mltrading.repository.StockRepository;
 import com.mltrading.service.ExtractionService;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -43,6 +48,22 @@ public class ScheduleParserGeneral  {
         }
     }
 
+    private void updatePredictor() {
+        List<StockGeneral> sg = new ArrayList(CacheStockGeneral.getIsinCache().values());
+
+        CacheMLStock.load(sg);
+        MlForecast ml = new MlForecast();
+        ml.processList(sg);
+
+        MLPredictor predictor = new MLPredictor();
+
+
+        for (StockGeneral s: CacheStockGeneral.getIsinCache().values()) {
+            StockPrediction p = predictor.prediction(s);
+            s.setPrediction(p);
+        }
+    }
+
 
     protected void runExtraction() {
         RealTimeParserYahoo.refreshCache();
@@ -52,6 +73,7 @@ public class ScheduleParserGeneral  {
     public void start() {
         updateBase();
         RealTimeParserYahoo.loaderCache();
+        updatePredictor();
         this.extractionCycleInMs =  30000;
         this.timer = new Timer("ExtractionProcess", true);
         this.timerTask = new GlobalTimerTask();
@@ -76,23 +98,8 @@ public class ScheduleParserGeneral  {
     void updateBase() {
 
         try {
-            String l = StockHistory.getLastDateHistory("FR0000045072");
-            DateTime timeInsert = new DateTime(l);
-            DateTime timeNow = new DateTime(System.currentTimeMillis());
 
-            int diff =
-                timeNow.getDayOfMonth() - timeInsert.getDayOfMonth();
-
-            l = StockHistory.getLastDateHistory("FRIN");
-            timeInsert = new DateTime(l);
-            diff = Math.max(diff, timeNow.getDayOfMonth() - timeInsert.getDayOfMonth());
-
-            l = StockHistory.getLastDateHistory("EFCHI");
-            timeInsert = new DateTime(l);
-            diff = Math.max(diff, timeNow.getDayOfMonth() - timeInsert.getDayOfMonth());
-
-            diff -=1;
-
+            int diff = 0; //service.getLastUpdateRef();
 
             log.info("Have to extract " +  diff + " days in influxdb base");
 

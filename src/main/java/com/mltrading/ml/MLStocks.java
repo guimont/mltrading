@@ -7,10 +7,11 @@ package com.mltrading.ml;
 import com.mltrading.ml.FeaturesStock.PredictionPeriodicity;
 import org.apache.spark.api.java.JavaRDD;
 
+import java.io.Serializable;
 import java.util.List;
 
 
-public class MLStocks {
+public class MLStocks  implements Serializable {
     private String codif;
     private MLStock mlD1;
     private MLStock mlD5;

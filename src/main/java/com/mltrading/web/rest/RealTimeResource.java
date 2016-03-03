@@ -25,7 +25,9 @@ public class RealTimeResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     @RolesAllowed(AuthoritiesConstants.ADMIN)
     public List<StockGeneral> findAll() {
-        return  new ArrayList(CacheStockGeneral.getCache().values());
+
+        List<StockGeneral> l = new ArrayList<>(CacheStockGeneral.getCache().values());
+        return l;
     }
 
 }

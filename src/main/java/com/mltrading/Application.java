@@ -2,6 +2,7 @@ package com.mltrading;
 
 import com.mltrading.config.Constants;
 import com.mltrading.models.parser.ScheduleParserGeneral;
+import com.mltrading.repository.StockRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -28,6 +29,7 @@ public class Application {
 
     @Inject
     private Environment env;
+
 
     /**
      * Initializes mltrading.

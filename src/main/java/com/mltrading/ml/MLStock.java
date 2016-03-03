@@ -5,10 +5,10 @@ import com.mltrading.ml.FeaturesStock.PredictionPeriodicity;
 
 import org.apache.spark.mllib.tree.model.RandomForestModel;
 
+import java.io.Serializable;
 
 
-
-public class MLStock {
+public class MLStock  implements Serializable {
     private String codif;
     private PredictionPeriodicity period;
     private RandomForestModel model;
@@ -52,11 +52,11 @@ public class MLStock {
 
 
     public void saveModel() {
-       this.model.save(CacheMLStock.getJavaSparkContext().sc(), "Model" + period.toString() + codif);
+       this.model.save(CacheMLStock.getJavaSparkContext().sc(), "model/Model" + period.toString() + codif);
     }
 
-    public void loadModel(PredictionPeriodicity t) {
-        this.model = RandomForestModel.load(CacheMLStock.getJavaSparkContext().sc(), "Model"+period.toString()+codif);
+    public void loadModel() {
+        this.model = RandomForestModel.load(CacheMLStock.getJavaSparkContext().sc(), "model/Model"+period.toString()+codif);
     }
 
 

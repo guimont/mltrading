@@ -22,12 +22,13 @@ import java.net.URL;
  */
 public class HistoryLocalRawMaterials implements HistoryRawMaterialsParser {
 
-    final static String localUrl = "http://localhost:8090/raw/";
+    final static String localUrl = "http://";
+    final static String path =   "/raw/";
 
 
     @Override
-    public void fetch() {
-        loader();
+    public void fetch(String host) {
+        loader(host);
     }
 
     @Override
@@ -38,10 +39,10 @@ public class HistoryLocalRawMaterials implements HistoryRawMaterialsParser {
 
     final String refCode = "tbody";
 
-    public  void loader() {
+    public  void loader(String host) {
         for (StockRawMat r: CacheRawMaterial.getCache().values()) {
             try {
-                String url = localUrl + r.getName() + ".html";
+                String url = localUrl + host + path + r.getName() + ".html";
                 String text = ParserCommon.loadUrl(new URL(url));
                 Document doc = Jsoup.parse(text);
                 Elements links = doc.select(refCode);

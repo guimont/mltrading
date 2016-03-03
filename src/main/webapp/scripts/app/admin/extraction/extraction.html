@@ -1,7 +1,7 @@
 <div class="container">
     <h2 translate="extraction.title">Extractions</h2>
 
-
+<span class="col-md-6">
     <p>
         <button type="button" class="btn btn-primary" ng-click="extraction()"><span class="glyphicon glyphicon-refresh"></span>&nbsp;<span>Extraction Action</span>
         </button>
@@ -16,19 +16,59 @@
         <button type="button" class="btn btn-primary" ng-click="extractSeriesDailly()"><span class="glyphicon glyphicon-refresh"></span>&nbsp;<span>Extraction Series Daily</span>
         </button>
     </p>
-
     <p>
-        <button type="button" class="btn btn-primary" ng-click="checkML()"><span class="glyphicon glyphicon-blackboard"></span>&nbsp;<span>Check coherency</span>
+        <button type="button" class="btn btn-primary" ng-click="extractSeriesRaw()"><span class="glyphicon glyphicon-refresh"></span>&nbsp;<span>Extraction Raws</span>
+        </button>
+    </p>
+     <p>
+         <button type="button" class="btn btn-primary" ng-click="extractSeriesSector()"><span class="glyphicon glyphicon-refresh"></span>&nbsp;<span>Extraction Sectors</span>
+         </button>
+     </p>
+    <p>
+        <button type="button" class="btn btn-primary" ng-click="extractSeriesIndice()"><span class="glyphicon glyphicon-refresh"></span>&nbsp;<span>Extraction Indices</span>
         </button>
     </p>
 
     <p>
-        <button type="button" class="btn btn-primary" ng-click="processML()"><span class="glyphicon glyphicon-blackboard"></span>&nbsp;<span>Process ML algo</span>
+        <button type="button" class="btn btn-primary" ng-click="extractProcessVCac()"><span class="glyphicon glyphicon-refresh"></span>&nbsp;<span>Extraction VCAC</span>
         </button>
     </p>
 
     <p>
-        <button type="button" class="btn btn-primary" ng-click="optimizeML()"><span class="glyphicon glyphicon-blackboard"></span>&nbsp;<span>Optimize ML algo</span>
+        <button type="button" class="btn btn-primary" ng-click="extractProcessAT()"><span class="glyphicon glyphicon-refresh"></span>&nbsp;<span>Process AT full</span>
+        </button>
+    </p>
+
+
+</span>
+
+    <p>
+        <button type="button" class="btn btn-success" ng-click="checkML()"><span class="glyphicon glyphicon-blackboard"></span>&nbsp;<span>Check coherency</span>
+        </button>
+    </p>
+
+    <p>
+        <button type="button" class="btn btn-success" ng-click="processML()"><span class="glyphicon glyphicon-blackboard"></span>&nbsp;<span>Process ML algo</span>
+        </button>
+    </p>
+
+    <p>
+        <button type="button" class="btn btn-success" ng-click="optimizeML()"><span class="glyphicon glyphicon-blackboard"></span>&nbsp;<span>Optimize ML algo</span>
+        </button>
+    </p>
+
+    <p>
+        <button type="button" class="btn btn-success" ng-click="optimizeMLLR()"><span class="glyphicon glyphicon-blackboard"></span>&nbsp;<span>Optimize ML linear </span>
+        </button>
+    </p>
+
+    <p>
+        <button type="button" class="btn btn-success" ng-click="saveML()"><span class="glyphicon glyphicon-blackboard"></span>&nbsp;<span>Save ML</span>
+        </button>
+    </p>
+
+    <p>
+        <button type="button" class="btn btn-success" ng-click="loadML()"><span class="glyphicon glyphicon-blackboard"></span>&nbsp;<span>Load ML</span>
         </button>
     </p>
 </div>

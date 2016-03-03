@@ -96,6 +96,12 @@ public class Analyse {
 
     }
 
+    public void processVcacAll() {
+
+        processAnalysisAll("VCAC", columnIndice);
+    }
+
+
 
     public void processIndiceAll() {
 

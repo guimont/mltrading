@@ -70,6 +70,17 @@ public class StockGeneral {
     private Integer volume;
 
 
+    private StockPrediction prediction;
+
+
+    public StockPrediction getPrediction() {
+        return prediction;
+    }
+
+    public void setPrediction(StockPrediction prediction) {
+        this.prediction = prediction;
+    }
+
     public String getCodif() {
         //specific case quick fixe
         if (codif.equalsIgnoreCase("SOL"))

@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
  */
 public interface HistoryRawMaterialsParser {
 
-    void fetch();
+    void fetch(String host);
 
     public void fetchCurrent(int period);
 

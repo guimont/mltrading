@@ -1,23 +1,29 @@
 package com.mltrading.ml;
 
-import java.util.*;
-
+import com.mltrading.ml.FeaturesStock.PredictionPeriodicity;
 import com.mltrading.models.stock.Stock;
 import com.mltrading.models.stock.StockGeneral;
-import org.apache.spark.mllib.linalg.*;
-import org.apache.spark.storage.StorageLevel;
-import scala.Serializable;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
+import org.apache.spark.ml.regression.LinearRegression;
+import org.apache.spark.mllib.linalg.Vectors;
 import org.apache.spark.mllib.regression.LabeledPoint;
+import org.apache.spark.mllib.regression.LinearRegressionModel;
+import org.apache.spark.mllib.regression.LinearRegressionWithSGD;
 import org.apache.spark.mllib.tree.RandomForest;
 import org.apache.spark.mllib.tree.model.RandomForestModel;
-import com.mltrading.ml.FeaturesStock.PredictionPeriodicity;
+import scala.Serializable;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Created by gmo on 14/11/2015.
  */
-public class RandomForestStock implements Serializable {
+public class LinearRegressionStock implements Serializable {
 
 
     public JavaRDD<LabeledPoint> createRDD(JavaSparkContext sc,  List<FeaturesStock> fsL, PredictionPeriodicity type) {
@@ -49,45 +55,28 @@ public class RandomForestStock implements Serializable {
 
         // Load and parse the data file.
         JavaRDD<LabeledPoint> trainingDataD1 = createRDD(sc, fsLTrain, PredictionPeriodicity.D1);
-        JavaRDD<LabeledPoint> trainingDataD5 = createRDD(sc, fsLTrain, PredictionPeriodicity.D5);
-        JavaRDD<LabeledPoint> trainingDataD20 = createRDD(sc, fsLTrain, PredictionPeriodicity.D20);
+        /*JavaRDD<LabeledPoint> trainingDataD5 = createRDD(sc, fsLTrain, PredictionPeriodicity.D5);
+        JavaRDD<LabeledPoint> trainingDataD20 = createRDD(sc, fsLTrain, PredictionPeriodicity.D20);*/
 
         JavaRDD<FeaturesStock> testData = sc.parallelize(fsLTest);
 
-        // Split the data into training and test sets (30% held out for testing)
 
-        // Set parameters.
-        //  Empty categoricalFeaturesInfo indicates all features are continuous.
-        Map<Integer, Integer> categoricalFeaturesInfoD1 = new HashMap<Integer, Integer>();
-        Map<Integer, Integer> categoricalFeaturesInfoD5 = new HashMap<Integer, Integer>();
-        Map<Integer, Integer> categoricalFeaturesInfoD20 = new HashMap<Integer, Integer>();
-        String impurity = "variance";
-
-        String featureSubsetStrategy = "auto"; // Let the algorithm choose.
-
+        trainingDataD1.cache();
 
         // Train a RandomForest model.
-        final RandomForestModel modelD1 = RandomForest.trainRegressor(trainingDataD1,
-            categoricalFeaturesInfoD1, mls.getMlD1().getValidator().getNumTrees(), featureSubsetStrategy, impurity,
-            mls.getMlD1().getValidator().getMaxDepth(), mls.getMlD1().getValidator().getMaxBins(),
-            mls.getMlD1().getValidator().getSeed());
-
-        // Train a RandomForest model.
-        final RandomForestModel modelD5 = RandomForest.trainRegressor(trainingDataD5,
-            categoricalFeaturesInfoD5,  mls.getMlD5().getValidator().getNumTrees(), featureSubsetStrategy, impurity,
-            mls.getMlD5().getValidator().getMaxDepth(), mls.getMlD5().getValidator().getMaxBins(),
-            mls.getMlD5().getValidator().getSeed());
-
-        // Train a RandomForest model.
-        final RandomForestModel modelD20 = RandomForest.trainRegressor(trainingDataD20,
-            categoricalFeaturesInfoD20, mls.getMlD20().getValidator().getNumTrees(), featureSubsetStrategy, impurity,
-            mls.getMlD20().getValidator().getMaxDepth(), mls.getMlD20().getValidator().getMaxBins(),
-            mls.getMlD20().getValidator().getSeed());
+        int numIterations = 300;
+        //final LinearRegressionModel modelD1 = LinearRegressionWithSGD.train(JavaRDD.toRDD(trainingDataD1), numIterations, 5);
+        //final LinearRegressionModel modelD5 = LinearRegressionWithSGD.train(JavaRDD.toRDD(trainingDataD5), numIterations);
+        //final LinearRegressionModel modelD20 = LinearRegressionWithSGD.train(JavaRDD.toRDD(trainingDataD20), numIterations);
 
 
-        mls.getMlD1().setModel(modelD1);
+        LinearRegressionModel modelD1 = (LinearRegressionModel) new LinearRegressionWithSGD(0.2, numIterations, 1.0).
+            setIntercept(true).
+            run(JavaRDD.toRDD(trainingDataD1));
+
+        /*mls.getMlD1().setModel(modelD1);
         mls.getMlD5().setModel(modelD5);
-        mls.getMlD20().setModel(modelD20);
+        mls.getMlD20().setModel(modelD20);*/
 
         mls.getMlD1().getValidator().setVectorSize(fsL.get(0).currentVectorPos);
         mls.getMlD5().getValidator().setVectorSize(fsL.get(0).currentVectorPos);
@@ -99,7 +88,7 @@ public class RandomForestStock implements Serializable {
 
                     double pred = modelD1.predict(Vectors.dense(fs.vectorize()));
                     FeaturesStock fsResult = new FeaturesStock(fs, pred, PredictionPeriodicity.D1);
-                    if (fs.getResultValue(PredictionPeriodicity.D5) != 0) {
+                    /*if (fs.getResultValue(PredictionPeriodicity.D5) != 0) {
                         pred = modelD5.predict(Vectors.dense(fs.vectorize()));
                         fsResult.setPredictionValue(pred,PredictionPeriodicity.D5);
                     }
@@ -107,7 +96,7 @@ public class RandomForestStock implements Serializable {
                     if (fs.getResultValue(PredictionPeriodicity.D20) != 0) {
                         pred = modelD20.predict(Vectors.dense(fs.vectorize()));
                         fsResult.setPredictionValue(pred,PredictionPeriodicity.D20);
-                    }
+                    }*/
 
                     return fsResult;
                 }

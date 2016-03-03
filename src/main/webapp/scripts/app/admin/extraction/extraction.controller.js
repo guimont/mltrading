@@ -21,6 +21,41 @@ angular.module('mltradingApp')
             });
         }
 
+        $scope.extractProcessAT = function () {
+            return $http.get('/api/processAT').then(function (response) {
+                return response.data;
+            });
+        }
+
+
+        $scope.extractProcessVCac = function () {
+            return $http.get('/api/extractionVCac').then(function (response) {
+                return response.data;
+            });
+        }
+
+
+
+        $scope.extractSeriesRaw = function () {
+            return $http.get('/api/extractionRaw').then(function (response) {
+                return response.data;
+            });
+        }
+
+        $scope.extractSeriesSector = function () {
+            return $http.get('/api/extractionSector').then(function (response) {
+                return response.data;
+            });
+        }
+
+        $scope.extractSeriesIndice = function () {
+            return $http.get('/api/extractionIndice').then(function (response) {
+                return response.data;
+            });
+        }
+
+
+
         $scope.processML = function () {
             return $http.get('/api/processML').then(function (response) {
                 return response.data;
@@ -35,6 +70,26 @@ angular.module('mltradingApp')
 
         $scope.optimizeML = function () {
             return $http.get('/api/optimizeML').then(function (response) {
+                return response.data;
+            });
+        }
+
+        $scope.optimizeMLLR = function () {
+            return $http.get('/api/optimizeMLLR').then(function (response) {
+                return response.data;
+            });
+        }
+
+
+
+        $scope.saveML = function () {
+            return $http.get('/api/saveML').then(function (response) {
+                return response.data;
+            });
+        }
+
+        $scope.loadML = function () {
+            return $http.get('/api/loadML').then(function (response) {
                 return response.data;
             });
         }

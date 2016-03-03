@@ -3,7 +3,10 @@ package com.mltrading.service;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.mltrading.models.parser.*;
+import com.mltrading.models.stock.StockHistory;
+import com.mltrading.models.stock.StockRawMat;
 import com.mltrading.repository.StockRepository;
+import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 import javax.inject.Inject;
 
@@ -36,6 +39,28 @@ public class ExtractionService {
         a.processAll();
     }
 
+    public void extractRawFull(String host) {
+        rawParser.fetch(host);
+    }
+
+    public void extractSectorFull() {
+        sectorParser.fetch();
+        Analyse a = new Analyse();
+        a.processSectorAll();
+    }
+
+    public void extractIndiceFull() {
+        indiceParser.fetch();
+        Analyse a = new Analyse();
+        a.processIndiceAll();
+    }
+
+    public void extractVcacFull() {
+        vola.fetch();
+        Analyse a = new Analyse();
+        a.processVcacAll();
+    }
+
 
     public void extractionCurrent(int period) {
         histParser.fetchCurrent(period);
@@ -48,6 +73,36 @@ public class ExtractionService {
     }
 
 
+    public int getLastUpdateRef() {
+        String l = StockHistory.getLastDateHistory("FR0000045072");
+        DateTime timeInsert = new DateTime(l);
+        DateTime timeNow = new DateTime(System.currentTimeMillis());
+
+        int diff =
+            timeNow.getDayOfMonth() - timeInsert.getDayOfMonth();
+
+        l = StockHistory.getLastDateHistory("FRIN");
+        timeInsert = new DateTime(l);
+        diff = Math.max(diff, timeNow.getDayOfMonth() - timeInsert.getDayOfMonth());
+
+        l = StockHistory.getLastDateHistory("EFCHI");
+        timeInsert = new DateTime(l);
+        diff = Math.max(diff, timeNow.getDayOfMonth() - timeInsert.getDayOfMonth());
+
+        l = StockRawMat.getLastDateHistory("PETB");
+        timeInsert = new DateTime(l);
+        diff = Math.max(diff, timeNow.getDayOfMonth() - timeInsert.getDayOfMonth());
 
 
+        diff -=1;
+
+        return diff;
+        //return 0;
+    }
+
+
+    public void processAT() {
+        Analyse a = new Analyse();
+        a.processAll();
+    }
 }

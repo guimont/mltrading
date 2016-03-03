@@ -1,15 +1,12 @@
 package com.mltrading.web.rest;
 
-import com.codahale.metrics.annotation.Timed;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.mltrading.ml.FeaturesStock;
+
+import com.mltrading.ml.CacheMLStock;
 import com.mltrading.ml.MlForecast;
-import com.mltrading.ml.RandomForestStock;
-import com.mltrading.models.parser.ServiceParser;
-import com.mltrading.models.parser.StockParser;
 import com.mltrading.models.parser.impl.CheckConsistency;
+import com.mltrading.models.stock.CacheStockGeneral;
 import com.mltrading.models.stock.Stock;
+import com.mltrading.models.stock.StockGeneral;
 import com.mltrading.repository.StockRepository;
 import com.mltrading.service.ExtractionService;
 import org.springframework.http.MediaType;
@@ -17,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -59,7 +57,54 @@ public class ExtractionResource {
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String getExtractionSeriesDailly() {
-        service.extractionCurrent(2);
+        int diff = service.getLastUpdateRef();
+        if (diff > 0)
+            service.extractionCurrent(diff);
+        return "ok";
+    }
+
+    @RequestMapping(value = "/extractionRaw",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    public String getExtractionRaw() {
+
+        service.extractRawFull("192.168.0.22:8090");
+        return "ok";
+    }
+
+    @RequestMapping(value = "/extractionVCac",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    public String getExtractionVCac() {
+
+        service.extractVcacFull();
+        return "ok";
+    }
+
+
+
+    @RequestMapping(value = "/extractionSector",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    public String getExtractionSector() {
+        service.extractSectorFull();
+        return "ok";
+    }
+
+    @RequestMapping(value = "/extractionIndice",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    public String getExtractionIndice() {
+        service.extractIndiceFull();
+        return "ok";
+    }
+
+
+    @RequestMapping(value = "/processAT",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    public String processAT() {
+        service.processAT();
         return "ok";
     }
 
@@ -87,9 +132,7 @@ public class ExtractionResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String processML() {
 
-        List<Stock> sl = stockRepository.findAll();
-
-        forecast.processList(sl);
+        forecast.processList(new ArrayList(CacheStockGeneral.getIsinCache().values()));
 
         return "ok";
     }
@@ -99,20 +142,65 @@ public class ExtractionResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String optimizeML() {
 
-        List<Stock> sl = stockRepository.findAll();
 
 
 
-        for (Stock s : sl) {
-           if (s.getCodeif().equalsIgnoreCase("VIV")) {
-               forecast.optimizeFeature(s, 40);
-           }
-        }
+        int loop = 1;
+
+        for (int i = 0 ; i < loop; i ++)
+            for (StockGeneral s : CacheStockGeneral.getIsinCache().values()) {
+                forecast.optimizeFeature(s, loop, MlForecast.Method.RandomForest);
+            }
 
 
 
         return "ok";
     }
+
+
+    @RequestMapping(value = "/optimizeMLLR",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    public String optimizeMLLR() {
+
+        int loop = 1;
+
+        for (int i = 0 ; i < loop; i ++)
+            for (StockGeneral s : CacheStockGeneral.getIsinCache().values()) {
+                forecast.optimizeFeature(s, loop, MlForecast.Method.LinearRegression);
+            }
+
+        return "ok";
+    }
+
+
+
+    @RequestMapping(value = "/saveML",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    public String saveML() {
+
+        List<Stock> sl = stockRepository.findAll();
+        CacheMLStock.save();
+
+        return "ok";
+    }
+
+
+    @RequestMapping(value = "/loadML",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    public String loadML() {
+
+        List<StockGeneral> sl = new ArrayList(CacheStockGeneral.getIsinCache().values());
+
+        CacheMLStock.load(sl);
+        MlForecast ml = new MlForecast();
+        ml.processList(sl);
+
+        return "ok";
+    }
+
 
 
 }
