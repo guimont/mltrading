@@ -63,6 +63,14 @@ public class ExtractionResource {
         return "ok";
     }
 
+    @RequestMapping(value = "/extractionSeriesWeekly",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    public String getExtractionSeriesWeekly() {
+        service.extractionCurrent(7);
+        return "ok";
+    }
+
     @RequestMapping(value = "/extractionRaw",
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)

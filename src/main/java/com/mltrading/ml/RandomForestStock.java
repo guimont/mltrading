@@ -36,14 +36,18 @@ public class RandomForestStock implements Serializable {
         return parsedData;
     }
 
+    static int RENDERING = 91;
+
     public MLStocks processRF(StockGeneral stock, MLStocks mls) {
 
         List<FeaturesStock> fsL = FeaturesStock.create(stock, mls.getMlD1().getValidator(), FeaturesStock.RANGE_MAX);
 
         if (null == fsL) return null;
 
-        List<FeaturesStock> fsLTrain =fsL.subList(0,(int)(fsL.size()*0.7));
-        List<FeaturesStock> fsLTest =fsL.subList((int)(fsL.size()*0.7), fsL.size());
+        int born = fsL.size() - RENDERING;
+
+        List<FeaturesStock> fsLTrain =fsL.subList(0,born);
+        List<FeaturesStock> fsLTest =fsL.subList(born, fsL.size());
 
         JavaSparkContext sc = CacheMLStock.getJavaSparkContext();
 

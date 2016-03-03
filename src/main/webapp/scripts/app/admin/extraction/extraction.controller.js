@@ -21,6 +21,13 @@ angular.module('mltradingApp')
             });
         }
 
+        $scope.extractSeriesWeekly = function () {
+            return $http.get('/api/extractionSeriesWeekly').then(function (response) {
+                return response.data;
+            });
+        }
+
+
         $scope.extractProcessAT = function () {
             return $http.get('/api/processAT').then(function (response) {
                 return response.data;

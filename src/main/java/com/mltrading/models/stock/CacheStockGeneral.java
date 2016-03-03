@@ -80,6 +80,7 @@ public class CacheStockGeneral {
     private CacheStockGeneral() {
     }
 
+
     private static class CacheStockGeneralHolder {
         /** Instance unique non pre-initialise */
         private final static CacheStockGeneral instance = new CacheStockGeneral();
@@ -104,6 +105,14 @@ public class CacheStockGeneral {
     public static String getPlace(String codif) {
         for (StockGeneral g: CacheStockGeneral.getIsinCache().values()) {
             if (g.getCodif().equals(codif)) return g.getPlace();
+        }
+        return null;
+    }
+
+
+    public static String getSector(String codif) {
+        for (StockGeneral g: CacheStockGeneral.getIsinCache().values()) {
+            if (g.getCodif().equals(codif)) return g.getSector();
         }
         return null;
     }

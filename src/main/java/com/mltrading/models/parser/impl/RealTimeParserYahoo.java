@@ -59,6 +59,7 @@ public class RealTimeParserYahoo implements RealTimeParser {
                                 StockGeneral g = CacheStockGeneral.getCache().get(CacheStockGeneral.getCode(codif));
                                 g.setValue(value);
                                 try {
+                                    //t.get(3).child(0).child(1).attributes color #cc0000
                                     g.setVariation(new Float(t.get(3).child(0).child(1).text().replace(",", ".")));
                                     g.setVolume(new Integer(t.get(4).child(0).text().replaceAll(" ", "")));
                                 }
@@ -125,6 +126,7 @@ public class RealTimeParserYahoo implements RealTimeParser {
 
                             g.setCode(CacheStockGeneral.getCode(g.getCodif()));
                             g.setPlace(CacheStockGeneral.getPlace(g.getCodif()));
+                            g.setSector(CacheStockGeneral.getSector(g.getCodif()));
 
                             CacheStockGeneral.getCache().put(g.getCode(),g);
                         }

@@ -1,33 +1,28 @@
 package com.mltrading.models.parser;
 
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import com.mltrading.ml.CacheMLStock;
 import com.mltrading.ml.MLPredictor;
 import com.mltrading.ml.MlForecast;
 import com.mltrading.models.parser.impl.RealTimeParserYahoo;
-import com.mltrading.models.stock.*;
-import com.mltrading.models.util.ThreadFactory;
-import com.mltrading.repository.StockRepository;
+import com.mltrading.models.stock.CacheStockGeneral;
+import com.mltrading.models.stock.StockGeneral;
+import com.mltrading.models.stock.StockPrediction;
 import com.mltrading.service.ExtractionService;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Created by gmo on 19/06/2015.
  */
-public class ScheduleParserGeneral  {
+public class ScheduleUpdate {
 
-
-    private static final Logger log = LoggerFactory.getLogger(ScheduleParserGeneral.class);
+    private static final Logger log = LoggerFactory.getLogger(ScheduleUpdate.class);
     protected AtomicBoolean extractionIsRunning = new AtomicBoolean(false);
-    protected long extractionCycleInMs;
 
     protected Timer timer;
     protected TimerTask timerTask;
@@ -39,11 +34,8 @@ public class ScheduleParserGeneral  {
         @Override
         public void run() {
             if(extractionIsRunning.compareAndSet(false, true)) {
-                try {
-                    runExtraction();
-                } finally {
-                    extractionIsRunning.set(false);
-                }
+            } else {
+                runUpdate();
             }
         }
     }
@@ -64,19 +56,24 @@ public class ScheduleParserGeneral  {
     }
 
 
-    protected void runExtraction() {
-        RealTimeParserYahoo.refreshCache();
+    protected void runUpdate() {
+        //System.out.print("now ?");
+        updateBase();
+        updatePredictor();
     }
 
 
     public void start() {
-        updateBase();
-        RealTimeParserYahoo.loaderCache();
-        updatePredictor();
-        this.extractionCycleInMs =  30000;
-        this.timer = new Timer("ExtractionProcess", true);
+        Calendar today = Calendar.getInstance();
+        today.set(Calendar.HOUR_OF_DAY, 2);
+        today.set(Calendar.MINUTE, 0);
+        today.set(Calendar.SECOND, 0);
+
         this.timerTask = new GlobalTimerTask();
-        this.timer.schedule(this.timerTask, 0, this.extractionCycleInMs);
+        this.timer = new Timer("UpdateProcess", true);
+        Date t = today.getTime();
+        long u = TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS);
+        this.timer.schedule(this.timerTask, t, u); // 60*60*24*100 = 8640000ms
     }
 
     public void stop() {
@@ -95,11 +92,8 @@ public class ScheduleParserGeneral  {
      * take 3 last date for one element in indice/sector/history
      */
     void updateBase() {
-
         try {
-
-            int diff = 0; //service.getLastUpdateRef();
-
+            int diff = service.getLastUpdateRef();
             log.info("Have to extract " +  diff + " days in influxdb base");
 
             if (diff > 0)
@@ -108,9 +102,6 @@ public class ScheduleParserGeneral  {
             log.error("cannot get history last date, base perhaps empty: " +e);
             return;
         }
-
-
-
 
     }
 

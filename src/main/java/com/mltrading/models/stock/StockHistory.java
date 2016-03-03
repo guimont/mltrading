@@ -458,6 +458,31 @@ public class StockHistory extends Object{
     }
 
 
+
+    public static List<StockHistory> getStockHistoryLast(final String code, int max) {
+
+        List<StockHistory> stockList = new ArrayList<>();
+        //offset is mult by 2 because it is no dense data
+        String query = "SELECT * FROM "+code +" where time > '2015-06-01T00:00:00Z'";
+        QueryResult list = InfluxDaoConnector.getPoints(query);
+
+        int size = list.getResults().get(0).getSeries().get(0).getValues().size();
+
+        if (size < max)
+            return null;
+
+        for (int i = size-max; i < size; i++) {
+            StockHistory sh = new StockHistory();
+            sh.setCode(code);
+            populate(sh, list, i);
+            stockList.add(sh);
+        }
+
+        return stockList;
+
+    }
+
+
     @Override
     public String toString() {
         return "StockHistory{" +

@@ -2,6 +2,7 @@ package com.mltrading;
 
 import com.mltrading.config.Constants;
 import com.mltrading.models.parser.ScheduleParserGeneral;
+import com.mltrading.models.parser.ScheduleUpdate;
 import com.mltrading.repository.StockRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,6 +74,8 @@ public class Application {
         Environment env = app.run(args).getEnvironment();
         ScheduleParserGeneral g = new ScheduleParserGeneral();
         g.start();
+        ScheduleUpdate update = new ScheduleUpdate();
+        update.start();
         log.info("Access URLs:\n----------------------------------------------------------\n\t" +
             "Local: \t\thttp://127.0.0.1:{}\n\t" +
             "External: \thttp://{}:{}\n----------------------------------------------------------",

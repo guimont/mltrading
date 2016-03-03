@@ -23,7 +23,6 @@ import java.net.URL;
 @Singleton
 public class HistoryIndiceParserYahoo implements HistoryIndiceParser {
 
-
     static String startUrl="https://fr.finance.yahoo.com/q/hp?s=%5";
     static String endUrl ="&a=00&b=3&c=2010&g=d&z=66&y=";
     static int PAGINATION = 66;

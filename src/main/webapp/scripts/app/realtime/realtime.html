@@ -12,6 +12,8 @@
             <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="realtime.table.header.volume"></span></th>
             <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="realtime.table.header.variation"></span></th>
             <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="realtime.table.header.prediction"></span></th>
+            <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="realtime.table.header.prediction"></span></th>
+            <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="realtime.table.header.prediction"></span></th>
         </tr>
         </thead>
 
@@ -22,7 +24,13 @@
             <td>{{rt.value}}</td>
             <td>{{rt.volume}}</td>
             <td style="color: darkred">{{rt.variation}}</td>
-            <td>2.23
+            <td>{{rt.prediction.predictionD1.toFixed(3)}} / {{rt.prediction.confidenceD1}}%
+                <a ui-sref="performance({code: '{{rt.codif}}'})" ><i style="margin-left: 5px" class="glyphicon glyphicon-eye-open"/></a>
+            </td>
+            <td>{{rt.prediction.predictionD5.toFixed(3)}} / {{rt.prediction.confidenceD5}}%
+                <a ui-sref="performance({code: '{{rt.codif}}'})" ><i style="margin-left: 5px" class="glyphicon glyphicon-eye-open"/></a>
+            </td>
+            <td>{{rt.prediction.predictionD20.toFixed(3)}} / {{rt.prediction.confidenceD20}}%
                 <a ui-sref="performance({code: '{{rt.codif}}'})" ><i style="margin-left: 5px" class="glyphicon glyphicon-eye-open"/></a>
             </td>
         </tr>

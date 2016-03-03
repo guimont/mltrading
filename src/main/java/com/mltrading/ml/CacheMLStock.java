@@ -1,7 +1,6 @@
 package com.mltrading.ml;
 
 
-import com.mltrading.models.stock.Stock;
 import com.mltrading.models.stock.StockGeneral;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -31,15 +30,11 @@ public class CacheMLStock {
         for (StockGeneral s : sl) {
             try {
                 MLStocks mls = new MLStocks(s.getCodif());
-                mls.getMlD1().loadModel();
-                mls.getMlD5().loadModel();
-                mls.getMlD20().loadModel();
-
-                mls.getMlD1().getValidator().loadValidator(s.getCodif() + "VD1");
-                mls.getMlD5().getValidator().loadValidator(s.getCodif() + "VD5");
-                mls.getMlD20().getValidator().loadValidator(s.getCodif() + "VD20");
-
+                mls.getMlD1().load();
+                mls.getMlD5().load();
+                mls.getMlD20().load();
                 mlStockMap.put(s.getCodif(), mls);
+
             }catch (Exception e) {
                 log.error(e.toString());
             }

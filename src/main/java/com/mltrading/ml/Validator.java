@@ -1,5 +1,6 @@
 package com.mltrading.ml;
 
+import com.mltrading.dao.InfluxDaoConnectorModel;
 import com.mltrading.dao.InfluxDaoConnectorPerf;
 import com.mltrading.influxdb.dto.BatchPoints;
 import com.mltrading.influxdb.dto.Point;
@@ -75,22 +76,24 @@ public class Validator implements Serializable {
 
     private double error;
     private double rate;
-    private int vestorSize;
+    private int vectorSize;
+
+    private int vSize = 300;
 
 
     public void loadValidator(String code) {
         String query = "SELECT min(error) FROM " + code;
-        QueryResult result = InfluxDaoConnectorPerf.getPoints(query);
+        QueryResult result = InfluxDaoConnectorModel.getPoints(query);
 
         double minError = (double) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(1);
 
         query = "SELECT min(rate) FROM " + code+ " where error="+ minError ;
-        result = InfluxDaoConnectorPerf.getPoints(query);
+        result = InfluxDaoConnectorModel.getPoints(query);
 
         double minRate = (double) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(1);
 
         query = "SELECT * FROM " + code + " where error="+ minError +" and rate="+minRate;
-        result = InfluxDaoConnectorPerf.getPoints(query);
+        result = InfluxDaoConnectorModel.getPoints(query);
 
 
         this.DAXIAT = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(1);
@@ -146,7 +149,8 @@ public class Validator implements Serializable {
         this.rate = ((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(0).get(50))).intValue();
         this.sectorAT = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(51);
         this.seed = new Integer(((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(0).get(52))).intValue());
-        this.vestorSize = new Integer(((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(0).get(53))).intValue());
+        this.vectorSize = new Integer(((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(0).get(53))).intValue());
+        this.vSize = new Integer(((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(0).get(54))).intValue());
 
     }
 
@@ -314,7 +318,8 @@ public class Validator implements Serializable {
 
             .field("error", error)
             .field("rate", rate)
-            .field("vestorSize", vestorSize)
+            .field("vectorSize", vectorSize)
+            .field("vSize", vSize)
             .build();
         bp.point(pt);
 
@@ -324,6 +329,76 @@ public class Validator implements Serializable {
 
     public void setVectorSize(int currentVectorPos) {
 
-        this.vestorSize = currentVectorPos;
+        this.vectorSize = currentVectorPos;
+    }
+
+    public void saveModel(String code) {
+        BatchPoints bp = InfluxDaoConnectorModel.getBatchPoints();
+
+        Point pt = Point.measurement(code)
+            .field("maxDepth", maxDepth)
+            .field("maxBins", maxBins)
+            .field("numTrees", numTrees)
+            .field("seed", seed)
+
+            .field("perdiodHist", perdiodHist)
+            .field("historyAT", historyAT)
+            .field("historyConsensus", historyConsensus)
+            .field("perdiodSector", perdiodSector)
+            .field("sectorAT", sectorAT)
+            .field("perdiodCac",perdiodCac)
+            .field("cac", cac)
+            .field("cacAT",cacAT)
+            .field("indiceDJI", indiceDJI)
+            .field("perdiodDJI", perdiodDJI)
+            .field("indiceN225",indiceN225)
+            .field("perdiodN225", perdiodN225)
+            .field("indiceFTSE", indiceFTSE)
+            .field("perdiodFTSE",perdiodFTSE)
+            .field("cacVola", cacVola)
+            .field("perdiodcacVola", perdiodcacVola)
+
+            .field("DAXIAT", DAXIAT)
+            .field("indiceDAX", indiceDAX)
+            .field("perdiodDAX", perdiodDAX)
+            .field("STOXX50AT",STOXX50AT)
+            .field("indiceSTOXX50",indiceSTOXX50)
+            .field("perdiodSTOXX50", perdiodSTOXX50)
+            .field("DOLLAR", DOLLAR)
+            .field("perdiodDOLLAR", perdiodDOLLAR)
+            .field("PETROL", PETROL)
+            .field("perdiodPETROL", perdiodPETROL)
+
+            .field("historyVolume", historyVolume)
+            .field("analyseMme12", analyseMme12)
+            .field("analyseMme26", analyseMme26)
+            .field("analyseMomentum",analyseMomentum)
+            .field("analyseStdDev", analyseStdDev)
+            .field("DJIAT",DJIAT)
+            .field("N225AT", N225AT)
+            .field("FTSEAT",FTSEAT)
+
+            .field("EURI1M", EURI1M)
+            .field("perdiodEURI1M", perdiodEURI1M)
+            .field("EURI1Y", EURI1Y)
+            .field("perdiodEURI1Y", perdiodEURI1Y)
+            .field("EURI10Y", EURI10Y)
+            .field("perdiodEURI10Y", perdiodEURI10Y)
+
+            .field("USRI1M", USRI1M)
+            .field("perdiodUSRI1M", perdiodUSRI1M)
+            .field("USRI1Y", USRI1Y)
+            .field("perdiodUSRI1Y", perdiodUSRI1Y)
+            .field("USRI10Y", USRI10Y)
+            .field("perdiodUSRI10Y", perdiodUSRI10Y)
+
+            .field("error", error)
+            .field("rate", rate)
+            .field("vestorSize", vectorSize)
+            .field("vSize", vSize)
+            .build();
+        bp.point(pt);
+
+        InfluxDaoConnectorModel.writePoints(bp);
     }
 }

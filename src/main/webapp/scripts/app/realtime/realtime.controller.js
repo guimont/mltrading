@@ -14,6 +14,10 @@ angular.module('mltradingApp')
 
         $scope.onChangeDate();
 
+        $scope.checkValue = function (val) {
+            if (val === NaN) return 0;
+            else return val;
+        }
 
         $scope.showPrediction = function(codif) {
             $('#showHealthModal').modal('show');

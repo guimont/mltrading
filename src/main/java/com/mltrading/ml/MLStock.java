@@ -60,9 +60,14 @@ public class MLStock  implements Serializable {
     }
 
 
+    public void load() {
+        loadModel();
+        validator.loadValidator(codif+"V"+period.toString());
+    }
 
     public void save() {
         saveModel();//savePerformance();
+        validator.saveModel(codif+"V"+period.toString());
     }
 
 
