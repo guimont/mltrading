@@ -319,7 +319,7 @@ public class Validator implements Serializable {
             .field("error", error)
             .field("rate", rate)
             .field("vectorSize", vectorSize)
-            .field("vSize", vSize)
+            .field("vsize", vSize)
             .build();
         bp.point(pt);
 
@@ -394,8 +394,8 @@ public class Validator implements Serializable {
 
             .field("error", error)
             .field("rate", rate)
-            .field("vestorSize", vectorSize)
-            .field("vSize", vSize)
+            .field("vectorSize", vectorSize)
+            .field("vsize", vSize)
             .build();
         bp.point(pt);
 

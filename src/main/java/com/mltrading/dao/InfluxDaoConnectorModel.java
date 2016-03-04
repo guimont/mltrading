@@ -50,7 +50,6 @@ public class InfluxDaoConnectorModel {
     public static BatchPoints getBatchPoints() {
         return BatchPoints
                 .database(dbName)
-                .tag("async", "true")
                 .retentionPolicy("default")
                 .build();
     }

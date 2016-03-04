@@ -9,6 +9,8 @@ import com.mltrading.models.stock.Stock;
 import com.mltrading.models.stock.StockGeneral;
 import com.mltrading.repository.StockRepository;
 import com.mltrading.service.ExtractionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -25,6 +27,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 public class ExtractionResource {
+
+    private static final Logger log = LoggerFactory.getLogger(ExtractionResource.class);
 
     @javax.inject.Inject
     private StockRepository stockRepository;
@@ -57,7 +61,9 @@ public class ExtractionResource {
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String getExtractionSeriesDailly() {
+        log.info("Processing perdiod to update");
         int diff = service.getLastUpdateRef();
+        log.info("Perdiod to update is: " + diff);
         if (diff > 0)
             service.extractionCurrent(diff);
         return "ok";
@@ -149,9 +155,6 @@ public class ExtractionResource {
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String optimizeML() {
-
-
-
 
         int loop = 1;
 
