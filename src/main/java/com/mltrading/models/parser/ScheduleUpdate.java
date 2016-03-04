@@ -65,7 +65,7 @@ public class ScheduleUpdate {
 
     public void start() {
         Calendar today = Calendar.getInstance();
-        today.set(Calendar.HOUR_OF_DAY, 2);
+        today.set(Calendar.HOUR_OF_DAY, 8);
         today.set(Calendar.MINUTE, 0);
         today.set(Calendar.SECOND, 0);
 
