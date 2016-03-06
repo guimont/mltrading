@@ -6,6 +6,8 @@ import com.mltrading.models.stock.Stock;
 import com.mltrading.models.stock.StockGeneral;
 import org.apache.spark.mllib.linalg.*;
 import org.apache.spark.storage.StorageLevel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import scala.Serializable;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -18,6 +20,8 @@ import com.mltrading.ml.FeaturesStock.PredictionPeriodicity;
  * Created by gmo on 14/11/2015.
  */
 public class RandomForestStock implements Serializable {
+
+    private static final Logger log = LoggerFactory.getLogger(RandomForestStock.class);
 
 
     public JavaRDD<LabeledPoint> createRDD(JavaSparkContext sc,  List<FeaturesStock> fsL, PredictionPeriodicity type) {
@@ -155,8 +159,23 @@ public class RandomForestStock implements Serializable {
     public MLStocks processRFResult(StockGeneral stock, MLStocks mls) {
 
         List<FeaturesStock> fsLD1 = FeaturesStock.create(stock, mls.getMlD1().getValidator(), FeaturesStock.RANGE_TEST);
+        if( fsLD1.size() != mls.getMlD1().getValidator().getVectorSize())    {
+            log.error("size vector not corresponding");
+            log.error("validatorr: " + mls.getMlD1().getValidator().getVectorSize());
+            log.error("vector: " + fsLD1.size() );
+        }
         List<FeaturesStock> fsLD5 = FeaturesStock.create(stock, mls.getMlD5().getValidator(), FeaturesStock.RANGE_TEST);
+        if( fsLD5.size() != mls.getMlD5().getValidator().getVectorSize())    {
+            log.error("size vector not corresponding");
+            log.error("validatorr: " + mls.getMlD5().getValidator().getVectorSize());
+            log.error("vector: " + fsLD5.size() );
+        }
         List<FeaturesStock> fsLD20 = FeaturesStock.create(stock, mls.getMlD20().getValidator(), FeaturesStock.RANGE_TEST);
+        if( fsLD20.size() != mls.getMlD20().getValidator().getVectorSize())    {
+            log.error("size vector not corresponding");
+            log.error("validatorr: " + mls.getMlD20().getValidator().getVectorSize());
+            log.error("vector: " + fsLD20.size() );
+        }
 
         if (null == fsLD1) return null;
 

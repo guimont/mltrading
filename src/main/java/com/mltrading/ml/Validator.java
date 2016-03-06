@@ -332,6 +332,10 @@ public class Validator implements Serializable {
         this.vectorSize = currentVectorPos;
     }
 
+    public int getVectorSize() {
+        return vectorSize;
+    }
+
     public void saveModel(String code) {
         BatchPoints bp = InfluxDaoConnectorModel.getBatchPoints();
 
