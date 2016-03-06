@@ -82,7 +82,7 @@ public class ExtractionResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String getExtractionRaw() {
 
-        service.extractRawFull("192.168.0.22:8090");
+        service.extractRawFull("localhost:8090");
         return "ok";
     }
 
@@ -156,7 +156,7 @@ public class ExtractionResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String optimizeML() {
 
-        int loop = 20;
+        int loop = 1;
 
         for (int i = 0 ; i < loop; i ++)
             for (StockGeneral s : CacheStockGeneral.getIsinCache().values()) {

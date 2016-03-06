@@ -24,7 +24,7 @@ public class CacheRawMaterial {
         aMap.put("GAZ", new StockRawMat("GAZ", "Gaz", "http://fr.investing.com/commodities/natural-gas-historical-data"));
 
         aMap.put("WHEAT", new StockRawMat("WHEAT", "Ble", "http://fr.investing.com/commodities/us-wheat-historical-data"));
-        aMap.put("CORN", new StockRawMat("CORN", "Maïs", "http://fr.investing.com/commodities/us-corn-historical-data"));
+        //aMap.put("CORN", new StockRawMat("CORN", "Maïs", "http://fr.investing.com/commodities/us-corn-historical-data"));
 
         aMap.put("EURI1M", new StockRawMat("EURI1M", "France_1_mois", "http://fr.investing.com/rates-bonds/france-1-month-bond-yield-historical-data"));
         aMap.put("EURI1Y", new StockRawMat("EURI1Y", "France_1_an", "http://fr.investing.com/rates-bonds/france-1-year-bond-yield-historical-data"));

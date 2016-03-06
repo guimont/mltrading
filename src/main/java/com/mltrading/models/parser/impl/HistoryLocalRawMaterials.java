@@ -84,7 +84,7 @@ public class HistoryLocalRawMaterials implements HistoryRawMaterialsParser {
                 Elements links = doc.select(refCode);
 
                 Element e;
-                if (links.get(1).children().size() > 20)
+                if (links.get(1).children().size() >= 20)
                     e = links.get(1);
                 else
                     e = links.get(2);

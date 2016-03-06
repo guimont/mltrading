@@ -25,7 +25,7 @@
             <td>{{rt.volume}}</td>
             <td style="color: darkred">{{rt.variation}}</td>
             <td>{{rt.prediction.predictionD1.toFixed(3)}} / {{rt.prediction.confidenceD1}}%
-                <a ui-sref="performance({code: '{{rt.codif}}'})" ><i style="margin-left: 5px" class="glyphicon glyphicon-eye-open"/></a>
+                <a ui-sref="detail({code: '{{rt.code}}'})" ><i style="margin-left: 5px" class="glyphicon glyphicon-eye-open"/></a>
             </td>
             <td>{{rt.prediction.predictionD5.toFixed(3)}} / {{rt.prediction.confidenceD5}}%
                 <a ui-sref="performance({code: '{{rt.codif}}'})" ><i style="margin-left: 5px" class="glyphicon glyphicon-eye-open"/></a>

@@ -26,13 +26,15 @@ public class StockDetail implements Serializable{
     public static StockDetail populate(Stock s) {
         StockDetail detail = new StockDetail();
         MLStocks mls = CacheMLStock.getMLStockCache().get(s.getCodeif());
+        detail.setCode(s.getCodeif());
         detail.setStock(s);
         detail.setPrediction(CacheStockGeneral.getCache().get(s.getCode()).getPrediction());
         detail.setValidatorD1(mls.getMlD1().getValidator());
         detail.setValidatorD5(mls.getMlD5().getValidator());
-        detail.setValidatorD5(mls.getMlD5().getValidator());
+        detail.setValidatorD20(mls.getMlD20().getValidator());
         detail.setHistory(StockHistory.getStockHistoryLast(s.getCode(), 20));
         int size =  mls.getStatus().getPerfList().size();
+        //detail.setSector();
         detail.setPerf(mls.getStatus().getPerfList().subList(size - 20, size));
         return detail;
     }

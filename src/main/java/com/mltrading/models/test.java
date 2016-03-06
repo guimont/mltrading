@@ -35,7 +35,7 @@ public class test {
     private static UserService userService;
 
 
-    /*public static void main(String[] args) {
+   /* public static void main(String[] args) {
 
 
         Injector injector = Guice.createInjector(new ServiceParser());
@@ -162,7 +162,7 @@ public class test {
         v.loadValidator("ORAVD1");*
 
 
-        rawParser.fetchCurrent(2);
+        rawParser.fetchCurrent(10);
 
         /*String l = StockHistory.getLastDateHistory("FR0000045072");
         DateTime timeInsert = new DateTime(l);
@@ -186,6 +186,6 @@ public class test {
         a.processSectorAll();*
 
 
-    }         */
+    }               */
 
 }

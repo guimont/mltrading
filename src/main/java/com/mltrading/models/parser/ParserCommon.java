@@ -19,7 +19,7 @@ public class ParserCommon {
         InputStream stream = null;
         try {
             try {
-                Thread.sleep(5000);
+                Thread.sleep(50);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

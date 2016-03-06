@@ -1,0 +1,20 @@
+{
+    "realtime": {
+        "title": "Real time Stock market",
+
+        "table": {
+            "header": {
+                "principal": "Name",
+                "code": "Code",
+                "codeIsin": "Code Isin",
+                "value": "Value",
+                "volume": "Volume",
+                "variation" : "Variation",
+                "prediction" : "Prediction"
+            },
+            "data": {
+                "remoteAddress": "Remote Address:"
+            }
+        }
+    }
+}
