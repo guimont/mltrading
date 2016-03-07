@@ -22,7 +22,7 @@ public class MlForecast {
 
         for (StockGeneral s : l) {
             RandomForestStock rfs = new RandomForestStock();
-            MLStocks mls  = CacheMLStock.getMLStockCache().get(s.getCodif());
+            MLStocks mls = CacheMLStock.getMLStockCache().get(s.getCodif());
             if (mls != null) {
                 mls = rfs.processRFResult(s, mls);
                 mls.getStatus().calculeAvgPrd();

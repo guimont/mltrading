@@ -7,39 +7,80 @@
         <div class="panel-body">
             <div class="list list-group">
                 <a class="list list-group-item">
-                    <i class="fa fa-fw"> </i> name
+                    <i class="fa fa-fw"> </i> marche
                     <span class="pull-right text-muted small">
-                        <em>date</em>
+                        <em>{{detail.stock.marche}}</em>
                     </span>
                 </a>
 
                 <a class="list list-group-item">
                     <i class="fa fa-fw"> </i> codif
                     <span class="pull-right text-muted small">
-                        <em>date</em>
+                        <em>{{detail.code}}</em>
                     </span>
                 </a>
 
+                <a class="list list-group-item">
+                    <i class="fa fa-fw"> </i> indice
+                    <span class="pull-right text-muted small">
+                        <em>{{detail.stock.indice}}</em>
+                    </span>
+                </a>
 
-                private String marche;
-                private String indice;
-                private String codeif;
-                @Id
-                private String code;
+                <a class="list list-group-item">
+                    <i class="fa fa-fw"> </i> reuters
+                    <span class="pull-right text-muted small">
+                        <em>{{detail.stock.reuters}}</em>
+                    </span>
+                </a>
 
-                private String bloomberg;
-                private String reuters;
-                private String eligib;
-                private String titleNb;
-                private String capitalization;
-                private String ownFounds;
-                private String debt;
-                private String netDebt;
+                <a class="list list-group-item">
+                    <i class="fa fa-fw"> </i> eligib
+                    <span class="pull-right text-muted small">
+                        <em>{{detail.stock.eligib}}</em>
+                    </span>
+                </a>
+
+                <a class="list list-group-item">
+                    <i class="fa fa-fw"> </i> Title numbers
+                    <span class="pull-right text-muted small">
+                        <em>{{detail.stock.titleNb}}</em>
+                    </span>
+                </a>
+
+                <a class="list list-group-item">
+                    <i class="fa fa-fw"> </i> Capitalization
+                    <span class="pull-right text-muted small">
+                        <em>{{detail.stock.capitalization}}</em>
+                    </span>
+                </a>
+
+                <a class="list list-group-item">
+                    <i class="fa fa-fw"> </i> Own Founds
+                    <span class="pull-right text-muted small">
+                        <em>{{detail.stock.ownFounds}}</em>
+                    </span>
+                </a>
+
+                <a class="list list-group-item">
+                    <i class="fa fa-fw"> </i> Debt
+                    <span class="pull-right text-muted small">
+                        <em>{{detail.stock.debt}}</em>
+                    </span>
+                </a>
+
+                <a class="list list-group-item">
+                    <i class="fa fa-fw"> </i> Net Debt
+                    <span class="pull-right text-muted small">
+                        <em>{{detail.stock.netDebt}}</em>
+                    </span>
+                </a>
+
             </div>
 
         </div>
     </div>
     <div class="col-md-7">
-        hello
+        <span id="result"></span>
     </div>
 </div>

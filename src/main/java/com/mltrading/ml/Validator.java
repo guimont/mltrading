@@ -82,7 +82,7 @@ public class Validator implements Serializable {
 
 
     public void loadValidator(String code) {
-        String query = "SELECT min(error) FROM " + code;
+        /*String query = "SELECT min(error) FROM " + code;
         QueryResult result = InfluxDaoConnectorModel.getPoints(query);
 
         double minError = (double) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(1);
@@ -93,64 +93,69 @@ public class Validator implements Serializable {
         double minRate = (double) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(1);
 
         query = "SELECT * FROM " + code + " where error="+ minError +" and rate="+minRate;
-        result = InfluxDaoConnectorModel.getPoints(query);
+        result = InfluxDaoConnectorModel.getPoints(query);*/
+
+        String query = "SELECT * FROM " + code;
+        QueryResult result = InfluxDaoConnectorModel.getPoints(query);
+
+        int size = result.getResults().get(0).getSeries().get(0).getValues().size() -1;
 
 
-        this.DAXIAT = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(1);
-        this.DJIAT = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(2);
-        this.DOLLAR = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(3);
-        this.EURI10Y = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(4);
-        this.EURI1M = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(5);
-        this.EURI1Y = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(6);
-        this.FTSEAT = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(7);
-        this.N225AT = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(8);
-        this.PETROL = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(9);
-        this.STOXX50AT = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(10);
-        this.USRI10Y = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(11);
-        this.USRI1M = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(12);
-        this.USRI1Y = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(13);
-        this.analyseMme12 = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(14);
-        this.analyseMme26 = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(15);
-        this.analyseMomentum = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(16);
-        this.analyseStdDev = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(17);
-        //async = result.getResults().get(0).getSeries().get(0).getValues().get(0).get(8);
-        this.cac = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(18);
-        this.cacAT = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(19);
-        this.cacVola = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(20);
-        this.error = (double) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(21);
-        this.historyAT = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(22);
-        this.historyConsensus = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(23);
-        this.historyVolume = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(24);
-        this.indiceDAX = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(25);
-        this.indiceDJI = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(26);
-        this.indiceFTSE = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(27);
-        this.indiceN225 = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(28);
-        this.indiceSTOXX50 = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(29);
-        this.maxBins = new Integer(((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(0).get(30))).intValue());
-        this.maxDepth = new Integer(((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(0).get(31))).intValue());
-        this.numTrees = new Integer(((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(0).get(32))).intValue());
-        this.perdiodCac = ((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(0).get(33))).intValue();
-        this.perdiodDAX = ((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(0).get(34))).intValue();
-        this.perdiodDJI = ((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(0).get(35))).intValue();
-        this.perdiodDOLLAR = ((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(0).get(36))).intValue();
-        this.perdiodEURI10Y = ((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(0).get(37))).intValue();
-        this.perdiodEURI1M = ((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(0).get(38))).intValue();
-        this.perdiodEURI1Y = ((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(0).get(39))).intValue();
-        this.perdiodFTSE = ((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(0).get(40))).intValue();
-        this.perdiodHist = ((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(0).get(41))).intValue();
-        this.perdiodN225 = ((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(0).get(42))).intValue();
-        this.perdiodPETROL = ((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(0).get(43))).intValue();
-        this.perdiodSTOXX50 = ((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(0).get(44))).intValue();
-        this.perdiodSector = ((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(0).get(45))).intValue();
-        this.perdiodUSRI10Y = ((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(0).get(46))).intValue();
-        this.perdiodUSRI1M = ((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(0).get(47))).intValue();
-        this.perdiodUSRI1Y = ((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(0).get(48))).intValue();
-        this.perdiodcacVola = ((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(0).get(49))).intValue();
-        this.rate = ((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(0).get(50))).intValue();
-        this.sectorAT = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(51);
-        this.seed = new Integer(((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(0).get(52))).intValue());
-        this.vectorSize = new Integer(((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(0).get(53))).intValue());
-        this.vSize = new Integer(((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(0).get(54))).intValue());
+        this.DAXIAT = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(size).get(1);
+        this.DJIAT = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(size).get(2);
+        this.DOLLAR = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(size).get(3);
+        this.EURI10Y = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(size).get(4);
+        this.EURI1M = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(size).get(5);
+        this.EURI1Y = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(size).get(6);
+        this.FTSEAT = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(size).get(7);
+        this.N225AT = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(size).get(8);
+        this.PETROL = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(size).get(9);
+        this.STOXX50AT = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(size).get(10);
+        this.USRI10Y = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(size).get(11);
+        this.USRI1M = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(size).get(12);
+        this.USRI1Y = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(size).get(13);
+        this.analyseMme12 = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(size).get(14);
+        this.analyseMme26 = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(size).get(15);
+        this.analyseMomentum = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(size).get(16);
+        this.analyseStdDev = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(size).get(17);
+        //async = result.getResults().get(0).getSeries().get(0).getValues().get(size).get(8);
+        this.cac = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(size).get(18);
+        this.cacAT = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(size).get(19);
+        this.cacVola = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(size).get(20);
+        this.error = (double) result.getResults().get(0).getSeries().get(0).getValues().get(size).get(21);
+        this.historyAT = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(size).get(22);
+        this.historyConsensus = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(size).get(23);
+        this.historyVolume = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(size).get(24);
+        this.indiceDAX = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(size).get(25);
+        this.indiceDJI = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(size).get(26);
+        this.indiceFTSE = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(size).get(27);
+        this.indiceN225 = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(size).get(28);
+        this.indiceSTOXX50 = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(size).get(29);
+        this.maxBins = new Integer(((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(size).get(30))).intValue());
+        this.maxDepth = new Integer(((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(size).get(31))).intValue());
+        this.numTrees = new Integer(((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(size).get(32))).intValue());
+        this.perdiodCac = ((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(size).get(33))).intValue();
+        this.perdiodDAX = ((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(size).get(34))).intValue();
+        this.perdiodDJI = ((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(size).get(35))).intValue();
+        this.perdiodDOLLAR = ((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(size).get(36))).intValue();
+        this.perdiodEURI10Y = ((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(size).get(37))).intValue();
+        this.perdiodEURI1M = ((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(size).get(38))).intValue();
+        this.perdiodEURI1Y = ((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(size).get(39))).intValue();
+        this.perdiodFTSE = ((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(size).get(40))).intValue();
+        this.perdiodHist = ((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(size).get(41))).intValue();
+        this.perdiodN225 = ((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(size).get(42))).intValue();
+        this.perdiodPETROL = ((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(size).get(43))).intValue();
+        this.perdiodSTOXX50 = ((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(size).get(44))).intValue();
+        this.perdiodSector = ((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(size).get(45))).intValue();
+        this.perdiodUSRI10Y = ((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(size).get(46))).intValue();
+        this.perdiodUSRI1M = ((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(size).get(47))).intValue();
+        this.perdiodUSRI1Y = ((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(size).get(48))).intValue();
+        this.perdiodcacVola = ((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(size).get(49))).intValue();
+        this.rate = ((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(size).get(50))).intValue();
+        this.sectorAT = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(size).get(51);
+        this.seed = new Integer(((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(size).get(52))).intValue());
+        this.vectorSize = new Integer(((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(size).get(53))).intValue());
+        this.vSize = new Integer(((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(size).get(54))).intValue());
 
     }
 

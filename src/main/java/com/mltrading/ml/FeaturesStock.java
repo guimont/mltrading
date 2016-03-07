@@ -29,6 +29,7 @@ public class FeaturesStock implements Serializable {
     private Double vector[];
 
     int currentVectorPos = 0;
+    int normalVectorPos = 0;
 
     /** Controls the perdiod */
     public enum PredictionPeriodicity {
@@ -274,7 +275,7 @@ public class FeaturesStock implements Serializable {
 
             } catch (Exception e) {
                 log.error("Cannot get stock history for: " + stock.getCode() + " and date: " + date +  " //exception:" + e);
-                continue;
+                throw  e ;
             }
 
 
@@ -284,7 +285,7 @@ public class FeaturesStock implements Serializable {
 
             } catch (Exception e) {
                 log.error("Cannot get analyse stock for: " + stock.getCode() + " and date: " + date +  " //exception:" + e);
-                continue;
+                throw  e ;
             }
 
             /**
@@ -299,7 +300,7 @@ public class FeaturesStock implements Serializable {
                 }
             } catch (Exception e) {
                 log.error("Cannot get sector/analyse stock for: " + stock.getSector() + " and date: " + date + " //exception:" + e);
-                continue;
+                throw  e ;
             }
 
 
@@ -320,7 +321,7 @@ public class FeaturesStock implements Serializable {
                 }
             } catch (Exception e) {
                 log.error("Cannot get indice/analyse stock for: " + "EFCHI" + " and date: " + date +  " //exception:" + e);
-                continue;
+                throw  e ;
             }
 
             /**
@@ -337,7 +338,7 @@ public class FeaturesStock implements Serializable {
                     }
                 } catch (Exception e) {
                     log.error("Cannot get indice/analyse stock for: " + "EDJI" + " and date: " + date + " //exception:" + e);
-                    continue;
+                    throw  e ;
                 }
             }
 
@@ -355,7 +356,7 @@ public class FeaturesStock implements Serializable {
                     }
                 } catch (Exception e) {
                     log.error("Cannot get indice/analyse stock for: " + "EN225" + " and date: " + date + " //exception:" + e);
-                    continue;
+                    throw  e ;
                 }
             }
 
@@ -373,7 +374,7 @@ public class FeaturesStock implements Serializable {
                     }
                 } catch (Exception e) {
                     log.error("Cannot get indice/analyse stock for: " + "EFTSE" + " and date: " + date + " //exception:" + e);
-                    continue;
+                    throw  e ;
                 }
             }
 
@@ -391,13 +392,13 @@ public class FeaturesStock implements Serializable {
                     }
                 } catch (Exception e) {
                     log.error("Cannot get indice/analyse stock for: " + "EGDAXI" + " and date: " + date + " //exception:" + e);
-                    continue;
+                    throw  e ;
                 }
             }
 
-            /**
+           /* /**
              * indice STOXX50 london
-             */
+             *
             if (validator.indiceSTOXX50) {
                 try {
 
@@ -411,9 +412,9 @@ public class FeaturesStock implements Serializable {
                     }
                 } catch (Exception e) {
                     log.error("Cannot get indice/analyse stock for: " + "ESTOXX50E" + " and date: " + date + " //exception:" + e);
-                    continue;
+                    throw  e ;
                 }
-            }
+            }*/
 
 
 
@@ -427,7 +428,7 @@ public class FeaturesStock implements Serializable {
 
                 } catch (Exception e) {
                     log.error("Cannot get vcac stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
-                    continue;
+                    throw  e ;
                 }
             }
 
@@ -441,7 +442,7 @@ public class FeaturesStock implements Serializable {
 
                 } catch (Exception e) {
                     log.error("Cannot get dollar stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
-                    continue;
+                    throw  e ;
                 }
             }
 
@@ -455,7 +456,7 @@ public class FeaturesStock implements Serializable {
 
                 } catch (Exception e) {
                     log.error("Cannot get petrol stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
-                    continue;
+                    throw  e ;
                 }
             }
 
@@ -470,7 +471,7 @@ public class FeaturesStock implements Serializable {
 
                 } catch (Exception e) {
                     log.error("Cannot get euribord 1 month stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
-                    continue;
+                    throw  e ;
                 }
             }
 
@@ -484,7 +485,7 @@ public class FeaturesStock implements Serializable {
 
                 } catch (Exception e) {
                     log.error("Cannot get euribord 1 year stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
-                    continue;
+                    throw  e ;
                 }
             }
 
@@ -498,7 +499,7 @@ public class FeaturesStock implements Serializable {
 
                 } catch (Exception e) {
                     log.error("Cannot get euribord 10 years stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
-                    continue;
+                    throw  e ;
                 }
             }
 
@@ -513,7 +514,7 @@ public class FeaturesStock implements Serializable {
 
                 } catch (Exception e) {
                     log.error("Cannot get usribord 1 month stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
-                    continue;
+                    throw  e ;
                 }
             }
 
@@ -527,7 +528,7 @@ public class FeaturesStock implements Serializable {
 
                 } catch (Exception e) {
                     log.error("Cannot get usribord 1 year stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
-                    continue;
+                    throw  e ;
                 }
             }
 
@@ -541,7 +542,7 @@ public class FeaturesStock implements Serializable {
 
                 } catch (Exception e) {
                     log.error("Cannot get usribord 10 years stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
-                    continue;
+                    throw  e ;
                 }
             }
 
@@ -699,7 +700,7 @@ public class FeaturesStock implements Serializable {
 
         /**
          * indice STOXX50 london
-         */
+         *
         if (validator.indiceSTOXX50) {
             try {
 
@@ -713,7 +714,7 @@ public class FeaturesStock implements Serializable {
                 log.error("Cannot get indice/analyse stock for: " + "EGDAXI" + " and date: " + date + " //exception:" + e);
                 return null;
             }
-        }
+        }*/
 
 
 

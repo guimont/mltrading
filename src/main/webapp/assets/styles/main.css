@@ -146,6 +146,9 @@ ul#strengthBar {
 }
 
 
+.list {
+    padding: 5px;
+}
 
 .homepage-hero-module {
     border-right: none;

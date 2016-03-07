@@ -159,19 +159,19 @@ public class RandomForestStock implements Serializable {
     public MLStocks processRFResult(StockGeneral stock, MLStocks mls) {
 
         List<FeaturesStock> fsLD1 = FeaturesStock.create(stock, mls.getMlD1().getValidator(), FeaturesStock.RANGE_TEST);
-        if( fsLD1.size() != mls.getMlD1().getValidator().getVectorSize())    {
+        if( fsLD1.get(0).currentVectorPos != mls.getMlD1().getValidator().getVectorSize())    {
             log.error("size vector not corresponding");
             log.error("validatorr: " + mls.getMlD1().getValidator().getVectorSize());
             log.error("vector: " + fsLD1.size() );
         }
         List<FeaturesStock> fsLD5 = FeaturesStock.create(stock, mls.getMlD5().getValidator(), FeaturesStock.RANGE_TEST);
-        if( fsLD5.size() != mls.getMlD5().getValidator().getVectorSize())    {
+        if( fsLD5.get(0).currentVectorPos != mls.getMlD5().getValidator().getVectorSize())    {
             log.error("size vector not corresponding");
             log.error("validatorr: " + mls.getMlD5().getValidator().getVectorSize());
             log.error("vector: " + fsLD5.size() );
         }
         List<FeaturesStock> fsLD20 = FeaturesStock.create(stock, mls.getMlD20().getValidator(), FeaturesStock.RANGE_TEST);
-        if( fsLD20.size() != mls.getMlD20().getValidator().getVectorSize())    {
+        if( fsLD20.get(0).currentVectorPos != mls.getMlD20().getValidator().getVectorSize())    {
             log.error("size vector not corresponding");
             log.error("validatorr: " + mls.getMlD20().getValidator().getVectorSize());
             log.error("vector: " + fsLD20.size() );

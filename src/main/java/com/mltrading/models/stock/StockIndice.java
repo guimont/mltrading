@@ -47,11 +47,12 @@ public class StockIndice extends StockHistory {
     }
 
 
-    public static List<StockIndice> getStockIndiceDateInvert(final String code, final String date, int offset) {
+    public static List<StockIndice>getStockIndiceDateInvert(final String code, final String date, int offset) {
 
         List<StockIndice> stockList = new ArrayList<>();
+        int decal = offset < 3 ? offset*6 : offset*4;
         //offset is mult by 2 because it is no dense data
-        String query = "SELECT * FROM " + code + " where time <= '" + date + "' and time > '"+ date + "' - "+ Integer.toString(offset*4)  +"d";
+        String query = "SELECT * FROM " + code + " where time <= '" + date + "' and time > '"+ date + "' - "+ Integer.toString(decal)  +"d";
         QueryResult list = InfluxDaoConnector.getPoints(query);
 
         int size = list.getResults().get(0).getSeries().get(0).getValues().size();

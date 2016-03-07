@@ -14,6 +14,7 @@ angular.module('mltradingApp')
         $scope.showDetail = function(code) {
             DetailService.find(code).then(function (data) {
                 $scope.detail = data;
+                loadResult(data);
             });
         };
 
