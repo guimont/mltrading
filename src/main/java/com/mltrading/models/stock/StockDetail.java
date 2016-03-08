@@ -6,6 +6,7 @@ import com.mltrading.ml.MLStocks;
 import com.mltrading.ml.Validator;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,13 +15,14 @@ import java.util.List;
 public class StockDetail implements Serializable{
     private String code;
     private Stock stock;
-    private List<StockHistory> history;
+
     private List<StockSector> sector;
     private Validator validatorD1;
     private Validator validatorD5;
     private Validator validatorD20;
     private StockPrediction prediction;
-    private List<MLPerformances> perf;
+    private List<DetailData> data;
+
 
 
     public static StockDetail populate(Stock s) {
@@ -32,12 +34,68 @@ public class StockDetail implements Serializable{
         detail.setValidatorD1(mls.getMlD1().getValidator());
         detail.setValidatorD5(mls.getMlD5().getValidator());
         detail.setValidatorD20(mls.getMlD20().getValidator());
-        detail.setHistory(StockHistory.getStockHistoryLast(s.getCode(), 20));
-        int size =  mls.getStatus().getPerfList().size();
         //detail.setSector();
-        detail.setPerf(mls.getStatus().getPerfList().subList(size - 20, size));
+        detail.setData(populateData(s));
         return detail;
     }
+
+
+    private static double findPredD1(List<MLPerformances> perfList, String date) {
+        for (MLPerformances p: perfList) {
+            if (p.getMlD1().getDate().equals(date))
+                return p.getMlD1().getPrediction();
+        }
+
+        return 0; //not found not normal
+    }
+
+    private static double findPredD5(List<MLPerformances> perfList, String date) {
+        for (MLPerformances p: perfList) {
+            if (p.getMlD5().getDate().equals(date))
+                return p.getMlD5().getPrediction();
+        }
+        return 0; //not found not normal
+    }
+
+    private static double findPredD20(List<MLPerformances> perfList, String date) {
+        for (MLPerformances p: perfList) {
+            if (p.getMlD20().getDate().equals(date))
+                return p.getMlD20().getPrediction();
+        }
+        return 0; //not found not normal
+    }
+
+    private static List<DetailData> populateData(Stock s) {
+        List<DetailData> data = new ArrayList<>();
+        List<StockHistory> h = StockHistory.getStockHistoryLast(s.getCode(), 20);
+        MLStocks mls = CacheMLStock.getMLStockCache().get(s.getCodeif());
+
+        for (StockHistory he:h) {
+            DetailData d = new DetailData();
+            d.setDate(he.getDay());
+            d.setValue(he.getValue());
+            d.setPredD1(findPredD1(mls.getStatus().getPerfList(),he.getDay()));
+            d.setPredD5(findPredD5(mls.getStatus().getPerfList(), he.getDay()));
+            d.setPredD20(findPredD20(mls.getStatus().getPerfList(), he.getDay()));
+            data.add(d);
+        }
+
+        int size = mls.getStatus().getPerfList().size();
+        for (int i=1; i<20; i++) {
+            DetailData d = new DetailData();
+            d.setDate("J+"+i);
+            if (i < 5) d.setPredD5(mls.getStatus().getPerfList().get(size - 5 + i).getMlD5().getPrediction());
+            d.setPredD20(mls.getStatus().getPerfList().get(size-20+i).getMlD20().getPrediction());
+            data.add(d);
+        }
+
+
+
+        return data;
+    }
+
+
+
 
 
     public String getCode() {
@@ -56,13 +114,6 @@ public class StockDetail implements Serializable{
         this.stock = stock;
     }
 
-    public List<StockHistory> getHistory() {
-        return history;
-    }
-
-    public void setHistory(List<StockHistory> history) {
-        this.history = history;
-    }
 
     public List<StockSector> getSector() {
         return sector;
@@ -84,13 +135,6 @@ public class StockDetail implements Serializable{
         return validatorD5;
     }
 
-    public List<MLPerformances> getPerf() {
-        return perf;
-    }
-
-    public void setPerf(List<MLPerformances> perf) {
-        this.perf = perf;
-    }
 
     public void setValidatorD5(Validator validatorD5) {
         this.validatorD5 = validatorD5;
@@ -110,5 +154,13 @@ public class StockDetail implements Serializable{
 
     public void setPrediction(StockPrediction prediction) {
         this.prediction = prediction;
+    }
+
+    public List<DetailData> getData() {
+        return data;
+    }
+
+    public void setData(List<DetailData> data) {
+        this.data = data;
     }
 }

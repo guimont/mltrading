@@ -112,15 +112,15 @@ public class LinearRegressionStock implements Serializable {
                     System.out.println("estimate: " + pl.getPredictionValue(PredictionPeriodicity.D1));
                     System.out.println("result: " + pl.getResultValue(PredictionPeriodicity.D1));
                     //Double diff = pl.getPredictionValue() - pl.getResultValue();
-                    MLPerformances perf = new MLPerformances(pl.getDate());
+                    MLPerformances perf = new MLPerformances(pl.getCurrentDate());
 
-                    perf.setMlD1(MLPerformance.calculYields(pl.getDate(), pl.getPredictionValue(PredictionPeriodicity.D1), pl.getResultValue(PredictionPeriodicity.D1), pl.getCurrentValue()));
+                    perf.setMlD1(MLPerformance.calculYields(pl.getDate(PredictionPeriodicity.D1), pl.getPredictionValue(PredictionPeriodicity.D1), pl.getResultValue(PredictionPeriodicity.D1), pl.getCurrentValue()));
 
                     if (pl.getResultValue(PredictionPeriodicity.D5) != 0)
-                        perf.setMlD5(MLPerformance.calculYields(pl.getDate(), pl.getPredictionValue(PredictionPeriodicity.D5), pl.getResultValue(PredictionPeriodicity.D5), pl.getCurrentValue()));
+                        perf.setMlD5(MLPerformance.calculYields(pl.getDate(PredictionPeriodicity.D5), pl.getPredictionValue(PredictionPeriodicity.D5), pl.getResultValue(PredictionPeriodicity.D5), pl.getCurrentValue()));
 
                     if (pl.getResultValue(PredictionPeriodicity.D20) != 0)
-                        perf.setMlD20(MLPerformance.calculYields(pl.getDate(), pl.getPredictionValue(PredictionPeriodicity.D20), pl.getResultValue(PredictionPeriodicity.D20), pl.getCurrentValue()));
+                        perf.setMlD20(MLPerformance.calculYields(pl.getDate(PredictionPeriodicity.D20), pl.getPredictionValue(PredictionPeriodicity.D20), pl.getResultValue(PredictionPeriodicity.D20), pl.getCurrentValue()));
 
 
                     return perf;
@@ -190,15 +190,15 @@ public class LinearRegressionStock implements Serializable {
             System.out.println("estimate: " + pl.getPredictionValue(PredictionPeriodicity.D1));
             System.out.println("result: " + pl.getResultValue(PredictionPeriodicity.D1));
             //Double diff = pl.getPredictionValue() - pl.getResultValue();
-            MLPerformances perf = new MLPerformances(pl.getDate());
+            MLPerformances perf = new MLPerformances(pl.getCurrentDate());
 
-            perf.setMlD1(MLPerformance.calculYields(pl.getDate(), pl.getPredictionValue(PredictionPeriodicity.D1), pl.getResultValue(PredictionPeriodicity.D1), pl.getCurrentValue()));
+            perf.setMlD1(MLPerformance.calculYields(pl.getDate(PredictionPeriodicity.D1), pl.getPredictionValue(PredictionPeriodicity.D1), pl.getResultValue(PredictionPeriodicity.D1), pl.getCurrentValue()));
 
             if (pl.getResultValue(PredictionPeriodicity.D5) != 0)
-                perf.setMlD5(MLPerformance.calculYields(pl.getDate(), pl.getPredictionValue(PredictionPeriodicity.D5), pl.getResultValue(PredictionPeriodicity.D5), pl.getCurrentValue()));
+                perf.setMlD5(MLPerformance.calculYields(pl.getDate(PredictionPeriodicity.D5), pl.getPredictionValue(PredictionPeriodicity.D5), pl.getResultValue(PredictionPeriodicity.D5), pl.getCurrentValue()));
 
             if (pl.getResultValue(PredictionPeriodicity.D20) != 0)
-                perf.setMlD20(MLPerformance.calculYields(pl.getDate(), pl.getPredictionValue(PredictionPeriodicity.D20), pl.getResultValue(PredictionPeriodicity.D20), pl.getCurrentValue()));
+                perf.setMlD20(MLPerformance.calculYields(pl.getDate(PredictionPeriodicity.D20), pl.getPredictionValue(PredictionPeriodicity.D20), pl.getResultValue(PredictionPeriodicity.D20), pl.getCurrentValue()));
 
             resList.add(perf);
 

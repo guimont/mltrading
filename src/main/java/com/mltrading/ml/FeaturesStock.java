@@ -16,7 +16,10 @@ public class FeaturesStock implements Serializable {
 
     private static final Logger log = LoggerFactory.getLogger(FeaturesStock.class);
 
-    private String date;
+    private String currentDate;
+    private String dateD1;
+    private String dateD5;
+    private String dateD20;
 
     private double resultValueD1 = 0;
     private double resultValueD5 = 0;
@@ -30,6 +33,15 @@ public class FeaturesStock implements Serializable {
 
     int currentVectorPos = 0;
     int normalVectorPos = 0;
+
+
+    public void setCurrentDate(String currentDate) {
+        this.currentDate = currentDate;
+    }
+
+    public String getCurrentDate() {
+        return currentDate;
+    }
 
     /** Controls the perdiod */
     public enum PredictionPeriodicity {
@@ -48,7 +60,8 @@ public class FeaturesStock implements Serializable {
     }
 
     public FeaturesStock(FeaturesStock fs, double predictRes,PredictionPeriodicity t) {
-        this.date = fs.date;
+        this.currentDate = fs.getCurrentDate();
+        this.setDate(fs.getDate(t),t);
         setResultValue(fs.getResultValue(PredictionPeriodicity.D1), PredictionPeriodicity.D1);
         setResultValue(fs.getResultValue(PredictionPeriodicity.D5), PredictionPeriodicity.D5);
         setResultValue(fs.getResultValue(PredictionPeriodicity.D20), PredictionPeriodicity.D20);
@@ -57,6 +70,35 @@ public class FeaturesStock implements Serializable {
         this.vector = fs.vector.clone();
         setPredictionValue(predictRes, t);
     }
+
+
+    public String getDate(PredictionPeriodicity t) {
+        switch (t) {
+            case D1 :
+                return dateD1;
+            case D5:
+                return dateD5;
+            case D20:
+                return dateD20;
+        }
+        //default
+        return "";
+    }
+
+    public void setDate(String date, PredictionPeriodicity t) {
+        switch (t) {
+            case D1 :
+                dateD1 = date;
+                break;
+            case D5:
+                dateD5 = date;
+                break;
+            case D20:
+                dateD20 = date;
+                break;
+        }
+    }
+
 
     public double getResultValue(PredictionPeriodicity t) {
         switch (t) {
@@ -116,14 +158,6 @@ public class FeaturesStock implements Serializable {
     }
 
 
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
 
     public Double[] getVector() {
         return vector;
@@ -247,17 +281,25 @@ public class FeaturesStock implements Serializable {
 
         for (String date: rangeDate) {
             FeaturesStock fs = new FeaturesStock();
-            fs.setDate(date);
+            fs.setCurrentDate(date);
+
 
             try {
                 StockHistory  res = StockHistory.getStockHistoryDayAfter(stock.getCode(), date);
                 fs.setResultValue(res.getValue(),PredictionPeriodicity.D1);
+                fs.setDate(res.getDay(),PredictionPeriodicity.D1);
 
                 //cannot catch exception for this perdiod
                 res = StockHistory.getStockHistoryDayOffset(stock.getCode(), date, 5);
-                if (res != null) fs.setResultValue(res.getValue(),PredictionPeriodicity.D5);
+                if (res != null) {
+                    fs.setResultValue(res.getValue(),PredictionPeriodicity.D5);
+                    fs.setDate(res.getDay(),PredictionPeriodicity.D5);
+                }
                 res = StockHistory.getStockHistoryDayOffset(stock.getCode(), date, 20);
-                if (res != null) fs.setResultValue(res.getValue(),PredictionPeriodicity.D20);
+                if (res != null) {
+                    fs.setResultValue(res.getValue(),PredictionPeriodicity.D20);
+                    fs.setDate(res.getDay(),PredictionPeriodicity.D20);
+                }
             } catch (Exception e) {
                 log.error("Cannot get date for: " + stock.getCode() + " and date: " + date + " //exception:" + e);
                 continue;
@@ -555,7 +597,7 @@ public class FeaturesStock implements Serializable {
     }
 
 
-    public  static FeaturesStock createRT(StockGeneral stock, Validator validator, String date) {
+    public static FeaturesStock createRT(StockGeneral stock, Validator validator, String date) {
         //Xt,Xt-1,...,Xn ,Consensus AT => StockHistory
         //Indice Xt,..Xn, AT => StockIndice
         //Secteur Xt,..Xn, AT => StockSecteur
@@ -566,7 +608,7 @@ public class FeaturesStock implements Serializable {
 
 
         FeaturesStock fs = new FeaturesStock();
-        fs.setDate(date);
+        fs.setCurrentDate(date);
 
         /**
          * stock
@@ -579,7 +621,7 @@ public class FeaturesStock implements Serializable {
             fs.setCurrentValue(current.getValue());
 
         } catch (Exception e) {
-            log.error("Cannot get stock history for: " + stock.getCode() + " and date: " + date +  " //exception:" + e);
+            log.error("Cannot get stock history for: " + stock.getCode() + " and date: " + date + " //exception:" + e);
             return null;
         }
 
@@ -589,7 +631,7 @@ public class FeaturesStock implements Serializable {
             fs.linearize(ash, validator);
 
         } catch (Exception e) {
-            log.error("Cannot get analyse stock for: " + stock.getCode() + " and date: " + date +  " //exception:" + e);
+            log.error("Cannot get analyse stock for: " + stock.getCode() + " and date: " + date + " //exception:" + e);
             return null;
         }
 
@@ -622,7 +664,7 @@ public class FeaturesStock implements Serializable {
                 fs.linearize(asi, validator);
             }
         } catch (Exception e) {
-            log.error("Cannot get indice/analyse stock for: " + "EFCHI" + " and date: " + date +  " //exception:" + e);
+            log.error("Cannot get indice/analyse stock for: " + "EFCHI" + " and date: " + date + " //exception:" + e);
             return null;
         }
 
@@ -701,21 +743,20 @@ public class FeaturesStock implements Serializable {
         /**
          * indice STOXX50 london
          *
-        if (validator.indiceSTOXX50) {
-            try {
+         if (validator.indiceSTOXX50) {
+         try {
 
-                List<StockIndice> si = StockIndice.getStockIndiceDateInvert("ESTOXX50E", date, validator.perdiodSTOXX50);
-                fs.linearizeSI(si);
-                if (validator.STOXX50AT) {
-                    StockAnalyse asi = StockAnalyse.getAnalyse("ESTOXX50E", si.get(0).getDay());
-                    fs.linearize(asi, validator);
-                }
-            } catch (Exception e) {
-                log.error("Cannot get indice/analyse stock for: " + "EGDAXI" + " and date: " + date + " //exception:" + e);
-                return null;
-            }
-        }*/
-
+         List<StockIndice> si = StockIndice.getStockIndiceDateInvert("ESTOXX50E", date, validator.perdiodSTOXX50);
+         fs.linearizeSI(si);
+         if (validator.STOXX50AT) {
+         StockAnalyse asi = StockAnalyse.getAnalyse("ESTOXX50E", si.get(0).getDay());
+         fs.linearize(asi, validator);
+         }
+         } catch (Exception e) {
+         log.error("Cannot get indice/analyse stock for: " + "EGDAXI" + " and date: " + date + " //exception:" + e);
+         return null;
+         }
+         }*/
 
 
         /**
@@ -771,7 +812,7 @@ public class FeaturesStock implements Serializable {
 
             } catch (Exception e) {
                 log.error("Cannot get euribord 1 month stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
-                return  null;
+                return null;
             }
         }
 

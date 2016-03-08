@@ -131,15 +131,15 @@ public class RandomForestStock implements Serializable {
                     System.out.println("estimate: " + pl.getPredictionValue(PredictionPeriodicity.D1));
                     System.out.println("result: " + pl.getResultValue(PredictionPeriodicity.D1));
                     //Double diff = pl.getPredictionValue() - pl.getResultValue();
-                    MLPerformances perf = new MLPerformances(pl.getDate());
+                    MLPerformances perf = new MLPerformances(pl.getCurrentDate());
 
-                    perf.setMlD1(MLPerformance.calculYields(pl.getDate(), pl.getPredictionValue(PredictionPeriodicity.D1), pl.getResultValue(PredictionPeriodicity.D1), pl.getCurrentValue()));
+                    perf.setMlD1(MLPerformance.calculYields(pl.getDate(PredictionPeriodicity.D1), pl.getPredictionValue(PredictionPeriodicity.D1), pl.getResultValue(PredictionPeriodicity.D1), pl.getCurrentValue()));
 
                     if (pl.getResultValue(PredictionPeriodicity.D5) != 0)
-                        perf.setMlD5(MLPerformance.calculYields(pl.getDate(), pl.getPredictionValue(PredictionPeriodicity.D5), pl.getResultValue(PredictionPeriodicity.D5), pl.getCurrentValue()));
+                        perf.setMlD5(MLPerformance.calculYields(pl.getDate(PredictionPeriodicity.D5), pl.getPredictionValue(PredictionPeriodicity.D5), pl.getResultValue(PredictionPeriodicity.D5), pl.getCurrentValue()));
 
                     if (pl.getResultValue(PredictionPeriodicity.D20) != 0)
-                        perf.setMlD20(MLPerformance.calculYields(pl.getDate(), pl.getPredictionValue(PredictionPeriodicity.D20), pl.getResultValue(PredictionPeriodicity.D20), pl.getCurrentValue()));
+                        perf.setMlD20(MLPerformance.calculYields(pl.getDate(PredictionPeriodicity.D20), pl.getPredictionValue(PredictionPeriodicity.D20), pl.getResultValue(PredictionPeriodicity.D20), pl.getCurrentValue()));
 
 
                     return perf;
@@ -199,21 +199,17 @@ public class RandomForestStock implements Serializable {
 
             FeaturesStock fsResult = new FeaturesStock(fsLD1.get(i), pred, PredictionPeriodicity.D1);
 
-            if (fsLD5.size() > i) {
-                FeaturesStock fsD5 = fsLD5.get(i);
-                if (fsD5.getResultValue(PredictionPeriodicity.D5) != 0) {
-                    pred = mls.getMlD5().getModel().predict(Vectors.dense(fsD5.vectorize()));
-                    fsResult.setPredictionValue(pred, PredictionPeriodicity.D5);
-                }
-            }
+            FeaturesStock fsD5 = fsLD5.get(i);
+            pred = mls.getMlD5().getModel().predict(Vectors.dense(fsD5.vectorize()));
+            fsResult.setPredictionValue(pred, PredictionPeriodicity.D5);
+            fsResult.setDate(fsD5.getDate( PredictionPeriodicity.D5),  PredictionPeriodicity.D5);
 
-            if (fsLD20.size() > i) {
-                FeaturesStock fsD20 = fsLD20.get(i);
-                if (fsD20.getResultValue(PredictionPeriodicity.D20) != 0) {
-                    pred = mls.getMlD5().getModel().predict(Vectors.dense(fsD20.vectorize()));
-                    fsResult.setPredictionValue(pred, PredictionPeriodicity.D20);
-                }
-            }
+
+            FeaturesStock fsD20 = fsLD20.get(i);
+            pred = mls.getMlD5().getModel().predict(Vectors.dense(fsD20.vectorize()));
+            fsResult.setPredictionValue(pred, PredictionPeriodicity.D20);
+            fsResult.setDate(fsD20.getDate( PredictionPeriodicity.D20),  PredictionPeriodicity.D20);
+
             resFSList.add(fsResult);
         }
 
@@ -224,15 +220,20 @@ public class RandomForestStock implements Serializable {
             System.out.println("estimate: " + pl.getPredictionValue(PredictionPeriodicity.D1));
             System.out.println("result: " + pl.getResultValue(PredictionPeriodicity.D1));
             //Double diff = pl.getPredictionValue() - pl.getResultValue();
-            MLPerformances perf = new MLPerformances(pl.getDate());
+            MLPerformances perf = new MLPerformances(pl.getCurrentDate());
 
-            perf.setMlD1(MLPerformance.calculYields(pl.getDate(), pl.getPredictionValue(PredictionPeriodicity.D1), pl.getResultValue(PredictionPeriodicity.D1), pl.getCurrentValue()));
+            perf.setMlD1(MLPerformance.calculYields(pl.getDate(PredictionPeriodicity.D1), pl.getPredictionValue(PredictionPeriodicity.D1), pl.getResultValue(PredictionPeriodicity.D1), pl.getCurrentValue()));
 
             if (pl.getResultValue(PredictionPeriodicity.D5) != 0)
-                perf.setMlD5(MLPerformance.calculYields(pl.getDate(), pl.getPredictionValue(PredictionPeriodicity.D5), pl.getResultValue(PredictionPeriodicity.D5), pl.getCurrentValue()));
+                perf.setMlD5(MLPerformance.calculYields(pl.getDate(PredictionPeriodicity.D5), pl.getPredictionValue(PredictionPeriodicity.D5), pl.getResultValue(PredictionPeriodicity.D5), pl.getCurrentValue()));
+            else
+                perf.setMlD5(new MLPerformance(pl.getDate(PredictionPeriodicity.D5),pl.getPredictionValue(PredictionPeriodicity.D5), -1, pl.getCurrentValue(), 0, 0, true));
+
 
             if (pl.getResultValue(PredictionPeriodicity.D20) != 0)
-                perf.setMlD20(MLPerformance.calculYields(pl.getDate(), pl.getPredictionValue(PredictionPeriodicity.D20), pl.getResultValue(PredictionPeriodicity.D20), pl.getCurrentValue()));
+                perf.setMlD20(MLPerformance.calculYields(pl.getDate(PredictionPeriodicity.D20), pl.getPredictionValue(PredictionPeriodicity.D20), pl.getResultValue(PredictionPeriodicity.D20), pl.getCurrentValue()));
+            else
+                perf.setMlD20(new MLPerformance(pl.getDate(PredictionPeriodicity.D20), pl.getPredictionValue(PredictionPeriodicity.D20), -1, pl.getCurrentValue(), 0, 0, true));
 
             resList.add(perf);
 

@@ -16,8 +16,14 @@ public class MLPerformance implements Serializable{
     private boolean sign;
     private String date;
     private double prediction;
+
+    /** value in Dday.. depend on period*/
     private double realvalue;
-    private double currentValue;
+
+    /** day value same of all vlue in MLPerformances*/
+    private double value;
+
+
     private double error;
 
 
@@ -38,7 +44,7 @@ public class MLPerformance implements Serializable{
         this.date = date;
         this.prediction = prediction;
         this.realvalue = realvalue;
-        this.currentValue = value;
+        this.value = value;
         this.error = realvalue - prediction;
     }
 
@@ -67,12 +73,12 @@ public class MLPerformance implements Serializable{
         this.realvalue = realvalue;
     }
 
-    public double getCurrentValue() {
-        return currentValue;
+    public double getValue() {
+        return value;
     }
 
-    public void setCurrentValue(double currentValue) {
-        this.currentValue = currentValue;
+    public void setValue(double currentValue) {
+        this.value = currentValue;
     }
 
     public double getYield() {

@@ -101,4 +101,10 @@ angular.module('mltradingApp')
             });
         }
 
+        $scope.evaluate = function () {
+            return $http.get('/api/evaluate').then(function (response) {
+                return response.data;
+            });
+        }
+
     });

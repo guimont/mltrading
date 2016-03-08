@@ -8,11 +8,12 @@ import java.io.Serializable;
 public class MLPerformances  implements Serializable, Comparable<MLPerformances> {
 
     private String date;
+    private double value;
     private MLPerformance mlD1;
     private MLPerformance mlD5;
     private MLPerformance mlD20;
 
-    
+
     public String getDate() {
         return date;
     }

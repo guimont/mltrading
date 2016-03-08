@@ -2,11 +2,13 @@ package com.mltrading.web.rest;
 
 
 import com.mltrading.ml.CacheMLStock;
+import com.mltrading.ml.MLPredictor;
 import com.mltrading.ml.MlForecast;
 import com.mltrading.models.parser.impl.CheckConsistency;
 import com.mltrading.models.stock.CacheStockGeneral;
 import com.mltrading.models.stock.Stock;
 import com.mltrading.models.stock.StockGeneral;
+import com.mltrading.models.stock.StockPrediction;
 import com.mltrading.repository.StockRepository;
 import com.mltrading.service.ExtractionService;
 import org.slf4j.Logger;
@@ -160,7 +162,8 @@ public class ExtractionResource {
 
         for (int i = 0 ; i < loop; i ++)
             for (StockGeneral s : CacheStockGeneral.getIsinCache().values()) {
-               forecast.optimizeFeature(s, loop, MlForecast.Method.RandomForest);
+                if (s.getCodif().equals("ORA"))
+                    forecast.optimizeFeature(s, loop, MlForecast.Method.RandomForest);
             }
 
         return "ok";
@@ -206,6 +209,23 @@ public class ExtractionResource {
         CacheMLStock.load(sl);
         MlForecast ml = new MlForecast();
         ml.processList(sl);
+
+        return "ok";
+    }
+
+
+    @RequestMapping(value = "/evaluate",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    public String evaluate() {
+
+        MLPredictor predictor = new MLPredictor();
+
+        for (StockGeneral s: CacheStockGeneral.getCache().values()) {
+            StockPrediction p = predictor.prediction(s);
+            s.setPrediction(p);
+        }
+
 
         return "ok";
     }
