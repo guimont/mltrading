@@ -396,7 +396,7 @@ public class FeaturesStock implements Serializable {
                 }
             }
 
-           /* /**
+           /**
              * indice STOXX50 london
              *
             if (validator.indiceSTOXX50) {
@@ -414,7 +414,7 @@ public class FeaturesStock implements Serializable {
                     log.error("Cannot get indice/analyse stock for: " + "ESTOXX50E" + " and date: " + date + " //exception:" + e);
                     throw  e ;
                 }
-            }*/
+            }   */
 
 
 

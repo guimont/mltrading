@@ -156,7 +156,7 @@ public class ExtractionResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String optimizeML() {
 
-        int loop = 3;
+        int loop = 1;
 
         for (int i = 0 ; i < loop; i ++)
             for (StockGeneral s : CacheStockGeneral.getIsinCache().values()) {

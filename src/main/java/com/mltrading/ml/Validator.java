@@ -12,7 +12,7 @@ import java.io.Serializable;
 /**
  * Created by gmo on 14/02/2016.
  */
-public class Validator implements Serializable {
+public class Validator implements Serializable ,Cloneable {
     Integer maxDepth = 3;
     Integer maxBins = 32;
     Integer numTrees = 100; // Use more in practice.
@@ -264,6 +264,9 @@ public class Validator implements Serializable {
     public void save(String code, int error, double rate) {
         BatchPoints bp = InfluxDaoConnectorPerf.getBatchPoints();
 
+        this.error = error;
+        this.rate = rate;
+
         Point pt = Point.measurement(code)
             .field("maxDepth", maxDepth)
             .field("maxBins", maxBins)
@@ -410,4 +413,20 @@ public class Validator implements Serializable {
 
         InfluxDaoConnectorModel.writePoints(bp);
     }
+
+    public Validator clone() {
+        Object o = null;
+        try {
+
+            o = super.clone();
+        } catch(CloneNotSupportedException cnse) {
+
+            cnse.printStackTrace(System.err);
+        }
+
+        return (Validator) o;
+    }
+
+
+
 }

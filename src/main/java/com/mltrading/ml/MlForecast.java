@@ -130,8 +130,8 @@ public class MlForecast {
 
             MLStocks mls = new MLStocks(s.getCodif());
             mls.getMlD1().getValidator().generateFeature();
-            mls.getMlD5().setValidator(mls.getMlD1().getValidator());
-            mls.getMlD20().setValidator(mls.getMlD1().getValidator());
+            mls.getMlD5().setValidator(mls.getMlD1().getValidator().clone());
+            mls.getMlD20().setValidator(mls.getMlD1().getValidator().clone());
 
             String saveCode;
             if (method == Method.LinearRegression) {

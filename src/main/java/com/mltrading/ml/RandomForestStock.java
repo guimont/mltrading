@@ -107,15 +107,15 @@ public class RandomForestStock implements Serializable {
 
                     double pred = modelD1.predict(Vectors.dense(fs.vectorize()));
                     FeaturesStock fsResult = new FeaturesStock(fs, pred, PredictionPeriodicity.D1);
-                    if (fs.getResultValue(PredictionPeriodicity.D5) != 0) {
+
                         pred = modelD5.predict(Vectors.dense(fs.vectorize()));
                         fsResult.setPredictionValue(pred,PredictionPeriodicity.D5);
-                    }
 
-                    if (fs.getResultValue(PredictionPeriodicity.D20) != 0) {
+
+
                         pred = modelD20.predict(Vectors.dense(fs.vectorize()));
                         fsResult.setPredictionValue(pred,PredictionPeriodicity.D20);
-                    }
+
 
                     return fsResult;
                 }
@@ -161,20 +161,20 @@ public class RandomForestStock implements Serializable {
         List<FeaturesStock> fsLD1 = FeaturesStock.create(stock, mls.getMlD1().getValidator(), FeaturesStock.RANGE_TEST);
         if( fsLD1.get(0).currentVectorPos != mls.getMlD1().getValidator().getVectorSize())    {
             log.error("size vector not corresponding");
-            log.error("validatorr: " + mls.getMlD1().getValidator().getVectorSize());
-            log.error("vector: " + fsLD1.size() );
+            log.error("validator: " + mls.getMlD1().getValidator().getVectorSize());
+            log.error("vector: " + fsLD1.get(0).currentVectorPos );
         }
         List<FeaturesStock> fsLD5 = FeaturesStock.create(stock, mls.getMlD5().getValidator(), FeaturesStock.RANGE_TEST);
         if( fsLD5.get(0).currentVectorPos != mls.getMlD5().getValidator().getVectorSize())    {
             log.error("size vector not corresponding");
-            log.error("validatorr: " + mls.getMlD5().getValidator().getVectorSize());
-            log.error("vector: " + fsLD5.size() );
+            log.error("validator: " + mls.getMlD5().getValidator().getVectorSize());
+            log.error("vector: " + fsLD5.get(0).currentVectorPos );
         }
         List<FeaturesStock> fsLD20 = FeaturesStock.create(stock, mls.getMlD20().getValidator(), FeaturesStock.RANGE_TEST);
         if( fsLD20.get(0).currentVectorPos != mls.getMlD20().getValidator().getVectorSize())    {
             log.error("size vector not corresponding");
-            log.error("validatorr: " + mls.getMlD20().getValidator().getVectorSize());
-            log.error("vector: " + fsLD20.size() );
+            log.error("validator: " + mls.getMlD20().getValidator().getVectorSize());
+            log.error("vector: " + fsLD20.get(0).currentVectorPos );
         }
 
         if (null == fsLD1) return null;
