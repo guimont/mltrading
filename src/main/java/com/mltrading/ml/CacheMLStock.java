@@ -6,7 +6,10 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.apache.commons.io.FileUtils;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,10 +54,22 @@ public class CacheMLStock {
     }
 
     public static void save() {
+        deleteModel();
         for (MLStocks mls:mlStockMap.values()) {
             if (mls != null && mls.getMlD1() != null) mls.getMlD1().save();
             if (mls != null && mls.getMlD5() != null) mls.getMlD5().save();
             if (mls != null && mls.getMlD20() != null) mls.getMlD20().save();
         }
     }
+
+
+    public static void deleteModel() {
+        try {
+            FileUtils.deleteDirectory(new File("model"));
+        } catch (IOException e) {
+            log.error("Cannot remove folder model: " + e);
+        }
+    }
+
+
 }

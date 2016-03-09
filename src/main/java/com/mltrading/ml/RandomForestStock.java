@@ -110,11 +110,11 @@ public class RandomForestStock implements Serializable {
 
                         pred = modelD5.predict(Vectors.dense(fs.vectorize()));
                         fsResult.setPredictionValue(pred,PredictionPeriodicity.D5);
-
-
+                        fsResult.setDate(fs.getDate(PredictionPeriodicity.D5), PredictionPeriodicity.D5);
 
                         pred = modelD20.predict(Vectors.dense(fs.vectorize()));
                         fsResult.setPredictionValue(pred,PredictionPeriodicity.D20);
+                        fsResult.setDate(fs.getDate(PredictionPeriodicity.D20), PredictionPeriodicity.D20);
 
 
                     return fsResult;
