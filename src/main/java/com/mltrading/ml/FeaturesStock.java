@@ -337,7 +337,7 @@ public class FeaturesStock implements Serializable {
                 List<StockSector> ss = StockSector.getStockSectorDateInvert(stock.getSector(), date, validator.perdiodSector);
                 fs.linearizeSS(ss);
                 if (validator.sectorAT) {
-                    StockAnalyse ass = StockAnalyse.getAnalyse(stock.getSector(), date);
+                    StockAnalyse ass = StockAnalyse.getAnalyse(stock.getSector(), ss.get(0).getDay());
                     fs.linearize(ass, validator);
                 }
             } catch (Exception e) {
@@ -355,11 +355,11 @@ public class FeaturesStock implements Serializable {
                 if (validator.cac) {
                     List<StockIndice> si = StockIndice.getStockIndiceDateInvert("EFCHI", date, validator.perdiodCac);
                     fs.linearizeSI(si);
-                }
 
-                if (validator.cacAT) {
-                    StockAnalyse asi = StockAnalyse.getAnalyse("EFCHI", date);
-                    fs.linearize(asi, validator);
+                    if (validator.cacAT) {
+                        StockAnalyse asi = StockAnalyse.getAnalyse("EFCHI", si.get(0).getDay());
+                        fs.linearize(asi, validator);
+                    }
                 }
             } catch (Exception e) {
                 log.error("Cannot get indice/analyse stock for: " + "EFCHI" + " and date: " + date +  " //exception:" + e);
@@ -642,7 +642,7 @@ public class FeaturesStock implements Serializable {
             List<StockSector> ss = StockSector.getStockSectorDateInvert(stock.getSector(), date, validator.perdiodSector);
             fs.linearizeSS(ss);
             if (validator.sectorAT) {
-                StockAnalyse ass = StockAnalyse.getAnalyse(stock.getSector(), date);
+                StockAnalyse ass = StockAnalyse.getAnalyse(stock.getSector(), ss.get(0).getDay());
                 fs.linearize(ass, validator);
             }
         } catch (Exception e) {
@@ -657,11 +657,12 @@ public class FeaturesStock implements Serializable {
             if (validator.cac) {
                 List<StockIndice> si = StockIndice.getStockIndiceDateInvert("EFCHI", date, validator.perdiodCac);
                 fs.linearizeSI(si);
-            }
 
-            if (validator.cacAT) {
-                StockAnalyse asi = StockAnalyse.getAnalyse("EFCHI", date);
-                fs.linearize(asi, validator);
+
+                if (validator.cacAT) {
+                    StockAnalyse asi = StockAnalyse.getAnalyse("EFCHI", si.get(0).getDay());
+                    fs.linearize(asi, validator);
+                }
             }
         } catch (Exception e) {
             log.error("Cannot get indice/analyse stock for: " + "EFCHI" + " and date: " + date + " //exception:" + e);

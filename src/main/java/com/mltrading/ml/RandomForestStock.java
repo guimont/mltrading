@@ -206,7 +206,7 @@ public class RandomForestStock implements Serializable {
 
 
             FeaturesStock fsD20 = fsLD20.get(i);
-            pred = mls.getMlD5().getModel().predict(Vectors.dense(fsD20.vectorize()));
+            pred = mls.getMlD20().getModel().predict(Vectors.dense(fsD20.vectorize()));
             fsResult.setPredictionValue(pred, PredictionPeriodicity.D20);
             fsResult.setDate(fsD20.getDate( PredictionPeriodicity.D20),  PredictionPeriodicity.D20);
 
