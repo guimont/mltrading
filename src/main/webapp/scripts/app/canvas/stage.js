@@ -412,7 +412,7 @@ function drawChart(group, pos, elt ,key , heightM, eltSize, i, text , layer, col
         tooltip.add(new Kinetic.Text({
             x:pos.x+100,
             y: 37,
-            text: elt.currentValue.toFixed(5),
+            text: elt.realvalue.toFixed(5),
             fontFamily: 'Calibri',
             fontSize: 11,
             fill: colorR
