@@ -1,19 +1,14 @@
 package com.mltrading.models;
 
+import breeze.optimize.AdaptiveGradientDescent;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.mltrading.domain.User;
 import com.mltrading.ml.RandomForestStock;
 import com.mltrading.ml.Validator;
 import com.mltrading.models.parser.*;
-import com.mltrading.models.parser.impl.CheckConsistency;
-import com.mltrading.models.parser.impl.HistorySectorParserYahoo;
-import com.mltrading.models.parser.impl.RealTimeParserBoursorama;
-import com.mltrading.models.parser.impl.RealTimeParserYahoo;
-import com.mltrading.models.stock.CacheStockGeneral;
-import com.mltrading.models.stock.StockAnalyse;
-import com.mltrading.models.stock.StockGeneral;
-import com.mltrading.models.stock.StockHistory;
+import com.mltrading.models.parser.impl.*;
+import com.mltrading.models.stock.*;
 import com.mltrading.service.ExtractionService;
 
 import com.mltrading.service.UserService;
@@ -34,6 +29,14 @@ public class test {
     @Inject
     private static UserService userService;
 
+    public static void main(String[] args) {
+        ArticlesParserEchos as = new ArticlesParserEchos();
+        //as.fetch();
+        ArticleParserEchos a = new ArticleParserEchos();
+        a.fetch();
+        HistogramDocument hd = new HistogramDocument();
+        //hd.test();
+    }
 
    /* public static void main(String[] args) {
 

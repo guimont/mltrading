@@ -47,7 +47,7 @@ public class MlForecast {
 
     public static enum Type {
         Feature,
-        RF
+        None, RF
     }
 
     public void optimize(StockGeneral s, int loop, Method method, Type type) {

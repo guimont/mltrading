@@ -108,6 +108,7 @@ Desktop.ini
 /spring_loaded/**
 /deploy/**
 /model/**
+/model_NO/**
 
 ######################
 # Logs

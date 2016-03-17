@@ -76,7 +76,7 @@ angular.module('mltradingApp')
         }
 
         $scope.optimizeML = function () {
-            return $http.get('/api/optimizeML').then(function (response) {
+            return $http.get('/api/defaultML').then(function (response) {
                 return response.data;
             });
         }

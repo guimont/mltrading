@@ -158,19 +158,38 @@ public class ExtractionResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String optimizeML() {
 
-        int loop = 10;
+        int loop = 2;
 
         for (int i = 0 ; i < loop; i ++)
             for (StockGeneral s : CacheStockGeneral.getIsinCache().values()) {
-                if (s.getCodif().equals("ORA"))
+                //if (s.getCodif().equals("ORA"))
                     forecast.optimize(s, loop, MlForecast.Method.RandomForest, MlForecast.Type.Feature);
             }
             for (StockGeneral s : CacheStockGeneral.getIsinCache().values()) {
-                if (s.getCodif().equals("ORA"))
+                //if (s.getCodif().equals("ORA"))
                     forecast.optimize(s, loop, MlForecast.Method.RandomForest, MlForecast.Type.RF);
             }
+            log.info("evaluate");
             evaluate();
+            log.info("saveML");
             saveML();
+
+        return "ok";
+    }
+
+    @RequestMapping(value = "/defaultML",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    public String defaultML() {
+
+
+        for (StockGeneral s : CacheStockGeneral.getIsinCache().values()) {
+            if (s.getCodif().equals("ORA"))
+                forecast.optimize(s, 1, MlForecast.Method.RandomForest, MlForecast.Type.None);
+        }
+
+        /*evaluate();
+        saveML();*/
 
         return "ok";
     }
