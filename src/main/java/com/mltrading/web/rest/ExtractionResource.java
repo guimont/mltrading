@@ -75,7 +75,7 @@ public class ExtractionResource {
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String getExtractionSeriesWeekly() {
-        service.extractionCurrent(7);
+        service.extractionCurrent(14);
         return "ok";
     }
 

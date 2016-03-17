@@ -2,6 +2,7 @@ package com.mltrading.models.parser.impl;
 
 import com.mltrading.dao.InfluxDaoConnector;
 import com.mltrading.dao.InfluxDaoConnectorDocument;
+import com.mltrading.dao.InfluxDaoConnectorNotation;
 import com.mltrading.influxdb.dto.BatchPoints;
 import com.mltrading.models.parser.ArticleParser;
 import com.mltrading.models.parser.ParserCommon;
@@ -91,11 +92,11 @@ public class ArticleParserEchos implements ArticleParser {
 
             List<StockDocument> sds =  StockDocument.getStockDocument(g.getCodif());
 
-            try {
+            /*try {
                 Thread.sleep(20000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
-            }
+            }*/
 
             for (StockDocument d: sds) {
                 String url = d.getRef();
@@ -108,13 +109,14 @@ public class ArticleParserEchos implements ArticleParser {
                         e.printStackTrace();
                     }
 
-                    url = url.replace("href=\"","http://investir.lesechos.fr").replaceAll("\"","");
+                    if (!url.startsWith("http"))
+                        url = url.replace("href=\"","http://investir.lesechos.fr").replaceAll("\"","");
                     System.out.println(url);
                     text = ParserCommon.loadUrl(new URL(url));
 
                     Document doc = Jsoup.parse(text);
                     Elements links = doc.select(refCode);
-                    HistogramDocument hd = new HistogramDocument();
+                    HistogramDocument hd = new HistogramDocument(d.getCode(), d.getDate());
 
                     Elements sentences =  links.select("p");
 
@@ -125,17 +127,18 @@ public class ArticleParserEchos implements ArticleParser {
                     log.info("resultat: " + hd.sum());
                     //Element list = links.get(0);
 
-                    BatchPoints bp = InfluxDaoConnectorDocument.getBatchPoints();
+                    BatchPoints bp = InfluxDaoConnectorNotation.getBatchPoints();
+                    ArticleParser.saveNotation(bp, hd);
 
-
-                    //InfluxDaoConnectorDocument.writePoints(bp);
-
+                    InfluxDaoConnectorNotation.writePoints(bp);
 
                 } catch (Exception e) {
                     e.printStackTrace();
                     System.out.println("ERROR for : " + g.getName());
                 }
+
             }
+            return;
         }
     }
 

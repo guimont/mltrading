@@ -34,7 +34,7 @@ public class test {
         //as.fetch();
         ArticleParserEchos a = new ArticleParserEchos();
         a.fetch();
-        HistogramDocument hd = new HistogramDocument();
+        //HistogramDocument hd = new HistogramDocument();
         //hd.test();
     }
 

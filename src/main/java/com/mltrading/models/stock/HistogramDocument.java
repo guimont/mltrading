@@ -1,5 +1,6 @@
 package com.mltrading.models.stock;
 
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,6 +13,7 @@ public class HistogramDocument {
 
     private static final Logger log = LoggerFactory.getLogger(HistogramDocument.class);
 
+    DateTime timeInsert;
     private String code;
     private String day;
     private int lvl_L4 = 0;
@@ -23,6 +25,21 @@ public class HistogramDocument {
     private int lvl_P2 = 0;
     private int lvl_P3 = 0;
     private int lvl_P4 = 0;
+
+
+    public HistogramDocument( String code, String date) {
+        this.day = date;
+        this.code = code;
+        timeInsert = new DateTime(date);
+    }
+
+    public DateTime getTimeInsert() {
+        return timeInsert;
+    }
+
+    public void setTimeInsert(DateTime timeInsert) {
+        this.timeInsert = timeInsert;
+    }
 
     public String getCode() {
         return code;
