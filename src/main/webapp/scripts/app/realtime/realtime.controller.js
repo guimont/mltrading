@@ -23,6 +23,17 @@ angular.module('mltradingApp')
             $('#showHealthModal').modal('show');
         };
 
+        $scope.prediction = function (val,per) {
+            if (val === undefined) return "";
+            return val.toFixed(3) +" / " + per +"%"
+        }
+
+        $scope.getcolor = function(val) {
+            if (val < 40) return 'red';
+            if (val < 70) return 'orange';
+            return 'green';
+        }
+
 
 
     });

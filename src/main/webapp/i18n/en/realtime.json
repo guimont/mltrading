@@ -10,7 +10,10 @@
                 "value": "Value",
                 "volume": "Volume",
                 "variation" : "Variation",
-                "prediction" : "Prediction"
+                "prediction1D" : "Prediction 1D",
+                "prediction5D" : "Prediction 5D",
+                "prediction20D" : "Prediction 20D",
+                "detail" : "Detail"
             },
             "data": {
                 "remoteAddress": "Remote Address:"
