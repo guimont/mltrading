@@ -1,9 +1,13 @@
 package com.mltrading.models.stock;
 
+import com.mltrading.dao.InfluxDaoConnectorDocument;
+import com.mltrading.influxdb.dto.QueryResult;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -191,4 +195,28 @@ public class HistogramDocument {
     public int sum() {
         return lvl_L4*-4 + lvl_L3*-3 + lvl_L2*-2 + lvl_L1*-1 + lvl_0 + lvl_P1 + lvl_P2*2 + lvl_P3*3 + lvl_P4*4;
     }
+
+    public static List<Integer> getSumDocument(final String code, String date, int offset) {
+
+        List<Integer> stockDocuments = new ArrayList<>();
+        //offset is mult by 2 because it is no dense data
+        //String query = "SELECT * FROM " + code + " where time <= '" + date + "' and time > '"+ date + "' - "+ Integer.toString(offset)  +"d";
+        String query = "SELECT sum(sum) FROM " + code + " where time <= '" + date + "' and time > '"+ date + "' - "+ Integer.toString(offset)  +"d group by time(1d)";
+        QueryResult list = InfluxDaoConnectorDocument.getPoints(query);
+
+        int size = list.getResults().get(0).getSeries().get(0).getValues().size();
+        if (size < offset)
+            return null;
+
+        for (int i = size-1; stockDocuments.size() < offset; i--) {
+            /*StockDocument sd = new StockDocument();
+            sd.setCode(code);
+            populate(sd, list, i);*/
+            stockDocuments.add(0);
+        }
+
+        return stockDocuments;
+
+    }
+
 }

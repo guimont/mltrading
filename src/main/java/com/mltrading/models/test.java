@@ -33,9 +33,11 @@ public class test {
         ArticlesParserEchos as = new ArticlesParserEchos();
         //as.fetch();
         ArticleParserEchos a = new ArticleParserEchos();
-        a.fetch();
+        //a.fetch();
         //HistogramDocument hd = new HistogramDocument();
         //hd.test();
+        List<StockDocument> l = StockDocument.getStockDocument("ORAR","2016-03-01", 10);
+        l.size();
     }
 
    /* public static void main(String[] args) {

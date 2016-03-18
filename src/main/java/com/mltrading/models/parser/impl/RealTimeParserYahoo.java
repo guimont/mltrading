@@ -60,7 +60,10 @@ public class RealTimeParserYahoo implements RealTimeParser {
                                 g.setValue(value);
                                 try {
                                     //t.get(3).child(0).child(1).attributes color #cc0000
-                                    g.setVariation(new Float(t.get(3).child(0).child(1).text().replace(",", ".")));
+                                    float sign = (float) 1.;
+                                    if (!t.get(3).child(0).child(1).attributes().toString().contains("#008800"))
+                                        sign = (float) -1.;
+                                    g.setVariation(new Float(t.get(3).child(0).child(1).text().replace(",", "."))*sign);
                                     g.setVolume(new Integer(t.get(4).child(0).text().replaceAll(" ", "")));
                                 }
                                 catch (IndexOutOfBoundsException e){

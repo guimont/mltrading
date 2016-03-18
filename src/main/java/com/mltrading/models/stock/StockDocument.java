@@ -1,5 +1,6 @@
 package com.mltrading.models.stock;
 
+import com.mltrading.dao.InfluxDaoConnector;
 import com.mltrading.dao.InfluxDaoConnectorDocument;
 import com.mltrading.influxdb.dto.QueryResult;
 import org.joda.time.DateTime;
@@ -89,5 +90,30 @@ public class StockDocument {
         return docList;
 
     }
+
+
+    public static List<Integer> getStockDocument(final String code, String date, int offset) {
+
+        List<Integer> stockDocuments = new ArrayList<>();
+        //offset is mult by 2 because it is no dense data
+        //String query = "SELECT * FROM " + code + " where time <= '" + date + "' and time > '"+ date + "' - "+ Integer.toString(offset)  +"d";
+        String query = "SELECT count(ref) FROM " + code + " where time <= '" + date + "' and time > '"+ date + "' - "+ Integer.toString(offset)  +"d group by time(1d)";
+        QueryResult list = InfluxDaoConnectorDocument.getPoints(query);
+
+        int size = list.getResults().get(0).getSeries().get(0).getValues().size();
+        if (size < offset)
+            return null;
+
+        for (int i = size-1; stockDocuments.size() < offset; i--) {
+            /*StockDocument sd = new StockDocument();
+            sd.setCode(code);
+            populate(sd, list, i);*/
+            stockDocuments.add(0);
+        }
+
+        return stockDocuments;
+
+    }
+
 
 }

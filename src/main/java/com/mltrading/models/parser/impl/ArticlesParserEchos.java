@@ -69,7 +69,7 @@ public class ArticlesParserEchos implements ArticleParser {
                         ArticleParser.saveDocument(bp, document);
                     }
 
-                    InfluxDaoConnectorDocument.writePoints(bp);
+                    //InfluxDaoConnectorDocument.writePoints(bp);
 
 
                 } catch (Exception e) {

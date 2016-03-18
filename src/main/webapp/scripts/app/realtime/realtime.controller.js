@@ -34,6 +34,12 @@ angular.module('mltradingApp')
             return 'green';
         }
 
+        $scope.getcolorSign = function(val) {
+            if (val < 0) return 'red';
+            return 'green';
+        }
+
+
 
 
     });

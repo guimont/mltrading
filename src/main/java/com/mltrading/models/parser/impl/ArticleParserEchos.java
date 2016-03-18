@@ -114,26 +114,35 @@ public class ArticleParserEchos implements ArticleParser {
                     System.out.println(url);
                     text = ParserCommon.loadUrl(new URL(url));
 
+
+
                     Document doc = Jsoup.parse(text);
-                    Elements links = doc.select(refCode);
-                    HistogramDocument hd = new HistogramDocument(d.getCode(), d.getDate());
 
-                    Elements sentences =  links.select("p");
+                    /**
+                     * Check balise number, if too much dont refer to action
+                     */
+                    if (doc.select("div.bloc-tags").select("li").size() <5) {
 
-                    for (Element sentence: sentences) {
-                        hd.analyseDocument(Jsoup.parse(sentence.toString()).text(), notationCache);
+                        Elements links = doc.select(refCode);
+                        HistogramDocument hd = new HistogramDocument(d.getCode(), d.getDate());
+
+                        Elements sentences = links.select("p");
+
+                        for (Element sentence : sentences) {
+                            hd.analyseDocument(Jsoup.parse(sentence.toString()).text(), notationCache);
+                        }
+
+                        log.info("resultat: " + hd.sum());
+                        //Element list = links.get(0);
+
+                        BatchPoints bp = InfluxDaoConnectorNotation.getBatchPoints();
+                        ArticleParser.saveNotation(bp, hd);
+
+                        InfluxDaoConnectorNotation.writePoints(bp);
                     }
 
-                    log.info("resultat: " + hd.sum());
-                    //Element list = links.get(0);
-
-                    BatchPoints bp = InfluxDaoConnectorNotation.getBatchPoints();
-                    ArticleParser.saveNotation(bp, hd);
-
-                    InfluxDaoConnectorNotation.writePoints(bp);
-
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    //e.printStackTrace();
                     System.out.println("ERROR for : " + g.getName());
                 }
 

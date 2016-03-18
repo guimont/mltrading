@@ -24,7 +24,7 @@
             <td><small>{{rt.codif}}</small></td>
             <td>{{rt.value}}</td>
             <td>{{rt.volume}}</td>
-            <td style="color: darkred">{{rt.variation}}</td>
+            <td style="color: {{getcolorSign(rt.variation)}}">{{rt.variation}}</td>
             <td style="color: {{getcolor(rt.prediction.confidenceD1)}}">{{prediction(rt.prediction.predictionD1, rt.prediction.confidenceD1)}}
                 <!--a ui-sref="detail({code: '{{rt.code}}'})" ><i style="margin-left: 5px" class="glyphicon glyphicon-eye-open"/></a-->
             </td>

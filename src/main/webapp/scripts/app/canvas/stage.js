@@ -155,9 +155,9 @@ function chartRun(pos, layer, col, key, color, dyn) {
 
 function drawChartMax(group, pos, max ,mean, heightM, width) {
     group.add(new Kinetic.Text({
-        x:pos.x-40,
+        x:pos.x-20,
         y: 146 - heightM*max,
-        text: max,
+        text: max.toFixed(3),
         fontFamily: 'Calibri',
         fontSize: 10,
         fill: '#AC7969'
@@ -174,9 +174,9 @@ function drawChartMax(group, pos, max ,mean, heightM, width) {
 
 
     group.add(new Kinetic.Text({
-        x:pos.x-40,
+        x:pos.x-20,
         y: 146 - heightM*mean,
-        text: mean.toFixed(),
+        text: mean.toFixed(3),
         fontFamily: 'Calibri',
         fontSize: 10,
         fill: '#AC7969'
