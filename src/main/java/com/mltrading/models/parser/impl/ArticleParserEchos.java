@@ -1,7 +1,6 @@
 package com.mltrading.models.parser.impl;
 
-import com.mltrading.dao.InfluxDaoConnector;
-import com.mltrading.dao.InfluxDaoConnectorDocument;
+import com.google.inject.Singleton;
 import com.mltrading.dao.InfluxDaoConnectorNotation;
 import com.mltrading.influxdb.dto.BatchPoints;
 import com.mltrading.models.parser.ArticleParser;
@@ -10,7 +9,7 @@ import com.mltrading.models.stock.CacheStockGeneral;
 import com.mltrading.models.stock.HistogramDocument;
 import com.mltrading.models.stock.StockDocument;
 import com.mltrading.models.stock.StockGeneral;
-import com.mltrading.repository.StockRepository;
+import org.joda.time.DateTime;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -27,6 +26,7 @@ import java.util.Map;
 /**
  * Created by gmo on 09/03/2016.
  */
+@Singleton
 public class ArticleParserEchos implements ArticleParser {
 
     private static final Logger log = LoggerFactory.getLogger(HistogramDocument.class);
@@ -37,13 +37,92 @@ public class ArticleParserEchos implements ArticleParser {
 
     public ArticleParserEchos() {
         openNotationFile(notationCache);
-        openIgnoreFile(ignoredCache);
+        //openIgnoreFile(ignoredCache);
     }
 
     @Override
     public void fetch() {
         loader();
     }
+
+    @Override
+    public void fetchCurrent() {
+    //get article
+        //si non present add
+        for (StockGeneral g: CacheStockGeneral.getIsinCache().values()) {
+            String dateRef = HistogramDocument.getLastDateHistory(g.getCodif() + "R");
+            loaderFrom(g, dateRef);
+        }
+
+    }
+
+
+    private void loaderFrom(StockGeneral g, String dateRef) {
+        DateTime dref = new DateTime(dateRef);
+
+        List<StockDocument> sds =  StockDocument.getStockDocumentInvert(g.getCodif());
+
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        for (StockDocument d: sds) {
+            if (dref.isAfter(d.getTimeInsert())) {
+                return;
+            }
+            String url = d.getRef();
+            try {
+                String text;
+
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                if (!url.startsWith("http"))
+                    url = url.replace("href=\"","http://investir.lesechos.fr").replaceAll("\"","");
+                System.out.println(url);
+                text = ParserCommon.loadUrl(new URL(url));
+
+
+
+                Document doc = Jsoup.parse(text);
+
+                /**
+                 * Check balise number, if too much dont refer to action
+                 */
+                if (doc.select("div.bloc-tags").select("li").size() <5) {
+
+                    Elements links = doc.select(refCode);
+                    HistogramDocument hd = new HistogramDocument(d.getCode(), d.getDate());
+
+                    Elements sentences = links.select("p");
+
+                    for (Element sentence : sentences) {
+                        hd.analyseDocument(Jsoup.parse(sentence.toString()).text(), notationCache);
+                    }
+
+                    log.info("resultat: " + hd.sum());
+                    //Element list = links.get(0);
+
+                    BatchPoints bp = InfluxDaoConnectorNotation.getBatchPoints();
+                    ArticleParser.saveNotation(bp, hd);
+
+                    InfluxDaoConnectorNotation.writePoints(bp);
+                }
+
+            } catch (Exception e) {
+                //e.printStackTrace();
+                System.out.println("ERROR for : " + g.getName());
+            }
+
+
+        }
+    }
+
 
     public static void openIgnoreFile( Map<String, Integer> ignoredCache) {
         String fileName = "ignored.txt";
@@ -66,7 +145,7 @@ public class ArticleParserEchos implements ArticleParser {
     }
 
     public static void openNotationFile( Map<String, Integer> notationCache) {
-        String fileName = "notation.txt";
+        String fileName = "/home/gmo/notation.txt";
         //lecture du fichier texte
         try{
             InputStream ips=new FileInputStream(fileName);
@@ -147,7 +226,6 @@ public class ArticleParserEchos implements ArticleParser {
                 }
 
             }
-            return;
         }
     }
 

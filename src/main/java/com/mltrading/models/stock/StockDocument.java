@@ -91,27 +91,71 @@ public class StockDocument {
 
     }
 
+    public static List<StockDocument> getStockDocumentInvert(final String code) {
 
-    public static List<Integer> getStockDocument(final String code, String date, int offset) {
-
-        List<Integer> stockDocuments = new ArrayList<>();
+        List<StockDocument> docList = new ArrayList<>();
         //offset is mult by 2 because it is no dense data
-        //String query = "SELECT * FROM " + code + " where time <= '" + date + "' and time > '"+ date + "' - "+ Integer.toString(offset)  +"d";
-        String query = "SELECT count(ref) FROM " + code + " where time <= '" + date + "' and time > '"+ date + "' - "+ Integer.toString(offset)  +"d group by time(1d)";
+        String query = "SELECT * FROM " + code + "R";
         QueryResult list = InfluxDaoConnectorDocument.getPoints(query);
 
         int size = list.getResults().get(0).getSeries().get(0).getValues().size();
-        if (size < offset)
-            return null;
 
-        for (int i = size-1; stockDocuments.size() < offset; i--) {
-            /*StockDocument sd = new StockDocument();
+        for (int i = size-1; i > 0; i--) {
+            StockDocument sd = new StockDocument();
             sd.setCode(code);
-            populate(sd, list, i);*/
-            stockDocuments.add(0);
+            populate(sd, list, i);
+            docList.add(sd);
         }
 
-        return stockDocuments;
+        return docList;
+
+    }
+
+
+    public static List<Double> getStockDocument(final String code, String date, int offset) {
+
+        try {
+
+            List<Double> stockDocuments = new ArrayList<>();
+            //offset is mult by 2 because it is no dense data
+            //String query = "SELECT * FROM " + code + " where time <= '" + date + "' and time > '"+ date + "' - "+ Integer.toString(offset)  +"d";
+            String query = "SELECT count(ref) FROM " + code + " where time <= '" + date + "' and time > '" + date + "' - " + Integer.toString(offset) + "d group by time(1d)";
+            QueryResult list = InfluxDaoConnectorDocument.getPoints(query);
+
+
+            if (list.getResults().get(0).getSeries() == null || list.getResults().get(0).getSeries().get(0) == null) {
+                for (int i = 0; i< offset; i++)
+                    stockDocuments.add(new Double(0));
+            } else {
+
+                int size = list.getResults().get(0).getSeries().get(0).getValues().size();
+                if (size < offset)
+                    return null;
+
+                for (int i = size - 1; stockDocuments.size() < offset; i--) {
+                    Double I = new Double(list.getResults().get(0).getSeries().get(0).getValues().get(i).get(1).toString());
+                    stockDocuments.add(I);
+                }
+            }
+
+            return stockDocuments;
+        }catch (Exception e) {
+            System.out.print(e);
+            return null;
+        }
+
+    }
+
+    public static String getLastDateHistory(final String code) {
+
+        //suppose base is filled
+        String query = "SELECT * FROM "+ code +" where time > '2015-06-01T00:00:00Z'";
+        QueryResult list = InfluxDaoConnectorDocument.getPoints(query);
+
+        if (list.getResults().get(0).getSeries() == null) return null;
+        int size = list.getResults().get(0).getSeries().get(0).getValues().size();
+
+        return (String) list.getResults().get(0).getSeries().get(0).getValues().get(size-1).get(0);
 
     }
 

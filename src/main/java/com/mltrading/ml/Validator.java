@@ -73,6 +73,10 @@ public class Validator implements Serializable ,Cloneable {
     public boolean USRI10Y = true;
     public int perdiodUSRI10Y = 20;
 
+    public boolean useDocument = true;
+    public boolean useNotation = true;
+    public int perdiodDocument  = 20;
+
 
     private double error;
     private double rate;
@@ -157,6 +161,10 @@ public class Validator implements Serializable ,Cloneable {
         this.vectorSize = new Integer(((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(size).get(53))).intValue());
         this.vSize = new Integer(((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(size).get(54))).intValue());
 
+        this.perdiodDocument = new Integer(((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(size).get(55))).intValue());
+        this.useDocument = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(size).get(56);
+        this.useNotation = (boolean) result.getResults().get(0).getSeries().get(0).getValues().get(size).get(57);
+
     }
 
 
@@ -220,6 +228,10 @@ public class Validator implements Serializable ,Cloneable {
         analyseMme26 = randomBool();
         analyseMomentum = randomBool();
         analyseStdDev = randomBool();
+
+        useDocument = randomBool();
+        useNotation = randomBool();
+        perdiodDocument  = randomPeriod();
     }
 
     public void generate() {
@@ -293,7 +305,7 @@ public class Validator implements Serializable ,Cloneable {
             .field("DAXIAT", DAXIAT)
             .field("indiceDAX", indiceDAX)
             .field("perdiodDAX", perdiodDAX)
-            .field("STOXX50AT",STOXX50AT)
+            .field("STOXX50AT", STOXX50AT)
             .field("indiceSTOXX50",indiceSTOXX50)
             .field("perdiodSTOXX50", perdiodSTOXX50)
             .field("DOLLAR", DOLLAR)
@@ -304,11 +316,11 @@ public class Validator implements Serializable ,Cloneable {
             .field("historyVolume", historyVolume)
             .field("analyseMme12", analyseMme12)
             .field("analyseMme26", analyseMme26)
-            .field("analyseMomentum",analyseMomentum)
+            .field("analyseMomentum", analyseMomentum)
             .field("analyseStdDev", analyseStdDev)
             .field("DJIAT",DJIAT)
             .field("N225AT", N225AT)
-            .field("FTSEAT",FTSEAT)
+            .field("FTSEAT", FTSEAT)
 
             .field("EURI1M", EURI1M)
             .field("perdiodEURI1M", perdiodEURI1M)
@@ -328,6 +340,12 @@ public class Validator implements Serializable ,Cloneable {
             .field("rate", rate)
             .field("vectorSize", vectorSize)
             .field("vsize", vSize)
+
+            //w to add at the end
+            .field("wperdiodDocument", perdiodDocument)
+            .field("wuseDocument", useDocument)
+            .field("wuseNotation", useNotation)
+
             .build();
         bp.point(pt);
 
@@ -408,6 +426,11 @@ public class Validator implements Serializable ,Cloneable {
             .field("rate", rate)
             .field("vectorSize", vectorSize)
             .field("vsize", vSize)
+
+                //w to add at the end
+            .field("wperdiodDocument", perdiodDocument)
+            .field("wuseDocument", useDocument)
+            .field("wuseNotation", useNotation)
             .build();
         bp.point(pt);
 

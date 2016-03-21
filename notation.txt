@@ -2019,3 +2019,13 @@ détrôner 1
 acquisition 1
 suppression -1
 désaccords -1
+émergence 1
+doubler 2
+double 2
+dépasser 2
+redressement 1
+ambition 1
+nulle -2
+nul -2
+volatil -2
+

@@ -29,15 +29,24 @@ public class test {
     @Inject
     private static UserService userService;
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         ArticlesParserEchos as = new ArticlesParserEchos();
         //as.fetch();
         ArticleParserEchos a = new ArticleParserEchos();
         //a.fetch();
         //HistogramDocument hd = new HistogramDocument();
         //hd.test();
-        List<StockDocument> l = StockDocument.getStockDocument("ORAR","2016-03-01", 10);
-        l.size();
+        //List<Double> l = StockDocument.getStockDocument("ORAR","2016-03-01", 10);
+        //l.size();
+
+        List<Double> l =    HistogramDocument.getSumDocument("ORA","2016-03-01", 10);
+        System.out.println(l.size());
+
+            //as.fetchCurrent();
+        //a.fetch();
+
+        //StockDocument.getStockDocument()
+
     }
 
    /* public static void main(String[] args) {

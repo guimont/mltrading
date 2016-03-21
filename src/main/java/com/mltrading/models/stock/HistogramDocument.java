@@ -1,6 +1,8 @@
 package com.mltrading.models.stock;
 
+import com.mltrading.dao.InfluxDaoConnector;
 import com.mltrading.dao.InfluxDaoConnectorDocument;
+import com.mltrading.dao.InfluxDaoConnectorNotation;
 import com.mltrading.influxdb.dto.QueryResult;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -196,27 +198,51 @@ public class HistogramDocument {
         return lvl_L4*-4 + lvl_L3*-3 + lvl_L2*-2 + lvl_L1*-1 + lvl_0 + lvl_P1 + lvl_P2*2 + lvl_P3*3 + lvl_P4*4;
     }
 
-    public static List<Integer> getSumDocument(final String code, String date, int offset) {
+    public static List<Double> getSumDocument(final String code, String date, int offset) {
 
-        List<Integer> stockDocuments = new ArrayList<>();
+        List<Double> stockDocuments = new ArrayList<>();
         //offset is mult by 2 because it is no dense data
         //String query = "SELECT * FROM " + code + " where time <= '" + date + "' and time > '"+ date + "' - "+ Integer.toString(offset)  +"d";
         String query = "SELECT sum(sum) FROM " + code + " where time <= '" + date + "' and time > '"+ date + "' - "+ Integer.toString(offset)  +"d group by time(1d)";
-        QueryResult list = InfluxDaoConnectorDocument.getPoints(query);
+        QueryResult list = InfluxDaoConnectorNotation.getPoints(query);
 
-        int size = list.getResults().get(0).getSeries().get(0).getValues().size();
-        if (size < offset)
-            return null;
 
-        for (int i = size-1; stockDocuments.size() < offset; i--) {
-            /*StockDocument sd = new StockDocument();
-            sd.setCode(code);
-            populate(sd, list, i);*/
-            stockDocuments.add(0);
+        if (list.getResults().get(0).getSeries() == null || list.getResults().get(0).getSeries().get(0) == null) {
+            for (int i = 0; i< offset; i++)
+                stockDocuments.add(new Double(0));
+        } else {
+
+            int size = list.getResults().get(0).getSeries().get(0).getValues().size();
+            if (size < offset)
+                return null;
+
+            for (int i = size - 1; stockDocuments.size() < offset; i--) {
+                Double d;
+                if (list.getResults().get(0).getSeries().get(0).getValues().get(i).get(1) == null)
+                    d = new Double(0.0);
+                else
+                    d = new Double(list.getResults().get(0).getSeries().get(0).getValues().get(i).get(1).toString());
+                stockDocuments.add(d);
+            }
         }
 
         return stockDocuments;
 
     }
+
+
+    public static String getLastDateHistory(final String code) {
+
+        //suppose base is filled
+        String query = "SELECT * FROM "+ code +" where time > '2015-06-01T00:00:00Z'";
+        QueryResult list = InfluxDaoConnectorNotation.getPoints(query);
+
+        int size = list.getResults().get(0).getSeries().get(0).getValues().size();
+
+
+        return (String) list.getResults().get(0).getSeries().get(0).getValues().get(size-1).get(0);
+
+    }
+
 
 }

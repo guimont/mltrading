@@ -13,7 +13,7 @@ import java.util.List;
 public class InfluxDaoConnectorModel {
 
     private InfluxDao dao;
-    static String dbName = "model";
+    static String dbName = "modelNote";
 
     private InfluxDaoConnectorModel() {
         dao = new InfluxDaoImpl();

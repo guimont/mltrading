@@ -62,6 +62,19 @@ angular.module('mltradingApp')
         }
 
 
+        $scope.extractionArticles = function () {
+            return $http.get('/api/extractionArticles').then(function (response) {
+                return response.data;
+            });
+        }
+
+        $scope.extractionArticle = function () {
+            return $http.get('/api/extractionArticle').then(function (response) {
+                return response.data;
+            });
+        }
+
+
 
         $scope.processML = function () {
             return $http.get('/api/processML').then(function (response) {
@@ -76,7 +89,7 @@ angular.module('mltradingApp')
         }
 
         $scope.optimizeML = function () {
-            return $http.get('/api/defaultML').then(function (response) {
+            return $http.get('/api/optimizeML').then(function (response) {
                 return response.data;
             });
         }

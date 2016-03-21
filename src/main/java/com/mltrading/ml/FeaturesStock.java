@@ -251,6 +251,11 @@ public class FeaturesStock implements Serializable {
             this.vector[currentVectorPos++] = sh.getValue();
     }
 
+    public void linearizeNote(List<Double> dl) {
+        for (Double d:dl)
+            this.vector[currentVectorPos++] = d;
+    }
+
     static int OFFSET_BASE = 50;
     static int RANGE_MAX = 300;
     static int RANGE_TEST = 90;
@@ -588,6 +593,23 @@ public class FeaturesStock implements Serializable {
                 }
             }
 
+            /**
+             * document number
+             */
+            if (validator.useDocument) {
+                List<Double> sdL = StockDocument.getStockDocument(stock.getCodif()+"R", date, validator.perdiodDocument);
+                fs.linearizeNote(sdL);
+            }
+
+            /**
+             * document note
+             */
+            if (validator.useNotation) {
+                List<Double> sdL = HistogramDocument.getSumDocument(stock.getCodif(), date, validator.perdiodDocument);
+                fs.linearizeNote(sdL);
+            }
+
+
 
 
             fsL.add(fs);
@@ -887,6 +909,24 @@ public class FeaturesStock implements Serializable {
                 return null;
             }
         }
+
+
+        /**
+         * document number
+         */
+        if (validator.useDocument) {
+            List<Double> sdL = StockDocument.getStockDocument(stock.getCodif()+"R", date, validator.perdiodDocument);
+            fs.linearizeNote(sdL);
+        }
+
+        /**
+         * document note
+         */
+        if (validator.useNotation) {
+            List<Double> sdL = HistogramDocument.getSumDocument(stock.getCodif(), date, validator.perdiodDocument);
+            fs.linearizeNote(sdL);
+        }
+
 
         return fs;
     }

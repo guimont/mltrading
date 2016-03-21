@@ -4,6 +4,7 @@ import com.mltrading.influxdb.dto.BatchPoints;
 import com.mltrading.influxdb.dto.Point;
 import com.mltrading.models.stock.HistogramDocument;
 import com.mltrading.models.stock.StockDocument;
+import com.mltrading.models.stock.StockGeneral;
 import com.mltrading.models.stock.StockIndice;
 
 import java.util.concurrent.TimeUnit;
@@ -15,16 +16,7 @@ public interface ArticleParser {
 
     void fetch();
 
-
-
-    public static void saveDocument(BatchPoints bp, StockDocument doc) {
-        Point pt = Point.measurement(doc.getCode()).time(doc.getTimeInsert().getMillis() + 3600000, TimeUnit.MILLISECONDS)
-            .field("ref", doc.getRef())
-            .build();
-        bp.point(pt);
-    }
-
-
+    public void fetchCurrent();
 
     public static void saveNotation(BatchPoints bp, HistogramDocument note) {
         Point pt = Point.measurement(note.getCode()).time(note.getTimeInsert().getMillis() + 3600000, TimeUnit.MILLISECONDS)

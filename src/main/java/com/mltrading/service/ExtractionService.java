@@ -24,6 +24,8 @@ public class ExtractionService {
     HistorySectorParser sectorParser = injector.getInstance(HistorySectorParser.class);
     VolatilityParser vola = injector.getInstance(VolatilityParser.class);
     StockParser stock = injector.getInstance(StockParser.class);
+    ArticlesParser articles =  injector.getInstance(ArticlesParser.class);
+    ArticleParser article =  injector.getInstance(ArticleParser.class);
 
 
     public void extractStock(StockRepository stockRepository) {
@@ -35,6 +37,7 @@ public class ExtractionService {
         indiceParser.fetch();
         sectorParser.fetch();
         vola.fetch();
+        articles.fetch();
         Analyse a = new Analyse();
         a.processAll();
     }
@@ -61,6 +64,14 @@ public class ExtractionService {
         a.processVcacAll();
     }
 
+    public void extractArticlesFull() {
+        articles.fetch();
+    }
+
+    public void extractArticleFull() {
+        article.fetch();
+    }
+
 
     public void extractionCurrent(int period) {
         histParser.fetchCurrent(period);
@@ -68,6 +79,7 @@ public class ExtractionService {
         sectorParser.fetchCurrent(period);
         vola.fetchCurrent(period);
         rawParser.fetchCurrent(period);
+        articles.fetchCurrent();
         Analyse a = new Analyse();
         a.processDaily(period);
     }
