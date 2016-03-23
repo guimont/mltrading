@@ -68,7 +68,7 @@ public class MlForecast {
             }
 
             if (type == Type.RF ) {
-                mls.getMlD1().getValidator().generate();
+                mls.getMlD1().getValidator().numTrees = 20 + i*40;
                 mls.getMlD5().setValidator(mls.getMlD1().getValidator().clone());
                 mls.getMlD20().setValidator(mls.getMlD1().getValidator().clone());
             }

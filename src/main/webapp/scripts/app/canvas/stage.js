@@ -111,11 +111,30 @@ function getmaxRun( list,f,c) {
     var max = 0;
     for (var i=0;i<list.length;i++) {
         if (list[i][c]) {
-            var v = Math.abs(list[i][c][f]);
+            var v = (list[i][c][f]);
             if (v > max) max = v;
         }
     }
     return max;
+}
+
+/**
+ *
+ * @param list
+ * @param f
+ * @param h
+ * @returns {number}
+ */
+
+function getminRun( list,f,c) {
+    var min = 100;
+    for (var i=0;i<list.length;i++) {
+        if (list[i][c]) {
+            var v = (list[i][c][f]);
+            if (v < min) min = v;
+        }
+    }
+    return min;
 }
 
 
@@ -132,7 +151,9 @@ function chartRun(pos, layer, col, key, color, dyn) {
     var eltLength = perf.perfList.length;
     var eltSize = 2;
     var max = getmaxRun(perf.perfList, key, col);
-    var heightM = (SIZEY/2)/max;
+    var min = getminRun(perf.perfList, key, col);
+    var ref = Math.max(max , Math.abs(min))
+    var heightM = (SIZEY/2)/ref;
 
     for (var i=0; i<perf.perfList.length;i++) {
         var dyncolor = color;

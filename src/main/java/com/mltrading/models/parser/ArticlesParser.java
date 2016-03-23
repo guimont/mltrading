@@ -17,6 +17,8 @@ public interface ArticlesParser {
 
     public void fetchCurrent();
 
+    public void fetchSpecific(StockGeneral g);
+
 
     public static void saveDocument(BatchPoints bp, StockDocument doc) {
         Point pt = Point.measurement(doc.getCode()).time(doc.getTimeInsert().getMillis() + 3600000, TimeUnit.MILLISECONDS)

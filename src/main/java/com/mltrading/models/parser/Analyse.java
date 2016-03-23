@@ -32,8 +32,8 @@ public class Analyse {
     private static String MOMENTUM = "momentum";
 
     private static int columnSector = 2;
-    private static int columnStock = 5;
-    private static int columnIndice = 4;
+    public static int columnStock = 5;
+    public static int columnIndice = 4;
 
 
     public void processAll() {

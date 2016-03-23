@@ -29,6 +29,22 @@ public class test {
     @Inject
     private static UserService userService;
 
+    public static void main(String[] args) {
+        Injector injector = Guice.createInjector(new ServiceParser());
+        HistoryParser histParser = injector.getInstance(HistoryParser.class);
+
+        StockGeneral g = CacheStockGeneral.getIsinCache().get("FR0000121220");
+        /*histParser.fetchSpecific(g);
+        Analyse a = new Analyse();
+        a.processAnalysisAll(g.getCode(), Analyse.columnStock);*/
+        /*ArticlesParserEchos as = new ArticlesParserEchos();
+        as.fetchSpecific(g);*/
+        ArticleParserEchos a = new ArticleParserEchos();
+        a.fetchSpecific(g);
+    }
+
+
+
     /*public static void main(String[] args) {
         ArticlesParserEchos as = new ArticlesParserEchos();
         //as.fetch();

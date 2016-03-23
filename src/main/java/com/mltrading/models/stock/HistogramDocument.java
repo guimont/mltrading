@@ -201,6 +201,14 @@ public class HistogramDocument {
     public static List<Double> getSumDocument(final String code, String date, int offset) {
 
         List<Double> stockDocuments = new ArrayList<>();
+
+        //quick fix bug dont keep
+        if (code.equals("OR")) {
+            for (int i = 0; i< offset; i++)
+                stockDocuments.add(new Double(0));
+            return stockDocuments;
+        }
+
         //offset is mult by 2 because it is no dense data
         //String query = "SELECT * FROM " + code + " where time <= '" + date + "' and time > '"+ date + "' - "+ Integer.toString(offset)  +"d";
         String query = "SELECT sum(sum) FROM " + code + " where time <= '" + date + "' and time > '"+ date + "' - "+ Integer.toString(offset)  +"d group by time(1d)";

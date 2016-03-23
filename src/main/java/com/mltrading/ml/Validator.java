@@ -13,7 +13,7 @@ import java.io.Serializable;
  * Created by gmo on 14/02/2016.
  */
 public class Validator implements Serializable ,Cloneable {
-    Integer maxDepth = 3;
+    Integer maxDepth = 5;
     Integer maxBins = 32;
     Integer numTrees = 100; // Use more in practice.
     Integer seed = 12345;
@@ -235,7 +235,7 @@ public class Validator implements Serializable ,Cloneable {
     }
 
     public void generate() {
-        maxDepth = (int) (Math.random()*(28) +2 );
+        maxDepth = (int) (Math.random()*(12) +2 );
         maxBins = (int) (Math.random()*(200) + 2);
         numTrees = (int) (Math.random()*(400) +1);
         seed = (int) (Math.random()*(20000) +1);

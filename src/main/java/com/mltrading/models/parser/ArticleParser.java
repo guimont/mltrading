@@ -18,6 +18,8 @@ public interface ArticleParser {
 
     public void fetchCurrent();
 
+    public void fetchSpecific(StockGeneral g);
+
     public static void saveNotation(BatchPoints bp, HistogramDocument note) {
         Point pt = Point.measurement(note.getCode()).time(note.getTimeInsert().getMillis() + 3600000, TimeUnit.MILLISECONDS)
             .field("L1", note.getLvl_L1())

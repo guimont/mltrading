@@ -193,4 +193,22 @@ ul#strengthBar {
     height: auto;
 }
 
+
+
+.text-white{
+    color: #fff !important;
+}
+
+.text-thin{
+    font-weight: 100;
+}
+
+.video-container .title-container {
+    z-index: 1000;
+    position: absolute;
+    top: 35%;
+    width: 100%;
+    text-align: center;
+    color: #fff;
+}
 /* end Password strength bar style */

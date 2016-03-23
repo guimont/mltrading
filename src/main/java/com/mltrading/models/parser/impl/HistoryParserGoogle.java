@@ -120,7 +120,7 @@ public class HistoryParserGoogle implements HistoryParser {
 
         Consensus cnote = ConsensusParserInvestir.fetchStock(g.getCode());
         for(numPage =0; numPage <= MAXPAGE ; numPage += PAGINATION) {
-            String url = startUrl + g.getCodif() + endUrl + 0;
+            String url = startUrl + g.getCodif() + endUrl + numPage;
             try {
                 String text;
                 int loopPage = 0;

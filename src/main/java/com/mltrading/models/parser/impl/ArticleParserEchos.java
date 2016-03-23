@@ -56,6 +56,11 @@ public class ArticleParserEchos implements ArticleParser {
 
     }
 
+    @Override
+    public void fetchSpecific(StockGeneral g) {
+        loaderFrom(g, "2010-01-01");
+    }
+
 
     private void loaderFrom(StockGeneral g, String dateRef) {
         DateTime dref = new DateTime(dateRef);
@@ -82,8 +87,10 @@ public class ArticleParserEchos implements ArticleParser {
                     e.printStackTrace();
                 }
 
-                if (!url.startsWith("http"))
-                    url = url.replace("href=\"","http://investir.lesechos.fr").replaceAll("\"","");
+                if (!url.startsWith("http")) {
+                    url = url.replace("href=\"http://", "http://").replaceAll("\"", "");
+                    url = url.replace("href=", "http://investir.lesechos.fr").replaceAll("\"", "");
+                }
                 System.out.println(url);
                 text = ParserCommon.loadUrl(new URL(url));
 
@@ -145,7 +152,8 @@ public class ArticleParserEchos implements ArticleParser {
     }
 
     public static void openNotationFile( Map<String, Integer> notationCache) {
-        String fileName = "/home/gmo/notation.txt";
+        //String fileName = "/home/gmo/notation.txt";
+        String fileName = "notation.txt";
         //lecture du fichier texte
         try{
             InputStream ips=new FileInputStream(fileName);

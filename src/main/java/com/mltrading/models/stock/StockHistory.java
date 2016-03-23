@@ -443,10 +443,12 @@ public class StockHistory extends Object{
         String query = "SELECT * FROM " + code + " where time <= '" + date + "' and time > '"+ date + "' - "+  Integer.toString(offset*4) +"d";
         QueryResult list = InfluxDaoConnector.getPoints(query);
 
-        if (list.getResults().get(0).getSeries().get(0).getValues().size()< offset)
+        int size = list.getResults().get(0).getSeries().get(0).getValues().size();
+
+        if (size < offset)
             return null;
 
-        for (int i = offset; stockList.size() < offset; i--) {
+        for (int i = size-1; stockList.size() < offset; i--) {
             StockHistory sh = new StockHistory();
             sh.setCode(code);
             populate(sh, list, i);
