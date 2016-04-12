@@ -16,6 +16,11 @@ public class InfluxDaoImpl implements InfluxDao{
         this.influxDB = InfluxDBFactory.connect("http://"+host+":"+port, login, pwd);
     }
 
+
+    public void createConnection(String hostDist) {
+        this.influxDB = InfluxDBFactory.connect("http://"+hostDist+":"+port, login, pwd);
+    }
+
     @Override
     public void createDB(String name) {
         influxDB.createDatabase(name);

@@ -1,9 +1,8 @@
 package com.mltrading.models.stock;
 
-import com.mltrading.ml.CacheMLStock;
-import com.mltrading.ml.MLPerformances;
-import com.mltrading.ml.MLStocks;
-import com.mltrading.ml.Validator;
+import com.mltrading.ml.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -13,6 +12,8 @@ import java.util.List;
  * Created by gmo on 03/03/2016.
  */
 public class StockDetail implements Serializable{
+
+    private static final Logger log = LoggerFactory.getLogger(StockDetail.class);
     private String code;
     private Stock stock;
 
@@ -27,7 +28,15 @@ public class StockDetail implements Serializable{
 
     public static StockDetail populate(Stock s) {
         StockDetail detail = new StockDetail();
+        if (s != null)
+            log.info(s.getCodeif());
+        else
+            log.info("s null error");
+
+        log.info("cache size:" + CacheMLStock.getMLStockCache().size());
         MLStocks mls = CacheMLStock.getMLStockCache().get(s.getCodeif());
+        if (mls == null )
+            log.info("mls null error");
         detail.setCode(s.getCodeif());
         detail.setStock(s);
         detail.setPrediction(CacheStockGeneral.getCache().get(s.getCode()).getPrediction());
@@ -57,17 +66,17 @@ public class StockDetail implements Serializable{
         return 0; //not found not normal
     }
 
-    private static double findPredD20(List<MLPerformances> perfList, String date) {
+    private static MLPerformance findPredD20(List<MLPerformances> perfList, String date) {
         for (MLPerformances p: perfList) {
             if (p.getMlD20().getDate().equals(date))
-                return p.getMlD20().getPrediction();
+                return p.getMlD20();
         }
-        return 0; //not found not normal
+        return null; //not found not normal
     }
 
     private static List<DetailData> populateData(Stock s) {
         List<DetailData> data = new ArrayList<>();
-        List<StockHistory> h = StockHistory.getStockHistoryLast(s.getCode(), 20);
+        List<StockHistory> h = StockHistory.getStockHistoryLast(s.getCode(), 40);
         MLStocks mls = CacheMLStock.getMLStockCache().get(s.getCodeif());
 
         for (StockHistory he:h) {
@@ -76,7 +85,9 @@ public class StockDetail implements Serializable{
             d.setValue(he.getValue());
             d.setPredD1(findPredD1(mls.getStatus().getPerfList(),he.getDay()));
             d.setPredD5(findPredD5(mls.getStatus().getPerfList(), he.getDay()));
-            d.setPredD20(findPredD20(mls.getStatus().getPerfList(), he.getDay()));
+            MLPerformance perf20 = findPredD20(mls.getStatus().getPerfList(), he.getDay());
+            d.setPredD20(perf20.getPrediction());
+            d.setSignD20(perf20.isSign());
             data.add(d);
         }
 

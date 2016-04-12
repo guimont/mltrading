@@ -29,19 +29,45 @@ public class test {
     @Inject
     private static UserService userService;
 
+
+    /*public static void main(String[] args) {
+        for (StockGeneral g : CacheStockGeneral.getIsinCache().values()) {
+            System.out.println(g.getCodif());
+            /*try {
+                Validator v = new Validator();
+                v.loadValidator(g.getCodif()+"VD1");
+                v.saveModel(g.getCodif() + "VD1");
+                v.loadValidator(g.getCodif()+"VD5");
+                v.saveModel(g.getCodif() + "VD5");
+                v.loadValidator(g.getCodif()+"VD20");
+                v.saveModel(g.getCodif()+"VD20");
+            } catch (Exception e) {
+                System.out.println(g.getCodif()+"execption");
+            }*
+
+        }
+    }*/
+
+
+    public static void main(String[] args) {
+        Analyse a = new Analyse();
+        a.processDaily(2);
+    }
+
+    /*
     public static void main(String[] args) {
         Injector injector = Guice.createInjector(new ServiceParser());
         HistoryParser histParser = injector.getInstance(HistoryParser.class);
 
         StockGeneral g = CacheStockGeneral.getIsinCache().get("FR0000121220");
-        /*histParser.fetchSpecific(g);
+        histParser.fetchSpecific(g);
         Analyse a = new Analyse();
-        a.processAnalysisAll(g.getCode(), Analyse.columnStock);*/
-        /*ArticlesParserEchos as = new ArticlesParserEchos();
-        as.fetchSpecific(g);*/
-        ArticleParserEchos a = new ArticleParserEchos();
-        a.fetchSpecific(g);
-    }
+        a.processAnalysisAll(g.getCode(), Analyse.columnStock);
+        ArticlesParserEchos as = new ArticlesParserEchos();
+        as.fetchSpecific(g);
+        ArticleParserEchos ap = new ArticleParserEchos();
+        ap.fetchSpecific(g);
+    }*/
 
 
 

@@ -15,6 +15,13 @@ angular.module('mltradingApp')
             });
         }
 
+        $scope.extractionSpecific = function () {
+            return $http.get('/api/extractionSpecific').then(function (response) {
+                return response.data;
+            });
+        }
+
+
         $scope.extractSeriesDailly = function () {
             return $http.get('/api/extractionSeriesDailly').then(function (response) {
                 return response.data;

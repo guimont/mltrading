@@ -68,7 +68,7 @@ public class ArticleParserEchos implements ArticleParser {
         List<StockDocument> sds =  StockDocument.getStockDocumentInvert(g.getCodif());
 
         try {
-            Thread.sleep(5000);
+            Thread.sleep(500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -82,7 +82,7 @@ public class ArticleParserEchos implements ArticleParser {
                 String text;
 
                 try {
-                    Thread.sleep(2000);
+                    Thread.sleep(200);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -104,7 +104,7 @@ public class ArticleParserEchos implements ArticleParser {
                 if (doc.select("div.bloc-tags").select("li").size() <5) {
 
                     Elements links = doc.select(refCode);
-                    HistogramDocument hd = new HistogramDocument(d.getCode(), d.getDate());
+                    HistogramDocument hd = new HistogramDocument(d.getCode()+"R", d.getDate());
 
                     Elements sentences = links.select("p");
 
@@ -175,8 +175,10 @@ public class ArticleParserEchos implements ArticleParser {
     }
 
     private void loader() {
+        int i = 0;
         for (StockGeneral g : CacheStockGeneral.getIsinCache().values()) {
 
+            if (i++ < 15) continue;
             List<StockDocument> sds =  StockDocument.getStockDocument(g.getCodif());
 
             /*try {

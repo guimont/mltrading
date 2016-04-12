@@ -44,11 +44,10 @@ function chartResult(pos, layer) {
     var marge =  heightM*4;
 
     for (var i=0; i<result.data.length;i++) {
-        drawLine (group, pos, result.data[i].predD20- min,  heightM,marge, i,  layer, 'blue' );
-        if (result.data[i].value != 0) drawValue(group, pos, result.data[i].value - min,  heightM,marge, i,  layer, 'grey','square' );
-        drawValue(group, pos, result.data[i].predD1- min,  heightM,marge, i,  layer, 'blue' );
-        drawValue(group, pos, result.data[i].predD5- min,  heightM,marge, i,  layer, 'green' );
-        drawValue(group, pos, result.data[i].predD20- min,  heightM,marge, i,  layer, 'orange' );
+        //if (result.data[i].value != 0) drawValue(group, pos, result.data ,min ,  heightM,marge, i,  layer, 'grey','square' );
+        //drawValue(group, pos, result.data[i].predD1- min,  heightM,marge, i,  layer, 'blue' );
+        //drawValue(group, pos, result.data[i].predD5- min,  heightM,marge, i,  layer, 'green' );
+        drawValue(group, pos, result.data, min,  heightM,marge, i,  layer);
 
     }
 
@@ -80,38 +79,131 @@ function getminRunResult( list,c) {
 }
 
 
-function drawLine(group, pos, value, heightM, marge,  i ,  layer, color ) {
-    group.add(new Kinetic.Rect({
-        x: pos.x*2+i*(15),
+
+function drawValue(group, pos, data,min, heightM, marge,  i ,  layer) {
+
+    var line = new Kinetic.Rect({
+        x: pos.x * 2 + i *(10),
         y: 100,
         width: 3,
         height:SIZERESY-120,
         fill: 'lightgrey',
         opacity: 0.2
+    });
 
-    }));
-}
+    group.add(line);
 
-function drawValue(group, pos, value, heightM, marge,  i ,  layer, color, form) {
+    var pred = new Kinetic.Rect({
+        x: pos.x * 2 + i * (10) - 2,
+        y: SIZERESY - (data[i].value-min) * heightM - marge,
+        width: 5,
+        height: 5,
+        fill: 'grey'
+    });
+    group.add(pred);
 
-    if (form === 'square')
-        group.add(new Kinetic.Rect({
-            x: pos.x*2+i*(15)-2,
-            y: SIZERESY - value * heightM  - marge,
-            width: 5,
-            height: 5,
-            fill: color
-        }));
-    else
-        group.add(new Kinetic.Circle({
-            x: pos.x*2+i*(15),
-            y: SIZERESY - value * heightM  - marge,
-            width: 5,
-            height: 5,
-            fill: color
-        }));
 
+
+    var pred = new Kinetic.Circle({
+        x: pos.x * 2 + i * (10),
+        y: SIZERESY - (data[i].predD20-min) * heightM - marge,
+        width: 5,
+        height: 5,
+        fill: 'orange'
+    });
+    group.add(pred);
     layer.draw();
+
+
+    var chartGroup = new Kinetic.Group();
+    line.on('mouseover', function() {
+        dist = 0;
+        detail.start();
+        group.add(chartGroup);
+        layer.draw();
+    });
+
+    line.on('mouseout', function() {
+        detail.stop();
+        chartGroup.remove();
+        layer.draw();
+    });
+
+    var detail = new Kinetic.Animation(function() {
+        chartGroup.destroyChildren();
+
+        var spos = {x:pos.x/2,y:pos.y};
+        if (i<42) spos.x+=90;
+
+
+        detail.stop();
+
+        chartGroup.add(new Kinetic.Rect({
+            x: pos.x*2+i*(10),
+            y: 100,
+            width: 2,
+            height:SIZERESY-120,
+            fill: 'red',
+            opacity: 0.1
+        }));
+
+        var origin = i >= 20 ? data[i-20].value: data[0].value;
+        origin = origin - min;
+        var dest = data[i].predD20-min;
+
+
+        var colorSign = data[i].signD20 == true ? 'green':'red';
+
+        var pts = [pos.x * 2 + i * (10) - 2, SIZERESY - dest * heightM - marge, pos.x * 2 + (i >= 20 ? i-20:0) * (10) - 2, SIZERESY - origin * heightM - marge +2];
+        chartGroup.add(new Kinetic.Line({
+            points: pts,
+            stroke:colorSign,
+            strokeWidth: 2,
+            lineCap: 'round',
+            lineJoin: 'round',
+            dashArray: [1, 1]
+        }));
+
+
+        var dest = data[i].value-min;
+        var pts = [pos.x * 2 + i * (10) - 2, SIZERESY - dest * heightM - marge, pos.x * 2 + (i >= 20 ? i-20:0) * (10) - 2, SIZERESY - origin * heightM - marge+2];
+        chartGroup.add(new Kinetic.Line({
+            points: pts,
+            stroke:colorSign,
+            strokeWidth: 2,
+            lineCap: 'round',
+            lineJoin: 'round',
+            dashArray: [1, 1]
+        }));
+
+
+
+
+
+        tooltip = new Kinetic.Label({
+            x: spos.x,
+            y: 50,
+            height: 85
+        });
+
+        var rect = new Kinetic.Rect({
+            x:spos.x,
+            y: 80,
+            width: 170,
+            height: -110,
+            fill: 'white',
+            shadowOffset: {x:1,y:1}
+        });
+
+        tooltip.add(rect);
+
+
+        chartGroup.add(tooltip);
+
+        layer.draw();
+    });
+
+
 }
 
 

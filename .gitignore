@@ -109,6 +109,7 @@ Desktop.ini
 /deploy/**
 /model/**
 /model_NO/**
+/model*/**
 
 ######################
 # Logs

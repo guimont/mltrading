@@ -202,16 +202,10 @@ public class HistogramDocument {
 
         List<Double> stockDocuments = new ArrayList<>();
 
-        //quick fix bug dont keep
-        if (code.equals("OR")) {
-            for (int i = 0; i< offset; i++)
-                stockDocuments.add(new Double(0));
-            return stockDocuments;
-        }
 
         //offset is mult by 2 because it is no dense data
         //String query = "SELECT * FROM " + code + " where time <= '" + date + "' and time > '"+ date + "' - "+ Integer.toString(offset)  +"d";
-        String query = "SELECT sum(sum) FROM " + code + " where time <= '" + date + "' and time > '"+ date + "' - "+ Integer.toString(offset)  +"d group by time(1d)";
+        String query = "SELECT sum(sum) FROM " + code + "R where time <= '" + date + "' and time > '"+ date + "' - "+ Integer.toString(offset)  +"d group by time(1d)";
         QueryResult list = InfluxDaoConnectorNotation.getPoints(query);
 
 
@@ -239,10 +233,11 @@ public class HistogramDocument {
     }
 
 
-    public static String getLastDateHistory(final String code) {
+    public static String getLastDateHistory( String code) {
 
-        //suppose base is filled
-        String query = "SELECT * FROM "+ code +" where time > '2015-06-01T00:00:00Z'";
+
+         //suppose base is filled
+        String query = "SELECT * FROM "+ code +"R where time > '2015-06-01T00:00:00Z'";
         QueryResult list = InfluxDaoConnectorNotation.getPoints(query);
 
         int size = list.getResults().get(0).getSeries().get(0).getValues().size();

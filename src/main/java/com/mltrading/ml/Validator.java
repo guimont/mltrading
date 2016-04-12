@@ -1,6 +1,7 @@
 package com.mltrading.ml;
 
 import com.mltrading.dao.InfluxDaoConnectorModel;
+import com.mltrading.dao.InfluxDaoConnectorModelBackup;
 import com.mltrading.dao.InfluxDaoConnectorPerf;
 import com.mltrading.influxdb.dto.BatchPoints;
 import com.mltrading.influxdb.dto.Point;
@@ -78,9 +79,9 @@ public class Validator implements Serializable ,Cloneable {
     public int perdiodDocument  = 20;
 
 
-    private double error;
-    private double rate;
-    private int vectorSize;
+    public double error;
+    public double rate;
+    public int vectorSize;
 
     private int vSize = 300;
 
@@ -100,7 +101,7 @@ public class Validator implements Serializable ,Cloneable {
         result = InfluxDaoConnectorModel.getPoints(query);*/
 
         String query = "SELECT * FROM " + code;
-        QueryResult result = InfluxDaoConnectorModel.getPoints(query);
+        QueryResult result = InfluxDaoConnectorModelBackup.getPoints(query);
 
         int size = result.getResults().get(0).getSeries().get(0).getValues().size() -1;
 

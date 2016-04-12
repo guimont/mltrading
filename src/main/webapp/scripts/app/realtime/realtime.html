@@ -19,7 +19,7 @@
         </thead>
 
         <tr ng-repeat="rt in rts | filter:filter | orderBy:'-name':true" ng-hide="audit.filtered">
-            <td><span>{{rt.name}}</span></td>
+            <td  ><span ui-sref="detail({code: '{{rt.code}}'})">{{rt.name}}</span></td>
             <td><small>{{rt.code}}</small></td>
             <td><small>{{rt.codif}}</small></td>
             <td>{{rt.value}}</td>

@@ -119,7 +119,7 @@ public class StockDocument {
             List<Double> stockDocuments = new ArrayList<>();
             //offset is mult by 2 because it is no dense data
             //String query = "SELECT * FROM " + code + " where time <= '" + date + "' and time > '"+ date + "' - "+ Integer.toString(offset)  +"d";
-            String query = "SELECT count(ref) FROM " + code + " where time <= '" + date + "' and time > '" + date + "' - " + Integer.toString(offset) + "d group by time(1d)";
+            String query = "SELECT count(ref) FROM " + code + "R where time <= '" + date + "' and time > '" + date + "' - " + Integer.toString(offset) + "d group by time(1d)";
             QueryResult list = InfluxDaoConnectorDocument.getPoints(query);
 
 
@@ -149,7 +149,7 @@ public class StockDocument {
     public static String getLastDateHistory(final String code) {
 
         //suppose base is filled
-        String query = "SELECT * FROM "+ code +" where time > '2015-06-01T00:00:00Z'";
+        String query = "SELECT * FROM "+ code +"R where time > '2015-06-01T00:00:00Z'";
         QueryResult list = InfluxDaoConnectorDocument.getPoints(query);
 
         if (list.getResults().get(0).getSeries() == null) return null;

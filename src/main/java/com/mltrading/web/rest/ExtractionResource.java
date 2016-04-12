@@ -50,6 +50,15 @@ public class ExtractionResource {
         return "ok";
     }
 
+    @RequestMapping(value = "/extractionSpecific",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    public String getExtractionSpecific() {
+        stockRepository.deleteAll();
+        service.extractionSpecific("FR0000121220");
+        return "ok";
+    }
+
 
     @RequestMapping(value = "/extractionSeries",
         method = RequestMethod.GET,
@@ -75,7 +84,7 @@ public class ExtractionResource {
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String getExtractionSeriesWeekly() {
-        service.extractionCurrent(14);
+        service.extractionCurrent(5);
         return "ok";
     }
 

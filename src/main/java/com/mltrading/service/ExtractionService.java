@@ -3,6 +3,10 @@ package com.mltrading.service;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.mltrading.models.parser.*;
+import com.mltrading.models.parser.impl.ArticleParserEchos;
+import com.mltrading.models.parser.impl.ArticlesParserEchos;
+import com.mltrading.models.stock.CacheStockGeneral;
+import com.mltrading.models.stock.StockGeneral;
 import com.mltrading.models.stock.StockHistory;
 import com.mltrading.models.stock.StockRawMat;
 import com.mltrading.repository.StockRepository;
@@ -38,6 +42,7 @@ public class ExtractionService {
         sectorParser.fetch();
         vola.fetch();
         articles.fetch();
+        article.fetch();
         Analyse a = new Analyse();
         a.processAll();
     }
@@ -80,8 +85,19 @@ public class ExtractionService {
         vola.fetchCurrent(period);
         rawParser.fetchCurrent(period);
         articles.fetchCurrent();
+        article.fetchCurrent();
         Analyse a = new Analyse();
         a.processDaily(period);
+    }
+    //
+
+    public  void extractionSpecific(String code) {
+        StockGeneral g = CacheStockGeneral.getIsinCache().get(code);
+        histParser.fetchSpecific(g);
+        Analyse a = new Analyse();
+        a.processAnalysisAll(g.getCode(), Analyse.columnStock);
+        articles.fetchSpecific(g);
+        article.fetchSpecific(g);
     }
 
 

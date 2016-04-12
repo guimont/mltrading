@@ -39,7 +39,7 @@ public class ArticlesParserEchos implements ArticlesParser {
     public void fetchCurrent() {
 
         for (StockGeneral g: CacheStockGeneral.getIsinCache().values()) {
-            String dateRef = StockDocument.getLastDateHistory(g.getCodif() + "R");
+            String dateRef = StockDocument.getLastDateHistory(g.getCodif());
             if (dateRef != null)
                 loaderFrom(g, dateRef);
         }
@@ -50,7 +50,7 @@ public class ArticlesParserEchos implements ArticlesParser {
         loaderFrom(g, "2010-01-01");
     }
 
-    static int MAXPAGE = 40;
+    static int MAXPAGE = 12;
 
 
     private void loaderFrom(StockGeneral g, String dateRef) {
@@ -81,8 +81,8 @@ public class ArticlesParserEchos implements ArticlesParser {
                     for (Element e : list.children()) {
                         StockDocument document = new StockDocument();
                         document.setCode(g.getCodif() + "R");
-                        String hour = e.getAllElements().get(1).getAllElements().get(1).childNodes().get(0).toString();
-                        hour = hour.substring(2, hour.length()).replaceAll("h", ":");
+                        String hour = Jsoup.parse(e.getAllElements().get(1).getAllElements().get(1).childNodes().get(0).toString()).text();
+                        if (!hour.isEmpty()) hour = hour.replaceAll("h", ":");
                         String date = e.getAllElements().get(1).getAllElements().get(1).childNodes().get(2).toString();
                         document.setDayInvestir(date, hour);
                         if (dref.isAfter(document.getTimeInsert())) {
@@ -133,10 +133,19 @@ public class ArticlesParserEchos implements ArticlesParser {
                     for (Element e : list.children()) {
                         StockDocument document = new StockDocument();
                         document.setCode(g.getCodif() + "R");
-                        String hour = e.getAllElements().get(1).getAllElements().get(1).childNodes().get(0).toString();
-                        hour = hour.substring(2, hour.length()).replaceAll("h", ":");
-                        String date = e.getAllElements().get(1).getAllElements().get(1).childNodes().get(2).toString();
-                        document.setDayInvestir(date, hour);
+                        String hour = Jsoup.parse(e.getAllElements().get(1).getAllElements().get(1).childNodes().get(0).toString()).text();
+                        //hour = hour.substring(2, hour.length()).replaceAll("h", ":");
+                        if (hour.isEmpty()) {
+                            hour = Jsoup.parse(e.getAllElements().get(1).getAllElements().get(1).childNodes().get(1).childNodes().get(0).toString()).text();
+                            hour = hour.replaceAll("h", ":");
+                            String date = Jsoup.parse(e.getAllElements().get(1).getAllElements().get(1).childNodes().get(1).childNodes().get(2).toString()).text();
+                            document.setDayInvestir(date, hour);
+
+                        } else {
+                            hour = hour.replaceAll("h", ":");
+                            String date = e.getAllElements().get(1).getAllElements().get(1).childNodes().get(2).toString();
+                            document.setDayInvestir(date, hour);
+                        }
                         String href = e.getAllElements().get(1).attributes().toString();
                         document.setRef(href);
                         ArticlesParser.saveDocument(bp, document);

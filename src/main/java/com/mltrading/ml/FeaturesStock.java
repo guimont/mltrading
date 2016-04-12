@@ -597,7 +597,7 @@ public class FeaturesStock implements Serializable {
              * document number
              */
             if (validator.useDocument) {
-                List<Double> sdL = StockDocument.getStockDocument(stock.getCodif()+"R", date, validator.perdiodDocument);
+                List<Double> sdL = StockDocument.getStockDocument(stock.getCodif(), date, validator.perdiodDocument);
                 fs.linearizeNote(sdL);
             }
 

@@ -11,6 +11,24 @@ public class DetailData implements Serializable {
     private double predD1;
     private double predD5;
     private double predD20;
+    private double valueD20;
+    private boolean signD20;
+
+    public boolean isSignD20() {
+        return signD20;
+    }
+
+    public void setSignD20(boolean signD20) {
+        this.signD20 = signD20;
+    }
+
+    public double getValueD20() {
+        return valueD20;
+    }
+
+    public void setValueD20(double valueD20) {
+        this.valueD20 = valueD20;
+    }
 
     public String getDate() {
         return date;

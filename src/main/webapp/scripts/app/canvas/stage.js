@@ -72,7 +72,7 @@ function load (data) {
 
 
 var SIZEX=380;
-var SIZEY=180;
+var SIZEY=140;
 var marginX= 340;
 
 
@@ -166,7 +166,7 @@ function chartRun(pos, layer, col, key, color, dyn) {
 
     }
 
-    drawChartMax(group, pos, max, getMeanRun(perf.perfList, key , col), heightM, marginX);
+    drawChartMax(group, pos, max, getMeanRun(perf.perfList, key , col),min, heightM, marginX);
 
     layer.add(group);
 }
@@ -174,10 +174,10 @@ function chartRun(pos, layer, col, key, color, dyn) {
 
 
 
-function drawChartMax(group, pos, max ,mean, heightM, width) {
+function drawChartMax(group, pos, max ,mean, min, heightM, width) {
     group.add(new Kinetic.Text({
         x:pos.x-20,
-        y: 146 - heightM*max,
+        y: pos.y - heightM*max,
         text: max.toFixed(3),
         fontFamily: 'Calibri',
         fontSize: 10,
@@ -186,7 +186,7 @@ function drawChartMax(group, pos, max ,mean, heightM, width) {
 
     group.add(new Kinetic.Rect({
         x: pos.x-12,
-        y: 150 - heightM*max,
+        y:  pos.y - heightM*max,
         width: width,
         height:1,
         fill: '#AC7969',
@@ -196,7 +196,7 @@ function drawChartMax(group, pos, max ,mean, heightM, width) {
 
     group.add(new Kinetic.Text({
         x:pos.x-20,
-        y: 146 - heightM*mean,
+        y:  pos.y - heightM*mean,
         text: mean.toFixed(3),
         fontFamily: 'Calibri',
         fontSize: 10,
@@ -205,7 +205,25 @@ function drawChartMax(group, pos, max ,mean, heightM, width) {
 
     group.add(new Kinetic.Rect({
         x: pos.x-10,
-        y: 150 - heightM*mean,
+        y:  pos.y - heightM*mean,
+        width: width,
+        height:1,
+        fill: '#AC7969',
+        opacity: 0.2
+    }));
+
+    group.add(new Kinetic.Text({
+        x:pos.x-20,
+        y:  pos.y - heightM*min ,
+        text: min.toFixed(3),
+        fontFamily: 'Calibri',
+        fontSize: 10,
+        fill: '#AC7969'
+    }));
+
+    group.add(new Kinetic.Rect({
+        x: pos.x-10,
+        y:  pos.y - heightM*min,
         width: width,
         height:1,
         fill: '#AC7969',
@@ -231,9 +249,9 @@ function drawChart(group, pos, elt ,key , heightM, eltSize, i, text , layer, col
 
     var rectBack = new Kinetic.Rect({
         x: pos.x+i*(eltSize+2),
-        y: pos.y*2+10,
+        y: pos.y*2-10,
         width: eltSize,
-        height: -SIZEY,
+        height: -SIZEY+10,
         fill: '#EDEAE6'
     });
 
@@ -311,6 +329,15 @@ function drawChart(group, pos, elt ,key , heightM, eltSize, i, text , layer, col
 
         anim.stop();
 
+        chartGroup.add(new Kinetic.Rect({
+            x: pos.x+i*(eltSize+2),
+            y: pos.y*2-10,
+            width: eltSize+1,
+            height: -SIZEY+10,
+            fill: 'blue',
+            opacity: 0.1
+        }));
+
         tooltip = new Kinetic.Label({
             x: spos.x,
             y: 50,
@@ -337,6 +364,7 @@ function drawChart(group, pos, elt ,key , heightM, eltSize, i, text , layer, col
 
 
     function drawRunPie(tooltip, pos, elt) {
+
 
 
         tooltip.add(new Kinetic.Text({
