@@ -9,6 +9,7 @@ import com.mltrading.models.stock.CacheStockGeneral;
 import com.mltrading.models.stock.Stock;
 import com.mltrading.models.stock.StockGeneral;
 import com.mltrading.models.stock.StockPrediction;
+import com.mltrading.repository.ArticleRepository;
 import com.mltrading.repository.StockRepository;
 import com.mltrading.service.ExtractionService;
 import org.slf4j.Logger;
@@ -34,6 +35,9 @@ public class ExtractionResource {
 
     @javax.inject.Inject
     private StockRepository stockRepository;
+
+    @javax.inject.Inject
+    private ArticleRepository articleRepository;
 
     @javax.inject.Inject
     private  MlForecast forecast;
@@ -64,7 +68,7 @@ public class ExtractionResource {
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String getExtractionSeries() {
-        service.extractFull();
+        service.extractFull(articleRepository);
         return "ok";
     }
 
@@ -125,22 +129,7 @@ public class ExtractionResource {
     }
 
 
-    @RequestMapping(value = "/extractionArticles",
-        method = RequestMethod.GET,
-        produces = MediaType.APPLICATION_JSON_VALUE)
-    public String getExtractionArticles() {
-        service.extractArticlesFull();
-        return "ok";
-    }
 
-
-    @RequestMapping(value = "/extractionArticle",
-        method = RequestMethod.GET,
-        produces = MediaType.APPLICATION_JSON_VALUE)
-    public String getExtractionArticle() {
-        service.extractArticleFull();
-        return "ok";
-    }
 
 
     @RequestMapping(value = "/processAT",

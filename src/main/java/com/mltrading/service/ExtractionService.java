@@ -3,16 +3,14 @@ package com.mltrading.service;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.mltrading.models.parser.*;
-import com.mltrading.models.parser.impl.ArticleParserEchos;
-import com.mltrading.models.parser.impl.ArticlesParserEchos;
 import com.mltrading.models.stock.CacheStockGeneral;
 import com.mltrading.models.stock.StockGeneral;
 import com.mltrading.models.stock.StockHistory;
 import com.mltrading.models.stock.StockRawMat;
+import com.mltrading.repository.ArticleRepository;
 import com.mltrading.repository.StockRepository;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
-import javax.inject.Inject;
 
 /**
  * Created by gmo on 04/01/2016.
@@ -36,13 +34,13 @@ public class ExtractionService {
         stock.fetch(stockRepository);
     }
 
-    public void extractFull() {
+    public void extractFull(ArticleRepository articleRepository) {
         histParser.fetch();
         indiceParser.fetch();
         sectorParser.fetch();
         vola.fetch();
         articles.fetch();
-        article.fetch();
+        article.fetch(articleRepository);
         Analyse a = new Analyse();
         a.processAll();
     }
@@ -73,8 +71,8 @@ public class ExtractionService {
         articles.fetch();
     }
 
-    public void extractArticleFull() {
-        article.fetch();
+    public void extractArticleFull(ArticleRepository articleRepository) {
+        article.fetch(articleRepository);
     }
 
 
@@ -85,7 +83,7 @@ public class ExtractionService {
         vola.fetchCurrent(period);
         rawParser.fetchCurrent(period);
         articles.fetchCurrent();
-        article.fetchCurrent();
+        //article.fetchCurrent();
         Analyse a = new Analyse();
         a.processDaily(period);
     }
@@ -97,7 +95,7 @@ public class ExtractionService {
         Analyse a = new Analyse();
         a.processAnalysisAll(g.getCode(), Analyse.columnStock);
         articles.fetchSpecific(g);
-        article.fetchSpecific(g);
+        //article.fetchSpecific(g);
     }
 
 
@@ -122,7 +120,7 @@ public class ExtractionService {
         diff = Math.max(diff, timeNow.getDayOfMonth() - timeInsert.getDayOfMonth());
 
 
-        diff -=1;
+        //diff -=1;
 
         return diff;
         //return 0;

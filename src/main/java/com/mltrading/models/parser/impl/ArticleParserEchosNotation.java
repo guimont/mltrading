@@ -27,7 +27,7 @@ import java.util.Map;
  * Created by gmo on 09/03/2016.
  */
 @Singleton
-public class ArticleParserEchosNotation implements ArticleParser {
+public class ArticleParserEchosNotation  {
 
     private static final Logger log = LoggerFactory.getLogger(HistogramDocument.class);
     static String refCode = "div.contenu_article";
@@ -40,12 +40,12 @@ public class ArticleParserEchosNotation implements ArticleParser {
         //openIgnoreFile(ignoredCache);
     }
 
-    @Override
+
     public void fetch() {
         loader();
     }
 
-    @Override
+
     public void fetchCurrent() {
     //get article
         //si non present add
@@ -56,7 +56,7 @@ public class ArticleParserEchosNotation implements ArticleParser {
 
     }
 
-    @Override
+
     public void fetchSpecific(StockGeneral g) {
         loaderFrom(g, "2010-01-01");
     }
@@ -116,7 +116,7 @@ public class ArticleParserEchosNotation implements ArticleParser {
                     //Element list = links.get(0);
 
                     BatchPoints bp = InfluxDaoConnectorNotation.getBatchPoints();
-                    ArticleParser.saveNotation(bp, hd);
+                    //ArticleParser.saveNotation(bp, hd);
 
                     InfluxDaoConnectorNotation.writePoints(bp);
                 }
@@ -225,7 +225,7 @@ public class ArticleParserEchosNotation implements ArticleParser {
                         //Element list = links.get(0);
 
                         BatchPoints bp = InfluxDaoConnectorNotation.getBatchPoints();
-                        ArticleParser.saveNotation(bp, hd);
+                        //ArticleParser.saveNotation(bp, hd);
 
                         InfluxDaoConnectorNotation.writePoints(bp);
                     }
