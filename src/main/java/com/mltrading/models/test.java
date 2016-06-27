@@ -51,7 +51,7 @@ public class test {
 
     public static void main(String[] args) {
         Analyse a = new Analyse();
-        a.processDaily(2);
+        a.processDaily(75);
     }
 
     /*

@@ -115,7 +115,7 @@ public class Analyse {
 
         List<Container> cList = new ArrayList<>();
 
-        QueryResult res = InfluxDaoConnector.getPoints("SELECT * FROM " + code + " where time > '" + date +"' - 90d and time <= '" + date +"'");
+        QueryResult res = InfluxDaoConnector.getPoints("SELECT * FROM " + code + " where time > '" + date +"' - 120d and time <= '" + date +"'");
 
         if (res.getResults().get(0).getSeries() == null || res.getResults().get(0).getSeries().get(0).getValues() == null) return; //resultat empry
 

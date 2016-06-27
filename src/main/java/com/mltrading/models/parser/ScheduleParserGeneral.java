@@ -70,7 +70,7 @@ public class ScheduleParserGeneral  {
 
 
     public void start() {
-        updateBase();
+        /*updateBase(); not use here but in update scheduler*/
         RealTimeParserYahoo.loaderCache();
         updatePredictor();
         this.extractionCycleInMs =  30000;

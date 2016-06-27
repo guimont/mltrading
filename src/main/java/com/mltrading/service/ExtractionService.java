@@ -105,7 +105,7 @@ public class ExtractionService {
         DateTime timeNow = new DateTime(System.currentTimeMillis());
 
         int diff =
-            timeNow.getDayOfMonth() - timeInsert.getDayOfMonth();
+            timeNow.getDayOfMonth()*timeNow.getMonthOfYear() - timeInsert.getDayOfMonth()*timeInsert.getMonthOfYear();
 
         l = StockHistory.getLastDateHistory("FRIN");
         timeInsert = new DateTime(l);

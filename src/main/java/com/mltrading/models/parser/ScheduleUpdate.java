@@ -40,26 +40,10 @@ public class ScheduleUpdate {
         }
     }
 
-    private void updatePredictor() {
-        List<StockGeneral> sg = new ArrayList(CacheStockGeneral.getIsinCache().values());
-
-        CacheMLStock.load(sg);
-        MlForecast ml = new MlForecast();
-        ml.processList(sg);
-
-        MLPredictor predictor = new MLPredictor();
-
-        for (StockGeneral s: CacheStockGeneral.getCache().values()) {
-            StockPrediction p = predictor.prediction(s);
-            s.setPrediction(p);
-        }
-    }
-
 
     protected void runUpdate() {
         //System.out.print("now ?");
         updateBase();
-        updatePredictor();
     }
 
 
@@ -74,6 +58,8 @@ public class ScheduleUpdate {
         Date t = today.getTime();
         long u = TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS);
         this.timer.schedule(this.timerTask, t, u); // 60*60*24*100 = 8640000ms
+
+        updateBase();
     }
 
     public void stop() {
