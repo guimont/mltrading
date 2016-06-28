@@ -219,6 +219,15 @@ public class StockHistory extends Object{
         timeInsert = new DateTime( "20" + YY + "-" + MM + "-" + DD);
     }
 
+    public void setDayInvestirExt(String day) {
+
+        this.day = day;
+        String DD = day.substring(0, 2);
+        String MM = day.substring(3,5);
+        String YY = day.substring(6,10);
+        timeInsert = new DateTime( YY + "-" + MM + "-" + DD);
+    }
+
     public void setDayYahoo(String day) {
         String convert[] = day.split(" ");
         String DD = convert[1];
@@ -316,7 +325,7 @@ public class StockHistory extends Object{
     public static StockHistory getStockHistoryDayAfter(final String code, String date) {
         StockHistory sh = new StockHistory();
 
-        String query = "SELECT * FROM "+code+" where time > '" + date + "' limit 1";
+        String query = "SELECT * FROM "+code+" where time >= '" + date + "' limit 1";
         QueryResult meanQ = InfluxDaoConnector.getPoints(query);
 
         sh.setCode(code);
@@ -329,7 +338,7 @@ public class StockHistory extends Object{
     public static StockHistory getStockHistoryDayOffset(final String code, String date, int offset) {
         StockHistory sh = new StockHistory();
 
-        String query = "SELECT * FROM "+code+" where time > '" + date + "' limit " + offset;
+        String query = "SELECT * FROM "+code+" where time >= '" + date + "' limit " + offset;
         QueryResult meanQ = InfluxDaoConnector.getPoints(query);
 
         if (meanQ == null || meanQ.getResults() == null || meanQ.getResults().get(0).getSeries().get(0) == null)

@@ -21,15 +21,29 @@ public class Article implements Serializable{
     @Id
     ArticleKey key;
 
+    /**
+     * url
+     */
     String reference;
 
+    /**
+     * title
+     */
+    String title;
+
+    /**
+     * articles
+     */
     List<String> lines;
 
-    //List<String> topic;
+    /**
+     * tag
+     */
+    List<String> topic;
 
     public Article() {
         lines = new ArrayList<String>();
-        //topic = new ArrayList<String>();
+        topic = new ArrayList<String>();
     }
 
     public String getReference() {
@@ -56,11 +70,20 @@ public class Article implements Serializable{
         this.key = key;
     }
 
-    /*public List<String> getTopic() {
+    public List<String> getTopic() {
         return topic;
     }
 
     public void setTopic(List<String> topic) {
         this.topic = topic;
-    }*/
+    }
+
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
 }

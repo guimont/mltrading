@@ -62,7 +62,10 @@ public class StockRawMat extends StockHistory {
 
         List<StockRawMat> stockList = new ArrayList<>();
         //offset is mult by 2 because it is no dense data
-        String query = "SELECT * FROM " + code + " where time <= '" + date + "' and time > '"+ date + "' - "+  Integer.toString(offset*4) +"d";
+        /**
+         * bug in data miss too much so increase coeff offset but temporary solution
+         */
+        String query = "SELECT * FROM " + code + " where time <= '" + date + "' and time > '"+ date + "' - "+  Integer.toString(offset*10) +"d";
         QueryResult list = InfluxDaoConnector.getPoints(query);
 
         if (list.getResults().get(0).getSeries().get(0).getValues().size()< offset)

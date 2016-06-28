@@ -48,11 +48,16 @@ public class test {
         }
     }*/
 
+    public static void main(String[] args) {
+        HistoryRawMaterialsParser rawParser = new HistoryLocalRawMaterials();
+        rawParser.fetch("localhost:8090");
+    }
 
+/*
     public static void main(String[] args) {
         Analyse a = new Analyse();
         a.processDaily(75);
-    }
+    }*/
 
     /*
     public static void main(String[] args) {
@@ -90,6 +95,9 @@ public class test {
         //StockDocument.getStockDocument()
 
     }
+
+
+
 
    /* public static void main(String[] args) {
 

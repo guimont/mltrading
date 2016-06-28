@@ -18,7 +18,7 @@ public interface HistoryIndiceParser {
 
 
     public static void saveHistory(BatchPoints bp, StockIndice hist) {
-        Point pt = Point.measurement(hist.getCode()).time(hist.getTimeInsert().getMillis()+3600000, TimeUnit.MILLISECONDS)
+        Point pt = Point.measurement(hist.getCode()).time(hist.getTimeInsert().getMillis()+36000000, TimeUnit.MILLISECONDS)
             .field("open", hist.getOpening())
             .field("high", hist.getHighest())
             .field("low", hist.getLowest())

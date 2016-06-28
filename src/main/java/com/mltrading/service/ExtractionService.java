@@ -98,26 +98,31 @@ public class ExtractionService {
         //article.fetchSpecific(g);
     }
 
+    static int DAYS_BY_MONTH = 31;
+
+    private int check_diff( DateTime timeInsert , DateTime timeNow ) {
+        return (timeNow.getDayOfMonth()+timeNow.getMonthOfYear()*DAYS_BY_MONTH) - (timeInsert.getDayOfMonth()+timeInsert.getMonthOfYear()*DAYS_BY_MONTH);
+    }
 
     public int getLastUpdateRef() {
         String l = StockHistory.getLastDateHistory("FR0000045072");
         DateTime timeInsert = new DateTime(l);
         DateTime timeNow = new DateTime(System.currentTimeMillis());
 
-        int diff =
-            timeNow.getDayOfMonth()*timeNow.getMonthOfYear() - timeInsert.getDayOfMonth()*timeInsert.getMonthOfYear();
+        int diff = check_diff(timeInsert,timeNow);
+
 
         l = StockHistory.getLastDateHistory("FRIN");
         timeInsert = new DateTime(l);
-        diff = Math.max(diff, timeNow.getDayOfMonth() - timeInsert.getDayOfMonth());
+        diff = Math.max(diff,  check_diff(timeInsert,timeNow));
 
         l = StockHistory.getLastDateHistory("EFCHI");
         timeInsert = new DateTime(l);
-        diff = Math.max(diff, timeNow.getDayOfMonth() - timeInsert.getDayOfMonth());
+        diff = Math.max(diff,  check_diff(timeInsert,timeNow));
 
         l = StockRawMat.getLastDateHistory("PETB");
         timeInsert = new DateTime(l);
-        diff = Math.max(diff, timeNow.getDayOfMonth() - timeInsert.getDayOfMonth());
+        diff = Math.max(diff,  check_diff(timeInsert,timeNow));
 
 
         //diff -=1;

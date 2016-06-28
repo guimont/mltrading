@@ -59,7 +59,8 @@ public class ScheduleUpdate {
         long u = TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS);
         this.timer.schedule(this.timerTask, t, u); // 60*60*24*100 = 8640000ms
 
-        updateBase();
+
+        //updateBase();
     }
 
     public void stop() {

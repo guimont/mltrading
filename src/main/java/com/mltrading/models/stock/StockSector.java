@@ -11,6 +11,11 @@ import java.util.List;
  */
 public class StockSector extends StockHistory{
 
+
+
+    private String urlInvestir;
+
+
     public StockSector(String code) {
         this.setCode(code);
     }
@@ -22,12 +27,26 @@ public class StockSector extends StockHistory{
         this.setName(name);
     }
 
+    public StockSector(String code, String name, String place, String url) {
+        this.setCode(code);
+        this.setPlace(place);
+        this.setName(name);
+        this.setUrlInvestir(url);
+    }
+
 
     static public String translate(String investir) {
 
         return null;
     }
 
+    public String getUrlInvestir() {
+        return urlInvestir;
+    }
+
+    public void setUrlInvestir(String urlInvestir) {
+        this.urlInvestir = urlInvestir;
+    }
 
     static public int DATE_COLUMN = 0;
     static public int OPENING_COLUMN_SECT = 2;

@@ -127,11 +127,11 @@ public class ArticleParserEchos implements ArticleParser {
 
             List<StockDocument> sds =  StockDocument.getStockDocument(g.getCodif());
 
-            /*try {
-                Thread.sleep(20000);
+            try {
+                Thread.sleep(2000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
-            }*/
+            }
 
             for (StockDocument d: sds) {
                 String url = d.getRef();
@@ -162,14 +162,21 @@ public class ArticleParserEchos implements ArticleParser {
                      */
                     if (doc.select("div.bloc-tags").select("li").size() <5) {
 
-                        Elements links = doc.select(refCode);
+                        String title = doc.select("h1").attr("itemprop","Headline").get(1).text();
+                        a.setTitle(title);
 
+                        Elements links = doc.select(refCode);
 
                         Elements sentences = links.select("p");
 
                         for (Element sentence : sentences) {
                             a.getLines().add(Jsoup.parse(sentence.toString()).text());
 
+                        }
+
+                        Elements kewWords = doc.select("div.bloc-tags").select("li");
+                        for (Element kewWord : kewWords) {
+                            a.getTopic().add(Jsoup.parse(kewWord.toString()).text());
                         }
 
                     }
