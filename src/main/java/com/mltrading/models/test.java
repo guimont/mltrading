@@ -48,10 +48,41 @@ public class test {
         }
     }*/
 
+
     public static void main(String[] args) {
+       DatabaseInfoList list = new DatabaseInfoList();
+        list.processingList();
+
+        System.out.println("STOCK DATABASE INFO");
+        for (DatabaseInfo i :list.getStockList())
+            System.out.println(i.toString());
+        System.out.println("-------------------");
+        System.out.println("");
+
+        System.out.println("INDICE DATABASE INFO");
+        for (DatabaseInfo i :list.getIndiceList())
+            System.out.println(i.toString());
+        System.out.println("-------------------");
+        System.out.println("");
+
+        System.out.println("SECTOR DATABASE INFO");
+        for (DatabaseInfo i :list.getSectorList())
+            System.out.println(i.toString());
+        System.out.println("-------------------");
+        System.out.println("");
+
+        System.out.println("RAW DATABASE INFO");
+        for (DatabaseInfo i :list.getRawList())
+            System.out.println(i.toString());
+        System.out.println("-------------------");
+        System.out.println("");
+    }
+
+
+    /*public static void main(String[] args) {
         HistoryRawMaterialsParser rawParser = new HistoryLocalRawMaterials();
         rawParser.fetch("localhost:8090");
-    }
+    }*/
 
 /*
     public static void main(String[] args) {

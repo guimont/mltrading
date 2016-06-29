@@ -81,4 +81,36 @@ public class StockSector extends StockHistory{
 
     }
 
+    /**
+     * return last max StockHistory
+     * @param code
+     * @param max
+     * @return O or max last StockHistory
+     */
+    public static List<StockSector> getStockSectorLastInvert(final String code, int max) {
+
+        List<StockSector> stockList = new ArrayList<>();
+        //offset is mult by 2 because it is no dense data
+        String query = "SELECT * FROM "+code +" where time > '2015-06-01T00:00:00Z'";
+        QueryResult list = InfluxDaoConnector.getPoints(query);
+
+        if (list == null || list.getResults() == null || list.getResults().get(0).getSeries() == null)
+            return null;
+
+        int size = list.getResults().get(0).getSeries().get(0).getValues().size();
+
+        int current = size < max ?  0 : size-max-1;
+
+
+        for (int i = size-1; i > current ; i--) {
+            StockSector ss = new StockSector(code);
+            populate(ss, list, i);
+            stockList.add(ss);
+        }
+
+        return stockList;
+
+    }
+
+
 }

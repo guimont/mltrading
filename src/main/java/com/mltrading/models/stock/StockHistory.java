@@ -469,7 +469,12 @@ public class StockHistory extends Object{
     }
 
 
-
+    /**
+     * return last max StockHistory
+     * @param code
+     * @param max
+     * @return O or max last StockHistory
+     */
     public static List<StockHistory> getStockHistoryLast(final String code, int max) {
 
         List<StockHistory> stockList = new ArrayList<>();
@@ -483,6 +488,39 @@ public class StockHistory extends Object{
             return null;
 
         for (int i = size-max; i < size; i++) {
+            StockHistory sh = new StockHistory();
+            sh.setCode(code);
+            populate(sh, list, i);
+            stockList.add(sh);
+        }
+
+        return stockList;
+
+    }
+
+
+    /**
+     * return last max StockHistory
+     * @param code
+     * @param max
+     * @return O or max last StockHistory
+     */
+    public static List<StockHistory> getStockHistoryLastInvert(final String code, int max) {
+
+        List<StockHistory> stockList = new ArrayList<>();
+        //offset is mult by 2 because it is no dense data
+        String query = "SELECT * FROM "+code +" where time > '2015-06-01T00:00:00Z'";
+        QueryResult list = InfluxDaoConnector.getPoints(query);
+
+        if (list == null || list.getResults() == null || list.getResults().get(0).getSeries() == null)
+            return null;
+
+        int size = list.getResults().get(0).getSeries().get(0).getValues().size();
+
+        int current = size < max ?  0 : size-max-1;
+
+
+        for (int i = size-1; i > current ; i--) {
             StockHistory sh = new StockHistory();
             sh.setCode(code);
             populate(sh, list, i);

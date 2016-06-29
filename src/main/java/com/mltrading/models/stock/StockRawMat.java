@@ -82,4 +82,37 @@ public class StockRawMat extends StockHistory {
 
     }
 
+
+    /**
+     * return last max StockHistory
+     * @param code
+     * @param max
+     * @return O or max last StockHistory
+     */
+    public static List<StockRawMat> getStockIndiceLastInvert(final String code, int max) {
+
+        List<StockRawMat> stockList = new ArrayList<>();
+        //offset is mult by 2 because it is no dense data
+        String query = "SELECT * FROM "+code +" where time > '2015-06-01T00:00:00Z'";
+        QueryResult list = InfluxDaoConnector.getPoints(query);
+
+        if (list == null || list.getResults() == null || list.getResults().get(0).getSeries() == null)
+            return null;
+
+        int size = list.getResults().get(0).getSeries().get(0).getValues().size();
+
+        int current = size < max ?  0 : size-max-1;
+
+
+        for (int i = size-1; i > current ; i--) {
+            StockRawMat sr = new StockRawMat(code);
+            populate(sr, list, i);
+            stockList.add(sr);
+        }
+
+        return stockList;
+
+    }
+
+
 }
