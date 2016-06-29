@@ -1,11 +1,13 @@
 {
-    "logs": {
+    "database": {
         "title": "Database data extraction",
-        "nbloggers": "There are {{ total }} loggers.",
-        "filter": "Filter",
         "table": {
-            "name": "Name",
-            "level": "Level"
+            "header": {
+                "code": "Code",
+                "lastdate": "Date of last",
+                "firstdate" : "Date of first",
+                "number" : "Number of data (200)"
+            }
         }
     }
 }
