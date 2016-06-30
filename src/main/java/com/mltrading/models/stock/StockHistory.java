@@ -509,7 +509,7 @@ public class StockHistory extends Object{
 
         List<StockHistory> stockList = new ArrayList<>();
         //offset is mult by 2 because it is no dense data
-        String query = "SELECT * FROM "+code +" where time > '2015-06-01T00:00:00Z'";
+        String query = "SELECT * FROM "+code +" where time > '2014-06-01T00:00:00Z'";
         QueryResult list = InfluxDaoConnector.getPoints(query);
 
         if (list == null || list.getResults() == null || list.getResults().get(0).getSeries() == null)

@@ -231,25 +231,12 @@ public class FeaturesStock implements Serializable {
         if (validator.analyseStdDev) this.vector[currentVectorPos++] = sa.getStdDev();
     }
 
-    public void linearizeSH(List<StockHistory> shl) {
-        for (StockHistory sh:shl)
+    public void linearize(List<? extends StockHistory> shL) {
+        for (StockHistory sh:shL)
             this.vector[currentVectorPos++] = sh.getValue();
     }
 
-    public void linearizeSS(List<StockSector> shl) {
-        for (StockSector sh:shl)
-            this.vector[currentVectorPos++] = sh.getValue();
-    }
 
-    public void linearizeSI(List<StockIndice> shl) {
-        for (StockIndice sh:shl)
-            this.vector[currentVectorPos++] = sh.getValue();
-    }
-
-    public void linearizeSR(List<StockRawMat> shl) {
-        for (StockRawMat sh:shl)
-            this.vector[currentVectorPos++] = sh.getValue();
-    }
 
     public void linearizeNote(List<Double> dl) {
         for (Double d:dl)
@@ -315,7 +302,7 @@ public class FeaturesStock implements Serializable {
              */
             try {
             List<StockHistory> sh = StockHistory.getStockHistoryDateInvert(stock.getCode(), date, validator.perdiodHist);
-            fs.linearizeSH(sh);
+            fs.linearize(sh);
             StockHistory current = StockHistory.getStockHistory(stock.getCode(), date);
             fs.linearize(current, validator);
             fs.setCurrentValue(current.getValue());
@@ -340,7 +327,7 @@ public class FeaturesStock implements Serializable {
              */
             try {
                 List<StockSector> ss = StockSector.getStockSectorDateInvert(stock.getSector(), date, validator.perdiodSector);
-                fs.linearizeSS(ss);
+                fs.linearize(ss);
                 if (validator.sectorAT) {
                     StockAnalyse ass = StockAnalyse.getAnalyse(stock.getSector(), ss.get(0).getDay());
                     fs.linearize(ass, validator);
@@ -359,7 +346,7 @@ public class FeaturesStock implements Serializable {
 
                 if (validator.cac) {
                     List<StockIndice> si = StockIndice.getStockIndiceDateInvert("EFCHI", date, validator.perdiodCac);
-                    fs.linearizeSI(si);
+                    fs.linearize(si);
 
                     if (validator.cacAT) {
                         StockAnalyse asi = StockAnalyse.getAnalyse("EFCHI", si.get(0).getDay());
@@ -378,7 +365,7 @@ public class FeaturesStock implements Serializable {
                 try {
 
                     List<StockIndice> si = StockIndice.getStockIndiceDateInvert("EDJI", date, validator.perdiodDJI);
-                    fs.linearizeSI(si);
+                    fs.linearize(si);
                     if (validator.DJIAT) {
                         StockAnalyse asi = StockAnalyse.getAnalyse("EDJI", si.get(0).getDay());
                         fs.linearize(asi, validator);
@@ -396,7 +383,7 @@ public class FeaturesStock implements Serializable {
                 try {
 
                     List<StockIndice> si = StockIndice.getStockIndiceDateInvert("EN225", date, validator.perdiodN225);
-                    fs.linearizeSI(si);
+                    fs.linearize(si);
                     if (validator.N225AT) {
                         StockAnalyse asi = StockAnalyse.getAnalyse("EN225", si.get(0).getDay());
                         fs.linearize(asi, validator);
@@ -414,7 +401,7 @@ public class FeaturesStock implements Serializable {
                 try {
 
                     List<StockIndice> si = StockIndice.getStockIndiceDateInvert("EFTSE", date, validator.perdiodFTSE);
-                    fs.linearizeSI(si);
+                    fs.linearize(si);
                     if (validator.FTSEAT) {
                         StockAnalyse asi = StockAnalyse.getAnalyse("EFTSE", si.get(0).getDay());
                         fs.linearize(asi, validator);
@@ -432,7 +419,7 @@ public class FeaturesStock implements Serializable {
                 try {
 
                     List<StockIndice> si = StockIndice.getStockIndiceDateInvert("EGDAXI", date, validator.perdiodDAX);
-                    fs.linearizeSI(si);
+                    fs.linearize(si);
                     if (validator.DAXIAT) {
                         StockAnalyse asi = StockAnalyse.getAnalyse("EGDAXI", si.get(0).getDay());
                         fs.linearize(asi, validator);
@@ -450,7 +437,7 @@ public class FeaturesStock implements Serializable {
                 try {
 
                     List<StockIndice> si = StockIndice.getStockIndiceDateInvert("ESTOXX50E", date, validator.perdiodSTOXX50);
-                    fs.linearizeSI(si);
+                    fs.linearize(si);
                     //log.info("find " + si.size() + " ESTOXX50E for " + validator.perdiodSTOXX50 + " and date: " + date);
                     if (validator.STOXX50AT) {
                         StockAnalyse asi = StockAnalyse.getAnalyse("ESTOXX50E", si.get(0).getDay());
@@ -471,7 +458,7 @@ public class FeaturesStock implements Serializable {
             if (validator.cacVola) {
                 try {
                     List<StockIndice> sVCac = StockIndice.getStockIndiceDateInvert("VCAC", date, validator.perdiodcacVola);
-                    fs.linearizeSI(sVCac);
+                    fs.linearize(sVCac);
 
                 } catch (Exception e) {
                     log.error("Cannot get vcac stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
@@ -485,7 +472,7 @@ public class FeaturesStock implements Serializable {
             if (validator.DOLLAR) {
                 try {
                     List<StockRawMat> sDE = StockRawMat.getStockRawDateInvert("DTOE", date, validator.perdiodDOLLAR);
-                    fs.linearizeSR(sDE);
+                    fs.linearize(sDE);
 
                 } catch (Exception e) {
                     log.error("Cannot get dollar stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
@@ -499,7 +486,7 @@ public class FeaturesStock implements Serializable {
             if (validator.PETROL) {
                 try {
                     List<StockRawMat> sDE = StockRawMat.getStockRawDateInvert("PETB", date, validator.perdiodPETROL);
-                    fs.linearizeSR(sDE);
+                    fs.linearize(sDE);
 
                 } catch (Exception e) {
                     log.error("Cannot get petrol stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
@@ -514,7 +501,7 @@ public class FeaturesStock implements Serializable {
             if (validator.EURI1M) {
                 try {
                     List<StockRawMat> sDE = StockRawMat.getStockRawDateInvert("EURI1M", date, validator.perdiodEURI1M);
-                    fs.linearizeSR(sDE);
+                    fs.linearize(sDE);
 
                 } catch (Exception e) {
                     log.error("Cannot get euribord 1 month stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
@@ -528,7 +515,7 @@ public class FeaturesStock implements Serializable {
             if (validator.EURI1Y) {
                 try {
                     List<StockRawMat> sDE = StockRawMat.getStockRawDateInvert("EURI1Y", date, validator.perdiodEURI1Y);
-                    fs.linearizeSR(sDE);
+                    fs.linearize(sDE);
 
                 } catch (Exception e) {
                     log.error("Cannot get euribord 1 year stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
@@ -542,7 +529,7 @@ public class FeaturesStock implements Serializable {
             if (validator.EURI10Y) {
                 try {
                     List<StockRawMat> sDE = StockRawMat.getStockRawDateInvert("EURI10Y", date, validator.perdiodEURI10Y);
-                    fs.linearizeSR(sDE);
+                    fs.linearize(sDE);
 
                 } catch (Exception e) {
                     log.error("Cannot get euribord 10 years stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
@@ -557,7 +544,7 @@ public class FeaturesStock implements Serializable {
             if (validator.USRI1M) {
                 try {
                     List<StockRawMat> sDE = StockRawMat.getStockRawDateInvert("USRI1M", date, validator.perdiodUSRI1M);
-                    fs.linearizeSR(sDE);
+                    fs.linearize(sDE);
 
                 } catch (Exception e) {
                     log.error("Cannot get usribord 1 month stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
@@ -571,7 +558,7 @@ public class FeaturesStock implements Serializable {
             if (validator.USRI1Y) {
                 try {
                     List<StockRawMat> sDE = StockRawMat.getStockRawDateInvert("USRI1Y", date, validator.perdiodUSRI1Y);
-                    fs.linearizeSR(sDE);
+                    fs.linearize(sDE);
 
                 } catch (Exception e) {
                     log.error("Cannot get usribord 1 year stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
@@ -585,7 +572,7 @@ public class FeaturesStock implements Serializable {
             if (validator.USRI10Y) {
                 try {
                     List<StockRawMat> sDE = StockRawMat.getStockRawDateInvert("USRI10Y", date, validator.perdiodUSRI10Y);
-                    fs.linearizeSR(sDE);
+                    fs.linearize(sDE);
 
                 } catch (Exception e) {
                     log.error("Cannot get usribord 10 years stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
@@ -637,7 +624,7 @@ public class FeaturesStock implements Serializable {
          */
         try {
             List<StockHistory> sh = StockHistory.getStockHistoryDateInvert(stock.getCode(), date, validator.perdiodHist);
-            fs.linearizeSH(sh);
+            fs.linearize(sh);
             StockHistory current = StockHistory.getStockHistory(stock.getCode(), date);
             fs.linearize(current, validator);
             fs.setCurrentValue(current.getValue());
@@ -662,7 +649,7 @@ public class FeaturesStock implements Serializable {
          */
         try {
             List<StockSector> ss = StockSector.getStockSectorDateInvert(stock.getSector(), date, validator.perdiodSector);
-            fs.linearizeSS(ss);
+            fs.linearize(ss);
             if (validator.sectorAT) {
                 StockAnalyse ass = StockAnalyse.getAnalyse(stock.getSector(), ss.get(0).getDay());
                 fs.linearize(ass, validator);
@@ -678,7 +665,7 @@ public class FeaturesStock implements Serializable {
         try {
             if (validator.cac) {
                 List<StockIndice> si = StockIndice.getStockIndiceDateInvert("EFCHI", date, validator.perdiodCac);
-                fs.linearizeSI(si);
+                fs.linearize(si);
 
 
                 if (validator.cacAT) {
@@ -698,7 +685,7 @@ public class FeaturesStock implements Serializable {
             try {
 
                 List<StockIndice> si = StockIndice.getStockIndiceDateInvert("EDJI", date, validator.perdiodDJI);
-                fs.linearizeSI(si);
+                fs.linearize(si);
                 if (validator.DJIAT) {
                     StockAnalyse asi = StockAnalyse.getAnalyse("EDJI", si.get(0).getDay());
                     fs.linearize(asi, validator);
@@ -716,7 +703,7 @@ public class FeaturesStock implements Serializable {
             try {
 
                 List<StockIndice> si = StockIndice.getStockIndiceDateInvert("EN225", date, validator.perdiodN225);
-                fs.linearizeSI(si);
+                fs.linearize(si);
                 if (validator.N225AT) {
                     StockAnalyse asi = StockAnalyse.getAnalyse("EN225", si.get(0).getDay());
                     fs.linearize(asi, validator);
@@ -734,7 +721,7 @@ public class FeaturesStock implements Serializable {
             try {
 
                 List<StockIndice> si = StockIndice.getStockIndiceDateInvert("EFTSE", date, validator.perdiodFTSE);
-                fs.linearizeSI(si);
+                fs.linearize(si);
                 if (validator.FTSEAT) {
                     StockAnalyse asi = StockAnalyse.getAnalyse("EFTSE", si.get(0).getDay());
                     fs.linearize(asi, validator);
@@ -752,7 +739,7 @@ public class FeaturesStock implements Serializable {
             try {
 
                 List<StockIndice> si = StockIndice.getStockIndiceDateInvert("EGDAXI", date, validator.perdiodDAX);
-                fs.linearizeSI(si);
+                fs.linearize(si);
                 if (validator.DAXIAT) {
                     StockAnalyse asi = StockAnalyse.getAnalyse("EGDAXI", si.get(0).getDay());
                     fs.linearize(asi, validator);
@@ -788,7 +775,7 @@ public class FeaturesStock implements Serializable {
         if (validator.cacVola) {
             try {
                 List<StockIndice> sVCac = StockIndice.getStockIndiceDateInvert("VCAC", date, validator.perdiodcacVola);
-                fs.linearizeSI(sVCac);
+                fs.linearize(sVCac);
 
             } catch (Exception e) {
                 log.error("Cannot get vcac stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
@@ -802,7 +789,7 @@ public class FeaturesStock implements Serializable {
         if (validator.DOLLAR) {
             try {
                 List<StockRawMat> sDE = StockRawMat.getStockRawDateInvert("DTOE", date, validator.perdiodDOLLAR);
-                fs.linearizeSR(sDE);
+                fs.linearize(sDE);
 
             } catch (Exception e) {
                 log.error("Cannot get dollar stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
@@ -816,7 +803,7 @@ public class FeaturesStock implements Serializable {
         if (validator.PETROL) {
             try {
                 List<StockRawMat> sDE = StockRawMat.getStockRawDateInvert("PETB", date, validator.perdiodPETROL);
-                fs.linearizeSR(sDE);
+                fs.linearize(sDE);
 
             } catch (Exception e) {
                 log.error("Cannot get petrol stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
@@ -831,7 +818,7 @@ public class FeaturesStock implements Serializable {
         if (validator.EURI1M) {
             try {
                 List<StockRawMat> sDE = StockRawMat.getStockRawDateInvert("EURI1M", date, validator.perdiodEURI1M);
-                fs.linearizeSR(sDE);
+                fs.linearize(sDE);
 
             } catch (Exception e) {
                 log.error("Cannot get euribord 1 month stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
@@ -845,7 +832,7 @@ public class FeaturesStock implements Serializable {
         if (validator.EURI1Y) {
             try {
                 List<StockRawMat> sDE = StockRawMat.getStockRawDateInvert("EURI1Y", date, validator.perdiodEURI1Y);
-                fs.linearizeSR(sDE);
+                fs.linearize(sDE);
 
             } catch (Exception e) {
                 log.error("Cannot get euribord 1 year stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
@@ -859,7 +846,7 @@ public class FeaturesStock implements Serializable {
         if (validator.EURI10Y) {
             try {
                 List<StockRawMat> sDE = StockRawMat.getStockRawDateInvert("EURI10Y", date, validator.perdiodEURI10Y);
-                fs.linearizeSR(sDE);
+                fs.linearize(sDE);
 
             } catch (Exception e) {
                 log.error("Cannot get euribord 10 years stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
@@ -874,7 +861,7 @@ public class FeaturesStock implements Serializable {
         if (validator.USRI1M) {
             try {
                 List<StockRawMat> sDE = StockRawMat.getStockRawDateInvert("USRI1M", date, validator.perdiodUSRI1M);
-                fs.linearizeSR(sDE);
+                fs.linearize(sDE);
 
             } catch (Exception e) {
                 log.error("Cannot get usribord 1 month stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
@@ -888,7 +875,7 @@ public class FeaturesStock implements Serializable {
         if (validator.USRI1Y) {
             try {
                 List<StockRawMat> sDE = StockRawMat.getStockRawDateInvert("USRI1Y", date, validator.perdiodUSRI1Y);
-                fs.linearizeSR(sDE);
+                fs.linearize(sDE);
 
             } catch (Exception e) {
                 log.error("Cannot get usribord 1 year stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
@@ -902,7 +889,7 @@ public class FeaturesStock implements Serializable {
         if (validator.USRI10Y) {
             try {
                 List<StockRawMat> sDE = StockRawMat.getStockRawDateInvert("USRI10Y", date, validator.perdiodUSRI10Y);
-                fs.linearizeSR(sDE);
+                fs.linearize(sDE);
 
             } catch (Exception e) {
                 log.error("Cannot get usribord 10 years stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);

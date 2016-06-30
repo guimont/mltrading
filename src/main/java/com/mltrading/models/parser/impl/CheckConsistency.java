@@ -37,7 +37,6 @@ public class CheckConsistency {
     public static void consistency(Stock stock) {
         log.info("create FeaturesStock for: " + stock.getCodeif());
 
-
         List<String> rangeDate = null;
         try {
             rangeDate = StockHistory.getDateHistoryListOffsetLimit(stock.getCode(), OFFSET_BASE, RANGE_MAX);

@@ -212,3 +212,10 @@ ul#strengthBar {
     color: #fff;
 }
 /* end Password strength bar style */
+
+
+.blank_row
+{
+    height: 10px !important; /* Overwrite any previous rules */
+    background-color: #FFFFFF;
+}

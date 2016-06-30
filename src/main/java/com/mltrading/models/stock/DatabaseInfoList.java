@@ -11,7 +11,7 @@ import java.util.List;
 public class DatabaseInfoList {
 
 
-static final int RANGE = 200 ;
+static final int RANGE = 300 ;
     private List<DatabaseInfo> stockList = new ArrayList<>();
     private List<DatabaseInfo> indiceList = new ArrayList<>();
     private List<DatabaseInfo> sectorList = new ArrayList<>();

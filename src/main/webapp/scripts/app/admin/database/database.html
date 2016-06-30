@@ -10,7 +10,46 @@
         </tr>
         </thead>
 
+        <tr ng-repeat="stock in data.stockList | filter:filter | orderBy:'-name':true" ng-hide="audit.filtered">
+            <td><small>{{stock.name}}</small></td>
+            <td><small>{{stock.lastdate}}</small></td>
+            <td><small>{{stock.firstdate}}</small></td>
+            <td>{{stock.nbElements}}</td>
+        </tr>
+
+        <tr class="blank_row">
+            <td colspan="4"></td>
+        </tr>
+
+
+        <tr ng-repeat="stock in data.sectorList | filter:filter | orderBy:'-name':true" ng-hide="audit.filtered">
+            <td><small>{{stock.name}}</small></td>
+            <td><small>{{stock.lastdate}}</small></td>
+            <td><small>{{stock.firstdate}}</small></td>
+            <td>{{stock.nbElements}}</td>
+        </tr>
+
+        <tr class="blank_row">
+            <td colspan="4"></td>
+        </tr>
+
+        <tr ng-repeat="stock in data.indiceList | filter:filter | orderBy:'-name':true" ng-hide="audit.filtered">
+            <td><small>{{stock.name}}</small></td>
+            <td><small>{{stock.lastdate}}</small></td>
+            <td><small>{{stock.firstdate}}</small></td>
+            <td>{{stock.nbElements}}</td>
+        </tr>
+
+        <tr class="blank_row">
+            <td colspan="4"></td>
+        </tr>
+
+        <tr ng-repeat="stock in data.rawList | filter:filter | orderBy:'-name':true" ng-hide="audit.filtered">
+            <td><small>{{stock.name}}</small></td>
+            <td><small>{{stock.lastdate}}</small></td>
+            <td><small>{{stock.firstdate}}</small></td>
+            <td>{{stock.nbElements}}</td>
+        </tr>
+
     </table>
-    </tr>
-    </table>
-</div>
+ </div>
