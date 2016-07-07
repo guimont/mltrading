@@ -23,6 +23,7 @@ import java.net.URL;
  */
 
 @Singleton
+@Deprecated
 public class HistoryParserYahoo implements HistoryParser {
     @Override
     public void fetch() {

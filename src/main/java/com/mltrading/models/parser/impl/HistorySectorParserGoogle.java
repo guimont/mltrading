@@ -4,9 +4,11 @@ import com.google.inject.Singleton;
 import com.mltrading.dao.InfluxDaoConnector;
 import com.mltrading.influxdb.dto.BatchPoints;
 import com.mltrading.models.parser.HistoryIndiceParser;
+import com.mltrading.models.parser.HistoryParser;
 import com.mltrading.models.parser.HistorySectorParser;
 import com.mltrading.models.parser.ParserCommon;
 import com.mltrading.models.stock.CacheStockSector;
+import com.mltrading.models.stock.StockHistory;
 import com.mltrading.models.stock.StockIndice;
 import com.mltrading.models.stock.StockSector;
 import org.jsoup.Jsoup;
@@ -25,9 +27,10 @@ import java.net.URL;
 public class HistorySectorParserGoogle implements HistorySectorParser {
 
     public void fetch() {
-        /*fix problem for specific day*/
+        /*fix problem for specific day
         HistorySectorParserYahoo hspy = new HistorySectorParserYahoo();
         hspy.loaderSpecific("");
+        USE IMPORT SYSTEM*/
         loader();
     }
 
@@ -37,7 +40,6 @@ public class HistorySectorParserGoogle implements HistorySectorParser {
     }
 
 
-    //http://www.google.com/finance/historical?q=INDEXEURO%3AFRAD&num=200&start=0
     static String startUrl="http://www.google.com/finance/historical?q=INDEXEURO%3A";
     static String endUrl ="&startdate=Dec%204%2C%202013&num=200&start=";
     static int PAGINATION = 200;
@@ -73,15 +75,17 @@ public class HistorySectorParserGoogle implements HistorySectorParser {
                             Elements t = elt.select("td");
                             if (t.size() > 3) {
 
-                                StockSector sect = new StockSector(g.getCode(), g.getName(), g.getPlace());
-                                sect.setDayGoogle(t.get(0).text());
-                                sect.setOpening(new Double(t.get(1).text().replaceAll(" ", "").replace(",", "")));
-                                sect.setHighest(new Double(t.get(2).text().replaceAll(" ", "").replace(",", "")));
-                                sect.setLowest(new Double(t.get(3).text().replaceAll(" ", "").replace(",", "")));
-                                sect.setValue(new Double(t.get(4).text().replaceAll(" ", "").replace(",", "")));
-                                sect.setVolume(new Double(0));
-                                HistorySectorParser.saveHistory(bp, sect);
-                                System.out.println(sect.toString());
+                                StockHistory stock = new StockHistory();
+                                stock.setCode(g.getCodif());
+                                stock.setDayGoogle(t.get(0).text());
+                                stock.setOpening(new Double(t.get(1).text().replaceAll(" ", "").replace(",", "")));
+                                stock.setHighest(new Double(t.get(2).text().replaceAll(" ", "").replace(",", "")));
+                                stock.setLowest(new Double(t.get(3).text().replaceAll(" ", "").replace(",", "")));
+                                stock.setValue(new Double(t.get(4).text().replaceAll(" ", "").replace(",", "")));
+                                stock.setVolume(new Double(0));
+                                stock.setConsensusNote(new Double(0));
+                                HistoryParser.saveHistory(bp, stock);
+                                System.out.println(stock.toString());
                                 if (++count >= range)
                                     break;
                             }
@@ -125,15 +129,17 @@ public class HistorySectorParserGoogle implements HistorySectorParser {
                                 Elements t = elt.select("td");
                                 if (t.size() > 3) {
 
-                                    StockSector sect = new StockSector(g.getCode(), g.getName(), g.getPlace());
-                                    sect.setDayGoogle(t.get(0).text());
-                                    sect.setOpening(new Double(t.get(1).text().replaceAll(" ", "").replace(",", "")));
-                                    sect.setHighest(new Double(t.get(2).text().replaceAll(" ", "").replace(",", "")));
-                                    sect.setLowest(new Double(t.get(3).text().replaceAll(" ", "").replace(",", "")));
-                                    sect.setValue(new Double(t.get(4).text().replaceAll(" ", "").replace(",", "")));
-                                    sect.setVolume(new Double(0));
-                                    HistorySectorParser.saveHistory(bp, sect);
-                                    System.out.println(sect.toString());
+                                    StockHistory stock = new StockHistory();
+                                    stock.setCode(g.getCodif());
+                                    stock.setDayGoogle(t.get(0).text());
+                                    stock.setOpening(new Double(t.get(1).text().replaceAll(" ", "").replace(",", "")));
+                                    stock.setHighest(new Double(t.get(2).text().replaceAll(" ", "").replace(",", "")));
+                                    stock.setLowest(new Double(t.get(3).text().replaceAll(" ", "").replace(",", "")));
+                                    stock.setValue(new Double(t.get(4).text().replaceAll(" ", "").replace(",", "")));
+                                    stock.setVolume(new Double(0));
+                                    stock.setConsensusNote(new Double(0));
+                                    HistoryParser.saveHistory(bp, stock);
+                                    System.out.println(stock.toString());
                                 }
                             }
                         }

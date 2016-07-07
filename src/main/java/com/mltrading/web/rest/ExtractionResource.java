@@ -4,7 +4,7 @@ package com.mltrading.web.rest;
 import com.mltrading.ml.CacheMLStock;
 import com.mltrading.ml.MLPredictor;
 import com.mltrading.ml.MlForecast;
-import com.mltrading.models.parser.impl.CheckConsistency;
+import com.mltrading.models.stock.CheckConsistency;
 import com.mltrading.models.stock.CacheStockGeneral;
 import com.mltrading.models.stock.Stock;
 import com.mltrading.models.stock.StockGeneral;
@@ -149,11 +149,8 @@ public class ExtractionResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String checkProcessML() {
 
-        List<Stock> sl = stockRepository.findAll();
+        CheckConsistency.consistency();
 
-        for (Stock s : sl) {
-            CheckConsistency.consistency(s);
-        }
 
         return "ok";
     }

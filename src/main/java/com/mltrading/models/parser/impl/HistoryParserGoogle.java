@@ -115,7 +115,7 @@ public class HistoryParserGoogle implements HistoryParser {
     public  void loaderSpecific(StockGeneral g) {
 
         int numPage;
-        boolean retry = false;
+        boolean retry;
         String startUrl="http://www.google.com/finance/historical?q=FRA%3A";
 
         Consensus cnote = ConsensusParserInvestir.fetchStock(g.getCode());
