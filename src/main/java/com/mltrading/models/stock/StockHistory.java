@@ -3,6 +3,7 @@ package com.mltrading.models.stock;
 
 import com.mltrading.dao.InfluxDaoConnector;
 import com.mltrading.influxdb.dto.QueryResult;
+import com.mltrading.models.parser.HistoryParser;
 import org.joda.time.DateTime;
 
 import java.util.ArrayList;
@@ -13,7 +14,17 @@ import java.util.List;
  */
 public class StockHistory extends Object{
 
-    private String nameRef;
+
+    /** Controls the perdiod */
+    public enum TypeHistory {
+        /** stock history */
+        STK,
+        /** sector history */
+        SEC,
+        /** indice history */
+        IND
+    }
+
 
     private String code;
 
@@ -87,14 +98,6 @@ public class StockHistory extends Object{
     private Double consensusNote;
 
 
-    public String getNameRef() {
-        return nameRef;
-    }
-
-    public void setNameRef(String nameRef) {
-        this.nameRef = nameRef;
-    }
-
     public StockHistory(StockGeneral g) {
         this.setCode(g.getCode());
         this.setName(g.getName());
@@ -104,6 +107,13 @@ public class StockHistory extends Object{
     }
 
     public StockHistory() {
+
+        this.consensusNote = 0.;
+        this.setHighest(0.);
+        this.setLowest(0.);
+        this.setOpening(0.);
+        this.setValue(0.);
+        this.setVolume(0.);
 
     }
 
@@ -209,9 +219,11 @@ public class StockHistory extends Object{
     }
 
 
-
+    /**
+     * investir (echos) web site
+     * @param day
+     */
     public void setDayInvestir(String day) {
-
         this.day = day;
         String DD = day.substring(0, 2);
         String MM = day.substring(3,5);
@@ -219,7 +231,11 @@ public class StockHistory extends Object{
         timeInsert = new DateTime( "20" + YY + "-" + MM + "-" + DD);
     }
 
-    public void setDayInvestirExt(String day) {
+    /**
+     * invest web site for raw
+     * @param day
+     */
+    public void setDayInvest(String day) {
 
         this.day = day;
         String DD = day.substring(0, 2);
@@ -228,6 +244,11 @@ public class StockHistory extends Object{
         timeInsert = new DateTime( YY + "-" + MM + "-" + DD);
     }
 
+
+    /**
+     * yahoo web site
+     * @param day
+     */
     public void setDayYahoo(String day) {
         String convert[] = day.split(" ");
         String DD = convert[1];
@@ -237,6 +258,10 @@ public class StockHistory extends Object{
         timeInsert = new DateTime( YY + "-" + MM + "-" + DD);
     }
 
+    /**
+     * google web site
+     * @param day
+     */
     public void setDayGoogle(String day) {
         String MM = convertGoolgeMont(day.substring(0, 3));
         String DD = day.substring(4,6).replace(",", "");
@@ -313,7 +338,7 @@ public class StockHistory extends Object{
         StockHistory sh = new StockHistory();
 
         String query = "SELECT * FROM "+code+" where time = '" + date + "'";
-        QueryResult meanQ = InfluxDaoConnector.getPoints(query);
+        QueryResult meanQ = InfluxDaoConnector.getPoints(query, HistoryParser.dbName);
 
         sh.setCode(code);
         populate(sh, meanQ, 0);
@@ -326,7 +351,7 @@ public class StockHistory extends Object{
         StockHistory sh = new StockHistory();
 
         String query = "SELECT * FROM "+code+" where time >= '" + date + "' limit 1";
-        QueryResult meanQ = InfluxDaoConnector.getPoints(query);
+        QueryResult meanQ = InfluxDaoConnector.getPoints(query, HistoryParser.dbName);
 
         sh.setCode(code);
         populate(sh, meanQ, 0);
@@ -339,7 +364,7 @@ public class StockHistory extends Object{
         StockHistory sh = new StockHistory();
 
         String query = "SELECT * FROM "+code+" where time >= '" + date + "' limit " + offset;
-        QueryResult meanQ = InfluxDaoConnector.getPoints(query);
+        QueryResult meanQ = InfluxDaoConnector.getPoints(query, HistoryParser.dbName);
 
         if (meanQ == null || meanQ.getResults() == null || meanQ.getResults().get(0).getSeries().get(0) == null)
             return null;
@@ -352,73 +377,14 @@ public class StockHistory extends Object{
         return sh;
     }
 
-    public static List<StockHistory> getStockAnalyseList(final String code) {
-        List<StockHistory> stockList = new ArrayList<StockHistory>();
-        String query = "SELECT * FROM "+code+ "T";
-        QueryResult list = InfluxDaoConnector.getPoints(query);
 
-        for (int i =0;i<list.getResults().get(0).getSeries().get(0).getValues().size();i++)
-            stockList.add(getStockHistory(code, (String) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(0)));
-
-        return stockList;
-    }
-
-
-    public static List<StockHistory> getStockHistoryList(final String code) {
-        List<StockHistory> stockList = new ArrayList<StockHistory>();
-        String query = "SELECT * FROM "+code;
-        QueryResult list = InfluxDaoConnector.getPoints(query);
-
-        for (int i =0;i<list.getResults().get(0).getSeries().get(0).getValues().size();i++)
-            stockList.add(getStockHistory(code, (String) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(0)));
-
-        return stockList;
-    }
-
-    public static List<StockHistory> getStockHistoryListOffsetWithAT(final String code, int offset) {
-        List<StockHistory> stockList = new ArrayList<>();
-        String query = "SELECT * FROM "+code;
-        QueryResult list = InfluxDaoConnector.getPoints(query);
-
-        int size = list.getResults().get(0).getSeries().get(0).getValues().size();
-
-        if (size < offset)
-            return null;
-
-        for (int i = size-1; i < list.getResults().get(0).getSeries().get(0).getValues().size(); i++) {
-            StockHistory sh = new StockHistory();
-            String date = (String) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(0);
-            sh.setCode(code);
-            populate(sh, list, i);  sh.setAnalyse_tech(StockAnalyse.getAnalyse(code, date));
-            stockList.add(sh);
-        }
-
-        return stockList;
-    }
-
-
-    public static List<String> getDateHistoryListOffset(final String code, int offset) {
-        List<String> dateList = new ArrayList<>();
-        String query = "SELECT * FROM "+code;
-        QueryResult list = InfluxDaoConnector.getPoints(query);
-
-        if (list.getResults().get(0).getSeries().get(0).getValues().size()< offset)
-            return null;
-
-        for (int i = offset; i < list.getResults().get(0).getSeries().get(0).getValues().size(); i++) {
-            StockHistory sh = new StockHistory();
-            dateList.add((String) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(0));
-
-        }
-        return dateList;
-    }
 
 
     public static List<String> getDateHistoryListOffsetLimit(final String code, int offset, int max) {
         List<String> dateList = new ArrayList<>();
         //bug .. dont get all data .. so make filter to have date only since 2013
         String query = "SELECT * FROM "+code +" where time > '2013-06-01T00:00:00Z'";
-        QueryResult list = InfluxDaoConnector.getPoints(query);
+        QueryResult list = InfluxDaoConnector.getPoints(query, HistoryParser.dbName);
         int series = max + offset;
         int size = list.getResults().get(0).getSeries().get(0).getValues().size();
 
@@ -435,7 +401,7 @@ public class StockHistory extends Object{
 
         //suppose base is filled
         String query = "SELECT * FROM "+code +" where time > '2015-06-01T00:00:00Z'";
-        QueryResult list = InfluxDaoConnector.getPoints(query);
+        QueryResult list = InfluxDaoConnector.getPoints(query, HistoryParser.dbName);
 
         int size = list.getResults().get(0).getSeries().get(0).getValues().size();
 
@@ -450,7 +416,7 @@ public class StockHistory extends Object{
         List<StockHistory> stockList = new ArrayList<>();
         //offset is mult by 2 because it is no dense data
         String query = "SELECT * FROM " + code + " where time <= '" + date + "' and time > '"+ date + "' - "+  Integer.toString(offset*4) +"d";
-        QueryResult list = InfluxDaoConnector.getPoints(query);
+        QueryResult list = InfluxDaoConnector.getPoints(query, HistoryParser.dbName);
 
         int size = list.getResults().get(0).getSeries().get(0).getValues().size();
 
@@ -480,7 +446,7 @@ public class StockHistory extends Object{
         List<StockHistory> stockList = new ArrayList<>();
         //offset is mult by 2 because it is no dense data
         String query = "SELECT * FROM "+code +" where time > '2015-06-01T00:00:00Z'";
-        QueryResult list = InfluxDaoConnector.getPoints(query);
+        QueryResult list = InfluxDaoConnector.getPoints(query, HistoryParser.dbName);
 
         int size = list.getResults().get(0).getSeries().get(0).getValues().size();
 
@@ -510,7 +476,7 @@ public class StockHistory extends Object{
         List<StockHistory> stockList = new ArrayList<>();
         //offset is mult by 2 because it is no dense data
         String query = "SELECT * FROM "+code +" where time > '2014-06-01T00:00:00Z'";
-        QueryResult list = InfluxDaoConnector.getPoints(query);
+        QueryResult list = InfluxDaoConnector.getPoints(query, HistoryParser.dbName);
 
         if (list == null || list.getResults() == null || list.getResults().get(0).getSeries() == null)
             return null;
@@ -565,4 +531,74 @@ public class StockHistory extends Object{
         copy.setAnalyse_tech((StockAnalyse) this.getAnalyse_tech().clone());
         return copy;
     }
+
+
+    /**
+     * NOT USE RANGE FUNCTION
+     */
+
+    @Deprecated
+    public static List<StockHistory> getStockAnalyseList(final String code) {
+        List<StockHistory> stockList = new ArrayList<StockHistory>();
+        String query = "SELECT * FROM "+code+ "T";
+        QueryResult list = InfluxDaoConnector.getPoints(query, HistoryParser.dbName);
+
+        for (int i =0;i<list.getResults().get(0).getSeries().get(0).getValues().size();i++)
+            stockList.add(getStockHistory(code, (String) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(0)));
+
+        return stockList;
+    }
+
+    @Deprecated
+    public static List<StockHistory> getStockHistoryList(final String code) {
+        List<StockHistory> stockList = new ArrayList<StockHistory>();
+        String query = "SELECT * FROM "+code;
+        QueryResult list = InfluxDaoConnector.getPoints(query, HistoryParser.dbName);
+
+        for (int i =0;i<list.getResults().get(0).getSeries().get(0).getValues().size();i++)
+            stockList.add(getStockHistory(code, (String) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(0)));
+
+        return stockList;
+    }
+
+    @Deprecated
+    public static List<StockHistory> getStockHistoryListOffsetWithAT(final String code, int offset) {
+        List<StockHistory> stockList = new ArrayList<>();
+        String query = "SELECT * FROM "+code;
+        QueryResult list = InfluxDaoConnector.getPoints(query, HistoryParser.dbName);
+
+        int size = list.getResults().get(0).getSeries().get(0).getValues().size();
+
+        if (size < offset)
+            return null;
+
+        for (int i = size-1; i < list.getResults().get(0).getSeries().get(0).getValues().size(); i++) {
+            StockHistory sh = new StockHistory();
+            String date = (String) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(0);
+            sh.setCode(code);
+            populate(sh, list, i);  sh.setAnalyse_tech(StockAnalyse.getAnalyse(code, date));
+            stockList.add(sh);
+        }
+
+        return stockList;
+    }
+
+
+    @Deprecated
+    public static List<String> getDateHistoryListOffset(final String code, int offset) {
+        List<String> dateList = new ArrayList<>();
+        String query = "SELECT * FROM "+code;
+        QueryResult list = InfluxDaoConnector.getPoints(query, HistoryParser.dbName);
+
+        if (list.getResults().get(0).getSeries().get(0).getValues().size()< offset)
+            return null;
+
+        for (int i = offset; i < list.getResults().get(0).getSeries().get(0).getValues().size(); i++) {
+            StockHistory sh = new StockHistory();
+            dateList.add((String) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(0));
+
+        }
+        return dateList;
+    }
+
 }

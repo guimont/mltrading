@@ -29,7 +29,6 @@ public class StockParserInvestir  implements StockParser{
 
     static String refCode = "tbody";
 
-    //http://investir.lesechos.fr/cours/profil-societe-action-accor,xpar,ac,fr0000120404,isin.html
 
     @Override
     public void fetch(StockRepository repository) {

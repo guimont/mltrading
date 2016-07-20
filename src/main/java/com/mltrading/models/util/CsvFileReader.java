@@ -32,7 +32,7 @@ public class CsvFileReader {
 
     private FileWriter fileWriter = null;
     BufferedReader fileReader = null;
-    BatchPoints bp = InfluxDaoConnector.getBatchPoints();
+    BatchPoints bp = InfluxDaoConnector.getBatchPoints(HistoryParser.dbName);
 
 
     private void createHistory() {

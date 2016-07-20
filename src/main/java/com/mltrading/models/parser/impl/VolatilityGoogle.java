@@ -3,9 +3,11 @@ package com.mltrading.models.parser.impl;
 import com.mltrading.dao.InfluxDaoConnector;
 import com.mltrading.influxdb.dto.BatchPoints;
 import com.mltrading.models.parser.HistoryIndiceParser;
+import com.mltrading.models.parser.HistoryParser;
 import com.mltrading.models.parser.ParserCommon;
 import com.mltrading.models.parser.VolatilityParser;
 
+import com.mltrading.models.stock.StockHistory;
 import com.mltrading.models.stock.StockIndice;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -52,7 +54,7 @@ public class VolatilityGoogle implements VolatilityParser {
             text = ParserCommon.loadUrl(new URL(url));
 
             Document doc = Jsoup.parse(text);
-            BatchPoints bp = InfluxDaoConnector.getBatchPoints();
+            BatchPoints bp = InfluxDaoConnector.getBatchPoints(HistoryParser.dbName);
 
             Elements links = doc.select(refCode);
             int count = 0;
@@ -64,14 +66,17 @@ public class VolatilityGoogle implements VolatilityParser {
                         Elements t = elt.select("td");
                         if (t.size() > 3) {
 
-                            StockIndice ind = new StockIndice(code, name);
+                            StockHistory ind = new StockHistory();
+                            ind.setCode(code);
+                            ind.setCodif(code);
+                            ind.setName(name);
                             ind.setDayGoogle(t.get(0).text());
                             ind.setOpening(new Double(t.get(1).text().replaceAll(" ", "").replace(",", ".")));
                             ind.setHighest(new Double(t.get(2).text().replaceAll(" ", "").replace(",", ".")));
                             ind.setLowest(new Double(t.get(3).text().replaceAll(" ", "").replace(",", ".")));
                             ind.setValue(new Double(t.get(4).text().replaceAll(" ", "").replace(",", ".")));
                             ind.setVolume(new Double(0));
-                            HistoryIndiceParser.saveHistory(bp, ind);
+                            HistoryParser.saveHistory(bp, ind);
                             System.out.println(ind.toString());
                             if (count++ >= range)
                                 break;
@@ -99,7 +104,7 @@ public class VolatilityGoogle implements VolatilityParser {
                 text = ParserCommon.loadUrl(new URL(url));
 
                 Document doc = Jsoup.parse(text);
-                BatchPoints bp = InfluxDaoConnector.getBatchPoints();
+                BatchPoints bp = InfluxDaoConnector.getBatchPoints(HistoryParser.dbName);
 
                 Elements links = doc.select(refCode);
                 for (Element link : links) {
@@ -110,14 +115,17 @@ public class VolatilityGoogle implements VolatilityParser {
                             Elements t = elt.select("td");
                             if (t.size() > 3) {
 
-                                StockIndice ind = new StockIndice(code, name);
+                                StockHistory ind = new StockHistory();
+                                ind.setCode(code);
+                                ind.setCodif(code);
+                                ind.setName(name);
                                 ind.setDayGoogle(t.get(0).text());
                                 ind.setOpening(new Double(t.get(1).text().replaceAll(" ", "").replace(",", ".")));
                                 ind.setHighest(new Double(t.get(2).text().replaceAll(" ", "").replace(",", ".")));
                                 ind.setLowest(new Double(t.get(3).text().replaceAll(" ", "").replace(",", ".")));
                                 ind.setValue(new Double(t.get(4).text().replaceAll(" ", "").replace(",", ".")));
                                 ind.setVolume(new Double(0));
-                                HistoryIndiceParser.saveHistory(bp, ind);
+                                HistoryParser.saveHistory(bp, ind);
                                 System.out.println(ind.toString());
                             }
                         }

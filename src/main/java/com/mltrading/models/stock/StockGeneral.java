@@ -82,10 +82,12 @@ public class StockGeneral {
     }
 
     public String getCodif() {
-        //specific case quick fixe
-        if (codif.equalsIgnoreCase("SOL"))
-            return "SOLB";
+        return codif;
+    }
 
+    public String getRealCodif() {
+        if (codif.equalsIgnoreCase("OREAL"))
+            return "OR";
         return codif;
     }
 
@@ -202,4 +204,6 @@ public class StockGeneral {
     public String getPlace() {
         return place;
     }
+
+
 }

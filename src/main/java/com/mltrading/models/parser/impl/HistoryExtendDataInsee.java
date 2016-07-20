@@ -16,6 +16,8 @@ import java.net.URL;
 /**
  * Created by gmo on 29/12/2015.
  */
+
+@Deprecated
 public class HistoryExtendDataInsee {
 
     //Statistiques des transports - Immatriculations de voitures particulières neuves - Données brutes
@@ -71,7 +73,7 @@ public class HistoryExtendDataInsee {
             text = ParserCommon.loadUrl(new URL(url));
 
             Document doc = Jsoup.parse(text);
-            BatchPoints bp = InfluxDaoConnector.getBatchPoints();
+            //BatchPoints bp = InfluxDaoConnector.getBatchPoints();
 
             Elements links = doc.select(refCode);
             for (Element link : links) {
@@ -87,13 +89,13 @@ public class HistoryExtendDataInsee {
 
                             //ind.setValue(new Double(t.get(4).text().replaceAll(" ", "").replace(",", ".")));
 
-                            HistoryIndiceParser.saveHistory(bp, ind);
+
                             System.out.println(ind.toString());
                         }
                     }
                 }
             }
-            InfluxDaoConnector.writePoints(bp);
+            //InfluxDaoConnector.writePoints(bp);
 
 
         } catch (IOException e) {

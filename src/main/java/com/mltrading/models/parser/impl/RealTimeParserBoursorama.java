@@ -19,6 +19,7 @@ import java.net.URL;
  */
 
 @Singleton
+@Deprecated
 public class RealTimeParserBoursorama implements RealTimeParser {
 
     static String cac40 = "http://www.boursorama.com/bourse/actions/cours_az.phtml?MARCHE=1rPCAC&validate=";

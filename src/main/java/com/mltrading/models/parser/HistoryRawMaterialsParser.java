@@ -16,13 +16,4 @@ public interface HistoryRawMaterialsParser {
 
     public void fetchCurrent(int period);
 
-    public static void saveHistory(BatchPoints bp, StockRawMat raw) {
-        Point pt = Point.measurement(raw.getCode()).time(raw.getTimeInsert().getMillis() + 36000000, TimeUnit.MILLISECONDS)
-            .field("open", raw.getOpening())
-            .field("high", raw.getHighest())
-            .field("low",raw.getLowest())
-            .field("value", raw.getValue())
-            .build();
-        bp.point(pt);
-    }
 }

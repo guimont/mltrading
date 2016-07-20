@@ -54,7 +54,7 @@ public class HistoryIndiceParserYahoo implements HistoryIndiceParser {
                 text = ParserCommon.loadUrl(new URL(url));
 
                 Document doc = Jsoup.parse(text);
-                BatchPoints bp = InfluxDaoConnector.getBatchPoints();
+                BatchPoints bp = InfluxDaoConnector.getBatchPoints(HistoryParser.dbName);
 
 
                 Elements links = doc.select(refCode);
@@ -66,14 +66,17 @@ public class HistoryIndiceParserYahoo implements HistoryIndiceParser {
                         for (Element elt : sublinks) {
                             Elements t = elt.select("td");
                             if (t.size() > 3) {
-                                StockIndice ind = new StockIndice(g.getCode(), g.getName());
+                                StockHistory ind = new StockHistory();
+                                ind.setCode(g.getCode());
+                                ind.setCodif(g.getCode());
+                                ind.setName(g.getName());
                                 ind.setDayYahoo(t.get(0).text());
                                 ind.setOpening(new Double(t.get(1).text().replaceAll(" ", "").replace(",", ".")));
                                 ind.setHighest(new Double(t.get(2).text().replaceAll(" ", "").replace(",", ".")));
                                 ind.setLowest(new Double(t.get(3).text().replaceAll(" ", "").replace(",", ".")));
                                 ind.setValue(new Double(t.get(4).text().replaceAll(" ", "").replace(",", ".")));
                                 ind.setVolume(new Double(t.get(5).text().replaceAll(" ", "")));
-                                HistoryIndiceParser.saveHistory(bp, ind);
+                                HistoryParser.saveHistory(bp, ind);
 
                                 System.out.println(ind.toString());
                                 if (++count >= range)
@@ -111,7 +114,7 @@ public class HistoryIndiceParserYahoo implements HistoryIndiceParser {
                     text = ParserCommon.loadUrl(new URL(url));
 
                     Document doc = Jsoup.parse(text);
-                    BatchPoints bp = InfluxDaoConnector.getBatchPoints();
+                    BatchPoints bp = InfluxDaoConnector.getBatchPoints(HistoryParser.dbName);
 
 
                     Elements links = doc.select(refCode);
@@ -123,14 +126,17 @@ public class HistoryIndiceParserYahoo implements HistoryIndiceParser {
                                 Elements t = elt.select("td");
                                 if (t.size() > 3) {
 
-                                    StockIndice ind = new StockIndice(g.getCode(), g.getName());
+                                    StockHistory ind = new StockHistory();
+                                    ind.setCode(g.getCode());
+                                    ind.setCodif(g.getCode());
+                                    ind.setName(g.getName());
                                     ind.setDayYahoo(t.get(0).text());
                                     ind.setOpening(new Double(t.get(1).text().replaceAll(" ", "").replace(",", ".")));
                                     ind.setHighest(new Double(t.get(2).text().replaceAll(" ", "").replace(",", ".")));
                                     ind.setLowest(new Double(t.get(3).text().replaceAll(" ", "").replace(",", ".")));
                                     ind.setValue(new Double(t.get(4).text().replaceAll(" ", "").replace(",", ".")));
                                     ind.setVolume(new Double(t.get(5).text().replaceAll(" ", "")));
-                                    HistoryIndiceParser.saveHistory(bp, ind);
+                                    HistoryParser.saveHistory(bp, ind);
                                     System.out.println(ind.toString());
                                 }
                             }

@@ -32,6 +32,7 @@ public class StockIndice extends StockHistory {
         return null;
     }
 
+    /*
     static public int DATE_COLUMN = 0;
     static public int HIGHEST_COLUMN_IND = 2;
     static public int LOWEST_COLUMN_IND = 3;
@@ -74,7 +75,7 @@ public class StockIndice extends StockHistory {
      * @param code
      * @param max
      * @return O or max last StockHistory
-     */
+     *
     public static List<StockIndice> getStockIndiceLastInvert(final String code, int max) {
 
         List<StockIndice> stockList = new ArrayList<>();
@@ -98,6 +99,6 @@ public class StockIndice extends StockHistory {
 
         return stockList;
 
-    }
+    }*/
 
 }

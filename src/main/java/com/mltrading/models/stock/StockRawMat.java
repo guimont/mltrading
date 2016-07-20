@@ -20,15 +20,7 @@ public class StockRawMat extends StockHistory {
         this.setName(name);
     }
 
-    public StockRawMat(String code) {
-        this.setCode(code);
-    }
 
-    public StockRawMat(StockRawMat r) {
-        this.url =  r.getUrl();
-        this.setCode(r.getCode());
-        this.setName(r.getName());
-    }
 
     public void setDayInvest(String day) {
 
@@ -44,6 +36,7 @@ public class StockRawMat extends StockHistory {
         return url;
     }
 
+    /*
     static public int DATE_COLUMN = 0;
     static public int HIGHEST_COLUMN_RAW = 2;
     static public int LOWEST_COLUMN_RAW = 3;
@@ -64,7 +57,7 @@ public class StockRawMat extends StockHistory {
         //offset is mult by 2 because it is no dense data
         /**
          * bug in data miss too much so increase coeff offset but temporary solution
-         */
+         *
         String query = "SELECT * FROM " + code + " where time <= '" + date + "' and time > '"+ date + "' - "+  Integer.toString(offset*10) +"d";
         QueryResult list = InfluxDaoConnector.getPoints(query);
 
@@ -88,7 +81,7 @@ public class StockRawMat extends StockHistory {
      * @param code
      * @param max
      * @return O or max last StockHistory
-     */
+     *
     public static List<StockRawMat> getStockIndiceLastInvert(final String code, int max) {
 
         List<StockRawMat> stockList = new ArrayList<>();
@@ -113,6 +106,6 @@ public class StockRawMat extends StockHistory {
         return stockList;
 
     }
-
+*/
 
 }

@@ -21,10 +21,11 @@ import java.net.URL;
  */
 
 @Singleton
+@Deprecated
 public class HistorySectorParserYahoo implements HistorySectorParser {
     @Override
     public void fetch() {
-        loader();
+        throw new NotImplementedException();//loader();
     }
 
     @Override
@@ -43,6 +44,7 @@ public class HistorySectorParserYahoo implements HistorySectorParser {
     static int MAXPAGE = 1518;
 
 
+    /*throw new NotImplementedException();
     public void loaderSpecific(String date) {
         String endUrl = "&b=2&a=00&c=2015&e=2&d=00&f=2015&g=d";
 
@@ -129,5 +131,5 @@ public class HistorySectorParserYahoo implements HistorySectorParser {
             }
 
         }
-    }
+    }*/
 }

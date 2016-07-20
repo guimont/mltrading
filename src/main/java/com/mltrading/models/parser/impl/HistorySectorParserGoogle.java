@@ -62,7 +62,7 @@ public class HistorySectorParserGoogle implements HistorySectorParser {
                 text = ParserCommon.loadUrl(new URL(url));
 
                 Document doc = Jsoup.parse(text);
-                BatchPoints bp = InfluxDaoConnector.getBatchPoints();
+                BatchPoints bp = InfluxDaoConnector.getBatchPoints(HistoryParser.dbName);
 
 
                 Elements links = doc.select(refCode);
@@ -76,7 +76,8 @@ public class HistorySectorParserGoogle implements HistorySectorParser {
                             if (t.size() > 3) {
 
                                 StockHistory stock = new StockHistory();
-                                stock.setCode(g.getCodif());
+                                stock.setCode(g.getCode());
+                                stock.setCodif(g.getCode());
                                 stock.setDayGoogle(t.get(0).text());
                                 stock.setOpening(new Double(t.get(1).text().replaceAll(" ", "").replace(",", "")));
                                 stock.setHighest(new Double(t.get(2).text().replaceAll(" ", "").replace(",", "")));
@@ -117,7 +118,7 @@ public class HistorySectorParserGoogle implements HistorySectorParser {
                     text = ParserCommon.loadUrl(new URL(url));
 
                     Document doc = Jsoup.parse(text);
-                    BatchPoints bp = InfluxDaoConnector.getBatchPoints();
+                    BatchPoints bp = InfluxDaoConnector.getBatchPoints(HistoryParser.dbName);
 
 
                     Elements links = doc.select(refCode);
@@ -131,6 +132,7 @@ public class HistorySectorParserGoogle implements HistorySectorParser {
 
                                     StockHistory stock = new StockHistory();
                                     stock.setCode(g.getCodif());
+                                    stock.setCodif(g.getCodif());
                                     stock.setDayGoogle(t.get(0).text());
                                     stock.setOpening(new Double(t.get(1).text().replaceAll(" ", "").replace(",", "")));
                                     stock.setHighest(new Double(t.get(2).text().replaceAll(" ", "").replace(",", "")));

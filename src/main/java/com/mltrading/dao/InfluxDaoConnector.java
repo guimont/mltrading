@@ -4,6 +4,7 @@ import com.mltrading.dao.impl.InfluxDaoImpl;
 import com.mltrading.influxdb.dto.BatchPoints;
 import com.mltrading.influxdb.dto.Query;
 import com.mltrading.influxdb.dto.QueryResult;
+import com.mltrading.models.parser.HistoryParser;
 
 import java.util.List;
 
@@ -13,17 +14,15 @@ import java.util.List;
 public class InfluxDaoConnector {
 
     private InfluxDao dao;
-    static String dbName = "history";
+
 
     private InfluxDaoConnector() {
         dao = new InfluxDaoImpl();
         dao.createConnection();
-       // dao.createDB(dbName);
 
         List<String> repo = dao.getDB().describeDatabases();
-        if (!repo.contains(dbName))
-            dao.createDB(dbName);
 
+        if (!repo.contains(HistoryParser.dbName)) dao.createDB(HistoryParser.dbName);
     }
 
     private static class InfluxDaoConnectorHolder {
@@ -39,7 +38,7 @@ public class InfluxDaoConnector {
         getInstance().dao.getDB().write(batchPoints);
     }
 
-    public static QueryResult getPoints(final String queryString) {
+    public static QueryResult getPoints(final String queryString, String dbName) {
         Query query = new Query(queryString, dbName);
         QueryResult result = getInstance().dao.getDB().query(query);
         return result;
@@ -47,7 +46,7 @@ public class InfluxDaoConnector {
     }
 
 
-    public static BatchPoints getBatchPoints() {
+    public static BatchPoints getBatchPoints(String dbName) {
         return BatchPoints
                 .database(dbName)
                 .retentionPolicy("default")

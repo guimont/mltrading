@@ -39,7 +39,7 @@ public class CacheStockGeneral {
         aMap.put("FR0000121667", new StockGeneral("FR0000121667","Essilor Intl","EI","xpar","PA", "FRHC" ,  "FRHC"));
         aMap.put("FR0000121485", new StockGeneral("FR0000121485","Kering","KER","xpar","PA", "FRCS" ,  "FRGR"));
         aMap.put("FR0000121964", new StockGeneral("FR0000121964","klepierre","LI","xpar","PA", "FRFIN" ,  "FRRE"));
-        aMap.put("FR0000120321", new StockGeneral("FR0000120321","Loreal","OR","xpar","PA", "FRCG" ,  "FRPG"));
+        aMap.put("FR0000120321", new StockGeneral("FR0000120321","Loreal","OREAL","xpar","PA", "FRCG" ,  "FRPG"));
         aMap.put("CH0012214059", new StockGeneral("CH0012214059","LafargeHolcim-ltd","LHN","xpar","PA", "FRIN" ,  "FRCM"));
         aMap.put("FR0010307819", new StockGeneral("FR0010307819","Legrand","LR","xpar","PA", "FRIN" ,  "FREEE"));
         aMap.put("FR0000121014", new StockGeneral("FR0000121014","Lvmh","MC","xpar","PA", "FRCG" , "FRPG"));
@@ -55,7 +55,7 @@ public class CacheStockGeneral {
         aMap.put("FR0000120578", new StockGeneral("FR0000120578","Sanofi","SAN","xpar","PA", "FRHC" ,  "FRPB"));
         aMap.put("FR0000121972", new StockGeneral("FR0000121972","Schneider Electric","SU","xpar","PA", "FRIN" ,  "FREEE"));
         aMap.put("FR0000130809", new StockGeneral("FR0000130809","Societe Generale","GLE","xpar","PA", "FRFIN" ,  "FRFIN"));
-        aMap.put("BE0003470755", new StockGeneral("BE0003470755","Solvay","SOL","xbru","BR", "FRBM" ,  "FRBM"));
+        aMap.put("BE0003470755", new StockGeneral("BE0003470755","Solvay","SOLB","xbru","BR", "FRBM" ,  "FRBM"));
         aMap.put("FR0000121220", new StockGeneral("FR0000121220","Sodexo","SW","xpar","PA", "FRCS" ,  "FRCS"));
         aMap.put("FR0000131708", new StockGeneral("FR0000131708","Technip","TEC","xpar","PA", "FROGP" ,  "FROGP"));
         aMap.put("FR0000120271", new StockGeneral("FR0000120271","Total","FP","xpar","PA", "FROGP" ,  "FROGP"));
@@ -98,14 +98,14 @@ public class CacheStockGeneral {
 
     public static String getCode(String codif) {
         for (StockGeneral g: CacheStockGeneral.getIsinCache().values()) {
-            if (g.getCodif().equals(codif)) return g.getCode();
+            if (g.getRealCodif().equals(codif)) return g.getCode();
         }
         return null;
     }
 
     public static String getPlace(String codif) {
         for (StockGeneral g: CacheStockGeneral.getIsinCache().values()) {
-            if (g.getCodif().equals(codif)) return g.getPlace();
+            if (g.getRealCodif().equals(codif)) return g.getPlace();
         }
         return null;
     }
@@ -113,7 +113,7 @@ public class CacheStockGeneral {
 
     public static String getSector(String codif) {
         for (StockGeneral g: CacheStockGeneral.getIsinCache().values()) {
-            if (g.getCodif().equals(codif)) return g.getSector();
+            if (g.getRealCodif().equals(codif)) return g.getSector();
         }
         return null;
     }

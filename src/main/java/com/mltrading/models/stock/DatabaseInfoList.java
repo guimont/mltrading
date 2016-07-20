@@ -46,14 +46,14 @@ static final int RANGE = 300 ;
         List<StockSector> ss = new ArrayList(CacheStockSector.getSectorCache().values());
 
         for (StockSector s:ss) {
-            List<StockSector> l = StockSector.getStockSectorLastInvert(s.getCode(), RANGE);
+            List<StockHistory> l = StockHistory.getStockHistoryLastInvert(s.getCode(), RANGE);
             sectorList.add(DatabaseInfo.populate(s.getCode(), l));
         }
 
         List<StockIndice> si = new ArrayList(CacheStockIndice.getIndiceCache().values());
 
         for (StockIndice s:si) {
-            List<StockIndice> l = StockIndice.getStockIndiceLastInvert(s.getCode(), RANGE);
+            List<StockHistory> l = StockHistory.getStockHistoryLastInvert(s.getCode(), RANGE);
             indiceList.add(DatabaseInfo.populate(s.getCode(), l));
         }
 
@@ -61,7 +61,7 @@ static final int RANGE = 300 ;
         List<StockRawMat> sr = new ArrayList(CacheRawMaterial.getCache().values());
 
         for (StockRawMat s:sr) {
-            List<StockRawMat> l = StockRawMat.getStockIndiceLastInvert(s.getCode(), RANGE);
+            List<StockHistory> l = StockHistory.getStockHistoryLastInvert(s.getCode(), RANGE);
             rawList.add(DatabaseInfo.populate(s.getCode(), l));
         }
 

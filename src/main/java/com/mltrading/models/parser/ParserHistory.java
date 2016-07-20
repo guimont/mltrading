@@ -10,6 +10,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
 import java.net.URL;
@@ -18,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by gmo on 24/06/2015.
  */
+@Deprecated
 public class ParserHistory {
 
     static String startUrl="http://bourse.lesechos.fr/bourse/details/donnees_histo.jsp?fw3_component=dataList&fw3_autonomous=/bourse/details/donnees_histo-view.jsp&dataList_pageNum=";
@@ -27,8 +29,9 @@ public class ParserHistory {
     static String refCode = "tr";
 
     public static void loader() {
+        throw new NotImplementedException();
 
-        int numPage;
+        /*int numPage;
         boolean retry = false;
         for (StockGeneral g: CacheStockGeneral.getCache().values()) {
             for(numPage = 20; numPage>0; numPage--) {
@@ -99,9 +102,10 @@ public class ParserHistory {
                     System.out.println("ERROR for : " + g.getName());
                 }
             }
-        }
+        }*/
     }
 
+    /*
     public static void saveHistory(BatchPoints bp, StockHistory hist) {
 
 
@@ -114,7 +118,7 @@ public class ParserHistory {
                 .build();
         bp.point(pt);
 
-    }
+    }*/
 
 
 }

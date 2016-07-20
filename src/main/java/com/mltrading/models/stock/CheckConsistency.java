@@ -16,21 +16,6 @@ public class CheckConsistency {
     private static final Logger log = LoggerFactory.getLogger(CheckConsistency.class);
 
 
-    public static void countfrom() {
-        for (StockGeneral g : CacheStockGeneral.getIsinCache().values()) {
-            String query = "SELECT * FROM "+g.getCode() +" where time > '2013-06-01T00:00:00Z'";
-            QueryResult list = InfluxDaoConnector.getPoints(query);
-            try {
-                int size = list.getResults().get(0).getSeries().get(0).getValues().size();
-                log.info(g.getCodif() + " / " + size);
-            } catch (Exception e) {
-                log.info("cannot find for: " + g.getCodif());
-            }
-
-
-        }
-    }
-
     private static int OFFSET_BASE = 50;
     private static int RANGE_MAX = 300;
     private static int XT_PERIOD = 20;
@@ -113,7 +98,7 @@ public class CheckConsistency {
              */
             for (String date : rangeDate) {
                 try {
-                    List<StockSector> ss = StockSector.getStockSectorDateInvert(sector.getCode(), date, XT_PERIOD);
+                    List<StockHistory> ss = StockHistory.getStockHistoryDateInvert(sector.getCode(), date, XT_PERIOD);
                     //Check date equals
 
                     if (!ss.get(0).getDay().equalsIgnoreCase(date)) {

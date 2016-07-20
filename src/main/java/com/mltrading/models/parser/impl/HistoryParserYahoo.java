@@ -14,6 +14,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
 import java.net.URL;
@@ -27,17 +28,17 @@ import java.net.URL;
 public class HistoryParserYahoo implements HistoryParser {
     @Override
     public void fetch() {
-        loader();
+        throw new NotImplementedException();
     }
 
     @Override
     public void fetchSpecific(StockGeneral g) {
-        loaderSpecific( g);
+        throw new NotImplementedException();
     }
 
     @Override
     public void fetchCurrent(int period) {
-        loaderFrom(period);
+        throw new NotImplementedException();
     }
 
 
@@ -51,7 +52,7 @@ public class HistoryParserYahoo implements HistoryParser {
     /**
      * not very nice .. code duplicate and exit not nice
      * @param range
-     */
+     *
     public  void loaderFrom(int range) {
 
         int numPage;
@@ -230,5 +231,5 @@ public class HistoryParserYahoo implements HistoryParser {
                 }
             }
         }
-    }
+    }*/
 }

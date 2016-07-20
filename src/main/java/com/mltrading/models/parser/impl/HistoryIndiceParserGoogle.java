@@ -7,7 +7,6 @@ import com.mltrading.models.parser.HistoryIndiceParser;
 import com.mltrading.models.parser.HistorySectorParser;
 import com.mltrading.models.parser.ParserCommon;
 import com.mltrading.models.stock.CacheStockSector;
-import com.mltrading.models.stock.StockSector;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -21,16 +20,18 @@ import java.net.URL;
  */
 
 @Singleton
+@Deprecated
 public class HistoryIndiceParserGoogle implements HistoryIndiceParser {
 
     public void fetch() {
         /*fix problem for specific day*/
-        loader();
+        //loader();
     }
 
     @Override
     public void fetchCurrent(int period) {
-        loaderFrom(period);
+
+        //loaderFrom(period);
     }
 
 
@@ -47,6 +48,7 @@ public class HistoryIndiceParserGoogle implements HistoryIndiceParser {
      * not very nice .. code duplicate and exit not nice
      * @param range
      */
+    /*
     public void loaderFrom(int range) {
 
         for (StockSector g : CacheStockSector.getSectorCache().values()) {
@@ -146,5 +148,5 @@ public class HistoryIndiceParserGoogle implements HistoryIndiceParser {
                 }
             }
         }
-    }
+    }*/
 }

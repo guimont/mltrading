@@ -54,7 +54,7 @@ public class HistoryParserGoogle implements HistoryParser {
         int numPage;
         boolean retry = false;
         for (StockGeneral g : CacheStockGeneral.getIsinCache().values()) {
-            Consensus cnote = ConsensusParserInvestir.fetchStock(g.getCode());
+            Consensus cnote = ConsensusParserInvestir.fetchStock(g.getRealCodif());
 
             String url = startUrl + g.getCodif()  + endUrl + 0;
             try {
@@ -70,7 +70,7 @@ public class HistoryParserGoogle implements HistoryParser {
 
 
                 Document doc = Jsoup.parse(text);
-                BatchPoints bp = InfluxDaoConnector.getBatchPoints();
+                BatchPoints bp = InfluxDaoConnector.getBatchPoints(dbName);
 
                 Elements links = doc.select(refCode);
                 int count = 0;
@@ -134,7 +134,7 @@ public class HistoryParserGoogle implements HistoryParser {
 
 
                 Document doc = Jsoup.parse(text);
-                BatchPoints bp = InfluxDaoConnector.getBatchPoints();
+                BatchPoints bp = InfluxDaoConnector.getBatchPoints(dbName);
 
                 Elements links = doc.select(refCode);
 
@@ -198,7 +198,7 @@ public class HistoryParserGoogle implements HistoryParser {
 
 
                     Document doc = Jsoup.parse(text);
-                    BatchPoints bp = InfluxDaoConnector.getBatchPoints();
+                    BatchPoints bp = InfluxDaoConnector.getBatchPoints(dbName);
 
                     Elements links = doc.select(refCode);
                     for (Element link : links) {

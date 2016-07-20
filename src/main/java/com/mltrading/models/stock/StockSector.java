@@ -12,20 +12,9 @@ import java.util.List;
 public class StockSector extends StockHistory{
 
 
-
     private String urlInvestir;
 
 
-    public StockSector(String code) {
-        this.setCode(code);
-    }
-
-
-    public StockSector(String code, String name, String place) {
-        this.setCode(code);
-        this.setPlace(place);
-        this.setName(name);
-    }
 
     public StockSector(String code, String name, String place, String url) {
         this.setCode(code);
@@ -40,14 +29,13 @@ public class StockSector extends StockHistory{
         return null;
     }
 
-    public String getUrlInvestir() {
-        return urlInvestir;
-    }
 
     public void setUrlInvestir(String urlInvestir) {
         this.urlInvestir = urlInvestir;
     }
 
+
+    /*
     static public int DATE_COLUMN = 0;
     static public int OPENING_COLUMN_SECT = 2;
     static public int VALUE_COLUMN_SECT = 3;
@@ -86,7 +74,7 @@ public class StockSector extends StockHistory{
      * @param code
      * @param max
      * @return O or max last StockHistory
-     */
+     *
     public static List<StockSector> getStockSectorLastInvert(final String code, int max) {
 
         List<StockSector> stockList = new ArrayList<>();
@@ -111,6 +99,6 @@ public class StockSector extends StockHistory{
         return stockList;
 
     }
-
+*/
 
 }

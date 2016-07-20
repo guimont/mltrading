@@ -115,7 +115,7 @@ public class Analyse {
 
         List<Container> cList = new ArrayList<>();
 
-        QueryResult res = InfluxDaoConnector.getPoints("SELECT * FROM " + code + " where time > '" + date +"' - 120d and time <= '" + date +"'");
+        QueryResult res = InfluxDaoConnector.getPoints("SELECT * FROM " + code + " where time > '" + date +"' - 120d and time <= '" + date +"'",HistoryParser.dbName);
 
         if (res.getResults().get(0).getSeries() == null || res.getResults().get(0).getSeries().get(0).getValues() == null) return; //resultat empry
 
@@ -157,7 +157,7 @@ public class Analyse {
 
         List<Container> cList = new ArrayList<>();
 
-        QueryResult res = InfluxDaoConnector.getPoints("SELECT * FROM " + code);
+        QueryResult res = InfluxDaoConnector.getPoints("SELECT * FROM " + code,HistoryParser.dbName);
 
         if (res.getResults().get(0).getSeries() == null || res.getResults().get(0).getSeries().get(0).getValues() == null) return; //resultat empry
 
@@ -193,7 +193,7 @@ public class Analyse {
 
     public void saveAnalysis(String code, Container c) {
 
-        BatchPoints bp = InfluxDaoConnector.getBatchPoints();
+        BatchPoints bp = InfluxDaoConnector.getBatchPoints(HistoryParser.dbName);
 
         Point pt = Point.measurement(code+"T").time(new DateTime(c.getDate()).getMillis(), TimeUnit.MILLISECONDS)
             //.field(VALUE, c.getIndice().get(VALUE))
@@ -242,7 +242,7 @@ public class Analyse {
         List<Object> lEnd = res.getResults().get(0).getSeries().get(0).getValues().get(index);
 
         String query = "SELECT stddev(value)*2 FROM "+code+" where time > '" + lStart.get(0) + "' and time < '"+ lEnd.get(0) + "'";
-        QueryResult meanQ = InfluxDaoConnector.getPoints(query);
+        QueryResult meanQ = InfluxDaoConnector.getPoints(query, HistoryParser.dbName);
 
         return meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(1).toString();
     }
@@ -261,7 +261,7 @@ public class Analyse {
         System.out.print(lStart.get(0).toString());
 
         String query = "SELECT mean(value) FROM "+code+" where time > '" + lStart.get(0) + "' and time < '"+ lEnd.get(0) + "'";
-        QueryResult meanQ = InfluxDaoConnector.getPoints(query);
+        QueryResult meanQ = InfluxDaoConnector.getPoints(query, HistoryParser.dbName);
 
         return meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(1).toString();
     }

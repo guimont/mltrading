@@ -39,10 +39,10 @@ public class ExtractionService {
         indiceParser.fetch();
         sectorParser.fetch();
         vola.fetch();
-        articles.fetch();
+        /*articles.fetch();
         article.fetch(articleRepository);
         Analyse a = new Analyse();
-        a.processAll();
+        a.processAll();*/
     }
 
     public void extractRawFull(String host) {
