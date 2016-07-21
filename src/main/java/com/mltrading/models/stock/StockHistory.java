@@ -309,12 +309,12 @@ public class StockHistory extends Object{
     }
 
     static public int DATE_COLUMN = 0;
-    static public int CONSENSUS_COLUMN_HIST = 2;
-    static public int HIGHEST_COLUMN_HIST = 3;
-    static public int LOWEST_COLUMN_HIST = 4;
-    static public int OPENING_COLUMN_HIST = 5;
-    static public int VALUE_COLUMN_HIST = 6;
-    static public int VOLUME_COLUMN_HIST = 7;
+    static public int CONSENSUS_COLUMN_HIST = 1;
+    static public int HIGHEST_COLUMN_HIST = 2;
+    static public int LOWEST_COLUMN_HIST = 3;
+    static public int OPENING_COLUMN_HIST = 4;
+    static public int VALUE_COLUMN_HIST = 5;
+    static public int VOLUME_COLUMN_HIST = 6;
 
     public static void populate(StockHistory sh, QueryResult meanQ, int i) {
         sh.setDay((String) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(DATE_COLUMN));

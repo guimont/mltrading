@@ -51,14 +51,14 @@ public class ExtractionService {
 
     public void extractSectorFull() {
         sectorParser.fetch();
-        Analyse a = new Analyse();
-        a.processSectorAll();
+        /*Analyse a = new Analyse();
+        a.processSectorAll();*/
     }
 
     public void extractIndiceFull() {
         indiceParser.fetch();
-        Analyse a = new Analyse();
-        a.processIndiceAll();
+        /*Analyse a = new Analyse();
+        a.processIndiceAll();*/
     }
 
     public void extractVcacFull() {

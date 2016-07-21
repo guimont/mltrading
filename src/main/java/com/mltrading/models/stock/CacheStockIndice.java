@@ -9,6 +9,8 @@ import java.util.Map;
  */
 public class CacheStockIndice {
 
+    public static int INDICE_EFCHI_POS=1;
+
     private static final Map<String, StockIndice> IndiceMap;
     static {
         Map<String, StockIndice> aMap = new HashMap<>();

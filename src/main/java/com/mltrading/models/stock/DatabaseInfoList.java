@@ -39,7 +39,7 @@ static final int RANGE = 300 ;
         List<StockGeneral> sg = new ArrayList(CacheStockGeneral.getIsinCache().values());
 
         for (StockGeneral s:sg) {
-            List<StockHistory> l = StockHistory.getStockHistoryLastInvert(s.getCode(), RANGE);
+            List<StockHistory> l = StockHistory.getStockHistoryLastInvert(s.getCodif(), RANGE);
             stockList.add(DatabaseInfo.populate(s.getCodif(), l));
         }
 

@@ -56,7 +56,7 @@ public class HistoryParserGoogle implements HistoryParser {
         for (StockGeneral g : CacheStockGeneral.getIsinCache().values()) {
             Consensus cnote = ConsensusParserInvestir.fetchStock(g.getRealCodif());
 
-            String url = startUrl + g.getCodif()  + endUrl + 0;
+            String url = startUrl + g.getRealCodif()  + endUrl + 0;
             try {
                 String text;
                 int loopPage = 0;
