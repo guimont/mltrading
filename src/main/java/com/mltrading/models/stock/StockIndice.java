@@ -11,9 +11,10 @@ import java.util.List;
  */
 public class StockIndice extends StockHistory {
 
-    public StockIndice(String code, String name) {
+    public StockIndice(String code, String name, int row) {
         this.setCode(code);
         this.setName(name);
+        this.setRow(row);
     }
 
     public StockIndice(String code) {

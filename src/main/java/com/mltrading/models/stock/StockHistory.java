@@ -42,6 +42,8 @@ public class StockHistory extends Object{
 
     private String placeCodif;
 
+    private int row;
+
 
     public String getCodif() {
         return codif;
@@ -117,6 +119,13 @@ public class StockHistory extends Object{
 
     }
 
+    public int getRow() {
+        return row;
+    }
+
+    public void setRow(int row) {
+        this.row = row;
+    }
 
     public Double getVolatiltyHist() {
         return volatiltyHist;
@@ -342,7 +351,8 @@ public class StockHistory extends Object{
 
         sh.setCode(code);
         populate(sh, meanQ, 0);
-        sh.setAnalyse_tech(StockAnalyse.getAnalyse(code, date));
+
+        //sh.setAnalyse_tech(StockAnalyse.getAnalyse(code, date));
 
         return sh;
     }
@@ -350,12 +360,13 @@ public class StockHistory extends Object{
     public static StockHistory getStockHistoryDayAfter(final String code, String date) {
         StockHistory sh = new StockHistory();
 
-        String query = "SELECT * FROM "+code+" where time >= '" + date + "' limit 1";
+        String query = "SELECT * FROM "+code+" where time > '" + date + "' limit 1";
         QueryResult meanQ = InfluxDaoConnector.getPoints(query, HistoryParser.dbName);
 
         sh.setCode(code);
         populate(sh, meanQ, 0);
-        sh.setAnalyse_tech(StockAnalyse.getAnalyse(code, date));
+
+        //sh.setAnalyse_tech(StockAnalyse.getAnalyse(code, date));
 
         return sh;
     }

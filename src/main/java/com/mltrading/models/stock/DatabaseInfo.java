@@ -15,11 +15,6 @@ public class DatabaseInfo implements Serializable{
     public Integer nbElements;
 
 
-
-
-    public DatabaseInfo() {
-    }
-
     public DatabaseInfo(String name, String lastdate, String firstdate, Integer nbElements) {
         this.name = name;
         this.lastdate = lastdate;

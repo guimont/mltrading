@@ -2,6 +2,8 @@ package com.mltrading.models.stock;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 
 /**
  * Created by gmo on 29/06/2016.
@@ -38,35 +40,25 @@ static final int RANGE = 300 ;
 
         List<StockGeneral> sg = new ArrayList(CacheStockGeneral.getIsinCache().values());
 
-        for (StockGeneral s:sg) {
-            List<StockHistory> l = StockHistory.getStockHistoryLastInvert(s.getCodif(), RANGE);
-            stockList.add(DatabaseInfo.populate(s.getCodif(), l));
-        }
+        sg.stream().map(s -> stockList.add(DatabaseInfo.populate(s.getCodif(), StockHistory.getStockHistoryLastInvert(s.getCodif(), RANGE)))).collect(Collectors.toList());
 
-        List<StockSector> ss = new ArrayList(CacheStockSector.getSectorCache().values());
+        List<? extends StockHistory> ss = new ArrayList(CacheStockSector.getSectorCache().values());
+        List<? extends StockHistory> si = new ArrayList(CacheStockIndice.getIndiceCache().values());
+        List<? extends StockHistory> sr = new ArrayList(CacheRawMaterial.getCache().values());
 
-        for (StockSector s:ss) {
-            List<StockHistory> l = StockHistory.getStockHistoryLastInvert(s.getCode(), RANGE);
-            sectorList.add(DatabaseInfo.populate(s.getCode(), l));
-        }
+        /* source are mixed with only one stream* display are not wished
+        Stream<StockHistory> stream = Stream.concat(Stream.concat(ss.stream(), si.stream()),sr.stream());
+        stream.map(s -> stockList.add(DatabaseInfo.populate(s.getCode(), StockHistory.getStockHistoryLastInvert(s.getCode(), RANGE)))).collect(Collectors.toList());
+        */
 
-        List<StockIndice> si = new ArrayList(CacheStockIndice.getIndiceCache().values());
+        ss.stream().map(s -> indiceList.add(DatabaseInfo.populate(s.getCode(), StockHistory.getStockHistoryLastInvert(s.getCode(), RANGE)))).collect(Collectors.toList());
 
-        for (StockIndice s:si) {
-            List<StockHistory> l = StockHistory.getStockHistoryLastInvert(s.getCode(), RANGE);
-            indiceList.add(DatabaseInfo.populate(s.getCode(), l));
-        }
+        si.stream().map(s -> sectorList.add(DatabaseInfo.populate(s.getCode(), StockHistory.getStockHistoryLastInvert(s.getCode(), RANGE)))).collect(Collectors.toList());
 
+        sr.stream().map(s -> rawList.add(DatabaseInfo.populate(s.getCode(), StockHistory.getStockHistoryLastInvert(s.getCode(), RANGE)))).collect(Collectors.toList());
 
-        List<StockRawMat> sr = new ArrayList(CacheRawMaterial.getCache().values());
-
-        for (StockRawMat s:sr) {
-            List<StockHistory> l = StockHistory.getStockHistoryLastInvert(s.getCode(), RANGE);
-            rawList.add(DatabaseInfo.populate(s.getCode(), l));
-        }
 
         return this;
-
     }
 
 

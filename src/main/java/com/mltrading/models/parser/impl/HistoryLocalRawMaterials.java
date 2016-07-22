@@ -58,7 +58,7 @@ public class HistoryLocalRawMaterials implements HistoryRawMaterialsParser {
                 for (Element t : e.children()) {
                     StockHistory raw = new StockHistory();
                     raw.setCode(r.getCode());
-                    raw.setCode(r.getCodif());
+                    raw.setCodif(r.getCode());
                     raw.setDayInvest(t.children().get(0).text());
                     raw.setValue(new Double(t.children().get(1).text().replaceAll(" ", "").replace(",", "").replace("-", "0")));
                     raw.setOpening(new Double(t.children().get(2).text().replaceAll(" ", "").replace(",", "").replace("-", "0")));
@@ -97,7 +97,7 @@ public class HistoryLocalRawMaterials implements HistoryRawMaterialsParser {
                 for (Element t : e.children()) {
                     StockHistory raw = new StockHistory();
                     raw.setCode(r.getCode());
-                    raw.setCode(r.getCodif());
+                    raw.setCodif(r.getCode());
                     raw.setDayInvest(t.children().get(0).text());
                     raw.setValue(new Double(t.children().get(1).text().replaceAll(" ", "").replace(",", "").replace("-", "0")));
                     raw.setOpening(new Double(t.children().get(2).text().replaceAll(" ", "").replace(",", "").replace("-", "0")));

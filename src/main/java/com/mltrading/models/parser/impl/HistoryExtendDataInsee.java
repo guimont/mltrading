@@ -67,41 +67,7 @@ public class HistoryExtendDataInsee {
 
     public void loader(String code, String name ,String url) {
 
-        try {
-            String text;
 
-            text = ParserCommon.loadUrl(new URL(url));
-
-            Document doc = Jsoup.parse(text);
-            //BatchPoints bp = InfluxDaoConnector.getBatchPoints();
-
-            Elements links = doc.select(refCode);
-            for (Element link : links) {
-
-                if (link.children().size() > 40) {
-                    Elements sublinks = link.children().select("tr");
-                    for (Element elt : sublinks) {
-                        Elements t = elt.select("td");
-                        if (t.size() > 3) {
-
-                            StockIndice ind = new StockIndice(code, name);
-                            ind.setDayGoogle(t.get(0).text());
-
-                            //ind.setValue(new Double(t.get(4).text().replaceAll(" ", "").replace(",", ".")));
-
-
-                            System.out.println(ind.toString());
-                        }
-                    }
-                }
-            }
-            //InfluxDaoConnector.writePoints(bp);
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("ERROR for : " + code);
-        }
     }
 
 }

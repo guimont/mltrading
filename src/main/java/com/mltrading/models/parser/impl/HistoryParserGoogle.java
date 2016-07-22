@@ -37,8 +37,10 @@ public class HistoryParserGoogle implements HistoryParser {
     }
 
 
+
 // http://www.google.com/finance/historical?q=EPA%3AAC&startdate=Jan%2029%2C%202011&num=50&start=0
-    static String startUrl="http://www.google.com/finance/historical?q=EPA%3A";
+    static String startUrl="http://www.google.com/finance/historical?q=";
+    static String midUrl="%3A";
     static String endUrl ="&startdate=Jan%2029%2C%202011&num=50&start=";
     static String refCode = "tbody";
     static int MAXPAGE = 1250;
@@ -56,7 +58,8 @@ public class HistoryParserGoogle implements HistoryParser {
         for (StockGeneral g : CacheStockGeneral.getIsinCache().values()) {
             Consensus cnote = ConsensusParserInvestir.fetchStock(g.getRealCodif());
 
-            String url = startUrl + g.getRealCodif()  + endUrl + 0;
+            String url = startUrl + getPlace(g.getPlace()) + midUrl + g.getRealCodif()  + endUrl + 0;
+
             try {
                 String text;
                 int loopPage = 0;
@@ -110,6 +113,12 @@ public class HistoryParserGoogle implements HistoryParser {
             }
         }
 
+    }
+
+    private String getPlace(String place) {
+        if (place.equalsIgnoreCase("xbru")) return "EBR";
+
+        return "EPA";
     }
 
     public  void loaderSpecific(StockGeneral g) {
@@ -184,7 +193,8 @@ public class HistoryParserGoogle implements HistoryParser {
         for (StockGeneral g: CacheStockGeneral.getIsinCache().values()) {
             Consensus cnote = ConsensusParserInvestir.fetchStock(g.getCode());
             for(numPage =0; numPage <= MAXPAGE ; numPage += PAGINATION) {
-                String url = startUrl + g.getCodif()+ endUrl+ numPage;
+                String url = startUrl + getPlace(g.getPlace()) + midUrl + g.getRealCodif()  + endUrl + numPage;
+
                 try {
                     String text;
                     int loopPage = 0;
@@ -196,6 +206,9 @@ public class HistoryParserGoogle implements HistoryParser {
                         else retry = false;
                     } while (retry);
 
+
+                    if (g.getRealCodif().equalsIgnoreCase("SGO"))
+                        System.out.println("break point");
 
                     Document doc = Jsoup.parse(text);
                     BatchPoints bp = InfluxDaoConnector.getBatchPoints(dbName);

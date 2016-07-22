@@ -14,10 +14,11 @@ public class StockRawMat extends StockHistory {
 
     private String url;
 
-    public StockRawMat(String code, String name, String url) {
+    public StockRawMat(String code, String name, String url, int row) {
         this.url =  url;
         this.setCode(code);
         this.setName(name);
+        this.setRow(row);
     }
 
 

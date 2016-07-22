@@ -16,11 +16,12 @@ public class StockSector extends StockHistory{
 
 
 
-    public StockSector(String code, String name, String place, String url) {
+    public StockSector(String code, String name, String place, String url, int row) {
         this.setCode(code);
         this.setPlace(place);
         this.setName(name);
         this.setUrlInvestir(url);
+        this.setRow(row);
     }
 
 

@@ -9,6 +9,20 @@ import java.util.Map;
  */
 public class CacheStockSector {
 
+    public static int SECTOR_FRIN_POS  = 0;
+    public static int SECTOR_FRBM_POS  = 1;
+    public static int SECTOR_FROGP_POS  = 2;
+    public static int SECTOR_FRCG_POS  = 3;
+    public static int SECTOR_FRHC_POS   = 4;
+    public static int SECTOR_FRCS_POS  = 5;
+    public static int SECTOR_FRTEL_POS   = 6;
+    public static int SECTOR_FRUT_POS  = 7;
+    public static int SECTOR_FRFIN_POS  = 8;
+    public static int SECTOR_FRTEC_POS  = 9;
+
+
+    public static int N_SECTOR  = 10;
+
     public static String urlFRIN = "http://investir.lesechos.fr/cours/historique-indice-cac-industries,xpar,frin,qs0011017652,isin.html";
     public static String urlFRBM = "http://investir.lesechos.fr/cours/historique-indice-cac-materiaux-de-base,xpar,frbm,qs0011017637,isin.html";
     public static String urlFROGP = "http://investir.lesechos.fr/cours/historique-indice-cac-producteurs-de-petrole-et-gaz,xpar,frogp,qs0011017843,isin.html";
@@ -23,7 +37,7 @@ public class CacheStockSector {
     private static final Map<String, StockSector> SectorMap;
     static {
         Map<String, StockSector> aMap = new HashMap<>();
-        aMap.put("FRIN", new StockSector("FRIN", "Industrie", "PA", urlFRIN));
+        aMap.put("FRIN", new StockSector("FRIN", "Industrie", "PA", urlFRIN, SECTOR_FRIN_POS));
         /*aMap.put("FRINT", new StockSector("FRINT", "Transport industriel", "PA"));
         aMap.put("FRCM", new StockSector("FRCM", "Bât et matériaux de constr.", "PA"));
         aMap.put("FRAD", new StockSector("FRAD", "Aérospatiale et Défense", "PA"));
@@ -31,13 +45,13 @@ public class CacheStockSector {
         aMap.put("FRIE", new StockSector("FRIE", "Ingénierie industrielle", "PA"));
         aMap.put("FRSS", new StockSector("FRSS", "CAC Sup. Services", "PA"));*/
 
-        aMap.put("FRBM", new StockSector("FRBM", "Matériaux de base", "PA", urlFRBM));
+        aMap.put("FRBM", new StockSector("FRBM", "Matériaux de base", "PA", urlFRBM, SECTOR_FRBM_POS));
 
 
-        aMap.put("FROGP", new StockSector("FROGP", "Prod. de Pétrole et de Gaz", "PA", urlFROGP));
+        aMap.put("FROG", new StockSector("FROG", "Prod. de Pétrole et de Gaz", "PA", urlFROGP, SECTOR_FROGP_POS));
 
 
-        aMap.put("FRCG", new StockSector("FRCG", "Biens de Consommation", "PA", urlFRCG));
+        aMap.put("FRCG", new StockSector("FRCG", "Biens de Consommation", "PA", urlFRCG, SECTOR_FRCG_POS));
         /*aMap.put("FRAP", new StockSector("FRAP", "Automobiles et équipementiers", "PA"));
         aMap.put("FRBEV", new StockSector("FRBEV", "Boissons", "PA"));
         aMap.put("FRFPR", new StockSector("FRFPR", "Agro-alimentaire", "PA"));
@@ -45,27 +59,27 @@ public class CacheStockSector {
         aMap.put("FRLEG", new StockSector("FRLEG", "Equipements de loisirs", "PA"));
         aMap.put("FRPG", new StockSector("FRPG", "Articles Personnels", "PA"));*/
 
-        aMap.put("FRHC", new StockSector("FRHC", "Santé", "PA", urlFRHC));
+        aMap.put("FRHC", new StockSector("FRHC", "Santé", "PA", urlFRHC, SECTOR_FRHC_POS));
         /*aMap.put("FRPB", new StockSector("FRPB", "CAC PHARMA. & BIO.", "PA"));*/
 
 
 
-        aMap.put("FRCS", new StockSector("FRCS", "Services aux consommateurs", "PA", urlFRCS)); //media voyage
+        aMap.put("FRCS", new StockSector("FRCS", "Services aux consommateurs", "PA", urlFRCS, SECTOR_FRCS_POS)); //media voyage
         /*aMap.put("FRMED", new StockSector("FRMED", "Médias et publicité", "PA"));
         aMap.put("FRTL", new StockSector("FRTL", "Voyages et loisirs.", "PA"));
         aMap.put("FRFDR", new StockSector("FRFDR", "Distribution - Alimentation et", "PA"));
         aMap.put("FRGR", new StockSector("FRGR", "Distributeurs généralistes", "PA"));*/
 
-        aMap.put("FRTEL", new StockSector("FRTEL", "Télécommunications", "PA", urlFRTEL));
+        aMap.put("FRTEL", new StockSector("FRTEL", "Télécommunications", "PA", urlFRTEL, SECTOR_FRTEL_POS));
 
-        aMap.put("FRUT", new StockSector("FRUT", "Services aux collectivités", "PA", urlFRUT));
+        aMap.put("FRUT", new StockSector("FRUT", "Services aux collectivités", "PA", urlFRUT, SECTOR_FRUT_POS));
         /*aMap.put("FRGWM", new StockSector("FRGWM", "Gaz, eau et services multiples", "PA"));*/
 
 
-        aMap.put("FRFIN", new StockSector("FRFIN", "Sociétés Financières", "PA", urlFRFIN));
+        aMap.put("FRFIN", new StockSector("FRFIN", "Sociétés Financières", "PA", urlFRFIN, SECTOR_FRFIN_POS));
         /*aMap.put("FRRE", new StockSector("FRRE", "Immobilier", "PA"));*/
 
-        aMap.put("FRTEC", new StockSector("FRTEC", "Technologie", "PA", urlFRTEC));
+        aMap.put("FRTEC", new StockSector("FRTEC", "Technologie", "PA", urlFRTEC, SECTOR_FRTEC_POS));
         //aMap.put("FRTHF", new StockSector("FRTHF", "Matériel et équipements destin", "PA"));
         //aMap.put("FRSCS", new StockSector("FRSCS", "Logiciels et services informat", "PA"));*/
 

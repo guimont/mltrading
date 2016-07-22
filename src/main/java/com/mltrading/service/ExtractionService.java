@@ -47,6 +47,7 @@ public class ExtractionService {
 
     public void extractRawFull(String host) {
         rawParser.fetch(host);
+        rawParser.fetchCurrent(30);
     }
 
     public void extractSectorFull() {
@@ -63,8 +64,8 @@ public class ExtractionService {
 
     public void extractVcacFull() {
         vola.fetch();
-        Analyse a = new Analyse();
-        a.processVcacAll();
+        /*Analyse a = new Analyse();
+        a.processVcacAll();*/
     }
 
     public void extractArticlesFull() {
