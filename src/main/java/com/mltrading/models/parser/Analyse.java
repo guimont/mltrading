@@ -49,6 +49,10 @@ public class Analyse {
             processAnalysisAll(g.getCode());
         }
 
+        for (StockRawMat g : CacheRawMaterial.getCache().values()) {
+            processAnalysisAll(g.getCode());
+        }
+
         processAnalysisAll("VCAC");
     }
 

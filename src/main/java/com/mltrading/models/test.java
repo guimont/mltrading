@@ -4,6 +4,7 @@ import breeze.optimize.AdaptiveGradientDescent;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.mltrading.domain.User;
+import com.mltrading.ml.MatrixValidator;
 import com.mltrading.ml.RandomForestStock;
 import com.mltrading.ml.Validator;
 import com.mltrading.models.parser.*;
@@ -50,8 +51,8 @@ public class test {
     }*/
 
     public static void main(String[] args) {
-        CsvFileReader csvFR = new CsvFileReader();
-        csvFR.readData();
+        MatrixValidator m = new MatrixValidator();
+        m.generate();
     }
 
 

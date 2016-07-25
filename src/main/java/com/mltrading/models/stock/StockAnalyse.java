@@ -9,6 +9,19 @@ import com.mltrading.models.parser.HistoryParser;
  * Created by gmo on 16/11/2015.
  */
 public class StockAnalyse extends Object{
+
+
+    public static int COL_MMA20_POS  = 0;
+    public static int COL_MMA50_POS  = 1;
+    public static int COL_MME12_POS  = 2;
+    public static int COL_MME26_POS  = 3;
+    public static int COL_MACD_POS   = 4;
+    public static int COL_MOMENTUM_POS  = 5;
+
+
+    public static int N_AT = 6;
+
+
     private Double mma20;
 
     private Double mma50;

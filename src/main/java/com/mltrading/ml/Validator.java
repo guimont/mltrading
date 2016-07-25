@@ -175,6 +175,11 @@ public class Validator implements Serializable ,Cloneable {
         return false;
     }
 
+    public static int randomiBool() {
+        if (Math.random()>0.5) return 1;
+        return 0;
+    }
+
     public static int randomPeriod(int min, int max) {
         return (int) (Math.random() * max + min);
     }

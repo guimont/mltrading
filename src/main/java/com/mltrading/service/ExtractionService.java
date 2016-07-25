@@ -7,6 +7,7 @@ import com.mltrading.models.stock.CacheStockGeneral;
 import com.mltrading.models.stock.StockGeneral;
 import com.mltrading.models.stock.StockHistory;
 import com.mltrading.models.stock.StockRawMat;
+import com.mltrading.models.util.CsvFileReader;
 import com.mltrading.repository.ArticleRepository;
 import com.mltrading.repository.StockRepository;
 import org.joda.time.DateTime;
@@ -34,15 +35,19 @@ public class ExtractionService {
         stock.fetch(stockRepository);
     }
 
+    /**
+     * Extract full data from web
+     * complete with ddd import data from file
+     * @param articleRepository
+     */
     public void extractFull(ArticleRepository articleRepository) {
         histParser.fetch();
         indiceParser.fetch();
         sectorParser.fetch();
         vola.fetch();
-        /*articles.fetch();
-        article.fetch(articleRepository);
-        Analyse a = new Analyse();
-        a.processAll();*/
+
+        CsvFileReader csvFR = new CsvFileReader();
+        csvFR.readData();
     }
 
     public void extractRawFull(String host) {
@@ -52,20 +57,20 @@ public class ExtractionService {
 
     public void extractSectorFull() {
         sectorParser.fetch();
-        /*Analyse a = new Analyse();
-        a.processSectorAll();*/
+        Analyse a = new Analyse();
+        a.processSectorAll();
     }
 
     public void extractIndiceFull() {
         indiceParser.fetch();
-        /*Analyse a = new Analyse();
-        a.processIndiceAll();*/
+        Analyse a = new Analyse();
+        a.processIndiceAll();
     }
 
     public void extractVcacFull() {
         vola.fetch();
-        /*Analyse a = new Analyse();
-        a.processVcacAll();*/
+        Analyse a = new Analyse();
+        a.processVcacAll();
     }
 
     public void extractArticlesFull() {
