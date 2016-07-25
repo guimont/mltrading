@@ -170,13 +170,17 @@ public class Validator implements Serializable ,Cloneable {
 
 
 
-    public boolean randomBool() {
+    public static boolean randomBool() {
         if (Math.random()>0.5) return true;
         return false;
     }
 
-    public int randomPeriod() {
-        return (int) (Math.random() * 40 + 2);
+    public static int randomPeriod(int min, int max) {
+        return (int) (Math.random() * max + min);
+    }
+
+    public static  int randomPeriod() {
+        return randomPeriod(2, 40);
     }
 
     public void generateFeature() {
