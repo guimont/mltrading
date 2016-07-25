@@ -21,6 +21,15 @@ public class StockAnalyse extends Object{
 
     private Double stdDev;
 
+    private Double macd;
+
+    public Double getMacd() {
+        return macd;
+    }
+
+    public void setMacd(Double macd) {
+        this.macd = macd;
+    }
 
     public Double getMma20() {
         return mma20;
@@ -80,6 +89,7 @@ public class StockAnalyse extends Object{
             ", mme26=" + mme26 +
             ", momentum=" + momentum +
             ", stdDev=" + stdDev +
+            ", macd=" + macd +
             '}';
     }
 
@@ -97,6 +107,7 @@ public class StockAnalyse extends Object{
         a.setMme26(new Double(meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(5).toString()));
         a.setMomentum(new Double(meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(6).toString()));
         a.setStdDev(new Double(meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(7).toString()));
+        a.setMacd(a.getMme26()-a.getMme12());
         /*} catch (Exception e) {
             System.out.println("error in analyse: " +e);
         }*/
@@ -113,6 +124,7 @@ public class StockAnalyse extends Object{
         copy.setMme26(this.mme26);
         copy.setMomentum(this.momentum);
         copy.setStdDev(this.stdDev);
+        copy.setMacd(this.macd);
         return copy;
     }
 }

@@ -9,6 +9,7 @@ import com.mltrading.ml.Validator;
 import com.mltrading.models.parser.*;
 import com.mltrading.models.parser.impl.*;
 import com.mltrading.models.stock.*;
+import com.mltrading.models.util.CsvFileReader;
 import com.mltrading.service.ExtractionService;
 
 import com.mltrading.service.UserService;
@@ -48,7 +49,13 @@ public class test {
         }
     }*/
 
+    public static void main(String[] args) {
+        CsvFileReader csvFR = new CsvFileReader();
+        csvFR.readData();
+    }
 
+
+    /*
     public static void main(String[] args) {
        DatabaseInfoList list = new DatabaseInfoList();
         list.processingList();

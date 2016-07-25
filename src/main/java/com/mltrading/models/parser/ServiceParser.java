@@ -17,7 +17,7 @@ public class ServiceParser extends AbstractModule {
         bind(ConsensusParser.class).to(ConsensusParserInvestir.class);
         bind(VolatilityParser.class).to(VolatilityGoogle.class);
         bind(HistorySectorParser.class).to(HistorySectorParserGoogle.class);
-        bind(HistoryIndiceParser.class).to(HistoryIndiceParserYahoo.class);
+        bind(HistoryIndiceParser.class).to(HistoryIndiceParserGoogle.class);
         bind(StockParser.class).to(StockParserInvestir.class);
         bind(ArticleParser.class).to(ArticleParserEchos.class);
         bind(ArticlesParser.class).to(ArticlesParserEchos.class);

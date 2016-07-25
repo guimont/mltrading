@@ -11,10 +11,20 @@ import java.util.List;
  */
 public class StockIndice extends StockHistory {
 
-    public StockIndice(String code, String name, int row) {
+    public StockIndice(String code, String name,String place, int row) {
         this.setCode(code);
         this.setName(name);
+        this.setPlace(place);
         this.setRow(row);
+    }
+
+    /**
+     * methode to translate INX (s&p500) because key .INX forbidden in database
+     * @return
+     */
+    public String getCodeUrl() {
+        if (getCode().equals("INX")) return ".INX";
+        return getCode();
     }
 
     public StockIndice(String code) {

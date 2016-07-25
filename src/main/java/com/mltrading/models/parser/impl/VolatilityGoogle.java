@@ -22,6 +22,11 @@ import java.net.URL;
  */
 public class VolatilityGoogle implements VolatilityParser {
 
+    //INDEXCBOE:VIX
+    //INDEXEURO:VFTSE
+    //VXN nasdaq
+    //INDEXCBOE:VXFXI china
+
     static String vol = "http://www.google.com/finance/historical?cid=6404916&startdate=Dec%204%2C%202013&num=200&start=";
     static int PAGINATION = 200;
     static String refCode = "tbody";

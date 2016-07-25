@@ -31,26 +31,25 @@ public class Analyse {
     private static String STDDEV = "stddev";
     private static String MOMENTUM = "momentum";
 
-    private static int columnSector = 2;
-    public static int columnStock = 5;
-    public static int columnIndice = 4;
+    private static int columnValue = StockHistory.VALUE_COLUMN_HIST;
+
 
 
     public void processAll() {
 
         for (StockGeneral g: CacheStockGeneral.getIsinCache().values()) {
-            processAnalysisAll(g.getCode(), columnStock);
+            processAnalysisAll(g.getCodif());
         }
 
         for (StockIndice g : CacheStockIndice.getIndiceCache().values()) {
-            processAnalysisAll(g.getCode(), columnIndice);
+            processAnalysisAll(g.getCode());
         }
 
         for (StockSector g : CacheStockSector.getSectorCache().values()) {
-            processAnalysisAll(g.getCode(), columnSector);
+            processAnalysisAll(g.getCode());
         }
 
-        processAnalysisAll("VCAC", columnIndice);
+        processAnalysisAll("VCAC");
     }
 
 
@@ -63,27 +62,27 @@ public class Analyse {
             }
 
             for (String date:dateList) {
-                processAnalysisSpecific(g.getCode(), date, columnStock);
+                processAnalysisSpecific(g.getCode(), date);
             }
         }
 
         for (StockIndice g : CacheStockIndice.getIndiceCache().values()) {
-            processAnalysisDaily(g.getCode(), columnIndice);
+            processAnalysisDaily(g.getCode(), columnValue);
             for (String date:dateList) {
-                processAnalysisSpecific(g.getCode(), date, columnIndice);
+                processAnalysisSpecific(g.getCode(), date);
             }
         }
 
         for (StockSector g : CacheStockSector.getSectorCache().values()) {
 
             for (String date:dateList) {
-                processAnalysisSpecific(g.getCode(), date, columnSector);
+                processAnalysisSpecific(g.getCode(), date);
             }
         }
 
 
         for (String date:dateList) {
-            processAnalysisSpecific("VCAC", date, columnIndice);
+            processAnalysisSpecific("VCAC", date);
         }
     }
 
@@ -91,14 +90,14 @@ public class Analyse {
     public void processSectorAll() {
 
         for (StockSector g : CacheStockSector.getSectorCache().values()) {
-            processAnalysisAll(g.getCode(), columnSector);
+            processAnalysisAll(g.getCode());
         }
 
     }
 
     public void processVcacAll() {
 
-        processAnalysisAll("VCAC", columnIndice);
+        processAnalysisAll("VCAC");
     }
 
 
@@ -106,12 +105,12 @@ public class Analyse {
     public void processIndiceAll() {
 
         for (StockIndice g : CacheStockIndice.getIndiceCache().values()) {
-            processAnalysisAll(g.getCode(), columnIndice);
+            processAnalysisAll(g.getCode());
         }
 
     }
 
-    public void processAnalysisSpecific(String code, String date, int column) {
+    public void processAnalysisSpecific(String code, String date) {
 
         List<Container> cList = new ArrayList<>();
 
@@ -134,11 +133,11 @@ public class Analyse {
         c.indice.put(MM20,mmRange(res, code, index, 20));
         c.indice.put(MM50,mmRange(res, code, index, 50));
         c.indice.put(STDDEV,stddevRange(res, code, index, 20));
-        ref_mme26 = mmeRange(res, index, ref_mme26, 0.075, column);
-        ref_mme12 = mmeRange(res, index, ref_mme12, 0.15, column);
+        ref_mme26 = mmeRange(res, index, ref_mme26, 0.075, columnValue);
+        ref_mme12 = mmeRange(res, index, ref_mme12, 0.15, columnValue);
         c.indice.put(MME12, Double.toString(ref_mme12));
         c.indice.put(MME26, Double.toString(ref_mme26));
-        c.indice.put(MOMENTUM, Double.toString(momentum(res,index, column)));
+        c.indice.put(MOMENTUM, Double.toString(momentum(res,index, columnValue)));
         saveAnalysis(code, c);
         cList.add(c);
 
@@ -153,7 +152,7 @@ public class Analyse {
 
 
 
-    public void processAnalysisAll(String code, int column) {
+    public void processAnalysisAll(String code) {
 
         List<Container> cList = new ArrayList<>();
 
@@ -175,15 +174,15 @@ public class Analyse {
         //TODO not always 1 for value => consensus or other
         for (int index = 50; index <len;index++ ) {
             Container c = new Container(res.getResults().get(0).getSeries().get(0).getValues().get(index).get(0).toString());
-            c.indice.put(VALUE, res.getResults().get(0).getSeries().get(0).getValues().get(index).get(column).toString());
+            c.indice.put(VALUE, res.getResults().get(0).getSeries().get(0).getValues().get(index).get(columnValue).toString());
             c.indice.put(MM20,mmRange(res, code, index, 20));
             c.indice.put(MM50,mmRange(res, code, index, 50));
             c.indice.put(STDDEV,stddevRange(res, code, index, 20));
-            ref_mme26 = mmeRange(res, index, ref_mme26, 0.075, column);
-            ref_mme12 = mmeRange(res, index, ref_mme12, 0.15, column);
+            ref_mme26 = mmeRange(res, index, ref_mme26, 0.075, columnValue);
+            ref_mme12 = mmeRange(res, index, ref_mme12, 0.15, columnValue);
             c.indice.put(MME12, Double.toString(ref_mme12));
             c.indice.put(MME26, Double.toString(ref_mme26));
-            c.indice.put(MOMENTUM, Double.toString(momentum(res,index, column)));
+            c.indice.put(MOMENTUM, Double.toString(momentum(res,index, columnValue)));
             saveAnalysis(code, c);
             cList.add(c);
         }

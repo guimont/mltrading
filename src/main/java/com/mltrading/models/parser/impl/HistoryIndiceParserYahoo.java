@@ -20,7 +20,10 @@ import java.net.URL;
  * Created by gmo on 23/11/2015.
  */
 
+
+/** yhaoo is not a confidence site now .. don use it anymore*/
 @Singleton
+@Deprecated
 public class HistoryIndiceParserYahoo implements HistoryIndiceParser {
 
     static String startUrl="https://fr.finance.yahoo.com/q/hp?s=%5";

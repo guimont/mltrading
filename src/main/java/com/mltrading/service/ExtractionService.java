@@ -94,7 +94,7 @@ public class ExtractionService {
         StockGeneral g = CacheStockGeneral.getIsinCache().get(code);
         histParser.fetchSpecific(g);
         Analyse a = new Analyse();
-        a.processAnalysisAll(g.getCode(), Analyse.columnStock);
+        a.processAnalysisAll(g.getCode());
         articles.fetchSpecific(g);
         //article.fetchSpecific(g);
     }

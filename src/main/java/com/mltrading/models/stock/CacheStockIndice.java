@@ -9,37 +9,50 @@ import java.util.Map;
  */
 public class CacheStockIndice {
 
-    public static int INDICE_EFCHI_POS  = 0;
-    public static int INDICE_EFTSE_POS  = 1;
-    public static int INDICE_EGDAXI_POS  = 2;
-    public static int INDICE_ESTOXX50E_POS  = 3;
-    public static int INDICE_ESSMI_POS   = 4;
-    public static int INDICE_EDJI_POS  = 5;
-    public static int INDICE_ENYA_POS   = 6;
-    public static int INDICE_ENDX_POS  = 7;
-    public static int INDICE_EN225_POS  = 8;
-    public static int INDICE_EHSI_POS  = 9;
-    public static int INDICE_EBSESN_POS  = 10;
-    public static int INDICE_ETA100_POS  = 11;
+    public static int INDICE_PX1_POS  = 0;
+    public static int INDICE_PX4_POS  = 1;
+    public static int INDICE_FTSE_POS  = 2;
+    public static int INDICE_DAX_POS  = 3;
+    //public static int INDICE_ESTOXX50E_POS  = 3;
+    public static int INDICE_SMI_POS   = 4;
+    public static int INDICE_DJI_POS  = 5;
+    public static int INDICE_INX_POS   = 6;
+    public static int INDICE_NDX_POS  = 7;
+    public static int INDICE_NI225_POS  = 8;
+    public static int INDICE_HSI_POS  = 9;
+    public static int INDICE_SENSEX_POS  = 10;
 
-    public static int N_INDICE  = 12;
+    public static int N_INDICE  = 11;
 
+
+    //INDEXDB:DAX  DAX
+    //INDEXEURO:PX1 CAC 40
+    //INDEXEURO:PX4 SBF120
+    //INDEXFTSE:UKX FTSEdow
+    //INDEXSWX:SMI SMI
+    //INDEXDJX:DJI
+    //INDEXNASDAQ:NDX nasdaq
+    //INDEXSP:INX SP500
+    //INDEXNIKKEI:NI225 nikkeiBS
+    //INDEXHANGSENG:HSI
+    //INDEXBOM:SENSEX sensex inde
+    //INDEXFTSE:XIN9 china A50
 
     private static final Map<String, StockIndice> IndiceMap;
     static {
         Map<String, StockIndice> aMap = new HashMap<>();
-        aMap.put("EFCHI", new StockIndice("EFCHI", "cac 40 french", INDICE_EFCHI_POS));
-        aMap.put("EFTSE", new StockIndice("EFTSE", "ftse britain", INDICE_EFTSE_POS));
-        aMap.put("EGDAXI", new StockIndice("EGDAXI", "dax deutch", INDICE_EGDAXI_POS));
-        aMap.put("ESTOXX50E", new StockIndice("ESTOXX50E", "stoxx 50 UE", INDICE_ESTOXX50E_POS));
-        aMap.put("ESSMI", new StockIndice("ESSMI", "swiss", INDICE_ESSMI_POS));
-        aMap.put("EDJI", new StockIndice("EDJI", "dji US", INDICE_EDJI_POS));
-        aMap.put("ENYA", new StockIndice("ENYA", "new york US", INDICE_ENYA_POS));
-        aMap.put("ENDX", new StockIndice("ENDX", "nasdaq US", INDICE_ENDX_POS));
-        aMap.put("EN225", new StockIndice("EN225", "nikkei japon", INDICE_EN225_POS));
-        aMap.put("EHSI", new StockIndice("EHSI", "china", INDICE_EHSI_POS));
-        aMap.put("EBSESN", new StockIndice("EBSESN", "india", INDICE_EBSESN_POS));
-        aMap.put("ETA100", new StockIndice("ETA100", "orient", INDICE_ETA100_POS));
+        aMap.put("PX1", new StockIndice("PX1", "cac 40 french","INDEXEURO",  INDICE_PX1_POS));
+        aMap.put("PX4", new StockIndice("PX4", "sbf 120 french","INDEXEURO",  INDICE_PX4_POS));
+        aMap.put("UKX", new StockIndice("UKX", "ftse britain","INDEXFTSE", INDICE_FTSE_POS));
+        aMap.put("DAX", new StockIndice("DAX", "dax deutch","INDEXDB", INDICE_DAX_POS));
+        aMap.put("SMI", new StockIndice("SMI", "swiss","INDEXSWX", INDICE_SMI_POS));
+        aMap.put("DJI", new StockIndice("DJI", "dji US","INDEXDJX", INDICE_DJI_POS));
+        aMap.put("INX", new StockIndice("INX", "S&P 500 US","INDEXSP", INDICE_INX_POS));
+        aMap.put("NDX", new StockIndice("NDX", "nasdaq US","INDEXNASDAQ", INDICE_NDX_POS));
+        aMap.put("NI225", new StockIndice("NI225", "nikkei japon","INDEXNIKKEI", INDICE_NI225_POS));
+        aMap.put("HSI", new StockIndice("HSI", "china","INDEXHANGSENG", INDICE_HSI_POS));
+        aMap.put("SENSEX", new StockIndice("SENSEX", "india","INDEXBOM", INDICE_SENSEX_POS));
+
 
         IndiceMap = Collections.unmodifiableMap(aMap);
     }
