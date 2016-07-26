@@ -2,7 +2,6 @@ package com.mltrading.ml;
 
 import com.mltrading.dao.InfluxDaoConnectorModel;
 import com.mltrading.dao.InfluxDaoConnectorModelBackup;
-import com.mltrading.dao.InfluxDaoConnectorPerf;
 import com.mltrading.influxdb.dto.BatchPoints;
 import com.mltrading.influxdb.dto.Point;
 import com.mltrading.influxdb.dto.QueryResult;
@@ -284,7 +283,7 @@ public class Validator implements Serializable ,Cloneable {
     }
 
     public void save(String code, int error, double rate) {
-        BatchPoints bp = InfluxDaoConnectorPerf.getBatchPoints();
+        //BatchPoints bp = InfluxDaoConnectorPerf.getBatchPoints();
 
         this.error = error;
         this.rate = rate;
@@ -357,9 +356,9 @@ public class Validator implements Serializable ,Cloneable {
             .field("wuseNotation", useNotation)
 
             .build();
-        bp.point(pt);
+        //bp.point(pt);
 
-        InfluxDaoConnectorPerf.writePoints(bp);
+        //InfluxDaoConnectorPerf.writePoints(bp);
 
     }
 

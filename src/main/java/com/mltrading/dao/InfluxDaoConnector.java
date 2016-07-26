@@ -4,6 +4,7 @@ import com.mltrading.dao.impl.InfluxDaoImpl;
 import com.mltrading.influxdb.dto.BatchPoints;
 import com.mltrading.influxdb.dto.Query;
 import com.mltrading.influxdb.dto.QueryResult;
+import com.mltrading.ml.MatrixValidator;
 import com.mltrading.models.parser.HistoryParser;
 
 import java.util.List;
@@ -23,6 +24,8 @@ public class InfluxDaoConnector {
         List<String> repo = dao.getDB().describeDatabases();
 
         if (!repo.contains(HistoryParser.dbName)) dao.createDB(HistoryParser.dbName);
+        if (!repo.contains(MatrixValidator.dbName)) dao.createDB(MatrixValidator.dbName);
+
     }
 
     private static class InfluxDaoConnectorHolder {
