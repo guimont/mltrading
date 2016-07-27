@@ -3,6 +3,7 @@ package com.mltrading.ml;
 
 import com.mltrading.ml.FeaturesStock.PredictionPeriodicity;
 
+import org.apache.spark.mllib.linalg.Matrix;
 import org.apache.spark.mllib.tree.model.RandomForestModel;
 
 import java.io.Serializable;
@@ -12,24 +13,24 @@ public class MLStock  implements Serializable {
     private String codif;
     private PredictionPeriodicity period;
     private RandomForestModel model;
-    private Validator validator;
+    private MatrixValidator validator;
 
 
     private MLStock() {
-        validator = new Validator();
+        validator = new MatrixValidator();
     }
 
     public MLStock(String codif, PredictionPeriodicity period) {
         this.period = period;
         this.codif = codif;
-        validator = new Validator();
+        validator = new MatrixValidator();
     }
 
-    public Validator getValidator() {
+    public MatrixValidator getValidator() {
         return validator;
     }
 
-    public void setValidator(Validator validator) {
+    public void setValidator(MatrixValidator validator) {
         this.validator = validator;
     }
 

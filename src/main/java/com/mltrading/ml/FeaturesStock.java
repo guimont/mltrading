@@ -248,7 +248,7 @@ public class FeaturesStock implements Serializable {
     static int RANGE_TEST = 90;
 
 
-    public  static List<FeaturesStock> create(StockGeneral stock, Validator validator, int range) {
+    public  static List<FeaturesStock> create(StockGeneral stock, MatrixValidator validator, int range) {
         //Xt,Xt-1,...,Xn ,Consensus AT => StockHistory
         //Indice Xt,..Xn, AT => StockIndice
         //Secteur Xt,..Xn, AT => StockSecteur

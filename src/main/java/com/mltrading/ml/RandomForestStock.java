@@ -37,6 +37,8 @@ public class RandomForestStock implements Serializable {
 
         );
 
+        
+
         return parsedData;
     }
 

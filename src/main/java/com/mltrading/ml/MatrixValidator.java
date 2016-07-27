@@ -8,10 +8,19 @@ import com.mltrading.models.stock.CacheStockIndice;
 import com.mltrading.models.stock.CacheStockSector;
 import com.mltrading.models.stock.StockAnalyse;
 
+import java.io.Serializable;
+
 /**
  * Created by gmo on 21/07/2016.
  */
-public class MatrixValidator {
+public class MatrixValidator implements Serializable,Cloneable {
+
+    Integer maxDepth = 5;
+    Integer maxBins = 32;
+    Integer numTrees = 100; // Use more in practice.
+    Integer seed = 12345;
+
+    public int vectorSize;
 
     public static String dbName = "perf";
 
@@ -26,6 +35,46 @@ public class MatrixValidator {
 
     private int globalROW = CacheStockSector.N_SECTOR+ CacheStockIndice.N_INDICE+ CacheRawMaterial.N_RAW+ N_HS;
     private int globalCOL = N_HS_COL+StockAnalyse.N_AT;
+
+    public Integer getMaxDepth() {
+        return maxDepth;
+    }
+
+    public void setMaxDepth(Integer maxDepth) {
+        this.maxDepth = maxDepth;
+    }
+
+    public Integer getMaxBins() {
+        return maxBins;
+    }
+
+    public void setMaxBins(Integer maxBins) {
+        this.maxBins = maxBins;
+    }
+
+    public Integer getNumTrees() {
+        return numTrees;
+    }
+
+    public void setNumTrees(Integer numTrees) {
+        this.numTrees = numTrees;
+    }
+
+    public Integer getSeed() {
+        return seed;
+    }
+
+    public void setSeed(Integer seed) {
+        this.seed = seed;
+    }
+
+    public int getVectorSize() {
+        return vectorSize;
+    }
+
+    public void setVectorSize(int vectorSize) {
+        this.vectorSize = vectorSize;
+    }
 
     /**
      * col indice
@@ -71,4 +120,25 @@ public class MatrixValidator {
 
     }
 
+    public void loadValidator(String s) {
+
+    }
+
+    public void saveModel(String s) {
+
+    }
+
+
+    public MatrixValidator clone() {
+        Object o = null;
+        try {
+
+            o = super.clone();
+        } catch(CloneNotSupportedException cnse) {
+
+            cnse.printStackTrace(System.err);
+        }
+
+        return (MatrixValidator) o;
+    }
 }

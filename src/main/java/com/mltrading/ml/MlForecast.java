@@ -62,13 +62,13 @@ public class MlForecast {
             MLStocks mls = new MLStocks(s.getCodif());
 
             if (type == Type.Feature ) {
-                mls.getMlD1().getValidator().generateFeature();
+                mls.getMlD1().getValidator().generate();
                 mls.getMlD5().setValidator(mls.getMlD1().getValidator().clone());
                 mls.getMlD20().setValidator(mls.getMlD1().getValidator().clone());
             }
 
             if (type == Type.RF ) {
-                mls.getMlD1().getValidator().numTrees = 20 + i*40;
+                //mls.getMlD1().getValidator().numTrees = 20 + i*40;
                 mls.getMlD5().setValidator(mls.getMlD1().getValidator().clone());
                 mls.getMlD20().setValidator(mls.getMlD1().getValidator().clone());
             }
