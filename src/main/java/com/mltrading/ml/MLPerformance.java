@@ -1,5 +1,6 @@
 package com.mltrading.ml;
 
+import com.mltrading.dao.InfluxDaoConnector;
 import com.mltrading.influxdb.dto.BatchPoints;
 import com.mltrading.influxdb.dto.Point;
 import org.joda.time.DateTime;
@@ -31,11 +32,15 @@ public class MLPerformance implements Serializable{
         return date;
     }
 
+    public static MLPerformance generateEmptyMLPerformance(String date) {
+        return new MLPerformance(date,0,0,0,0,0,true);
+    }
+
     public void setDate(String date) {
         this.date = date;
     }
 
-
+    public MLPerformance() {}
 
     public MLPerformance(String date, double prediction, double  value, double realvalue,double yield, double realyield, boolean sign) {
         this.yield = yield;
@@ -124,8 +129,13 @@ public class MLPerformance implements Serializable{
             .field("sign", sign)
             .field("yield", yield)
             .field("realyield", realyield)
+            .field("prediction", prediction)
+            .field("realvalue", realvalue)
+            .field("value", value)
+            .field("error", error)
             .build();
         bp.point(pt);
+        InfluxDaoConnector.writePoints(bp);
     }
 
 }

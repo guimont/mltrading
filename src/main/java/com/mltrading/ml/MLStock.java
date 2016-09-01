@@ -1,9 +1,7 @@
 package com.mltrading.ml;
 
 
-import com.mltrading.ml.FeaturesStock.PredictionPeriodicity;
 
-import org.apache.spark.mllib.linalg.Matrix;
 import org.apache.spark.mllib.tree.model.RandomForestModel;
 
 import java.io.Serializable;
@@ -15,10 +13,6 @@ public class MLStock  implements Serializable {
     private RandomForestModel model;
     private MatrixValidator validator;
 
-
-    private MLStock() {
-        validator = new MatrixValidator();
-    }
 
     public MLStock(String codif, PredictionPeriodicity period) {
         this.period = period;
@@ -67,7 +61,7 @@ public class MLStock  implements Serializable {
     }
 
     public void save() {
-        saveModel();//savePerformance();
+        saveModel();
         validator.saveModel(codif+"V"+period.toString());
     }
 

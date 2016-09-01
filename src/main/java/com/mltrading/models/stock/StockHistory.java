@@ -15,17 +15,6 @@ import java.util.List;
 public class StockHistory extends Object{
 
 
-    /** Controls the perdiod */
-    public enum TypeHistory {
-        /** stock history */
-        STK,
-        /** sector history */
-        SEC,
-        /** indice history */
-        IND
-    }
-
-
     private String code;
 
     private String name;

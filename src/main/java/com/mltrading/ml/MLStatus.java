@@ -1,6 +1,11 @@
 package com.mltrading.ml;
 
+import com.mltrading.dao.InfluxDaoConnector;
+import com.mltrading.influxdb.dto.QueryResult;
+import org.apache.avro.generic.GenericData;
+
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,6 +23,11 @@ public class MLStatus implements Serializable{
 
     private List<MLPerformances> perfList;
 
+    public void savePerf(String code) {
+        for (MLPerformances perfs : perfList) {
+            perfs.save(code);
+        }
+    }
 
     public void calculeAvgPrd() {
         double avgD1 = 0, avgD5 =0, avgD20 =0;
@@ -110,9 +120,72 @@ public class MLStatus implements Serializable{
                     break;
                 case 20 : this.getPerfList().get(i).setMlD20(rep.get(i).getMlD20());
                     break;
-                default: throw new Exception("replaement imossible, perdio unknown");
+                default: throw new Exception("replacement impossible, period unknown");
             }
         }
+
+    }
+
+    /**
+     * return last max StockHistory
+     * @param code
+     * @return O or max last StockHistory
+     */
+    public void loadPerf(final String code) {
+        final int max = 89;
+        perfList = new ArrayList();
+
+        //offset is mult by 2 because it is no dense data
+        String query = "SELECT * FROM "+code +"PD1 where time > '2015-06-01T00:00:00Z'";
+        QueryResult listP1 = InfluxDaoConnector.getPoints(query, MatrixValidator.dbNameModel);
+        query = "SELECT * FROM "+code +"PD5 where time > '2015-06-01T00:00:00Z'";
+        QueryResult listP5 = InfluxDaoConnector.getPoints(query, MatrixValidator.dbNameModel);
+        query = "SELECT * FROM "+code +"PD20 where time > '2015-06-01T00:00:00Z'";
+        QueryResult listP20 = InfluxDaoConnector.getPoints(query, MatrixValidator.dbNameModel);
+
+        int sizeP1 = listP1.getResults().get(0).getSeries().get(0).getValues().size();
+        int sizeP5 = listP5.getResults().get(0).getSeries().get(0).getValues().size();
+        int sizeP20 = listP20.getResults().get(0).getSeries().get(0).getValues().size();
+
+        if (sizeP1 < max)
+            return ;
+
+        for (int i = sizeP1-max; i < sizeP1; i++) {
+            MLPerformances mlps = new MLPerformances();
+
+            populate(mlps.getMlD1(), listP1, i);
+            populate(mlps.getMlD5(), listP5, i);
+            populate(mlps.getMlD20(), listP20, i);
+            mlps.setDate(mlps.getMlD1().getDate());
+
+            perfList.add(mlps);
+
+        }
+
+        calculeAvgPrd();
+
+    }
+
+
+    static public int DATE_COLUMN = 0;
+    static public int ERROR_COLUMN = 1;
+    static public int PREDICTION_COLUMN = 2;
+    static public int REALVALUE_COLUMN = 3;
+    static public int REALYIELD_COLUMN = 4;
+    static public int SIGN_COLUMN = 5;
+    static public int VALUE_COLUMN = 6;
+    static public int YIELD_COLUMN = 7;
+
+    public static void populate(MLPerformance mlp, QueryResult meanQ, int i) {
+        mlp.setDate((String) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(DATE_COLUMN));
+
+        mlp.setError((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(ERROR_COLUMN));
+        mlp.setPrediction((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(PREDICTION_COLUMN));
+        mlp.setRealvalue((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(REALVALUE_COLUMN));
+        mlp.setRealyield((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(REALYIELD_COLUMN));
+        mlp.setSign((boolean) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(SIGN_COLUMN));
+        mlp.setValue((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(VALUE_COLUMN));
+        mlp.setYield((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(YIELD_COLUMN));
 
     }
 

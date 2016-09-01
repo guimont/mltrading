@@ -92,6 +92,8 @@ public class MlForecast {
                 mls.getMlD20().getValidator().save(mls.getCodif() + saveCode + "D20", mls.getStatus().getErrorRateD20(), mls.getStatus().getAvgD20());
                 MLStocks ref = CacheMLStock.getMLStockCache().get(mls.getCodif());
 
+
+
                 if (ref != null) {
                     /**for 1 day prevision*/
                     if (mls.getStatus().getErrorRateD1() <= ref.getStatus().getErrorRateD1() ||
@@ -104,6 +106,7 @@ public class MlForecast {
 
                             try {
                                 ref.getStatus().replaceElementList(mls.getStatus().getPerfList(), 1);
+                                //mls.getStatus().savePerf(s.getCodif() , 1);
                             } catch (Exception e) {
                             }
                         }

@@ -1,6 +1,13 @@
 package com.mltrading.ml;
 
+import com.mltrading.dao.InfluxDaoConnector;
+import com.mltrading.influxdb.dto.BatchPoints;
+import com.mltrading.influxdb.dto.QueryResult;
+import com.mltrading.models.parser.HistoryParser;
+
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by gmo on 10/02/2016.
@@ -8,7 +15,6 @@ import java.io.Serializable;
 public class MLPerformances  implements Serializable, Comparable<MLPerformances> {
 
     private String date;
-    private double value;
     private MLPerformance mlD1;
     private MLPerformance mlD5;
     private MLPerformance mlD20;
@@ -20,6 +26,12 @@ public class MLPerformances  implements Serializable, Comparable<MLPerformances>
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public MLPerformances() {
+        mlD1 = new MLPerformance();
+        mlD5 = new MLPerformance();
+        mlD20 = new MLPerformance();
     }
 
     public MLPerformances(String date) {
@@ -55,4 +67,23 @@ public class MLPerformances  implements Serializable, Comparable<MLPerformances>
     public int compareTo(MLPerformances o) {
         return o.getDate().compareTo(this.date)*-1;
     }
+
+
+    void save(String code) {
+        BatchPoints bp = InfluxDaoConnector.getBatchPoints(MatrixValidator.dbNameModel);
+        mlD1.savePerformance(bp,code+"PD1");
+
+        if (mlD5 != null) {
+            mlD5.savePerformance(bp,code+"PD5");
+        } else
+            MLPerformance.generateEmptyMLPerformance(date).savePerformance(bp,code+"PD5");
+
+        if (mlD20 != null)
+            mlD20.savePerformance(bp,code+"PD20");
+        else
+            MLPerformance.generateEmptyMLPerformance(date).savePerformance(bp, code + "PD20");
+
+    }
+
+
 }

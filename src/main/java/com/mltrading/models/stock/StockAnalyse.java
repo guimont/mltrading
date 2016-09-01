@@ -17,9 +17,10 @@ public class StockAnalyse extends Object{
     public static int COL_MME26_POS  = 3;
     public static int COL_MACD_POS   = 4;
     public static int COL_MOMENTUM_POS  = 5;
+    public static int COL_STDDEV_POS  = 6;
 
 
-    public static int N_AT = 6;
+    public static int N_AT = 7;
 
 
     private Double mma20;
@@ -106,6 +107,13 @@ public class StockAnalyse extends Object{
             '}';
     }
 
+    static private int DATE_COLUMN = 0;
+    static private int MMA20_COLUMN = 1;
+    static private int MMA50_COLUMN = 2;
+    static private int MME12_COLUMN = 3;
+    static private int MME26_COLUMN = 4;
+    static private int MOMENTUM_COLUMN = 5;
+    static private int STDDEV_COLUMN = 6;
 
     public static StockAnalyse getAnalyse(String code, String date) {
         StockAnalyse a = new StockAnalyse();
@@ -114,12 +122,12 @@ public class StockAnalyse extends Object{
             String query = "SELECT * FROM " + code + "T where time = '" + date + "'";
             QueryResult meanQ = InfluxDaoConnector.getPoints(query, HistoryParser.dbName);
 
-        a.setMma20(new Double(meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(2).toString()));
-        a.setMma50(new Double(meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(3).toString()));
-        a.setMme12(new Double(meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(4).toString()));
-        a.setMme26(new Double(meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(5).toString()));
-        a.setMomentum(new Double(meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(6).toString()));
-        a.setStdDev(new Double(meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(7).toString()));
+        a.setMma20(new Double(meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(MMA20_COLUMN).toString()));
+        a.setMma50(new Double(meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(MMA50_COLUMN).toString()));
+        a.setMme12(new Double(meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(MME12_COLUMN).toString()));
+        a.setMme26(new Double(meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(MME26_COLUMN).toString()));
+        a.setMomentum(new Double(meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(MOMENTUM_COLUMN).toString()));
+        a.setStdDev(new Double(meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(STDDEV_COLUMN).toString()));
         a.setMacd(a.getMme26()-a.getMme12());
         /*} catch (Exception e) {
             System.out.println("error in analyse: " +e);

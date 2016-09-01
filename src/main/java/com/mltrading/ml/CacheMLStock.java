@@ -1,6 +1,7 @@
 package com.mltrading.ml;
 
 
+import com.mltrading.dao.InfluxDaoConnector;
 import com.mltrading.models.stock.StockGeneral;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -36,6 +37,7 @@ public class CacheMLStock {
                 mls.getMlD1().load();
                 mls.getMlD5().load();
                 mls.getMlD20().load();
+                mls.getStatus().loadPerf(s.getCodif());
                 mlStockMap.put(s.getCodif(), mls);
 
             }catch (Exception e) {
@@ -59,6 +61,7 @@ public class CacheMLStock {
             if (mls != null && mls.getMlD1() != null) mls.getMlD1().save();
             if (mls != null && mls.getMlD5() != null) mls.getMlD5().save();
             if (mls != null && mls.getMlD20() != null) mls.getMlD20().save();
+            mls.getStatus().savePerf(mls.getCodif());
         }
     }
 
@@ -66,6 +69,7 @@ public class CacheMLStock {
     public static void deleteModel() {
         try {
             FileUtils.deleteDirectory(new File("model"));
+            InfluxDaoConnector.deleteDB(MatrixValidator.dbNameModel);
         } catch (IOException e) {
             log.error("Cannot remove folder model: " + e);
         }

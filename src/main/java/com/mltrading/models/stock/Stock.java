@@ -117,13 +117,10 @@ public class Stock  implements Serializable {
         this.indice = indice;
     }
 
-    public String getCodeif() {
+    public String getCodif() {
         return codeif;
     }
 
-    public void setCodeif(String codeif) {
-        this.codeif = codeif;
-    }
 
     public String getCode() {
         return code;

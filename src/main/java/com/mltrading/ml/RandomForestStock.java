@@ -15,7 +15,7 @@ import org.apache.spark.api.java.function.Function;
 import org.apache.spark.mllib.regression.LabeledPoint;
 import org.apache.spark.mllib.tree.RandomForest;
 import org.apache.spark.mllib.tree.model.RandomForestModel;
-import com.mltrading.ml.FeaturesStock.PredictionPeriodicity;
+
 /**
  * Created by gmo on 14/11/2015.
  */
@@ -37,7 +37,7 @@ public class RandomForestStock implements Serializable {
 
         );
 
-        
+
 
         return parsedData;
     }

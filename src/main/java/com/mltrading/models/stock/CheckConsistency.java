@@ -210,7 +210,7 @@ public class CheckConsistency {
             try {
                 List<StockIndice> sVCac = StockIndice.getStockIndiceDateInvert("VCAC", date, XT_PERIOD);
             } catch (Exception e) {
-                log.error("Cannot get vcac stock for: " + stock.getCodeif() + " and date: " + date + " //exception:" + e);
+                log.error("Cannot get vcac stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
                 continue;
             }
 

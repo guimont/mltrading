@@ -18,9 +18,9 @@ public class StockDetail implements Serializable{
     private Stock stock;
 
     private List<StockSector> sector;
-    private Validator validatorD1;
-    private Validator validatorD5;
-    private Validator validatorD20;
+    private MatrixValidator validatorD1;
+    private MatrixValidator validatorD5;
+    private MatrixValidator validatorD20;
     private StockPrediction prediction;
     private List<DetailData> data;
 
@@ -29,15 +29,15 @@ public class StockDetail implements Serializable{
     public static StockDetail populate(Stock s) {
         StockDetail detail = new StockDetail();
         if (s != null)
-            log.info(s.getCodeif());
+            log.info(s.getCodif());
         else
             log.info("s null error");
 
         log.info("cache size:" + CacheMLStock.getMLStockCache().size());
-        MLStocks mls = CacheMLStock.getMLStockCache().get(s.getCodeif());
+        MLStocks mls = CacheMLStock.getMLStockCache().get(s.getCodif());
         if (mls == null )
             log.info("mls null error");
-        detail.setCode(s.getCodeif());
+        detail.setCode(s.getCodif());
         detail.setStock(s);
         detail.setPrediction(CacheStockGeneral.getCache().get(s.getCode()).getPrediction());
         detail.setValidatorD1(mls.getMlD1().getValidator());
@@ -76,8 +76,8 @@ public class StockDetail implements Serializable{
 
     private static List<DetailData> populateData(Stock s) {
         List<DetailData> data = new ArrayList<>();
-        List<StockHistory> h = StockHistory.getStockHistoryLast(s.getCode(), 40);
-        MLStocks mls = CacheMLStock.getMLStockCache().get(s.getCodeif());
+        List<StockHistory> h = StockHistory.getStockHistoryLast(s.getCodif(), 40);
+        MLStocks mls = CacheMLStock.getMLStockCache().get(s.getCodif());
 
         for (StockHistory he:h) {
             DetailData d = new DetailData();
@@ -134,28 +134,28 @@ public class StockDetail implements Serializable{
         this.sector = sector;
     }
 
-    public Validator getValidatorD1() {
+    public MatrixValidator getValidatorD1() {
         return validatorD1;
     }
 
-    public void setValidatorD1(Validator validatorD1) {
+    public void setValidatorD1(MatrixValidator validatorD1) {
         this.validatorD1 = validatorD1;
     }
 
-    public Validator getValidatorD5() {
+    public MatrixValidator getValidatorD5() {
         return validatorD5;
     }
 
 
-    public void setValidatorD5(Validator validatorD5) {
+    public void setValidatorD5(MatrixValidator validatorD5) {
         this.validatorD5 = validatorD5;
     }
 
-    public Validator getValidatorD20() {
+    public MatrixValidator getValidatorD20() {
         return validatorD20;
     }
 
-    public void setValidatorD20(Validator validatorD20) {
+    public void setValidatorD20(MatrixValidator validatorD20) {
         this.validatorD20 = validatorD20;
     }
 

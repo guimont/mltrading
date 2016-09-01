@@ -1,7 +1,6 @@
 package com.mltrading.ml;
 
-import com.mltrading.dao.InfluxDaoConnectorModel;
-import com.mltrading.dao.InfluxDaoConnectorModelBackup;
+
 import com.mltrading.influxdb.dto.BatchPoints;
 import com.mltrading.influxdb.dto.Point;
 import com.mltrading.influxdb.dto.QueryResult;
@@ -12,7 +11,8 @@ import java.io.Serializable;
 /**
  * Created by gmo on 14/02/2016.
  */
-public class Validator implements Serializable ,Cloneable {
+@Deprecated
+public class OldValidator implements Serializable ,Cloneable {
     Integer maxDepth = 5;
     Integer maxBins = 32;
     Integer numTrees = 100; // Use more in practice.
@@ -100,7 +100,7 @@ public class Validator implements Serializable ,Cloneable {
         result = InfluxDaoConnectorModel.getPoints(query);*/
 
         String query = "SELECT * FROM " + code;
-        QueryResult result = InfluxDaoConnectorModelBackup.getPoints(query);
+        QueryResult result = null;// = InfluxDaoConnectorModelBackup.getPoints(query);
 
         int size = result.getResults().get(0).getSeries().get(0).getValues().size() -1;
 
@@ -372,7 +372,7 @@ public class Validator implements Serializable ,Cloneable {
     }
 
     public void saveModel(String code) {
-        BatchPoints bp = InfluxDaoConnectorModel.getBatchPoints();
+        //BatchPoints bp = InfluxDaoConnectorModel.getBatchPoints();
 
         Point pt = Point.measurement(code)
             .field("maxDepth", maxDepth)
@@ -441,23 +441,12 @@ public class Validator implements Serializable ,Cloneable {
             .field("wuseDocument", useDocument)
             .field("wuseNotation", useNotation)
             .build();
-        bp.point(pt);
+        //bp.point(pt);
 
-        InfluxDaoConnectorModel.writePoints(bp);
+        //InfluxDaoConnectorModel.writePoints(bp);
     }
 
-    public Validator clone() {
-        Object o = null;
-        try {
 
-            o = super.clone();
-        } catch(CloneNotSupportedException cnse) {
-
-            cnse.printStackTrace(System.err);
-        }
-
-        return (Validator) o;
-    }
 
 
 

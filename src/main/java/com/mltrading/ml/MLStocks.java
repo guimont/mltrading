@@ -4,11 +4,11 @@ package com.mltrading.ml;
  * Created by gmo on 26/01/2016.
  */
 
-import com.mltrading.ml.FeaturesStock.PredictionPeriodicity;
+
 import org.apache.spark.api.java.JavaRDD;
 
 import java.io.Serializable;
-import java.util.List;
+
 
 
 public class MLStocks  implements Serializable {

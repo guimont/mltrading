@@ -24,7 +24,9 @@ public class InfluxDaoConnector {
         List<String> repo = dao.getDB().describeDatabases();
 
         if (!repo.contains(HistoryParser.dbName)) dao.createDB(HistoryParser.dbName);
-        if (!repo.contains(MatrixValidator.dbName)) dao.createDB(MatrixValidator.dbName);
+        if (!repo.contains(MatrixValidator.dbNamePerf)) dao.createDB(MatrixValidator.dbNamePerf);
+        if (!repo.contains(MatrixValidator.dbNameModel)) dao.createDB(MatrixValidator.dbNameModel);
+
 
     }
 
@@ -46,6 +48,14 @@ public class InfluxDaoConnector {
         QueryResult result = getInstance().dao.getDB().query(query);
         return result;
 
+    }
+
+    public static void deleteDB(String name) {
+        List<String> repo = getInstance().dao.getDB().describeDatabases();
+        if (repo.contains(name)) {
+            getInstance().dao.deleteDB(name);
+            getInstance().dao.createDB(name);
+        }
     }
 
 

@@ -1,24 +1,17 @@
 package com.mltrading.ml;
 
-import com.mltrading.ml.FeaturesStock.PredictionPeriodicity;
-import com.mltrading.models.stock.Stock;
 import com.mltrading.models.stock.StockGeneral;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
-import org.apache.spark.ml.regression.LinearRegression;
 import org.apache.spark.mllib.linalg.Vectors;
 import org.apache.spark.mllib.regression.LabeledPoint;
 import org.apache.spark.mllib.regression.LinearRegressionModel;
 import org.apache.spark.mllib.regression.LinearRegressionWithSGD;
-import org.apache.spark.mllib.tree.RandomForest;
-import org.apache.spark.mllib.tree.model.RandomForestModel;
 import scala.Serializable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by gmo on 14/11/2015.
