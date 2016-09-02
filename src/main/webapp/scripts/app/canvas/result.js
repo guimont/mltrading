@@ -39,7 +39,7 @@ function chartResult(pos, layer) {
 
     var group = new Kinetic.Group();
     var max = getmaxRunResult( result.data, 'value');
-    var min = getminRunResult( result.data, 'value');
+    var min = 0; //getminRunResult( result.data, 'value');
     var heightM = (SIZERESY/2)/(max-min*0.8);
     var marge =  heightM*4;
 

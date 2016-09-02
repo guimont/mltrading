@@ -75,13 +75,13 @@ public class MLPerformances  implements Serializable, Comparable<MLPerformances>
 
         if (mlD5 != null) {
             mlD5.savePerformance(bp,code+"PD5");
-        } else
-            MLPerformance.generateEmptyMLPerformance(date).savePerformance(bp,code+"PD5");
+        } /*else
+            MLPerformance.generateEmptyMLPerformance(date).savePerformance(bp,code+"PD5");*/
 
         if (mlD20 != null)
             mlD20.savePerformance(bp,code+"PD20");
-        else
-            MLPerformance.generateEmptyMLPerformance(date).savePerformance(bp, code + "PD20");
+        /*else
+            MLPerformance.generateEmptyMLPerformance(date).savePerformance(bp, code + "PD20");*/
 
     }
 

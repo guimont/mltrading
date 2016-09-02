@@ -6,7 +6,6 @@ import com.google.inject.Injector;
 import com.mltrading.domain.User;
 import com.mltrading.ml.MatrixValidator;
 import com.mltrading.ml.RandomForestStock;
-import com.mltrading.ml.Validator;
 import com.mltrading.models.parser.*;
 import com.mltrading.models.parser.impl.*;
 import com.mltrading.models.stock.*;
@@ -51,12 +50,24 @@ public class test {
     }*/
 
     public static void main(String[] args) {
+        /*HistoryRawMaterialsParser rawParser = new HistoryLocalRawMaterials();
+        rawParser.fetchCurrent(43);*/
+        Analyse a = new Analyse();
+        a.processDaily(50);
+    }
+
+
+
+
+
+    /*
+
+    public static void main(String[] args) {
         MatrixValidator m = new MatrixValidator();
         m.generate();
     }
 
-
-    /*
+     *
     public static void main(String[] args) {
        DatabaseInfoList list = new DatabaseInfoList();
         list.processingList();
@@ -87,10 +98,10 @@ public class test {
     }
 
 
-    /*public static void main(String[] args) {
+    public static void main(String[] args) {
         HistoryRawMaterialsParser rawParser = new HistoryLocalRawMaterials();
         rawParser.fetch("localhost:8090");
-    }*/
+    }
 
 /*
     public static void main(String[] args) {

@@ -37,7 +37,7 @@ public class HistoryLocalRawMaterials implements HistoryRawMaterialsParser {
     }
 
 
-    final String refCode = "tbody";
+    final String refCode = "tr";
 
     public  void loader(String host) {
         for (StockRawMat r: CacheRawMaterial.getCache().values()) {
@@ -47,25 +47,24 @@ public class HistoryLocalRawMaterials implements HistoryRawMaterialsParser {
                 Document doc = Jsoup.parse(text);
                 Elements links = doc.select(refCode);
 
-                Element e;
-                if (links.get(1).children().size() > 100)
-                    e = links.get(1);
-                else
-                    e = links.get(2);
-
                 BatchPoints bp = InfluxDaoConnector.getBatchPoints(HistoryParser.dbName);
+                doc.select("tr").get(7).child(0).hasAttr("data-real-value"); //true
 
-                for (Element t : e.children()) {
-                    StockHistory raw = new StockHistory();
-                    raw.setCode(r.getCode());
-                    raw.setCodif(r.getCode());
-                    raw.setDayInvest(t.children().get(0).text());
-                    raw.setValue(new Double(t.children().get(1).text().replaceAll(" ", "").replace(",", "").replace("-", "0")));
-                    raw.setOpening(new Double(t.children().get(2).text().replaceAll(" ", "").replace(",", "").replace("-", "0")));
-                    raw.setHighest(new Double(t.children().get(3).text().replaceAll(" ", "").replace(",", "").replace("-", "0")));
-                    raw.setLowest(new Double(t.children().get(4).text().replaceAll(" ", "").replace(",", "").replace("-", "0")));
 
-                    HistoryParser.saveHistory(bp, raw);
+                for (Element t : links) {
+                    if (t.child(0).hasAttr("data-real-value")) {
+                        StockHistory raw = new StockHistory();
+                        raw.setCode(r.getCode());
+                        raw.setCodif(r.getCode());
+                        raw.setDayInvest(t.children().get(0).text());
+                        raw.setValue(new Double(t.children().get(1).text().replaceAll(" ", "").replace(",", "").replace("-", "0")));
+                        raw.setOpening(new Double(t.children().get(2).text().replaceAll(" ", "").replace(",", "").replace("-", "0")));
+                        raw.setHighest(new Double(t.children().get(3).text().replaceAll(" ", "").replace(",", "").replace("-", "0")));
+                        raw.setLowest(new Double(t.children().get(4).text().replaceAll(" ", "").replace(",", "").replace("-", "0")));
+
+                        HistoryParser.saveHistory(bp, raw);
+
+                    }
                 }
                 InfluxDaoConnector.writePoints(bp);
 
@@ -85,28 +84,28 @@ public class HistoryLocalRawMaterials implements HistoryRawMaterialsParser {
                 Document doc = Jsoup.parse(text);
                 Elements links = doc.select(refCode);
 
-                Element e;
-                if (links.get(1).children().size() >= 20)
-                    e = links.get(1);
-                else
-                    e = links.get(2);
 
                 BatchPoints bp = InfluxDaoConnector.getBatchPoints(HistoryParser.dbName);
 
-                int count = 0;
-                for (Element t : e.children()) {
-                    StockHistory raw = new StockHistory();
-                    raw.setCode(r.getCode());
-                    raw.setCodif(r.getCode());
-                    raw.setDayInvest(t.children().get(0).text());
-                    raw.setValue(new Double(t.children().get(1).text().replaceAll(" ", "").replace(",", "").replace("-", "0")));
-                    raw.setOpening(new Double(t.children().get(2).text().replaceAll(" ", "").replace(",", "").replace("-", "0")));
-                    raw.setHighest(new Double(t.children().get(3).text().replaceAll(" ", "").replace(",", "").replace("-", "0")));
-                    raw.setLowest(new Double(t.children().get(4).text().replaceAll(" ", "").replace(",", "").replace("-", "0")));
 
-                    HistoryParser.saveHistory(bp, raw);
-                    if (++count >= range)
-                        break;
+                doc.select("tr").get(7).child(0).hasAttr("data-real-value"); //true
+
+                int count = 0;
+                for (Element t : links) {
+                    if (t.child(0).hasAttr("data-real-value")) {
+                        StockHistory raw = new StockHistory();
+                        raw.setCode(r.getCode());
+                        raw.setCodif(r.getCode());
+                        raw.setDayInvest(t.children().get(0).text());
+                        raw.setValue(new Double(t.children().get(1).text().replaceAll(" ", "").replace(",", "").replace("-", "0")));
+                        raw.setOpening(new Double(t.children().get(2).text().replaceAll(" ", "").replace(",", "").replace("-", "0")));
+                        raw.setHighest(new Double(t.children().get(3).text().replaceAll(" ", "").replace(",", "").replace("-", "0")));
+                        raw.setLowest(new Double(t.children().get(4).text().replaceAll(" ", "").replace(",", "").replace("-", "0")));
+
+                        HistoryParser.saveHistory(bp, raw);
+                        if (++count >= range)
+                            break;
+                    }
                 }
                 InfluxDaoConnector.writePoints(bp);
 

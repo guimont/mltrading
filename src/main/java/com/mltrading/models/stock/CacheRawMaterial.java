@@ -48,7 +48,7 @@ public class CacheRawMaterial {
         aMap.put("EURI1Y", new StockRawMat("EURI1Y", "France_1_an", "http://fr.investing.com/rates-bonds/france-1-year-bond-yield-historical-data", RAW_EURI1Y_POS));
         aMap.put("EURI10Y", new StockRawMat("EURI10Y", "France_10_ans", "http://fr.investing.com/rates-bonds/france-10-year-bond-yield-historical-data", RAW_EURI10Y_POS));
 
-        aMap.put("USRI1M", new StockRawMat("USRI1M", "Etats-Unis_1_mois", " http://fr.investing.com/rates-bonds/u.s.-1-month-bond-yield-historical-data", RAW_USRI1M_POS));
+        aMap.put("USRI1M", new StockRawMat("USRI1M", "Etats-Unis_1_mois", "http://fr.investing.com/rates-bonds/u.s.-1-month-bond-yield-historical-data", RAW_USRI1M_POS));
         aMap.put("USRI1Y", new StockRawMat("USRI1Y", "Etats-Unis_1_an", "http://fr.investing.com/rates-bonds/u.s.-1-year-bond-yield-historical-data", RAW_USRI1Y_POS));
         aMap.put("USRI10Y", new StockRawMat("USRI10Y", "Etats-Unis_10_ans", "http://fr.investing.com/rates-bonds/u.s.-10-year-bond-yield-historical-data", RAW_USRI10Y_POS));
 

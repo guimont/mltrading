@@ -37,7 +37,9 @@ public class RealTimeParserYahoo implements RealTimeParser {
 
     private static int refreshStock(String url) {
 
+
         try {
+
             String text = ParserCommon.loadUrl(new URL(url));
 
             Document doc = Jsoup.parse(text);
@@ -98,6 +100,7 @@ public class RealTimeParserYahoo implements RealTimeParser {
 
 
     private static int loaderStock(String url) {
+
 
         try {
             String text = ParserCommon.loadUrl(new URL(url));

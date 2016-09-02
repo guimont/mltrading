@@ -60,7 +60,7 @@ public class StockDetail implements Serializable{
 
     private static double findPredD5(List<MLPerformances> perfList, String date) {
         for (MLPerformances p: perfList) {
-            if (p.getMlD5().getDate().equals(date))
+            if (p.getMlD5() != null && (p.getMlD5().getDate().equals(date)))
                 return p.getMlD5().getPrediction();
         }
         return 0; //not found not normal
@@ -68,7 +68,7 @@ public class StockDetail implements Serializable{
 
     private static MLPerformance findPredD20(List<MLPerformances> perfList, String date) {
         for (MLPerformances p: perfList) {
-            if (p.getMlD20().getDate().equals(date))
+            if (p.getMlD20() != null && p.getMlD20().getDate().equals(date))
                 return p.getMlD20();
         }
         return null; //not found not normal

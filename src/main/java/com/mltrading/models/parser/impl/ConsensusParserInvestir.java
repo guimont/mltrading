@@ -32,7 +32,7 @@ public class ConsensusParserInvestir implements ConsensusParser {
 
 
     public static Consensus fetchStock(String code) {
-        StockGeneral g = CacheStockGeneral.getIsinCache().get(code);
+        StockGeneral g = CacheStockGeneral.getIsinCache().get(CacheStockGeneral.getCode(code));
 
         Consensus c = new Consensus();
         String url = base + CacheStockGeneral.getIsinCache().get(g.getCode()).getName().toLowerCase().replaceAll(" ","-") + sep + g.getPlace().toLowerCase() + sep  + g.getCodif().toLowerCase() + sep + g.getCode().toLowerCase() +end;

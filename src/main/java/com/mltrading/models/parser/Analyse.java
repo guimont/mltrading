@@ -62,23 +62,27 @@ public class Analyse {
 
         for (StockGeneral g: CacheStockGeneral.getIsinCache().values()) {
             if (dateList == null) {
-                dateList = StockHistory.getDateHistoryListOffsetLimit(g.getCode(),50,period);
+                dateList = StockHistory.getDateHistoryListOffsetLimit(g.getCodif(),50,period);
             }
 
             for (String date:dateList) {
-                processAnalysisSpecific(g.getCode(), date);
+                processAnalysisSpecific(g.getCodif(), date);
             }
         }
 
         for (StockIndice g : CacheStockIndice.getIndiceCache().values()) {
-            processAnalysisDaily(g.getCode(), columnValue);
             for (String date:dateList) {
                 processAnalysisSpecific(g.getCode(), date);
             }
         }
 
         for (StockSector g : CacheStockSector.getSectorCache().values()) {
+            for (String date:dateList) {
+                processAnalysisSpecific(g.getCode(), date);
+            }
+        }
 
+        for (StockRawMat g : CacheRawMaterial.getCache().values()) {
             for (String date:dateList) {
                 processAnalysisSpecific(g.getCode(), date);
             }
@@ -148,11 +152,6 @@ public class Analyse {
         list.put(code,cList);
     }
 
-
-    public void processAnalysisDaily(String code, int column) {
-
-
-    }
 
 
 

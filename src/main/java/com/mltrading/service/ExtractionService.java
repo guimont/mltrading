@@ -88,7 +88,7 @@ public class ExtractionService {
         sectorParser.fetchCurrent(period);
         vola.fetchCurrent(period);
         rawParser.fetchCurrent(period);
-        articles.fetchCurrent();
+        //articles.fetchCurrent();
         //article.fetchCurrent();
         Analyse a = new Analyse();
         a.processDaily(period);
@@ -111,7 +111,7 @@ public class ExtractionService {
     }
 
     public int getLastUpdateRef() {
-        String l = StockHistory.getLastDateHistory("FR0000045072");
+        String l = StockHistory.getLastDateHistory("ORA");
         DateTime timeInsert = new DateTime(l);
         DateTime timeNow = new DateTime(System.currentTimeMillis());
 

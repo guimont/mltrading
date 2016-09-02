@@ -147,15 +147,15 @@ public class MLStatus implements Serializable{
         int sizeP5 = listP5.getResults().get(0).getSeries().get(0).getValues().size();
         int sizeP20 = listP20.getResults().get(0).getSeries().get(0).getValues().size();
 
-        if (sizeP1 < max)
-            return ;
+        /*if (sizeP1 < max)
+            return ;*/
 
         for (int i = sizeP1-max; i < sizeP1; i++) {
             MLPerformances mlps = new MLPerformances();
 
             populate(mlps.getMlD1(), listP1, i);
-            populate(mlps.getMlD5(), listP5, i);
-            populate(mlps.getMlD20(), listP20, i);
+            if (i < sizeP5 ) populate(mlps.getMlD5(), listP5, i); else mlps.setMlD5(null);
+            if (i < sizeP20 ) populate(mlps.getMlD20(), listP20, i);  else mlps.setMlD20(null);
             mlps.setDate(mlps.getMlD1().getDate());
 
             perfList.add(mlps);
