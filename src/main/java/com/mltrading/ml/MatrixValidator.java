@@ -135,6 +135,24 @@ public class MatrixValidator implements Serializable,Cloneable {
         }
     }
 
+
+    /**
+     * Generate a random matrix validator for features selection
+     */
+    public void generateSimpleModel() {
+        //hs stock => enable
+        //stock sector => enable
+        //all indice => enable
+        //raw and other => disable
+        for (int i = HS_POS ; i < globalROW; i++) {
+            matrix[i][HS_COL] = randomiBool();
+            matrix[i][HS_PERIOD_COL] = randomPeriod(2, 50);
+            matrix[i][HS_VOLUME_COL] = randomiBool();
+            for (int j = N_HS_COL; j < globalCOL; j++)
+                matrix[i][j] = randomiBool();
+        }
+    }
+
     /**
      * Save matrix in influx db
      * @param code

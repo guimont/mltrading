@@ -1,6 +1,7 @@
 package com.mltrading.ml;
 
 import com.google.inject.Inject;
+import com.mltrading.models.stock.CacheStockSector;
 import com.mltrading.models.stock.Stock;
 
 import com.mltrading.models.stock.StockGeneral;
@@ -63,6 +64,7 @@ public class MlForecast {
 
             if (type == Type.Feature ) {
                 mls.getMlD1().getValidator().generate();
+                mls.getMlD1().getValidator().generateSimpleModel(CacheStockSector.getSectorCache().get(s.getSector()).getRow());
                 mls.getMlD5().setValidator(mls.getMlD1().getValidator().clone());
                 mls.getMlD20().setValidator(mls.getMlD1().getValidator().clone());
             }
