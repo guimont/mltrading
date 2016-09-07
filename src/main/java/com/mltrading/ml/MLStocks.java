@@ -29,6 +29,13 @@ public class MLStocks  implements Serializable {
         status = new MLStatus();
     }
 
+    public MLStock getSock(PredictionPeriodicity perdiod) {
+        if (perdiod == PredictionPeriodicity.D1) return mlD1;
+        if (perdiod == PredictionPeriodicity.D5) return mlD5;
+        if (perdiod == PredictionPeriodicity.D20) return mlD20;
+        return null;
+    }
+
 
     public MLStatus getStatus() {
         return status;

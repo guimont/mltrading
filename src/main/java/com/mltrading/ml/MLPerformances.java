@@ -28,6 +28,12 @@ public class MLPerformances  implements Serializable, Comparable<MLPerformances>
         this.date = date;
     }
 
+    public void setPerf(PredictionPeriodicity perdiod, MLPerformance perf) {
+        if (perdiod == PredictionPeriodicity.D1) mlD1 = perf;
+        if (perdiod == PredictionPeriodicity.D5) mlD5 = perf;
+        if (perdiod == PredictionPeriodicity.D20) mlD20 = perf;
+    }
+
     public MLPerformances() {
         mlD1 = new MLPerformance();
         mlD5 = new MLPerformance();

@@ -171,23 +171,17 @@ public class ExtractionResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String optimizeML() {
 
-        int loop = 10;
-
-        for (int i = 0 ; i < loop; i ++) {
-            for (StockGeneral s : CacheStockGeneral.getIsinCache().values()) {
-                if (s.getCodif().equals("ORA"))
-                    forecast.optimize(s, 2, MlForecast.Method.RandomForest, MlForecast.Type.Feature);
-            }
-            /*for (StockGeneral s : CacheStockGeneral.getIsinCache().values()) {
-                if (s.getCodif().equals("ORA"))
-                    forecast.optimize(s, 10, MlForecast.Method.RandomForest, MlForecast.Type.RF);
-            }*/
-
-            log.info("evaluate");
-            evaluate();
-            log.info("saveML");
-            saveML();
+        for (StockGeneral s : CacheStockGeneral.getIsinCache().values()) {
+            if (s.getCodif().equals("ORA"))
+                forecast.optimize(s, 20,10, MlForecast.Method.RandomForest, MlForecast.Type.Feature);
         }
+        /*for (StockGeneral s : CacheStockGeneral.getIsinCache().values()) {
+            if (s.getCodif().equals("ORA"))
+                forecast.optimize(s, 10, MlForecast.Method.RandomForest, MlForecast.Type.RF);
+        }*/
+
+
+
 
 
 
@@ -202,11 +196,8 @@ public class ExtractionResource {
 
         for (StockGeneral s : CacheStockGeneral.getIsinCache().values()) {
             if (s.getCodif().equals("ORA"))
-                forecast.optimize(s, 1, MlForecast.Method.RandomForest, MlForecast.Type.None);
+                forecast.optimizeModel(s);
         }
-
-        evaluate();
-        saveML();
 
         return "ok";
     }
@@ -217,12 +208,11 @@ public class ExtractionResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String optimizeMLLR() {
 
-        int loop = 5;
+        for (StockGeneral s : CacheStockGeneral.getIsinCache().values()) {
+            if (s.getCodif().equals("ORA"))
+                forecast.optimizeModel(s);
+        }
 
-        for (int i = 0 ; i < loop; i ++)
-            for (StockGeneral s : CacheStockGeneral.getIsinCache().values()) {
-                forecast.optimize(s, loop, MlForecast.Method.LinearRegression, MlForecast.Type.Feature);
-            }
 
         return "ok";
     }

@@ -16,6 +16,11 @@ import java.io.Serializable;
  */
 public class MatrixValidator implements Serializable,Cloneable {
 
+
+    public void setCol(int col) {
+        this.col = col;
+    }
+
     /** Controls the perdiod */
     public enum TypeHistory {
         /** stock history */
@@ -32,6 +37,8 @@ public class MatrixValidator implements Serializable,Cloneable {
     Integer maxBins = 32;
     Integer numTrees = 100; // Use more in practice.
     Integer seed = 12345;
+
+    int col = N_HS;
 
     public double error;
     public double rate;
@@ -57,7 +64,9 @@ public class MatrixValidator implements Serializable,Cloneable {
     private int vSize = 300;
 
 
-
+    public int getCol() {
+        return col;
+    }
 
     private int globalROW = CacheStockSector.N_SECTOR+ CacheStockIndice.N_INDICE+ CacheRawMaterial.N_RAW+ N_HS;
     private int globalCOL = N_HS_COL+StockAnalyse.N_AT;
@@ -128,7 +137,7 @@ public class MatrixValidator implements Serializable,Cloneable {
     public void generate() {
         for (int i = HS_POS ; i < globalROW; i++) {
             matrix[i][HS_COL] = randomiBool();
-            matrix[i][HS_PERIOD_COL] = randomPeriod(2, 50);
+            matrix[i][HS_PERIOD_COL] = randomPeriod(2, 100);
             matrix[i][HS_VOLUME_COL] = randomiBool();
             for (int j = N_HS_COL; j < globalCOL; j++)
                 matrix[i][j] = randomiBool();
@@ -139,19 +148,65 @@ public class MatrixValidator implements Serializable,Cloneable {
     /**
      * Generate a random matrix validator for features selection
      */
+    static private int TRUEBOOL = 1;
+    static private int FALSEBOOL = 0;
+    static private int DEFAULTPERIOD = 25;
     public void generateSimpleModel() {
         //hs stock => enable
         //stock sector => enable
         //all indice => enable
         //raw and other => disable
-        for (int i = HS_POS ; i < globalROW; i++) {
-            matrix[i][HS_COL] = randomiBool();
-            matrix[i][HS_PERIOD_COL] = randomPeriod(2, 50);
-            matrix[i][HS_VOLUME_COL] = randomiBool();
+
+        matrix[HS_POS][HS_COL] = TRUEBOOL;
+        matrix[HS_POS][HS_PERIOD_COL] = DEFAULTPERIOD;
+        matrix[HS_POS][HS_VOLUME_COL] = TRUEBOOL;
+        for (int j = N_HS_COL; j < globalCOL; j++)
+            matrix[HS_POS][j] = TRUEBOOL;
+
+        //stock sector => disable
+        for (int i = N_HS ; i < N_HS+CacheStockSector.N_SECTOR; i++) {
+            matrix[i][HS_COL] = FALSEBOOL;
+            matrix[i][HS_PERIOD_COL] = DEFAULTPERIOD;
+            matrix[i][HS_VOLUME_COL] = TRUEBOOL;
             for (int j = N_HS_COL; j < globalCOL; j++)
-                matrix[i][j] = randomiBool();
+                matrix[i][j] = TRUEBOOL;
+        }
+
+        //stock indice => enable
+        for (int i = N_HS+CacheStockSector.N_SECTOR ; i < N_HS+CacheStockSector.N_SECTOR+CacheStockIndice.N_INDICE; i++) {
+            matrix[i][HS_COL] = FALSEBOOL;
+            matrix[i][HS_PERIOD_COL] = DEFAULTPERIOD;
+            matrix[i][HS_VOLUME_COL] = TRUEBOOL;
+            for (int j = N_HS_COL; j < globalCOL; j++)
+                matrix[i][j] = TRUEBOOL;
+        }
+
+        //stock raw => enable
+        for (int i = N_HS+CacheStockSector.N_SECTOR+CacheStockIndice.N_INDICE ; i < globalROW; i++) {
+            matrix[i][HS_COL] = FALSEBOOL;
+            matrix[i][HS_PERIOD_COL] = DEFAULTPERIOD;
+            matrix[i][HS_VOLUME_COL] = FALSEBOOL;
+            for (int j = N_HS_COL; j < globalCOL; j++)
+                matrix[i][j] = FALSEBOOL;
         }
     }
+
+    public boolean randomizeModel(MatrixValidator mv) {
+        if (col >= globalROW) return false;
+
+        mv.matrix[col][HS_COL] = TRUEBOOL;
+        mv.matrix[col][HS_PERIOD_COL] = DEFAULTPERIOD;
+        mv.matrix[col][HS_VOLUME_COL] = TRUEBOOL;
+        for (int j = N_HS_COL; j < globalCOL; j++)
+            mv.matrix[col][j] = TRUEBOOL;
+        col = col + 1;
+        return true;
+    }
+
+    public void revertModel(MatrixValidator mv) {
+        mv.matrix[col-1][HS_COL] = FALSEBOOL;
+    }
+
 
     /**
      * Save matrix in influx db
@@ -270,7 +325,7 @@ public class MatrixValidator implements Serializable,Cloneable {
      * @return
      */
     public boolean getPeriodEnable(int indice) {
-        return matrix[indice][HS_COL] == 0;
+        return matrix[indice][HS_COL] == 1;
     }
 
     /**
@@ -288,7 +343,7 @@ public class MatrixValidator implements Serializable,Cloneable {
      * @return
      */
     public boolean getPeriodVolume(int indice) {
-        return matrix[indice][HS_VOLUME_COL] == 0;
+        return matrix[indice][HS_VOLUME_COL] == 1;
     }
 
 
@@ -300,7 +355,7 @@ public class MatrixValidator implements Serializable,Cloneable {
      * @return
      */
     public boolean getATMMA20(int indice) {
-        return matrix[indice][StockAnalyse.COL_MMA20_POS + N_HS_COL] == 0;
+        return matrix[indice][StockAnalyse.COL_MMA20_POS + N_HS_COL] == 1;
     }
 
     /**
@@ -309,7 +364,7 @@ public class MatrixValidator implements Serializable,Cloneable {
      * @return
      */
     public boolean getATMMA50(int indice) {
-        return matrix[indice][StockAnalyse.COL_MMA50_POS + N_HS_COL] == 0;
+        return matrix[indice][StockAnalyse.COL_MMA50_POS + N_HS_COL] == 1;
     }
 
     /**
@@ -318,7 +373,7 @@ public class MatrixValidator implements Serializable,Cloneable {
      * @return
      */
     public boolean getATMME12(int indice) {
-        return matrix[indice][StockAnalyse.COL_MME12_POS + N_HS_COL] == 0;
+        return matrix[indice][StockAnalyse.COL_MME12_POS + N_HS_COL] == 1;
     }
 
     /**
@@ -327,7 +382,7 @@ public class MatrixValidator implements Serializable,Cloneable {
      * @return
      */
     public boolean getATMME26(int indice) {
-        return matrix[indice][StockAnalyse.COL_MME26_POS + N_HS_COL] == 0;
+        return matrix[indice][StockAnalyse.COL_MME26_POS + N_HS_COL] == 1;
     }
 
     /**
@@ -336,7 +391,7 @@ public class MatrixValidator implements Serializable,Cloneable {
      * @return
      */
     public boolean getATMACD(int indice) {
-        return matrix[indice][StockAnalyse.COL_MACD_POS + N_HS_COL] == 0;
+        return matrix[indice][StockAnalyse.COL_MACD_POS + N_HS_COL] == 1;
     }
 
     /**
@@ -345,7 +400,7 @@ public class MatrixValidator implements Serializable,Cloneable {
      * @return
      */
     public boolean getATMOMENTUM(int indice) {
-        return matrix[indice][StockAnalyse.COL_MOMENTUM_POS + N_HS_COL] == 0;
+        return matrix[indice][StockAnalyse.COL_MOMENTUM_POS + N_HS_COL] == 1;
     }
 
     /**
@@ -354,7 +409,7 @@ public class MatrixValidator implements Serializable,Cloneable {
      * @return
      */
     public boolean getATSTDDEV(int indice) {
-        return matrix[indice][StockAnalyse.COL_STDDEV_POS + N_HS_COL] == 0;
+        return matrix[indice][StockAnalyse.COL_STDDEV_POS + N_HS_COL] == 1;
     }
 
 

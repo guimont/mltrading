@@ -214,9 +214,11 @@ public class FeaturesStock implements Serializable {
     }
 
     public void linearize(StockAnalyse sa,  MatrixValidator validator, int indice) {
-        if (validator.getATMMA20(indice)) this.vector[currentVectorPos++] = sa.getMme12();
-        if (validator.getATMME26(indice)) this.vector[currentVectorPos++] = sa.getMme26();
-        if (validator.getATMACD(indice)) this.vector[currentVectorPos++] = sa.getMacd();
+        if (validator.getATMMA20(indice)) this.vector[currentVectorPos++] = sa.getMma20();
+        if (validator.getATMMA50(indice)) this.vector[currentVectorPos++] = sa.getMma50();
+        //if (validator.getATMME12(indice)) this.vector[currentVectorPos++] = sa.getMme12();
+        //if (validator.getATMME26(indice)) this.vector[currentVectorPos++] = sa.getMme26();
+        //if (validator.getATMACD(indice)) this.vector[currentVectorPos++] = sa.getMacd();
         if (validator.getATMOMENTUM(indice)) this.vector[currentVectorPos++] = sa.getMomentum();
         if (validator.getATSTDDEV(indice)) this.vector[currentVectorPos++] = sa.getStdDev();
 
@@ -235,7 +237,7 @@ public class FeaturesStock implements Serializable {
     }
 
     static int OFFSET_BASE = 50;
-    static int RANGE_MAX = 300;
+    static int RANGE_MAX = 500;
     static int RANGE_TEST = 90;
 
 
@@ -329,7 +331,7 @@ public class FeaturesStock implements Serializable {
 
                 /** ALL sector*/
                 for (StockSector g : CacheStockSector.getSectorCache().values()) {
-                    int row = validator.getIndice(g.getRow(), MatrixValidator.TypeHistory.IND);
+                    int row = validator.getIndice(g.getRow(), MatrixValidator.TypeHistory.SEC);
                     if (row != rowS) { //if same row, sector of this stock already done
                         if (validator.getPeriodEnable(row)) {
                             List<StockHistory> si = StockHistory.getStockHistoryDateInvert(g.getCode(), date, validator.getPeriodHist(row));

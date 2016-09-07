@@ -63,7 +63,7 @@ public class LinearRegressionStock implements Serializable {
         //final LinearRegressionModel modelD20 = LinearRegressionWithSGD.train(JavaRDD.toRDD(trainingDataD20), numIterations);
 
 
-        LinearRegressionModel modelD1 = (LinearRegressionModel) new LinearRegressionWithSGD(0.2, numIterations, 1.0).
+        LinearRegressionModel modelD1 = (LinearRegressionModel) new LinearRegressionWithSGD(0.2, numIterations, 1.0,1.0).
             setIntercept(true).
             run(JavaRDD.toRDD(trainingDataD1));
 

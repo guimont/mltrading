@@ -1,10 +1,8 @@
 package com.mltrading.ml;
 
 import com.google.inject.Inject;
-import com.mltrading.models.stock.CacheStockSector;
-import com.mltrading.models.stock.Stock;
+import com.mltrading.models.stock.*;
 
-import com.mltrading.models.stock.StockGeneral;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -51,56 +49,64 @@ public class MlForecast {
         None, RF
     }
 
-    public void optimize(StockGeneral s, int loop, Method method, Type type) {
+    /**
+     * optimize model with processing validator sample
+     * @param s
+     * @param loop
+     * @param backloop
+     * @param method
+     * @param type
+     */
+    public void optimize(StockGeneral s, int loop, int backloop, Method method, Type type) {
 
         /**
          * to have some results faster, 2 iterations loop
          */
 
-        for (int i = 0; i< loop; i++) {
+        for (int j = 0; j< backloop; j++) {
+            for (int i = 0; i < loop; i++) {
 
 
-            MLStocks mls = new MLStocks(s.getCodif());
+                MLStocks mls = new MLStocks(s.getCodif());
 
-            if (type == Type.Feature ) {
-                mls.getMlD1().getValidator().generate();
-                mls.getMlD1().getValidator().generateSimpleModel(CacheStockSector.getSectorCache().get(s.getSector()).getRow());
-                mls.getMlD5().setValidator(mls.getMlD1().getValidator().clone());
-                mls.getMlD20().setValidator(mls.getMlD1().getValidator().clone());
-            }
+                if (type == Type.Feature) {
+                    //mls.getMlD1().getValidator().generate();
+                    mls.getMlD1().getValidator().generateSimpleModel();
+                    mls.getMlD5().setValidator(mls.getMlD1().getValidator().clone());
+                    mls.getMlD20().setValidator(mls.getMlD1().getValidator().clone());
+                }
 
-            if (type == Type.RF ) {
-                //mls.getMlD1().getValidator().numTrees = 20 + i*40;
-                mls.getMlD5().setValidator(mls.getMlD1().getValidator().clone());
-                mls.getMlD20().setValidator(mls.getMlD1().getValidator().clone());
-            }
-
-
-            String saveCode;
-            if (method == Method.LinearRegression) {
-                LinearRegressionStock rfs = new LinearRegressionStock();
-                mls = rfs.processRF(s, mls);
-                saveCode = "L";
-            } else {
-                RandomForestStock rfs = new RandomForestStock();
-                mls = rfs.processRF(s, mls);
-                saveCode = "V";
-            }
-
-            if (null != mls) {
-                mls.getStatus().calculeAvgPrd();
-                mls.getMlD1().getValidator().save(mls.getCodif() + saveCode + "D1", mls.getStatus().getErrorRateD1(), mls.getStatus().getAvgD1());
-                mls.getMlD5().getValidator().save(mls.getCodif() + saveCode + "D5", mls.getStatus().getErrorRateD5(), mls.getStatus().getAvgD5());
-                mls.getMlD20().getValidator().save(mls.getCodif() + saveCode + "D20", mls.getStatus().getErrorRateD20(), mls.getStatus().getAvgD20());
-                MLStocks ref = CacheMLStock.getMLStockCache().get(mls.getCodif());
+                if (type == Type.RF) {
+                    //mls.getMlD1().getValidator().numTrees = 20 + i*40;
+                    mls.getMlD5().setValidator(mls.getMlD1().getValidator().clone());
+                    mls.getMlD20().setValidator(mls.getMlD1().getValidator().clone());
+                }
 
 
+                String saveCode;
+                if (method == Method.LinearRegression) {
+                    LinearRegressionStock rfs = new LinearRegressionStock();
+                    mls = rfs.processRF(s, mls);
+                    saveCode = "L";
+                } else {
+                    RandomForestStock rfs = new RandomForestStock();
+                    mls = rfs.processRF(s, mls);
+                    saveCode = "V";
+                }
 
-                if (ref != null) {
-                    /**for 1 day prevision*/
-                    if (mls.getStatus().getErrorRateD1() <= ref.getStatus().getErrorRateD1() ||
-                        (mls.getStatus().getErrorRateD1() == ref.getStatus().getErrorRateD1() &&
-                            mls.getStatus().getAvgD1() < ref.getStatus().getAvgD1())) {
+                if (null != mls) {
+                    mls.getStatus().calculeAvgPrd();
+                    mls.getMlD1().getValidator().save(mls.getCodif() + saveCode + "D1", mls.getStatus().getErrorRateD1(), mls.getStatus().getAvgD1());
+                    mls.getMlD5().getValidator().save(mls.getCodif() + saveCode + "D5", mls.getStatus().getErrorRateD5(), mls.getStatus().getAvgD5());
+                    mls.getMlD20().getValidator().save(mls.getCodif() + saveCode + "D20", mls.getStatus().getErrorRateD20(), mls.getStatus().getAvgD20());
+                    MLStocks ref = CacheMLStock.getMLStockCache().get(mls.getCodif());
+
+
+                    if (ref != null) {
+                        /**for 1 day prevision*/
+                        if (mls.getStatus().getErrorRateD1() <= ref.getStatus().getErrorRateD1() ||
+                            (mls.getStatus().getErrorRateD1() == ref.getStatus().getErrorRateD1() &&
+                                mls.getStatus().getAvgD1() < ref.getStatus().getAvgD1())) {
                             ref.getMlD1().setValidator(mls.getMlD1().getValidator());
                             ref.getMlD1().setModel(mls.getMlD1().getModel());
                             ref.getStatus().setAvgD1(mls.getStatus().getAvgD1());
@@ -114,10 +120,10 @@ public class MlForecast {
                         }
 
 
-                    /**for 5 day prevision*/
-                    if (mls.getStatus().getErrorRateD5() < ref.getStatus().getErrorRateD5() ||
-                        (mls.getStatus().getErrorRateD5() == ref.getStatus().getErrorRateD5() &&
-                            mls.getStatus().getAvgD5() < ref.getStatus().getAvgD5())) {
+                        /**for 5 day prevision*/
+                        if (mls.getStatus().getErrorRateD5() < ref.getStatus().getErrorRateD5() ||
+                            (mls.getStatus().getErrorRateD5() == ref.getStatus().getErrorRateD5() &&
+                                mls.getStatus().getAvgD5() < ref.getStatus().getAvgD5())) {
                             ref.getMlD5().setValidator(mls.getMlD5().getValidator());
                             ref.getMlD5().setModel(mls.getMlD5().getModel());
                             ref.getStatus().setAvgD5(mls.getStatus().getAvgD5());
@@ -130,10 +136,10 @@ public class MlForecast {
                         }
 
 
-                    /**for 20 day prevision*/
-                    if (mls.getStatus().getErrorRateD20() < ref.getStatus().getErrorRateD20() ||
-                        (mls.getStatus().getErrorRateD20() == ref.getStatus().getErrorRateD20() &&
-                            mls.getStatus().getAvgD20() < ref.getStatus().getAvgD20())) {
+                        /**for 20 day prevision*/
+                        if (mls.getStatus().getErrorRateD20() < ref.getStatus().getErrorRateD20() ||
+                            (mls.getStatus().getErrorRateD20() == ref.getStatus().getErrorRateD20() &&
+                                mls.getStatus().getAvgD20() < ref.getStatus().getAvgD20())) {
                             ref.getMlD20().setValidator(mls.getMlD20().getValidator());
                             ref.getMlD20().setModel(mls.getMlD20().getModel());
                             ref.getStatus().setAvgD20(mls.getStatus().getAvgD20());
@@ -145,11 +151,146 @@ public class MlForecast {
                             }
                         }
 
+                    } else {
+                        CacheMLStock.getMLStockCache().put(mls.getCodif(), mls);
+                    }
+                }
+
+            }
+            log.info("evaluate");
+            //evaluate();
+            MLPredictor predictor = new MLPredictor();
+
+            for (StockGeneral sg: CacheStockGeneral.getCache().values()) {
+                StockPrediction p = predictor.prediction(sg);
+                sg.setPrediction(p);
+            }
+            log.info("saveML");
+            CacheMLStock.save();
+        }
+    }
+
+
+    /**
+     * optimize model with processing validator sample
+     * @param s
+
+     */
+    public void optimizeModel(StockGeneral s) {
+
+        /**
+         * to have some results faster, 2 iterations loop
+         */
+
+        MLStocks mls = new MLStocks(s.getCodif());
+        mls.getMlD1().getValidator().generateSimpleModel();
+        mls.getMlD5().setValidator(mls.getMlD1().getValidator().clone());
+        mls.getMlD20().setValidator(mls.getMlD1().getValidator().clone());
+
+
+        while(mls.getMlD1().getValidator().randomizeModel(mls.getMlD1().getValidator())) {
+            mls.getMlD5().getValidator().randomizeModel(mls.getMlD5().getValidator());
+            mls.getMlD20().getValidator().randomizeModel(mls.getMlD20().getValidator());
+
+
+            RandomForestStock rfs = new RandomForestStock();
+            mls= rfs.processRF(s, mls,PredictionPeriodicity.D1);
+            mls= rfs.processRF(s, mls,PredictionPeriodicity.D5);
+            mls= rfs.processRF(s, mls,PredictionPeriodicity.D20);
+            String saveCode = "V";
+
+
+            if (null != mls) {
+                mls.getStatus().calculeAvgPrd();
+                mls.getMlD1().getValidator().save(mls.getCodif() + saveCode + "D1", mls.getStatus().getErrorRateD1(), mls.getStatus().getAvgD1());
+                mls.getMlD5().getValidator().save(mls.getCodif() + saveCode + "D5", mls.getStatus().getErrorRateD5(), mls.getStatus().getAvgD5());
+                mls.getMlD20().getValidator().save(mls.getCodif() + saveCode + "D20", mls.getStatus().getErrorRateD20(), mls.getStatus().getAvgD20());
+                MLStocks ref = CacheMLStock.getMLStockCache().get(mls.getCodif());
+
+
+                if (ref != null) {
+                    /**for 1 day prevision*/
+                    if (mls.getStatus().getErrorRateD1() <= ref.getStatus().getErrorRateD1() ||
+                        (mls.getStatus().getErrorRateD1() == ref.getStatus().getErrorRateD1() &&
+                            mls.getStatus().getAvgD1() < ref.getStatus().getAvgD1())) {
+                        ref.getMlD1().setValidator(mls.getMlD1().getValidator());
+                        ref.getMlD1().setModel(mls.getMlD1().getModel());
+                        ref.getStatus().setAvgD1(mls.getStatus().getAvgD1());
+                        ref.getStatus().setErrorRateD1(mls.getStatus().getErrorRateD1());
+
+                        try {
+                            ref.getStatus().replaceElementList(mls.getStatus().getPerfList(), 1);
+                            //mls.getStatus().savePerf(s.getCodif() , 1);
+                        } catch (Exception e) {
+                        }
+                    } else {
+                        mls.getMlD1().getValidator().revertModel(mls.getMlD1().getValidator());
+                    }
+
+
+                    /**for 5 day prevision*/
+                    if (mls.getStatus().getErrorRateD5() < ref.getStatus().getErrorRateD5() ||
+                        (mls.getStatus().getErrorRateD5() == ref.getStatus().getErrorRateD5() &&
+                            mls.getStatus().getAvgD5() < ref.getStatus().getAvgD5())) {
+                        ref.getMlD5().setValidator(mls.getMlD5().getValidator());
+                        ref.getMlD5().setModel(mls.getMlD5().getModel());
+                        ref.getStatus().setAvgD5(mls.getStatus().getAvgD5());
+                        ref.getStatus().setErrorRateD5(mls.getStatus().getErrorRateD5());
+                        try {
+                            ref.getStatus().replaceElementList(mls.getStatus().getPerfList(), 5);
+                        } catch (Exception e) {
+                            log.error("Cannot replace element for period 5 days" + e);
+                        }
+                    }
+                    else {
+                        mls.getMlD5().getValidator().revertModel(mls.getMlD5().getValidator());
+                    }
+
+
+                    /**for 20 day prevision*/
+                    if (mls.getStatus().getErrorRateD20() < ref.getStatus().getErrorRateD20() ||
+                        (mls.getStatus().getErrorRateD20() == ref.getStatus().getErrorRateD20() &&
+                            mls.getStatus().getAvgD20() < ref.getStatus().getAvgD20())) {
+                        ref.getMlD20().setValidator(mls.getMlD20().getValidator());
+                        ref.getMlD20().setModel(mls.getMlD20().getModel());
+                        ref.getStatus().setAvgD20(mls.getStatus().getAvgD20());
+                        ref.getStatus().setErrorRateD20(mls.getStatus().getErrorRateD20());
+                        try {
+                            ref.getStatus().replaceElementList(mls.getStatus().getPerfList(), 20);
+                        } catch (Exception e) {
+                            log.error("Cannot replace element for period 20 days" + e);
+                        }
+                    }
+                    else {
+                        mls.getMlD20().getValidator().revertModel(mls.getMlD20().getValidator());
+                    }
+
                 } else {
                     CacheMLStock.getMLStockCache().put(mls.getCodif(), mls);
+                    ref = mls;
                 }
+
+                int position = mls.getMlD1().getValidator().getCol();
+                mls = new MLStocks(s.getCodif());
+                mls.getMlD1().setValidator(ref.getMlD1().getValidator().clone());
+                mls.getMlD1().getValidator().setCol(position);
+                mls.getMlD5().setValidator(ref.getMlD5().getValidator().clone());
+                mls.getMlD5().getValidator().setCol(position);
+                mls.getMlD20().setValidator(ref.getMlD20().getValidator().clone());
+                mls.getMlD20().getValidator().setCol(position);
             }
 
+
         }
+
+        log.info("evaluate");
+        //evaluate();
+        MLPredictor predictor = new MLPredictor();
+
+        for (StockGeneral sg: CacheStockGeneral.getCache().values()) {
+            StockPrediction p = predictor.prediction(sg);
+            sg.setPrediction(p);
+        }
+        log.info("saveML");
     }
 }

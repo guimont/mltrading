@@ -19,6 +19,7 @@ import java.util.Map;
  * Created by gmo on 15/12/2015.
  */
 public class CacheMLStock {
+    //static SparkConf sparkConf = new SparkConf().setAppName("JavaRandomForest").setMaster("spark://172.22.30.122:7077").setJars(new String[]{"target/mltrading-0.0.1-SNAPSHOT.war"});
     static SparkConf sparkConf = new SparkConf().setAppName("JavaRandomForest").setMaster("local[*]");
     static JavaSparkContext sc = new JavaSparkContext(sparkConf);
 
@@ -26,7 +27,7 @@ public class CacheMLStock {
 
     private static final Map<String, MLStocks> mlStockMap;
     static {
-        System.setProperty("hadoop.home.dir", "C:\\spark-1.6.0-bin-hadoop2.6\\");
+        System.setProperty("hadoop.home.dir", "C:\\spark-2.0.0-bin-hadoop2.7\\");
         mlStockMap = new HashMap<>();
     }
 

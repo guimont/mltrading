@@ -156,6 +156,87 @@ public class RandomForestStock implements Serializable {
 
     }
 
+    public MLStocks processRF(StockGeneral stock, MLStocks mls, PredictionPeriodicity period) {
+        MatrixValidator validator = mls.getSock(period).getValidator();
+
+        List<FeaturesStock> fsL = FeaturesStock.create(stock, validator , FeaturesStock.RANGE_MAX);
+
+        if (null == fsL) return null;
+
+        int born = fsL.size() - RENDERING;
+
+        List<FeaturesStock> fsLTrain =fsL.subList(0,born);
+        List<FeaturesStock> fsLTest =fsL.subList(born, fsL.size());
+
+        JavaSparkContext sc = CacheMLStock.getJavaSparkContext();
+
+        // Load and parse the data file.
+        JavaRDD<LabeledPoint> trainingData = createRDD(sc, fsLTrain, period);
+
+
+        JavaRDD<FeaturesStock> testData = sc.parallelize(fsLTest);
+
+        // Split the data into training and test sets (30% held out for testing)
+
+        // Set parameters.
+        //  Empty categoricalFeaturesInfo indicates all features are continuous.
+        Map<Integer, Integer> categoricalFeaturesInfo = new HashMap<Integer, Integer>();
+
+        String impurity = "variance";
+
+        String featureSubsetStrategy = "auto"; // Let the algorithm choose.
+
+
+        // Train a RandomForest model.
+        final RandomForestModel model = RandomForest.trainRegressor(trainingData,
+            categoricalFeaturesInfo, mls.getMlD1().getValidator().getNumTrees(), featureSubsetStrategy, impurity,
+            mls.getMlD1().getValidator().getMaxDepth(), mls.getMlD1().getValidator().getMaxBins(),
+            mls.getMlD1().getValidator().getSeed());
+
+
+
+
+        mls.getSock(period).setModel(model);
+
+        validator.setVectorSize(fsL.get(0).currentVectorPos);
+
+
+        JavaRDD<FeaturesStock> predictionAndLabel = testData.map(
+            new Function<FeaturesStock, FeaturesStock>() {
+                public FeaturesStock call(FeaturesStock fs) {
+
+                    double pred = model.predict(Vectors.dense(fs.vectorize()));
+                    FeaturesStock fsResult = new FeaturesStock(fs, pred, period);
+                    return fsResult;
+                }
+            }
+        );
+
+
+        mls.setTestData(predictionAndLabel);
+
+        JavaRDD<MLPerformances> res =
+            predictionAndLabel.map(new Function <FeaturesStock, MLPerformances>() {
+                public MLPerformances call(FeaturesStock pl) {
+                    System.out.println("estimate: " + pl.getPredictionValue(PredictionPeriodicity.D1));
+                    System.out.println("result: " + pl.getResultValue(PredictionPeriodicity.D1));
+                    //Double diff = pl.getPredictionValue() - pl.getResultValue();
+                    MLPerformances perf = new MLPerformances(pl.getCurrentDate());
+                    if (pl.getDate(period) != null && !pl.getDate(period).isEmpty())
+                        perf.setPerf(period, MLPerformance.calculYields(pl.getDate(period), pl.getPredictionValue(period), pl.getResultValue(period), pl.getCurrentValue()));
+
+                    return perf;
+
+                }
+            });
+
+
+        mls.getStatus().mergeList(res.collect());
+
+        return mls;
+
+    }
+
 
 
     public MLStocks processRFResult(StockGeneral stock, MLStocks mls) {

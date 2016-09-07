@@ -29,6 +29,22 @@ public class MLStatus implements Serializable{
         }
     }
 
+    /**
+     * merge perfList
+     * Warning => list have to be smaller or equal than perfList
+     * @param list
+     */
+    public void mergeList(List<MLPerformances> list) {
+        if (perfList == null) perfList = list;
+        else {
+            for (int i = 0; i< list.size(); i++) {
+                if (list.get(i).getMlD5() != null) perfList.get(i).setMlD5(list.get(i).getMlD5());
+                if (list.get(i).getMlD20() != null) perfList.get(i).setMlD20(list.get(i).getMlD20());
+            }
+        }
+    }
+
+
     public void calculeAvgPrd() {
         double avgD1 = 0, avgD5 =0, avgD20 =0;
         int errD1 = 0, errD5 =0, errD20 =0;
