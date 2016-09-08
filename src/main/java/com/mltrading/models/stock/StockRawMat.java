@@ -1,11 +1,7 @@
 package com.mltrading.models.stock;
 
-import com.mltrading.dao.InfluxDaoConnector;
-import com.mltrading.influxdb.dto.QueryResult;
 import org.joda.time.DateTime;
 
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by gmo on 06/12/2015.

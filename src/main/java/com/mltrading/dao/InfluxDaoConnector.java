@@ -3,6 +3,7 @@ package com.mltrading.dao;
 import com.mltrading.dao.impl.InfluxDaoImpl;
 import com.mltrading.influxdb.dto.BatchPoints;
 import com.mltrading.influxdb.dto.Query;
+import com.mltrading.influxdb.dto.QueryRequest;
 import com.mltrading.influxdb.dto.QueryResult;
 import com.mltrading.ml.MatrixValidator;
 import com.mltrading.models.parser.HistoryParser;
@@ -17,7 +18,7 @@ public class InfluxDaoConnector {
     private InfluxDao dao;
 
 
-    private InfluxDaoConnector() {
+    public InfluxDaoConnector() {
         dao = new InfluxDaoImpl();
         dao.createConnection();
 
@@ -26,7 +27,6 @@ public class InfluxDaoConnector {
         if (!repo.contains(HistoryParser.dbName)) dao.createDB(HistoryParser.dbName);
         if (!repo.contains(MatrixValidator.dbNamePerf)) dao.createDB(MatrixValidator.dbNamePerf);
         if (!repo.contains(MatrixValidator.dbNameModel)) dao.createDB(MatrixValidator.dbNameModel);
-
 
     }
 
@@ -50,6 +50,11 @@ public class InfluxDaoConnector {
 
     }
 
+    public QueryResult getAkkaPoints(QueryRequest queryRequest) {
+        return getPoints(queryRequest.getQuery(), queryRequest.getName());
+
+    }
+
     public static void deleteDB(String name) {
         List<String> repo = getInstance().dao.getDB().describeDatabases();
         if (repo.contains(name)) {
@@ -64,6 +69,10 @@ public class InfluxDaoConnector {
                 .database(dbName)
                 .retentionPolicy("default")
                 .build();
+    }
+
+    public void close() {
+
     }
 
 

@@ -19,7 +19,7 @@ import java.util.Map;
  * Created by gmo on 15/12/2015.
  */
 public class CacheMLStock {
-    //static SparkConf sparkConf = new SparkConf().setAppName("JavaRandomForest").setMaster("spark://172.22.30.122:7077").setJars(new String[]{"target/mltrading-0.0.1-SNAPSHOT.war"});
+    //static SparkConf sparkConf = new SparkConf().setAppName("JavaRandomForest").setMaster("spark://172.22.30.122:7077").setJars(new String[]{"target/com.mltrading-1.0-SNAPSHOT.jar"});
     static SparkConf sparkConf = new SparkConf().setAppName("JavaRandomForest").setMaster("local[*]");
     static JavaSparkContext sc = new JavaSparkContext(sparkConf);
 

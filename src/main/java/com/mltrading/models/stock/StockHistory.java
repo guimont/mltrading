@@ -1,7 +1,9 @@
 package com.mltrading.models.stock;
 
 
-import com.mltrading.dao.InfluxDaoConnector;
+
+import com.mltrading.dao.Requester;
+import com.mltrading.influxdb.dto.QueryRequest;
 import com.mltrading.influxdb.dto.QueryResult;
 import com.mltrading.models.parser.HistoryParser;
 import org.joda.time.DateTime;
@@ -336,10 +338,10 @@ public class StockHistory extends Object{
         StockHistory sh = new StockHistory();
 
         String query = "SELECT * FROM "+code+" where time = '" + date + "'";
-        QueryResult meanQ = InfluxDaoConnector.getPoints(query, HistoryParser.dbName);
+        QueryResult list = Requester.sendRequest(new QueryRequest(query, HistoryParser.dbName));
 
         sh.setCode(code);
-        populate(sh, meanQ, 0);
+        populate(sh, list, 0);
 
         //sh.setAnalyse_tech(StockAnalyse.getAnalyse(code, date));
 
@@ -350,10 +352,10 @@ public class StockHistory extends Object{
         StockHistory sh = new StockHistory();
 
         String query = "SELECT * FROM "+code+" where time > '" + date + "' limit 1";
-        QueryResult meanQ = InfluxDaoConnector.getPoints(query, HistoryParser.dbName);
+        QueryResult list = Requester.sendRequest(new QueryRequest(query, HistoryParser.dbName));
 
         sh.setCode(code);
-        populate(sh, meanQ, 0);
+        populate(sh, list, 0);
 
         //sh.setAnalyse_tech(StockAnalyse.getAnalyse(code, date));
 
@@ -364,16 +366,16 @@ public class StockHistory extends Object{
         StockHistory sh = new StockHistory();
 
         String query = "SELECT * FROM "+code+" where time >= '" + date + "' limit " + offset;
-        QueryResult meanQ = InfluxDaoConnector.getPoints(query, HistoryParser.dbName);
+        QueryResult list = Requester.sendRequest(new QueryRequest(query, HistoryParser.dbName));
 
-        if (meanQ == null || meanQ.getResults() == null || meanQ.getResults().get(0).getSeries().get(0) == null)
+        if (list == null || list.getResults() == null || list.getResults().get(0).getSeries().get(0) == null)
             return null;
 
-        if (meanQ.getResults().get(0).getSeries().get(0).getValues().size() < offset)
+        if (list.getResults().get(0).getSeries().get(0).getValues().size() < offset)
             return null;
 
         sh.setCode(code);
-        populate(sh, meanQ, offset-1);
+        populate(sh, list, offset-1);
         return sh;
     }
 
@@ -384,7 +386,7 @@ public class StockHistory extends Object{
         List<String> dateList = new ArrayList<>();
         //bug .. dont get all data .. so make filter to have date only since 2013
         String query = "SELECT * FROM "+code +" where time > '2013-06-01T00:00:00Z'";
-        QueryResult list = InfluxDaoConnector.getPoints(query, HistoryParser.dbName);
+        QueryResult list = Requester.sendRequest(new QueryRequest(query, HistoryParser.dbName));
         int series = max + offset;
         int size = list.getResults().get(0).getSeries().get(0).getValues().size();
 
@@ -401,7 +403,7 @@ public class StockHistory extends Object{
 
         //suppose base is filled
         String query = "SELECT * FROM "+code +" where time > '2015-06-01T00:00:00Z'";
-        QueryResult list = InfluxDaoConnector.getPoints(query, HistoryParser.dbName);
+        QueryResult list = Requester.sendRequest(new QueryRequest(query, HistoryParser.dbName));
 
         int size = list.getResults().get(0).getSeries().get(0).getValues().size();
 
@@ -416,7 +418,7 @@ public class StockHistory extends Object{
         List<StockHistory> stockList = new ArrayList<>();
         //offset is mult by 2 because it is no dense data
         String query = "SELECT * FROM " + code + " where time <= '" + date + "' and time > '"+ date + "' - "+  Integer.toString(offset*4) +"d";
-        QueryResult list = InfluxDaoConnector.getPoints(query, HistoryParser.dbName);
+        QueryResult list = Requester.sendRequest(new QueryRequest(query, HistoryParser.dbName));
 
         int size = list.getResults().get(0).getSeries().get(0).getValues().size();
 
@@ -446,7 +448,7 @@ public class StockHistory extends Object{
         List<StockHistory> stockList = new ArrayList<>();
         //offset is mult by 2 because it is no dense data
         String query = "SELECT * FROM "+code +" where time > '2015-06-01T00:00:00Z'";
-        QueryResult list = InfluxDaoConnector.getPoints(query, HistoryParser.dbName);
+        QueryResult list = Requester.sendRequest(new QueryRequest(query, HistoryParser.dbName));
 
         int size = list.getResults().get(0).getSeries().get(0).getValues().size();
 
@@ -476,8 +478,8 @@ public class StockHistory extends Object{
         List<StockHistory> stockList = new ArrayList<>();
         //offset is mult by 2 because it is no dense data
         String query = "SELECT * FROM "+code +" where time > '2014-06-01T00:00:00Z'";
-        QueryResult list = InfluxDaoConnector.getPoints(query, HistoryParser.dbName);
 
+        QueryResult list = Requester.sendRequest(new QueryRequest(query,HistoryParser.dbName));
         if (list == null || list.getResults() == null || list.getResults().get(0).getSeries() == null)
             return null;
 
@@ -541,7 +543,7 @@ public class StockHistory extends Object{
     public static List<StockHistory> getStockAnalyseList(final String code) {
         List<StockHistory> stockList = new ArrayList<StockHistory>();
         String query = "SELECT * FROM "+code+ "T";
-        QueryResult list = InfluxDaoConnector.getPoints(query, HistoryParser.dbName);
+        QueryResult list = Requester.sendRequest(new QueryRequest(query, HistoryParser.dbName));
 
         for (int i =0;i<list.getResults().get(0).getSeries().get(0).getValues().size();i++)
             stockList.add(getStockHistory(code, (String) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(0)));
@@ -553,7 +555,7 @@ public class StockHistory extends Object{
     public static List<StockHistory> getStockHistoryList(final String code) {
         List<StockHistory> stockList = new ArrayList<StockHistory>();
         String query = "SELECT * FROM "+code;
-        QueryResult list = InfluxDaoConnector.getPoints(query, HistoryParser.dbName);
+        QueryResult list = Requester.sendRequest(new QueryRequest(query, HistoryParser.dbName));
 
         for (int i =0;i<list.getResults().get(0).getSeries().get(0).getValues().size();i++)
             stockList.add(getStockHistory(code, (String) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(0)));
@@ -565,7 +567,7 @@ public class StockHistory extends Object{
     public static List<StockHistory> getStockHistoryListOffsetWithAT(final String code, int offset) {
         List<StockHistory> stockList = new ArrayList<>();
         String query = "SELECT * FROM "+code;
-        QueryResult list = InfluxDaoConnector.getPoints(query, HistoryParser.dbName);
+        QueryResult list = Requester.sendRequest(new QueryRequest(query, HistoryParser.dbName));
 
         int size = list.getResults().get(0).getSeries().get(0).getValues().size();
 
@@ -588,7 +590,7 @@ public class StockHistory extends Object{
     public static List<String> getDateHistoryListOffset(final String code, int offset) {
         List<String> dateList = new ArrayList<>();
         String query = "SELECT * FROM "+code;
-        QueryResult list = InfluxDaoConnector.getPoints(query, HistoryParser.dbName);
+        QueryResult list = Requester.sendRequest(new QueryRequest(query, HistoryParser.dbName));
 
         if (list.getResults().get(0).getSeries().get(0).getValues().size()< offset)
             return null;
