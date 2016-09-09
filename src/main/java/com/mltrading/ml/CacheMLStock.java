@@ -19,17 +19,20 @@ import java.util.Map;
  * Created by gmo on 15/12/2015.
  */
 public class CacheMLStock {
-    //static SparkConf sparkConf = new SparkConf().setAppName("JavaRandomForest").setMaster("spark://172.22.30.122:7077").setJars(new String[]{"target/com.mltrading-1.0-SNAPSHOT.jar"});
-    static SparkConf sparkConf = new SparkConf().setAppName("JavaRandomForest").setMaster("local[*]");
-    static JavaSparkContext sc = new JavaSparkContext(sparkConf);
+     //static SparkConf sparkConf = new SparkConf().setAppName("JavaRandomForest").setMaster("local[*]");
+
 
     private static final Logger log = LoggerFactory.getLogger(CacheMLStock.class);
 
     private static final Map<String, MLStocks> mlStockMap;
     static {
         System.setProperty("hadoop.home.dir", "C:\\spark-2.0.0-bin-hadoop2.7\\");
+        System.setProperty("spark.sql.warehouse.dir","file:///C:/temp");
         mlStockMap = new HashMap<>();
     }
+
+    static SparkConf sparkConf = new SparkConf().setSparkHome("file:///C:/temp").setAppName("JavaRandomForest").setMaster("spark://NB120249:7077").setJars(new String[]{"target/com.mltrading-1.0-SNAPSHOT.jar"});
+    static JavaSparkContext sc = new JavaSparkContext(sparkConf);
 
     public static void load(List<StockGeneral> sl) {
         for (StockGeneral s : sl) {
