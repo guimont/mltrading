@@ -9,5 +9,7 @@ public enum PredictionPeriodicity {
     /** 5 days    mid range */
     D5,
     /** 20 days   long range */
-    D20
+    D20,
+    /** 20 days   long range */
+    D40
 }

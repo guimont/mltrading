@@ -19,7 +19,7 @@ import java.util.Map;
  * Created by gmo on 15/12/2015.
  */
 public class CacheMLStock {
-     //static SparkConf sparkConf = new SparkConf().setAppName("JavaRandomForest").setMaster("local[*]");
+     //
 
 
     private static final Logger log = LoggerFactory.getLogger(CacheMLStock.class);
@@ -31,6 +31,7 @@ public class CacheMLStock {
         mlStockMap = new HashMap<>();
     }
 
+    //static SparkConf sparkConf = new SparkConf().setAppName("JavaRandomForest").setMaster("local[*]");
     static SparkConf sparkConf = new SparkConf().setSparkHome("file:///C:/temp").setAppName("JavaRandomForest").setMaster("spark://NB120249:7077").setJars(new String[]{"target/com.mltrading-1.0-SNAPSHOT.jar"});
     static JavaSparkContext sc = new JavaSparkContext(sparkConf);
 
@@ -38,9 +39,7 @@ public class CacheMLStock {
         for (StockGeneral s : sl) {
             try {
                 MLStocks mls = new MLStocks(s.getCodif());
-                mls.getMlD1().load();
-                mls.getMlD5().load();
-                mls.getMlD20().load();
+                mls.load();
                 mls.getStatus().loadPerf(s.getCodif());
                 mlStockMap.put(s.getCodif(), mls);
 
@@ -62,9 +61,7 @@ public class CacheMLStock {
     public static void save() {
         deleteModel();
         for (MLStocks mls:mlStockMap.values()) {
-            if (mls != null && mls.getMlD1() != null) mls.getMlD1().save();
-            if (mls != null && mls.getMlD5() != null) mls.getMlD5().save();
-            if (mls != null && mls.getMlD20() != null) mls.getMlD20().save();
+            mls.save();
             mls.getStatus().savePerf(mls.getCodif());
         }
     }

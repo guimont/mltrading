@@ -20,16 +20,16 @@ public class MLPredictor  implements Serializable {
             try {
                 StockPrediction sp = new StockPrediction(stock.getCodif());
                 String date = StockHistory.getLastDateHistory(stock.getCodif());
-                FeaturesStock fs = FeaturesStock.createRT(stock, s.getMlD1().getValidator(), date);
-                sp.setPredictionD1(s.getMlD1().getModel().predict(Vectors.dense(fs.vectorize())));
+                FeaturesStock fs = FeaturesStock.createRT(stock, s.getValidator(PredictionPeriodicity.D1), date);
+                sp.setPredictionD1(s.getModel(PredictionPeriodicity.D1).predict(Vectors.dense(fs.vectorize())));
                 sp.setConfidenceD1(100 - (s.getStatus().getErrorRateD1() * 100 / 90));
 
-                fs = FeaturesStock.createRT(stock, s.getMlD5().getValidator(), date);
-                sp.setPredictionD5(s.getMlD5().getModel().predict(Vectors.dense(fs.vectorize())));
+                fs = FeaturesStock.createRT(stock, s.getValidator(PredictionPeriodicity.D5), date);
+                sp.setPredictionD5(s.getModel(PredictionPeriodicity.D5).predict(Vectors.dense(fs.vectorize())));
                 sp.setConfidenceD5(100 - (s.getStatus().getErrorRateD5() * 100 / 85));
 
-                fs = FeaturesStock.createRT(stock, s.getMlD20().getValidator(), date);
-                sp.setPredictionD20(s.getMlD20().getModel().predict(Vectors.dense(fs.vectorize())));
+                fs = FeaturesStock.createRT(stock, s.getValidator(PredictionPeriodicity.D20), date);
+                sp.setPredictionD20(s.getModel(PredictionPeriodicity.D20).predict(Vectors.dense(fs.vectorize())));
                 sp.setConfidenceD20(100 - (s.getStatus().getErrorRateD20() * 100 / 70));
 
                 return sp;

@@ -7,7 +7,9 @@ import com.mltrading.models.parser.HistoryParser;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by gmo on 10/02/2016.
@@ -15,9 +17,8 @@ import java.util.List;
 public class MLPerformances  implements Serializable, Comparable<MLPerformances> {
 
     private String date;
-    private MLPerformance mlD1;
-    private MLPerformance mlD5;
-    private MLPerformance mlD20;
+
+    private Map<PredictionPeriodicity,MLPerformance> container;
 
 
     public String getDate() {
@@ -28,44 +29,46 @@ public class MLPerformances  implements Serializable, Comparable<MLPerformances>
         this.date = date;
     }
 
-    public void setPerf(PredictionPeriodicity perdiod, MLPerformance perf) {
-        if (perdiod == PredictionPeriodicity.D1) mlD1 = perf;
-        if (perdiod == PredictionPeriodicity.D5) mlD5 = perf;
-        if (perdiod == PredictionPeriodicity.D20) mlD20 = perf;
+    public void setPerf(PredictionPeriodicity period, MLPerformance perf) {
+        container.put(period,perf);
     }
 
     public MLPerformances() {
-        mlD1 = new MLPerformance();
-        mlD5 = new MLPerformance();
-        mlD20 = new MLPerformance();
+        container = new HashMap<>();
+        container.put(PredictionPeriodicity.D1,new MLPerformance());
+        container.put(PredictionPeriodicity.D5,new MLPerformance());
+        container.put(PredictionPeriodicity.D20,new MLPerformance());
+
     }
 
     public MLPerformances(String date) {
+        container = new HashMap<>();
         this.date = date;
     }
 
     public MLPerformance getMlD1() {
-        return mlD1;
+        return container.get(PredictionPeriodicity.D1);
     }
 
-    public void setMlD1(MLPerformance mlD1) {
-        this.mlD1 = mlD1;
+    public void setMlD1(MLPerformance mlPerf) {
+        container.put(PredictionPeriodicity.D1,mlPerf);
     }
 
     public MLPerformance getMlD5() {
-        return mlD5;
+        return container.get(PredictionPeriodicity.D5);
     }
 
-    public void setMlD5(MLPerformance mlD5) {
-        this.mlD5 = mlD5;
+    public void setMlD5(MLPerformance mlPerf) {
+
+        container.put(PredictionPeriodicity.D5,mlPerf);
     }
 
     public MLPerformance getMlD20() {
-        return mlD20;
+        return  container.get(PredictionPeriodicity.D20);
     }
 
-    public void setMlD20(MLPerformance mlD20) {
-        this.mlD20 = mlD20;
+    public void setMlD20(MLPerformance mlPerf) {
+        container.put(PredictionPeriodicity.D20,mlPerf);
     }
 
 
@@ -77,18 +80,9 @@ public class MLPerformances  implements Serializable, Comparable<MLPerformances>
 
     void save(String code) {
         BatchPoints bp = InfluxDaoConnector.getBatchPoints(MatrixValidator.dbNameModel);
-        mlD1.savePerformance(bp,code+"PD1");
-
-        if (mlD5 != null) {
-            mlD5.savePerformance(bp,code+"PD5");
-        } /*else
-            MLPerformance.generateEmptyMLPerformance(date).savePerformance(bp,code+"PD5");*/
-
-        if (mlD20 != null)
-            mlD20.savePerformance(bp,code+"PD20");
-        /*else
-            MLPerformance.generateEmptyMLPerformance(date).savePerformance(bp, code + "PD20");*/
-
+        for (Map.Entry<PredictionPeriodicity, MLPerformance> entry : container.entrySet()) {
+            entry.getValue().savePerformance(bp,code+"P"+entry.getKey());
+        }
     }
 
 

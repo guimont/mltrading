@@ -134,7 +134,7 @@ public class MatrixValidator implements Serializable,Cloneable {
     /**
      * Generate a random matrix validator for features selection
      */
-    public void generate() {
+    public MatrixValidator generate() {
         for (int i = HS_POS ; i < globalROW; i++) {
             matrix[i][HS_COL] = randomiBool();
             matrix[i][HS_PERIOD_COL] = randomPeriod(2, 100);
@@ -142,6 +142,7 @@ public class MatrixValidator implements Serializable,Cloneable {
             for (int j = N_HS_COL; j < globalCOL; j++)
                 matrix[i][j] = randomiBool();
         }
+        return this;
     }
 
 

@@ -46,7 +46,7 @@ public class RandomForestStock implements Serializable {
 
     public MLStocks processRF(StockGeneral stock, MLStocks mls) {
 
-        List<FeaturesStock> fsL = FeaturesStock.create(stock, mls.getMlD1().getValidator(), FeaturesStock.RANGE_MAX);
+        List<FeaturesStock> fsL = FeaturesStock.create(stock, mls.getValidator(PredictionPeriodicity.D1), FeaturesStock.RANGE_MAX);
 
         if (null == fsL) return null;
 
@@ -78,30 +78,31 @@ public class RandomForestStock implements Serializable {
 
         // Train a RandomForest model.
         final RandomForestModel modelD1 = RandomForest.trainRegressor(trainingDataD1,
-            categoricalFeaturesInfoD1, mls.getMlD1().getValidator().getNumTrees(), featureSubsetStrategy, impurity,
-            mls.getMlD1().getValidator().getMaxDepth(), mls.getMlD1().getValidator().getMaxBins(),
-            mls.getMlD1().getValidator().getSeed());
+            categoricalFeaturesInfoD1, mls.getValidator(PredictionPeriodicity.D1).getNumTrees(), featureSubsetStrategy, impurity,
+            mls.getValidator(PredictionPeriodicity.D1).getMaxDepth(), mls.getValidator(PredictionPeriodicity.D1).getMaxBins(),
+            mls.getValidator(PredictionPeriodicity.D1).getSeed());
 
         // Train a RandomForest model.
         final RandomForestModel modelD5 = RandomForest.trainRegressor(trainingDataD5,
-            categoricalFeaturesInfoD5,  mls.getMlD5().getValidator().getNumTrees(), featureSubsetStrategy, impurity,
-            mls.getMlD5().getValidator().getMaxDepth(), mls.getMlD5().getValidator().getMaxBins(),
-            mls.getMlD5().getValidator().getSeed());
+            categoricalFeaturesInfoD5,  mls.getValidator(PredictionPeriodicity.D5).getNumTrees(), featureSubsetStrategy, impurity,
+            mls.getValidator(PredictionPeriodicity.D5).getMaxDepth(), mls.getValidator(PredictionPeriodicity.D5).getMaxBins(),
+            mls.getValidator(PredictionPeriodicity.D5).getSeed());
 
         // Train a RandomForest model.
         final RandomForestModel modelD20 = RandomForest.trainRegressor(trainingDataD20,
-            categoricalFeaturesInfoD20, mls.getMlD20().getValidator().getNumTrees(), featureSubsetStrategy, impurity,
-            mls.getMlD20().getValidator().getMaxDepth(), mls.getMlD20().getValidator().getMaxBins(),
-            mls.getMlD20().getValidator().getSeed());
+            categoricalFeaturesInfoD20, mls.getValidator(PredictionPeriodicity.D20).getNumTrees(), featureSubsetStrategy, impurity,
+            mls.getValidator(PredictionPeriodicity.D20).getMaxDepth(), mls.getValidator(PredictionPeriodicity.D20).getMaxBins(),
+            mls.getValidator(PredictionPeriodicity.D20).getSeed());
 
 
-        mls.getMlD1().setModel(modelD1);
-        mls.getMlD5().setModel(modelD5);
-        mls.getMlD20().setModel(modelD20);
+        mls.setModel(PredictionPeriodicity.D1, modelD1);
+        mls.setModel(PredictionPeriodicity.D5, modelD1);
+        mls.setModel(PredictionPeriodicity.D20, modelD1);
 
-        mls.getMlD1().getValidator().setVectorSize(fsL.get(0).currentVectorPos);
-        mls.getMlD5().getValidator().setVectorSize(fsL.get(0).currentVectorPos);
-        mls.getMlD20().getValidator().setVectorSize(fsL.get(0).currentVectorPos);
+
+        mls.getValidator(PredictionPeriodicity.D1).setVectorSize(fsL.get(0).currentVectorPos);
+        mls.getValidator(PredictionPeriodicity.D5).setVectorSize(fsL.get(0).currentVectorPos);
+        mls.getValidator(PredictionPeriodicity.D20).setVectorSize(fsL.get(0).currentVectorPos);
 
         JavaRDD<FeaturesStock> predictionAndLabel = testData.map(
             new Function<FeaturesStock, FeaturesStock>() {
@@ -189,9 +190,9 @@ public class RandomForestStock implements Serializable {
 
         // Train a RandomForest model.
         final RandomForestModel model = RandomForest.trainRegressor(trainingData,
-            categoricalFeaturesInfo, mls.getMlD1().getValidator().getNumTrees(), featureSubsetStrategy, impurity,
-            mls.getMlD1().getValidator().getMaxDepth(), mls.getMlD1().getValidator().getMaxBins(),
-            mls.getMlD1().getValidator().getSeed());
+            categoricalFeaturesInfo, validator.getNumTrees(), featureSubsetStrategy, impurity,
+            validator.getMaxDepth(), validator.getMaxBins(),
+            validator.getSeed());
 
 
 
@@ -241,22 +242,22 @@ public class RandomForestStock implements Serializable {
 
     public MLStocks processRFResult(StockGeneral stock, MLStocks mls) {
 
-        List<FeaturesStock> fsLD1 = FeaturesStock.create(stock, mls.getMlD1().getValidator(), FeaturesStock.RANGE_TEST);
-        if( fsLD1.get(0).currentVectorPos != mls.getMlD1().getValidator().getVectorSize())    {
+        List<FeaturesStock> fsLD1 = FeaturesStock.create(stock, mls.getValidator(PredictionPeriodicity.D1), FeaturesStock.RANGE_TEST);
+        if( fsLD1.get(0).currentVectorPos != mls.getValidator(PredictionPeriodicity.D1).getVectorSize())    {
             log.error("size vector not corresponding");
-            log.error("validator: " + mls.getMlD1().getValidator().getVectorSize());
+            log.error("validator: " + mls.getValidator(PredictionPeriodicity.D1).getVectorSize());
             log.error("vector: " + fsLD1.get(0).currentVectorPos );
         }
-        List<FeaturesStock> fsLD5 = FeaturesStock.create(stock, mls.getMlD5().getValidator(), FeaturesStock.RANGE_TEST);
-        if( fsLD5.get(0).currentVectorPos != mls.getMlD5().getValidator().getVectorSize())    {
+        List<FeaturesStock> fsLD5 = FeaturesStock.create(stock, mls.getValidator(PredictionPeriodicity.D5), FeaturesStock.RANGE_TEST);
+        if( fsLD5.get(0).currentVectorPos != mls.getValidator(PredictionPeriodicity.D5).getVectorSize())    {
             log.error("size vector not corresponding");
-            log.error("validator: " + mls.getMlD5().getValidator().getVectorSize());
+            log.error("validator: " + mls.getValidator(PredictionPeriodicity.D5).getVectorSize());
             log.error("vector: " + fsLD5.get(0).currentVectorPos );
         }
-        List<FeaturesStock> fsLD20 = FeaturesStock.create(stock, mls.getMlD20().getValidator(), FeaturesStock.RANGE_TEST);
-        if( fsLD20.get(0).currentVectorPos != mls.getMlD20().getValidator().getVectorSize())    {
+        List<FeaturesStock> fsLD20 = FeaturesStock.create(stock, mls.getValidator(PredictionPeriodicity.D20), FeaturesStock.RANGE_TEST);
+        if( fsLD20.get(0).currentVectorPos != mls.getValidator(PredictionPeriodicity.D20).getVectorSize())    {
             log.error("size vector not corresponding");
-            log.error("validator: " + mls.getMlD20().getValidator().getVectorSize());
+            log.error("validator: " + mls.getValidator(PredictionPeriodicity.D20).getVectorSize());
             log.error("vector: " + fsLD20.get(0).currentVectorPos );
         }
 
@@ -274,7 +275,7 @@ public class RandomForestStock implements Serializable {
             double  pred = 0;
             try {
                 FeaturesStock fsD1 = fsLD1.get(i);
-                pred = mls.getMlD1().getModel().predict(Vectors.dense(fsD1.vectorize()));
+                pred = mls.getModel(PredictionPeriodicity.D1).predict(Vectors.dense(fsD1.vectorize()));
             } catch (Exception e) {
                 System.out.print(e.toString());
             }
@@ -283,13 +284,13 @@ public class RandomForestStock implements Serializable {
             FeaturesStock fsResult = new FeaturesStock(fsLD1.get(i), pred, PredictionPeriodicity.D1);
 
             FeaturesStock fsD5 = fsLD5.get(i);
-            pred = mls.getMlD5().getModel().predict(Vectors.dense(fsD5.vectorize()));
+            pred = mls.getModel(PredictionPeriodicity.D5).predict(Vectors.dense(fsD5.vectorize()));
             fsResult.setPredictionValue(pred, PredictionPeriodicity.D5);
             fsResult.setDate(fsD5.getDate( PredictionPeriodicity.D5),  PredictionPeriodicity.D5);
 
 
             FeaturesStock fsD20 = fsLD20.get(i);
-            pred = mls.getMlD20().getModel().predict(Vectors.dense(fsD20.vectorize()));
+            pred = mls.getModel(PredictionPeriodicity.D20).predict(Vectors.dense(fsD20.vectorize()));
             fsResult.setPredictionValue(pred, PredictionPeriodicity.D20);
             fsResult.setDate(fsD20.getDate( PredictionPeriodicity.D20),  PredictionPeriodicity.D20);
 

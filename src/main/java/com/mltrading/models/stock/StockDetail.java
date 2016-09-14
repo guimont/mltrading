@@ -40,9 +40,9 @@ public class StockDetail implements Serializable{
         detail.setCode(s.getCodif());
         detail.setStock(s);
         detail.setPrediction(CacheStockGeneral.getCache().get(s.getCode()).getPrediction());
-        detail.setValidatorD1(mls.getMlD1().getValidator());
-        detail.setValidatorD5(mls.getMlD5().getValidator());
-        detail.setValidatorD20(mls.getMlD20().getValidator());
+        detail.setValidatorD1(mls.getValidator(PredictionPeriodicity.D1));
+        detail.setValidatorD5(mls.getValidator(PredictionPeriodicity.D5));
+        detail.setValidatorD20(mls.getValidator(PredictionPeriodicity.D20));
         //detail.setSector();
         detail.setData(populateData(s));
         return detail;
