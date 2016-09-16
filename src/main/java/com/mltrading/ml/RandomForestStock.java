@@ -138,11 +138,11 @@ public class RandomForestStock implements Serializable {
 
                     perf.setMlD1(MLPerformance.calculYields(pl.getDate(PredictionPeriodicity.D1), pl.getPredictionValue(PredictionPeriodicity.D1), pl.getResultValue(PredictionPeriodicity.D1), pl.getCurrentValue()));
 
-                    if (pl.getResultValue(PredictionPeriodicity.D5) != 0)
-                        perf.setMlD5(MLPerformance.calculYields(pl.getDate(PredictionPeriodicity.D5), pl.getPredictionValue(PredictionPeriodicity.D5), pl.getResultValue(PredictionPeriodicity.D5), pl.getCurrentValue()));
+                    //if (pl.getResultValue(PredictionPeriodicity.D5) != 0)
+                    perf.setMlD5(MLPerformance.calculYields(pl.getDate(PredictionPeriodicity.D5), pl.getPredictionValue(PredictionPeriodicity.D5), pl.getResultValue(PredictionPeriodicity.D5), pl.getCurrentValue()));
 
-                    if (pl.getResultValue(PredictionPeriodicity.D20) != 0)
-                        perf.setMlD20(MLPerformance.calculYields(pl.getDate(PredictionPeriodicity.D20), pl.getPredictionValue(PredictionPeriodicity.D20), pl.getResultValue(PredictionPeriodicity.D20), pl.getCurrentValue()));
+                    //if (pl.getResultValue(PredictionPeriodicity.D20) != 0)
+                    perf.setMlD20(MLPerformance.calculYields(pl.getDate(PredictionPeriodicity.D20), pl.getPredictionValue(PredictionPeriodicity.D20), pl.getResultValue(PredictionPeriodicity.D20), pl.getCurrentValue()));
 
 
                     return perf;

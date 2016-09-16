@@ -52,7 +52,7 @@ public class ScheduleParserGeneral  {
         List<StockGeneral> sg = new ArrayList(CacheStockGeneral.getIsinCache().values());
 
         CacheMLStock.load(sg);
-        /*MlForecast ml = new MlForecast();
+       /* MlForecast ml = new MlForecast();
         ml.processList(sg);*/
         //load status
 

@@ -57,7 +57,7 @@ public class HistoryIndiceParserYahoo implements HistoryIndiceParser {
                 text = ParserCommon.loadUrl(new URL(url));
 
                 Document doc = Jsoup.parse(text);
-                BatchPoints bp = InfluxDaoConnector.getBatchPoints(HistoryParser.dbName);
+                BatchPoints bp = InfluxDaoConnector.getBatchPoints(StockHistory.dbName);
 
 
                 Elements links = doc.select(refCode);
@@ -117,7 +117,7 @@ public class HistoryIndiceParserYahoo implements HistoryIndiceParser {
                     text = ParserCommon.loadUrl(new URL(url));
 
                     Document doc = Jsoup.parse(text);
-                    BatchPoints bp = InfluxDaoConnector.getBatchPoints(HistoryParser.dbName);
+                    BatchPoints bp = InfluxDaoConnector.getBatchPoints(StockHistory.dbName);
 
 
                     Elements links = doc.select(refCode);

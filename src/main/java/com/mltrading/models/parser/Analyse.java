@@ -122,7 +122,7 @@ public class Analyse {
 
         List<Container> cList = new ArrayList<>();
 
-        QueryResult res = InfluxDaoConnector.getPoints("SELECT * FROM " + code + " where time > '" + date +"' - 120d and time <= '" + date +"'",HistoryParser.dbName);
+        QueryResult res = InfluxDaoConnector.getPoints("SELECT * FROM " + code + " where time > '" + date +"' - 120d and time <= '" + date +"'",StockHistory.dbName);
 
         if (res.getResults().get(0).getSeries() == null || res.getResults().get(0).getSeries().get(0).getValues() == null) return; //resultat empry
 
@@ -141,8 +141,8 @@ public class Analyse {
         c.indice.put(MM20,mmRange(res, code, index, 20));
         c.indice.put(MM50,mmRange(res, code, index, 50));
         c.indice.put(STDDEV,stddevRange(res, code, index, 20));
-        ref_mme26 = mmeRange(res, index, ref_mme26, 0.075, columnValue);
-        ref_mme12 = mmeRange(res, index, ref_mme12, 0.15, columnValue);
+        ref_mme26 = mmeRange(res, index, 26, 0.075, columnValue);
+        ref_mme12 = mmeRange(res, index, 12, 0.15, columnValue);
         c.indice.put(MME12, Double.toString(ref_mme12));
         c.indice.put(MME26, Double.toString(ref_mme26));
         c.indice.put(MOMENTUM, Double.toString(momentum(res,index, columnValue)));
@@ -159,7 +159,7 @@ public class Analyse {
 
         List<Container> cList = new ArrayList<>();
 
-        QueryResult res = InfluxDaoConnector.getPoints("SELECT * FROM " + code,HistoryParser.dbName);
+        QueryResult res = InfluxDaoConnector.getPoints("SELECT * FROM " + code,StockHistory.dbName);
 
         if (res.getResults().get(0).getSeries() == null || res.getResults().get(0).getSeries().get(0).getValues() == null) return; //resultat empry
 
@@ -181,8 +181,8 @@ public class Analyse {
             c.indice.put(MM20,mmRange(res, code, index, 20));
             c.indice.put(MM50,mmRange(res, code, index, 50));
             c.indice.put(STDDEV,stddevRange(res, code, index, 20));
-            ref_mme26 = mmeRange(res, index, ref_mme26, 0.075, columnValue);
-            ref_mme12 = mmeRange(res, index, ref_mme12, 0.15, columnValue);
+            ref_mme26 = mmeRange(res, index, 26, 0.075, columnValue);
+            ref_mme12 = mmeRange(res, index, 12, 0.15, columnValue);
             c.indice.put(MME12, Double.toString(ref_mme12));
             c.indice.put(MME26, Double.toString(ref_mme26));
             c.indice.put(MOMENTUM, Double.toString(momentum(res,index, columnValue)));
@@ -195,7 +195,7 @@ public class Analyse {
 
     public void saveAnalysis(String code, Container c) {
 
-        BatchPoints bp = InfluxDaoConnector.getBatchPoints(HistoryParser.dbName);
+        BatchPoints bp = InfluxDaoConnector.getBatchPoints(StockHistory.dbName);
 
         Point pt = Point.measurement(code+"T").time(new DateTime(c.getDate()).getMillis(), TimeUnit.MILLISECONDS)
             //.field(VALUE, c.getIndice().get(VALUE))
@@ -225,9 +225,17 @@ public class Analyse {
         return val-valPast;
     }
 
-    public Double mmeRange(QueryResult res, int index, double mme, double constant, int column) {
-        double val = Double.parseDouble(res.getResults().get(0).getSeries().get(0).getValues().get(index).get(column).toString());
-        return val*(1-constant) + mme * constant;
+    public Double mmeRange(QueryResult res, int index, int range, double constant, int column) {
+        double num = 0, denum =0;
+        double c = (1-constant);
+        for (int i=0; i<range;i++) {
+            double val = Double.parseDouble(res.getResults().get(0).getSeries().get(0).getValues().get(index-i).get(column).toString());
+            double coef = Math.pow(c, i);
+            num += val * coef;
+            denum += coef;
+        }
+
+        return num/denum;
     }
 
 
@@ -244,7 +252,7 @@ public class Analyse {
         List<Object> lEnd = res.getResults().get(0).getSeries().get(0).getValues().get(index);
 
         String query = "SELECT stddev(value)*2 FROM "+code+" where time > '" + lStart.get(0) + "' and time < '"+ lEnd.get(0) + "'";
-        QueryResult meanQ = InfluxDaoConnector.getPoints(query, HistoryParser.dbName);
+        QueryResult meanQ = InfluxDaoConnector.getPoints(query, StockHistory.dbName);
 
         return meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(1).toString();
     }
@@ -263,7 +271,7 @@ public class Analyse {
         System.out.print(lStart.get(0).toString());
 
         String query = "SELECT mean(value) FROM "+code+" where time > '" + lStart.get(0) + "' and time < '"+ lEnd.get(0) + "'";
-        QueryResult meanQ = InfluxDaoConnector.getPoints(query, HistoryParser.dbName);
+        QueryResult meanQ = InfluxDaoConnector.getPoints(query, StockHistory.dbName);
 
         return meanQ.getResults().get(0).getSeries().get(0).getValues().get(0).get(1).toString();
     }

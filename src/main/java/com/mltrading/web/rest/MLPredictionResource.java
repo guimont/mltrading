@@ -1,9 +1,10 @@
 package com.mltrading.web.rest;
 
 import com.mltrading.ml.*;
-import com.mltrading.models.stock.CacheStockGeneral;
-import com.mltrading.models.stock.StockGeneral;
+
 import com.mltrading.security.AuthoritiesConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -11,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.security.RolesAllowed;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -21,6 +21,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 public class MLPredictionResource {
+
+    private static final Logger log = LoggerFactory.getLogger(MLPredictionResource.class);
 
     @RequestMapping(value = "/ml/stat",
         method = RequestMethod.GET,
@@ -36,10 +38,21 @@ public class MLPredictionResource {
     }*/
 
     public MLStatus findAll(@RequestParam(value = "key") String key) {
+
         MLStocks ms = CacheMLStock.getMLStockCache().get(key);
         if (ms != null) {
             MLStatus l = ms.getStatus();
-            Collections.sort(l.getPerfList());
+            List pList = l.getPerfList();
+            try {
+                Collections.sort(pList);
+            }catch (Exception e) {
+                log.error(e.getMessage());
+            }
+
+            for (MLPerformances mlPerformances : l.getPerfList()) {
+                if (mlPerformances.getMlD5().getValue() ==0.) mlPerformances.setMlD5(null);
+                if (mlPerformances.getMlD20().getValue() ==0.) mlPerformances.setMlD20(null);
+            }
 
             return l;
         } else

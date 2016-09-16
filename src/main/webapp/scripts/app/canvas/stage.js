@@ -266,6 +266,7 @@ function drawChart(group, pos, elt ,key , heightM, eltSize, i, text , layer, col
             fill: '#AC7969'
         }));
 
+        if (text != null) {
         group.add(new Kinetic.Text({
             x: pos.x+i*(eltSize+2),
             y: pos.y,
@@ -275,7 +276,7 @@ function drawChart(group, pos, elt ,key , heightM, eltSize, i, text , layer, col
             fill: '#AC7969',
             width: 150,
             align: 'left'
-        }));
+        }))}
     }
 
 

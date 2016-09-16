@@ -14,15 +14,15 @@ public class WorkerConnector extends Supervisor{
     private static final Logger log = LoggerFactory.getLogger(MainConnector.class);
 
     /**
-     * create elasticsearch connection
+     * create influxdb connection
      */
     public WorkerConnector() {
-        log.debug("Start akka reader connector");
+        log.debug("Start akka worker connector");
         connector = new InfluxDaoConnector();
     }
 
     /**
-     * Stop actor and close elasticsearch connection
+     * Stop actor and close influxdb connection
      */
     @Override
     public void postStop(){
@@ -32,7 +32,7 @@ public class WorkerConnector extends Supervisor{
 
     /**
      * flow management
-     * @param message: ESRequest to dispatch
+     * @param message: QueryRequest to dispatch
      */
     @Override
     public void onReceive(Object message) {

@@ -1,11 +1,8 @@
 package com.mltrading.models.stock;
 
-import com.mltrading.dao.InfluxDaoConnector;
 import com.mltrading.dao.Requester;
 import com.mltrading.influxdb.dto.QueryRequest;
 import com.mltrading.influxdb.dto.QueryResult;
-import com.mltrading.models.parser.HistoryIndiceParser;
-import com.mltrading.models.parser.HistoryParser;
 
 /**
  * Created by gmo on 16/11/2015.
@@ -121,7 +118,7 @@ public class StockAnalyse extends Object{
         StockAnalyse a = new StockAnalyse();
 
         String query = "SELECT * FROM " + code + "T where time = '" + date + "'";
-        QueryResult list = Requester.sendRequest(new QueryRequest(query, HistoryParser.dbName));
+        QueryResult list = Requester.sendRequest(new QueryRequest(query, StockHistory.dbName));
 
         a.setMma20(new Double(list.getResults().get(0).getSeries().get(0).getValues().get(0).get(MMA20_COLUMN).toString()));
         a.setMma50(new Double(list.getResults().get(0).getSeries().get(0).getValues().get(0).get(MMA50_COLUMN).toString()));

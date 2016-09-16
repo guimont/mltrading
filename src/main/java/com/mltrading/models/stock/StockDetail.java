@@ -50,25 +50,29 @@ public class StockDetail implements Serializable{
 
 
     private static double findPredD1(List<MLPerformances> perfList, String date) {
+        date = date.substring(0,10);
         for (MLPerformances p: perfList) {
-            if (p.getMlD1().getDate().equals(date))
+            if (p.getMlD1().getDate().substring(0, 10).compareTo(date) == 0) {
                 return p.getMlD1().getPrediction();
+            }
         }
 
         return 0; //not found not normal
     }
 
     private static double findPredD5(List<MLPerformances> perfList, String date) {
+        date = date.substring(0,10);
         for (MLPerformances p: perfList) {
-            if (p.getMlD5() != null && (p.getMlD5().getDate().equals(date)))
+            if (p.getMlD5() != null && (p.getMlD5().getDate().substring(0, 10).compareTo(date) == 0))
                 return p.getMlD5().getPrediction();
         }
         return 0; //not found not normal
     }
 
     private static MLPerformance findPredD20(List<MLPerformances> perfList, String date) {
+        date = date.substring(0,10);
         for (MLPerformances p: perfList) {
-            if (p.getMlD20() != null && p.getMlD20().getDate().equals(date))
+            if (p.getMlD20() != null && p.getMlD20().getDate().substring(0, 10).compareTo(date) == 0)
                 return p.getMlD20();
         }
         return null; //not found not normal
@@ -95,7 +99,9 @@ public class StockDetail implements Serializable{
         for (int i=1; i<20; i++) {
             DetailData d = new DetailData();
             d.setDate("J+"+i);
-            if (i < 5) d.setPredD5(mls.getStatus().getPerfList().get(size - 5 + i).getMlD5().getPrediction());
+            if (i < 5) //TODO ugly code
+                if (mls.getStatus().getPerfList().get(size - 5 + i).getMlD5() != null)
+                    d.setPredD5(mls.getStatus().getPerfList().get(size - 5 + i).getMlD5().getPrediction());
             d.setPredD20(mls.getStatus().getPerfList().get(size-20+i).getMlD20().getPrediction());
             data.add(d);
         }

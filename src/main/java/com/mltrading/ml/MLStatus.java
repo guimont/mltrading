@@ -49,15 +49,15 @@ public class MLStatus implements Serializable{
         double avgD1 = 0, avgD5 =0, avgD20 =0;
         int errD1 = 0, errD5 =0, errD20 =0;
         for (MLPerformances p : perfList) {
-            if (p.getMlD1() != null) {
+            if (p.getMlD1() != null && p.getMlD1().getValue()!=0) {
                 avgD1 += p.getMlD1().getRealyield() - p.getMlD1().getYield();
                 errD1 += p.getMlD1().isSign() == false ? 1 : 0;
             }
-            if (p.getMlD5() != null) {
+            if (p.getMlD5() != null && p.getMlD5().getValue()!=0) {
                 avgD5 += p.getMlD5().getRealyield() - p.getMlD5().getYield();
                 errD5 += p.getMlD5().isSign() == false ? 1 : 0;
             }
-            if (p.getMlD20() != null) {
+            if (p.getMlD20() != null && p.getMlD20().getValue()!=0) {
                 avgD20 += p.getMlD20().getRealyield() - p.getMlD20().getYield();
                 errD20 += p.getMlD20().isSign() == false ? 1 : 0;
             }
@@ -148,7 +148,7 @@ public class MLStatus implements Serializable{
      * @return O or max last StockHistory
      */
     public void loadPerf(final String code) {
-        final int max = 89;
+        final int max = 90;
         perfList = new ArrayList();
 
         //offset is mult by 2 because it is no dense data

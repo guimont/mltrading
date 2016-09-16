@@ -47,7 +47,7 @@ public class HistoryLocalRawMaterials implements HistoryRawMaterialsParser {
                 Document doc = Jsoup.parse(text);
                 Elements links = doc.select(refCode);
 
-                BatchPoints bp = InfluxDaoConnector.getBatchPoints(HistoryParser.dbName);
+                BatchPoints bp = InfluxDaoConnector.getBatchPoints(StockHistory.dbName);
                 doc.select("tr").get(7).child(0).hasAttr("data-real-value"); //true
 
 
@@ -85,7 +85,7 @@ public class HistoryLocalRawMaterials implements HistoryRawMaterialsParser {
                 Elements links = doc.select(refCode);
 
 
-                BatchPoints bp = InfluxDaoConnector.getBatchPoints(HistoryParser.dbName);
+                BatchPoints bp = InfluxDaoConnector.getBatchPoints(StockHistory.dbName);
 
 
                 doc.select("tr").get(7).child(0).hasAttr("data-real-value"); //true

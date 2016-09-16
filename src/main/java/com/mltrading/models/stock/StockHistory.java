@@ -5,7 +5,6 @@ package com.mltrading.models.stock;
 import com.mltrading.dao.Requester;
 import com.mltrading.influxdb.dto.QueryRequest;
 import com.mltrading.influxdb.dto.QueryResult;
-import com.mltrading.models.parser.HistoryParser;
 import org.joda.time.DateTime;
 
 import java.util.ArrayList;
@@ -16,6 +15,7 @@ import java.util.List;
  */
 public class StockHistory extends Object{
 
+    public static String dbName = "history";
 
     private String code;
 
@@ -338,7 +338,7 @@ public class StockHistory extends Object{
         StockHistory sh = new StockHistory();
 
         String query = "SELECT * FROM "+code+" where time = '" + date + "'";
-        QueryResult list = Requester.sendRequest(new QueryRequest(query, HistoryParser.dbName));
+        QueryResult list = Requester.sendRequest(new QueryRequest(query, dbName));
 
         sh.setCode(code);
         populate(sh, list, 0);
@@ -352,7 +352,7 @@ public class StockHistory extends Object{
         StockHistory sh = new StockHistory();
 
         String query = "SELECT * FROM "+code+" where time > '" + date + "' limit 1";
-        QueryResult list = Requester.sendRequest(new QueryRequest(query, HistoryParser.dbName));
+        QueryResult list = Requester.sendRequest(new QueryRequest(query, dbName));
 
         sh.setCode(code);
         populate(sh, list, 0);
@@ -366,7 +366,7 @@ public class StockHistory extends Object{
         StockHistory sh = new StockHistory();
 
         String query = "SELECT * FROM "+code+" where time >= '" + date + "' limit " + offset;
-        QueryResult list = Requester.sendRequest(new QueryRequest(query, HistoryParser.dbName));
+        QueryResult list = Requester.sendRequest(new QueryRequest(query, dbName));
 
         if (list == null || list.getResults() == null || list.getResults().get(0).getSeries().get(0) == null)
             return null;
@@ -386,7 +386,7 @@ public class StockHistory extends Object{
         List<String> dateList = new ArrayList<>();
         //bug .. dont get all data .. so make filter to have date only since 2013
         String query = "SELECT * FROM "+code +" where time > '2013-06-01T00:00:00Z'";
-        QueryResult list = Requester.sendRequest(new QueryRequest(query, HistoryParser.dbName));
+        QueryResult list = Requester.sendRequest(new QueryRequest(query, dbName));
         int series = max + offset;
         int size = list.getResults().get(0).getSeries().get(0).getValues().size();
 
@@ -403,7 +403,7 @@ public class StockHistory extends Object{
 
         //suppose base is filled
         String query = "SELECT * FROM "+code +" where time > '2015-06-01T00:00:00Z'";
-        QueryResult list = Requester.sendRequest(new QueryRequest(query, HistoryParser.dbName));
+        QueryResult list = Requester.sendRequest(new QueryRequest(query, dbName));
 
         int size = list.getResults().get(0).getSeries().get(0).getValues().size();
 
@@ -418,7 +418,7 @@ public class StockHistory extends Object{
         List<StockHistory> stockList = new ArrayList<>();
         //offset is mult by 2 because it is no dense data
         String query = "SELECT * FROM " + code + " where time <= '" + date + "' and time > '"+ date + "' - "+  Integer.toString(offset*4) +"d";
-        QueryResult list = Requester.sendRequest(new QueryRequest(query, HistoryParser.dbName));
+        QueryResult list = Requester.sendRequest(new QueryRequest(query, dbName));
 
         int size = list.getResults().get(0).getSeries().get(0).getValues().size();
 
@@ -448,7 +448,7 @@ public class StockHistory extends Object{
         List<StockHistory> stockList = new ArrayList<>();
         //offset is mult by 2 because it is no dense data
         String query = "SELECT * FROM "+code +" where time > '2015-06-01T00:00:00Z'";
-        QueryResult list = Requester.sendRequest(new QueryRequest(query, HistoryParser.dbName));
+        QueryResult list = Requester.sendRequest(new QueryRequest(query, dbName));
 
         int size = list.getResults().get(0).getSeries().get(0).getValues().size();
 
@@ -479,7 +479,7 @@ public class StockHistory extends Object{
         //offset is mult by 2 because it is no dense data
         String query = "SELECT * FROM "+code +" where time > '2014-06-01T00:00:00Z'";
 
-        QueryResult list = Requester.sendRequest(new QueryRequest(query,HistoryParser.dbName));
+        QueryResult list = Requester.sendRequest(new QueryRequest(query,dbName));
         if (list == null || list.getResults() == null || list.getResults().get(0).getSeries() == null)
             return null;
 
@@ -543,7 +543,7 @@ public class StockHistory extends Object{
     public static List<StockHistory> getStockAnalyseList(final String code) {
         List<StockHistory> stockList = new ArrayList<StockHistory>();
         String query = "SELECT * FROM "+code+ "T";
-        QueryResult list = Requester.sendRequest(new QueryRequest(query, HistoryParser.dbName));
+        QueryResult list = Requester.sendRequest(new QueryRequest(query, dbName));
 
         for (int i =0;i<list.getResults().get(0).getSeries().get(0).getValues().size();i++)
             stockList.add(getStockHistory(code, (String) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(0)));
@@ -555,7 +555,7 @@ public class StockHistory extends Object{
     public static List<StockHistory> getStockHistoryList(final String code) {
         List<StockHistory> stockList = new ArrayList<StockHistory>();
         String query = "SELECT * FROM "+code;
-        QueryResult list = Requester.sendRequest(new QueryRequest(query, HistoryParser.dbName));
+        QueryResult list = Requester.sendRequest(new QueryRequest(query, dbName));
 
         for (int i =0;i<list.getResults().get(0).getSeries().get(0).getValues().size();i++)
             stockList.add(getStockHistory(code, (String) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(0)));
@@ -567,7 +567,7 @@ public class StockHistory extends Object{
     public static List<StockHistory> getStockHistoryListOffsetWithAT(final String code, int offset) {
         List<StockHistory> stockList = new ArrayList<>();
         String query = "SELECT * FROM "+code;
-        QueryResult list = Requester.sendRequest(new QueryRequest(query, HistoryParser.dbName));
+        QueryResult list = Requester.sendRequest(new QueryRequest(query, dbName));
 
         int size = list.getResults().get(0).getSeries().get(0).getValues().size();
 
@@ -590,7 +590,7 @@ public class StockHistory extends Object{
     public static List<String> getDateHistoryListOffset(final String code, int offset) {
         List<String> dateList = new ArrayList<>();
         String query = "SELECT * FROM "+code;
-        QueryResult list = Requester.sendRequest(new QueryRequest(query, HistoryParser.dbName));
+        QueryResult list = Requester.sendRequest(new QueryRequest(query, dbName));
 
         if (list.getResults().get(0).getSeries().get(0).getValues().size()< offset)
             return null;

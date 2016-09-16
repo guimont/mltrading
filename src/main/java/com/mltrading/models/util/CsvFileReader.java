@@ -38,7 +38,7 @@ public class CsvFileReader {
     public void readData() {
         try {
 
-            BatchPoints bp = InfluxDaoConnector.getBatchPoints(HistoryParser.dbName);
+            BatchPoints bp = InfluxDaoConnector.getBatchPoints(StockHistory.dbName);
 
             fileReader = new BufferedReader(new FileReader("ConsistencyImport.csv"));
             fileReader.readLine();

@@ -73,7 +73,7 @@ public class HistoryParserGoogle implements HistoryParser {
 
 
                 Document doc = Jsoup.parse(text);
-                BatchPoints bp = InfluxDaoConnector.getBatchPoints(dbName);
+                BatchPoints bp = InfluxDaoConnector.getBatchPoints(StockHistory.dbName);
 
                 Elements links = doc.select(refCode);
                 int count = 0;
@@ -143,7 +143,7 @@ public class HistoryParserGoogle implements HistoryParser {
 
 
                 Document doc = Jsoup.parse(text);
-                BatchPoints bp = InfluxDaoConnector.getBatchPoints(dbName);
+                BatchPoints bp = InfluxDaoConnector.getBatchPoints(StockHistory.dbName);
 
                 Elements links = doc.select(refCode);
 
@@ -211,7 +211,7 @@ public class HistoryParserGoogle implements HistoryParser {
                         System.out.println("break point");
 
                     Document doc = Jsoup.parse(text);
-                    BatchPoints bp = InfluxDaoConnector.getBatchPoints(dbName);
+                    BatchPoints bp = InfluxDaoConnector.getBatchPoints(StockHistory.dbName);
 
                     Elements links = doc.select(refCode);
                     for (Element link : links) {

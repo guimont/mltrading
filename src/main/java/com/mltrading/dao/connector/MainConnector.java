@@ -17,13 +17,12 @@ public class MainConnector extends Supervisor{
 
     /**
      * Create Main connector
-     * Create readerRouter with WORKLOAD_AR_AKKA_READER_ROUTER routes (5 by default)
-     * Create writerRouter with a unique route for Conflict Management
+     * Create worker with WORKER_NB routes (5 by default)
      */
     public MainConnector() {
         //create the worker dispatcher
-        int workerNb = 10;
-        worker = this.getContext().actorOf(new SmallestMailboxPool(workerNb).props(Props.create(WorkerConnector.class)), "workerRouter");
+        int WORKER_NB = 5;
+        worker = this.getContext().actorOf(new SmallestMailboxPool(WORKER_NB).props(Props.create(WorkerConnector.class)), "workerRouter");
 
     }
 

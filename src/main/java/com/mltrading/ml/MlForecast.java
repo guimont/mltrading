@@ -73,7 +73,7 @@ public class MlForecast {
         //For test purpose only
         CacheStockGeneral.getIsinCache().values().stream().filter(s -> s.getCodif().equals("ORA")).forEach(s -> executorRef.submit(() -> {    //For test purpose only
             try {
-                optimize(s, 5, 1, Method.RandomForest, Type.Feature);
+                optimize(s, 1, 1, Method.RandomForest, Type.Feature);
             } finally {
                 {
                     latches.countDown();
@@ -119,7 +119,8 @@ public class MlForecast {
                     MLStocks mls = new MLStocks(s.getCodif());
 
                     if (type == Type.Feature) {
-                        mls.generateValidator("generate");
+                        //mls.generateValidator("generate"); too big for test
+                        mls.generateValidator("generateSimpleModel");
                     }
 
 

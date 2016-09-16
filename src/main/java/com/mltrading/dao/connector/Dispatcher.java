@@ -4,7 +4,6 @@ import akka.actor.ActorRef;
 
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.concurrent.TimeUnit;
 import akka.actor.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,7 +58,7 @@ public class Dispatcher {
      * Send stop message on bus to stop all actors clients
      */
     public static void endDispatcher() {
-        log.info("Stop dispatchers and close all ES connections");
+        log.info("Stop dispatchers and close all influxdb connections");
         for (ActorRef dispatcher : DispatcherHolder.instance.dispatchers.values()) {
             dispatcher.tell(akka.actor.PoisonPill.getInstance(),null);
         }

@@ -2,13 +2,9 @@ package com.mltrading.ml;
 
 import com.mltrading.dao.InfluxDaoConnector;
 import com.mltrading.influxdb.dto.BatchPoints;
-import com.mltrading.influxdb.dto.QueryResult;
-import com.mltrading.models.parser.HistoryParser;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**

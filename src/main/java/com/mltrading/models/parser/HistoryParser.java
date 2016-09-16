@@ -12,8 +12,6 @@ import java.util.concurrent.TimeUnit;
  */
 public interface HistoryParser {
 
-    static String dbName = "history";
-
     void fetch();
 
     public void fetchSpecific(StockGeneral g);

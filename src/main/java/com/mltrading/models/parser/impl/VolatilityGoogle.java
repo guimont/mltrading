@@ -59,7 +59,7 @@ public class VolatilityGoogle implements VolatilityParser {
             text = ParserCommon.loadUrl(new URL(url));
 
             Document doc = Jsoup.parse(text);
-            BatchPoints bp = InfluxDaoConnector.getBatchPoints(HistoryParser.dbName);
+            BatchPoints bp = InfluxDaoConnector.getBatchPoints(StockHistory.dbName);
 
             Elements links = doc.select(refCode);
             int count = 0;
@@ -109,7 +109,7 @@ public class VolatilityGoogle implements VolatilityParser {
                 text = ParserCommon.loadUrl(new URL(url));
 
                 Document doc = Jsoup.parse(text);
-                BatchPoints bp = InfluxDaoConnector.getBatchPoints(HistoryParser.dbName);
+                BatchPoints bp = InfluxDaoConnector.getBatchPoints(StockHistory.dbName);
 
                 Elements links = doc.select(refCode);
                 for (Element link : links) {

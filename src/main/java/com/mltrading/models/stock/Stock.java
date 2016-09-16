@@ -1,7 +1,6 @@
 package com.mltrading.models.stock;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.mltrading.domain.AbstractAuditingEntity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -16,8 +15,6 @@ import java.util.List;
 public class Stock  implements Serializable {
 
 
-    @JsonIgnore
-    private Company company;
 
     private String marche;
     private String indice;
@@ -34,8 +31,6 @@ public class Stock  implements Serializable {
     private String debt;
     private String netDebt;
 
-    @JsonIgnore
-    private Bilan bilan;
 
     //private List<String> indice;
     private String sector;
@@ -60,29 +55,7 @@ public class Stock  implements Serializable {
         this.sector = sector;
     }
 
-    public Bilan getBilan() {
-        return bilan;
-    }
 
-    public void setBilan(Bilan bilan) {
-        this.bilan = bilan;
-    }
-
-    public Company getCompany() {
-        return company;
-    }
-
-    public void setCompany(Company company) {
-        this.company = company;
-    }
-
-    /*public List<String> getIndice() {
-        return indice;
-    }
-
-    public void setIndice(List<String> indice) {
-        this.indice = indice;
-    }*/
 
     public String getSector() {
         return CacheStockGeneral.getIsinCache().get(code).getSector();
