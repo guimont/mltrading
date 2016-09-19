@@ -32,6 +32,10 @@ public class MLPredictor  implements Serializable {
                 sp.setPredictionD20(s.getModel(PredictionPeriodicity.D20).predict(Vectors.dense(fs.vectorize())));
                 sp.setConfidenceD20(100 - (s.getStatus().getErrorRateD20() * 100 / 70));
 
+                fs = FeaturesStock.createRT(stock, s.getValidator(PredictionPeriodicity.D40), date);
+                sp.setPredictionD40(s.getModel(PredictionPeriodicity.D40).predict(Vectors.dense(fs.vectorize())));
+                sp.setConfidenceD40(100 - (s.getStatus().getErrorRate(PredictionPeriodicity.D40) * 100 / 50));
+
                 return sp;
             }catch (Exception e) {
                 System.out.print(e.toString());

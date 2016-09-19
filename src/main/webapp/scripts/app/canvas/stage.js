@@ -59,9 +59,9 @@ function load (data) {
     chartRun({x:390,y:75}, layerChartD5, 'mlD5', 'realyield', '#96B399', false);
     chartRun({x:760,y:75}, layerChartD5, 'mlD5', 'error', 'orange', false);
 
-    chartRun({x:20,y:75}, layerChartD20, 'mlD20', 'yield', 'grey' , true);
-    chartRun({x:390,y:75}, layerChartD20, 'mlD20', 'realyield', '#96B399', false);
-    chartRun({x:760,y:75}, layerChartD20, 'mlD20', 'error', 'orange', false);
+    chartRun({x:20,y:75}, layerChartD20, 'mlD40', 'yield', 'grey' , true);
+    chartRun({x:390,y:75}, layerChartD20, 'mlD40', 'realyield', '#96B399', false);
+    chartRun({x:760,y:75}, layerChartD20, 'mlD40', 'error', 'orange', false);
 
     stagePredictionD1.add(layerChart);
     stagePredictionD5.add(layerChartD5);

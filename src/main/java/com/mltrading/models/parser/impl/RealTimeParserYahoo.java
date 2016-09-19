@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
  */
 
 @Singleton
+@Deprecated /* fuck yahoo .. go to the evil broken again and again*/
 public class RealTimeParserYahoo implements RealTimeParser {
 
     static String cac40 = "https://fr.finance.yahoo.com/q/cp?s=%5EFCHI";

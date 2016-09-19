@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import com.mltrading.ml.CacheMLStock;
 import com.mltrading.ml.MLPredictor;
 import com.mltrading.ml.MlForecast;
+import com.mltrading.models.parser.impl.RealTimeParserBoursorama;
 import com.mltrading.models.parser.impl.RealTimeParserYahoo;
 import com.mltrading.models.stock.*;
 import com.mltrading.models.util.ThreadFactory;
@@ -66,13 +67,13 @@ public class ScheduleParserGeneral  {
 
 
     protected void runExtraction() {
-        RealTimeParserYahoo.refreshCache();
+        RealTimeParserBoursorama.refreshCache();
     }
 
 
     public void start() {
         /*updateBase(); not use here but in update scheduler*/
-        RealTimeParserYahoo.loaderCache();
+        RealTimeParserBoursorama.loaderCache();
         updatePredictor();
         this.extractionCycleInMs =  30000;
         this.timer = new Timer("ExtractionProcess", true);

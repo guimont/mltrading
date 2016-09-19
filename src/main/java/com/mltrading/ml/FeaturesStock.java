@@ -20,19 +20,22 @@ public class FeaturesStock implements Serializable {
     private String dateD1;
     private String dateD5;
     private String dateD20;
+    private String dateD40;
 
     private double resultValueD1 = 0;
     private double resultValueD5 = 0;
     private double resultValueD20 = 0;
+    private double resultValueD40 = 0;
     private double predictionValueD1 = 0;
     private double predictionValueD5 = 0;
     private double predictionValueD20 = 0;
+    private double predictionValueD40 = 0;
     private double currentValue;
 
     private Double vector[];
 
     int currentVectorPos = 0;
-    int normalVectorPos = 0;
+
 
 
     public void setCurrentDate(String currentDate) {
@@ -55,6 +58,7 @@ public class FeaturesStock implements Serializable {
         setResultValue(fs.getResultValue(PredictionPeriodicity.D1), PredictionPeriodicity.D1);
         setResultValue(fs.getResultValue(PredictionPeriodicity.D5), PredictionPeriodicity.D5);
         setResultValue(fs.getResultValue(PredictionPeriodicity.D20), PredictionPeriodicity.D20);
+        setResultValue(fs.getResultValue(PredictionPeriodicity.D40), PredictionPeriodicity.D40);
         this.currentValue = fs.getCurrentValue();
         this.currentVectorPos = fs.currentVectorPos;
         this.vector = fs.vector.clone();
@@ -70,6 +74,8 @@ public class FeaturesStock implements Serializable {
                 return dateD5;
             case D20:
                 return dateD20;
+            case D40:
+                return dateD40;
         }
         //default
         return "";
@@ -86,6 +92,9 @@ public class FeaturesStock implements Serializable {
             case D20:
                 dateD20 = date;
                 break;
+            case D40:
+                dateD40 = date;
+                break;
         }
     }
 
@@ -98,6 +107,8 @@ public class FeaturesStock implements Serializable {
                 return resultValueD5;
             case D20:
                 return resultValueD20;
+            case D40:
+                return resultValueD40;
         }
 
         //default
@@ -115,6 +126,9 @@ public class FeaturesStock implements Serializable {
             case D20:
                 resultValueD20 = resultValue;
                 break;
+            case D40:
+                resultValueD40 = resultValue;
+                break;
         }
     }
 
@@ -129,6 +143,9 @@ public class FeaturesStock implements Serializable {
             case D20:
                 predictionValueD20 = predictionValue;
                 break;
+            case D40:
+                predictionValueD40 = predictionValue;
+                break;
         }
     }
 
@@ -141,6 +158,8 @@ public class FeaturesStock implements Serializable {
                 return predictionValueD5;
             case D20:
                 return predictionValueD20;
+            case D40:
+                return predictionValueD40;
         }
 
         //default
@@ -151,10 +170,6 @@ public class FeaturesStock implements Serializable {
 
     public Double[] getVector() {
         return vector;
-    }
-
-    public int getCurrentVectorPos() {
-        return currentVectorPos;
     }
 
 
@@ -170,7 +185,7 @@ public class FeaturesStock implements Serializable {
         this.currentValue = currentValue;
     }
 
-    public static FeaturesStock transform(StockHistory sh, double value, PredictionPeriodicity t) {
+    public static FeaturesStock transform(double value, PredictionPeriodicity t) {
         FeaturesStock fs = new FeaturesStock();
 
         fs.setPredictionValue(value, t);
@@ -198,15 +213,6 @@ public class FeaturesStock implements Serializable {
         return super.clone();
     }
 
-    public  static List<FeaturesStock> transformList(List<StockHistory> shL, PredictionPeriodicity t) {
-        List<FeaturesStock> fsL = new ArrayList<>();
-
-        for (int i = 0; i< shL.size()-1; i++) {
-            fsL.add(transform(shL.get(i), shL.get(i+1).getValue(), t));
-        }
-
-        return fsL;
-    }
 
     public void linearize(StockHistory sh, MatrixValidator validator) {
         this.vector[currentVectorPos++] = sh.getValue();
@@ -285,6 +291,13 @@ public class FeaturesStock implements Serializable {
                     fs.setResultValue(res.getValue(),PredictionPeriodicity.D20);
                     fs.setDate(res.getDay(),PredictionPeriodicity.D20);
                 }
+
+                res = StockHistory.getStockHistoryDayOffset(stock.getCodif(), date, 40);
+                if (res != null) {
+                    fs.setResultValue(res.getValue(),PredictionPeriodicity.D40);
+                    fs.setDate(res.getDay(),PredictionPeriodicity.D40);
+                }
+
             } catch (Exception e) {
                 log.error("Cannot get date for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
                 continue;

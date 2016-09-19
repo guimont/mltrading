@@ -95,14 +95,23 @@ public class RandomForestStock implements Serializable {
             mls.getValidator(PredictionPeriodicity.D20).getSeed());
 
 
+        // Train a RandomForest model.
+        final RandomForestModel modelD40 = RandomForest.trainRegressor(trainingDataD20,
+            categoricalFeaturesInfoD20, mls.getValidator(PredictionPeriodicity.D40).getNumTrees(), featureSubsetStrategy, impurity,
+            mls.getValidator(PredictionPeriodicity.D40).getMaxDepth(), mls.getValidator(PredictionPeriodicity.D40).getMaxBins(),
+            mls.getValidator(PredictionPeriodicity.D40).getSeed());
+
+
         mls.setModel(PredictionPeriodicity.D1, modelD1);
-        mls.setModel(PredictionPeriodicity.D5, modelD1);
-        mls.setModel(PredictionPeriodicity.D20, modelD1);
+        mls.setModel(PredictionPeriodicity.D5, modelD5);
+        mls.setModel(PredictionPeriodicity.D20, modelD20);
+        mls.setModel(PredictionPeriodicity.D40, modelD40);
 
 
         mls.getValidator(PredictionPeriodicity.D1).setVectorSize(fsL.get(0).currentVectorPos);
         mls.getValidator(PredictionPeriodicity.D5).setVectorSize(fsL.get(0).currentVectorPos);
         mls.getValidator(PredictionPeriodicity.D20).setVectorSize(fsL.get(0).currentVectorPos);
+        mls.getValidator(PredictionPeriodicity.D40).setVectorSize(fsL.get(0).currentVectorPos);
 
         JavaRDD<FeaturesStock> predictionAndLabel = testData.map(
             new Function<FeaturesStock, FeaturesStock>() {
@@ -118,6 +127,10 @@ public class RandomForestStock implements Serializable {
                         pred = modelD20.predict(Vectors.dense(fs.vectorize()));
                         fsResult.setPredictionValue(pred,PredictionPeriodicity.D20);
                         fsResult.setDate(fs.getDate(PredictionPeriodicity.D20), PredictionPeriodicity.D20);
+
+                        pred = modelD40.predict(Vectors.dense(fs.vectorize()));
+                        fsResult.setPredictionValue(pred,PredictionPeriodicity.D40);
+                        fsResult.setDate(fs.getDate(PredictionPeriodicity.D40), PredictionPeriodicity.D40);
 
 
                     return fsResult;
@@ -143,6 +156,8 @@ public class RandomForestStock implements Serializable {
 
                     //if (pl.getResultValue(PredictionPeriodicity.D20) != 0)
                     perf.setMlD20(MLPerformance.calculYields(pl.getDate(PredictionPeriodicity.D20), pl.getPredictionValue(PredictionPeriodicity.D20), pl.getResultValue(PredictionPeriodicity.D20), pl.getCurrentValue()));
+
+                    perf.setMlD40(MLPerformance.calculYields(pl.getDate(PredictionPeriodicity.D40), pl.getPredictionValue(PredictionPeriodicity.D40), pl.getResultValue(PredictionPeriodicity.D40), pl.getCurrentValue()));
 
 
                     return perf;
@@ -261,6 +276,13 @@ public class RandomForestStock implements Serializable {
             log.error("vector: " + fsLD20.get(0).currentVectorPos );
         }
 
+        List<FeaturesStock> fsLD40 = FeaturesStock.create(stock, mls.getValidator(PredictionPeriodicity.D40), FeaturesStock.RANGE_TEST);
+        if( fsLD40.get(0).currentVectorPos != mls.getValidator(PredictionPeriodicity.D40).getVectorSize())    {
+            log.error("size vector not corresponding");
+            log.error("validator: " + mls.getValidator(PredictionPeriodicity.D40).getVectorSize());
+            log.error("vector: " + fsLD40.get(0).currentVectorPos );
+        }
+
         if (null == fsLD1) return null;
 
         //JavaSparkContext sc = CacheMLStock.getJavaSparkContext();
@@ -294,6 +316,11 @@ public class RandomForestStock implements Serializable {
             fsResult.setPredictionValue(pred, PredictionPeriodicity.D20);
             fsResult.setDate(fsD20.getDate( PredictionPeriodicity.D20),  PredictionPeriodicity.D20);
 
+            FeaturesStock fsD40 = fsLD40.get(i);
+            pred = mls.getModel(PredictionPeriodicity.D40).predict(Vectors.dense(fsD40.vectorize()));
+            fsResult.setPredictionValue(pred, PredictionPeriodicity.D40);
+            fsResult.setDate(fsD40.getDate( PredictionPeriodicity.D40),  PredictionPeriodicity.D40);
+
             resFSList.add(fsResult);
         }
 
@@ -319,61 +346,17 @@ public class RandomForestStock implements Serializable {
             else
                 perf.setMlD20(new MLPerformance(pl.getDate(PredictionPeriodicity.D20), pl.getPredictionValue(PredictionPeriodicity.D20), -1, pl.getCurrentValue(), 0, 0, true));
 
+            if (pl.getResultValue(PredictionPeriodicity.D40) != 0)
+                perf.setMlD40(MLPerformance.calculYields(pl.getDate(PredictionPeriodicity.D40), pl.getPredictionValue(PredictionPeriodicity.D40), pl.getResultValue(PredictionPeriodicity.D40), pl.getCurrentValue()));
+            else
+                perf.setMlD40(new MLPerformance(pl.getDate(PredictionPeriodicity.D40), pl.getPredictionValue(PredictionPeriodicity.D40), -1, pl.getCurrentValue(), 0, 0, true));
+
+
+
             resList.add(perf);
 
         }
 
-
-
-/*
-        JavaRDD<FeaturesStock> predictionAndLabel = testData.map(
-            new Function<FeaturesStock, FeaturesStock>() {
-                public FeaturesStock call(FeaturesStock fs) {
-                    double pred = mls.getMlD1().getModel().predict(Vectors.dense(fs.vectorize()));
-                    FeaturesStock fsResult = new FeaturesStock(fs, pred, PredictionPeriodicity.D1);
-                    if (fs.getResultValue(PredictionPeriodicity.D5) != 0) {
-                        pred = mls.getMlD5().getModel().predict(Vectors.dense(fs.vectorize()));
-                        fsResult.setPredictionValue(pred,PredictionPeriodicity.D5);
-                    }
-
-                    if (fs.getResultValue(PredictionPeriodicity.D20) != 0) {
-                        pred = mls.getMlD20().getModel().predict(Vectors.dense(fs.vectorize()));
-                        fsResult.setPredictionValue(pred,PredictionPeriodicity.D20);
-                    }
-
-                    return fsResult;
-                }
-            }
-        );
-
-
-        mls.setTestData(predictionAndLabel);
-
-        JavaRDD<MLPerformances> res =
-            predictionAndLabel.map(new Function <FeaturesStock, MLPerformances>() {
-                public MLPerformances call(FeaturesStock pl) {
-                    System.out.println("estimate: " + pl.getPredictionValue(PredictionPeriodicity.D1));
-                    System.out.println("result: " + pl.getResultValue(PredictionPeriodicity.D1));
-                    //Double diff = pl.getPredictionValue() - pl.getResultValue();
-                    MLPerformances perf = new MLPerformances(pl.getDate());
-
-                    perf.setMlD1(MLPerformance.calculYields(pl.getDate(), pl.getPredictionValue(PredictionPeriodicity.D1), pl.getResultValue(PredictionPeriodicity.D1), pl.getCurrentValue()));
-
-                    if (pl.getResultValue(PredictionPeriodicity.D5) != 0)
-                        perf.setMlD5(MLPerformance.calculYields(pl.getDate(), pl.getPredictionValue(PredictionPeriodicity.D5), pl.getResultValue(PredictionPeriodicity.D5), pl.getCurrentValue()));
-
-                    if (pl.getResultValue(PredictionPeriodicity.D20) != 0)
-                        perf.setMlD20(MLPerformance.calculYields(pl.getDate(), pl.getPredictionValue(PredictionPeriodicity.D20), pl.getResultValue(PredictionPeriodicity.D20), pl.getCurrentValue()));
-
-
-                    return perf;
-
-                }
-            });
-
-        if (res.isEmpty())
-            return null;
-            */
 
         mls.getStatus().setPerfList(resList);
 

@@ -19,7 +19,6 @@ import java.net.URL;
  */
 
 @Singleton
-@Deprecated
 public class RealTimeParserBoursorama implements RealTimeParser {
 
     static String cac40 = "http://www.boursorama.com/bourse/actions/cours_az.phtml?MARCHE=1rPCAC&validate=";
@@ -27,12 +26,85 @@ public class RealTimeParserBoursorama implements RealTimeParser {
     static String refCode = "tbody";
 
 
+    public static int refreshCache() {
+        return refreshCache(cac40);
+
+    }
+
     public static int loaderCache() {
         return loaderStock(cac40);
 
     }
 
-    //TODO
+
+    private static int refreshCache(String url) {
+
+        try {
+            String text = ParserCommon.loadUrl(new URL(url));
+
+            Document doc = Jsoup.parse(text);
+
+            Elements links = doc.select(refCode);
+            Elements sublinks = links.select("tr");
+
+            for (Element link : sublinks) {
+
+
+                if (!link.hasAttr("href")) break;
+
+                String balise = link.getElementsByAttribute("href").get(1).toString();
+
+                String codif;
+                /* specific format for solvay*/
+                if (balise.contains("SOLB")) {
+                    codif = "SOLB";
+                } else {
+
+                    String splitRes[] = balise.split("=1r");
+                    splitRes = splitRes[1].split("\">");
+                    codif = splitRes[0].substring(1);
+                }
+
+                StockGeneral g = CacheStockGeneral.getCache().get(CacheStockGeneral.getCode(codif));
+
+                g.setValue(new Float(link.child(3).text()));
+                g.setVariation(new Float(link.child(4).text().replaceAll("%", "")));
+                g.setOpening(new Float(link.child(5).text()));
+                g.setVolume(new Integer(link.child(9).text().replaceAll(" ", "")));
+
+
+                try {
+                    CacheStockGeneral.getCache().put(g.getCode(), g);
+                } catch (Exception e) {
+                    System.out.print(e);
+                }
+            }
+
+
+            //System.out.println(CacheStockGeneral.getCache().size());
+
+
+            /*for (StockGeneral g: CacheStockGeneral.getCache().values()) {
+                System.out.println(g.getCode());
+            }*/
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
+
+
+
+
+
+    /**
+     * use boursorama to create cac 40
+     * @param url
+     * @return
+     */
     private static int loaderStock(String url) {
 
         try {
@@ -46,23 +118,44 @@ public class RealTimeParserBoursorama implements RealTimeParser {
             for (Element link : sublinks) {
 
                 StockGeneral g = new StockGeneral();
-                String name = link.child(1).text();
-                String value = link.child(3).text();
-                String variation = link.child(4).text();
-                String open = link.child(5).text();
-                String volume = link.child(9).text();
 
+                if (!link.hasAttr("href")) break;
 
-                CacheStockGeneral.getCache().put(g.getCode(),g);
+                String balise = link.getElementsByAttribute("href").get(1).toString();
+
+                /* specific format for solvay*/
+                if (balise.contains("SOLB")) {
+                    g.setCodif("SOLB");
+                } else {
+
+                    String splitRes[] = balise.split("=1r");
+                    splitRes = splitRes[1].split("\">");
+                    g.setCodif(splitRes[0].substring(1));
+                }
+                g.setName(link.child(1).text());
+                g.setValue(new Float(link.child(3).text()));
+                g.setVariation(new Float(link.child(4).text().replaceAll("%", "")));
+                g.setOpening(new Float(link.child(5).text()));
+                g.setVolume(new Integer(link.child(9).text().replaceAll(" ", "")));
+
+                g.setCode(CacheStockGeneral.getCode(g.getCodif()));
+                g.setPlace(CacheStockGeneral.getPlace(g.getCodif()));
+                g.setSector(CacheStockGeneral.getSector(g.getCodif()));
+
+                try {
+                    CacheStockGeneral.getCache().put(g.getCode(), g);
+                } catch (Exception e) {
+                    System.out.print(e);
+                }
             }
 
 
             System.out.println(CacheStockGeneral.getCache().size());
 
 
-            for (StockGeneral g: CacheStockGeneral.getCache().values()) {
+            /*for (StockGeneral g: CacheStockGeneral.getCache().values()) {
                 System.out.println(g.getCode());
-            }
+            }*/
 
         } catch (IOException e) {
             e.printStackTrace();

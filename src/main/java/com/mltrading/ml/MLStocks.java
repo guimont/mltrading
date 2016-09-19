@@ -31,7 +31,7 @@ public class MLStocks  implements Serializable {
         container.put(PredictionPeriodicity.D1, new MLStock(codif, PredictionPeriodicity.D1));
         container.put(PredictionPeriodicity.D5, new MLStock(codif, PredictionPeriodicity.D5));
         container.put(PredictionPeriodicity.D20, new MLStock(codif, PredictionPeriodicity.D20));
-        //container.put(PredictionPeriodicity.D40, new MLStock(codif, PredictionPeriodicity.D40));
+        container.put(PredictionPeriodicity.D40, new MLStock(codif, PredictionPeriodicity.D40));
 
         status = new MLStatus();
     }

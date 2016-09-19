@@ -12,10 +12,12 @@ public class StockPrediction implements Serializable{
     private double PredictionD1 = 0;
     private double PredictionD5 = 0;
     private double PredictionD20 = 0;
+    private double PredictionD40 = 0;
 
     private double confidenceD1 = 0;
     private double confidenceD5 = 0;
     private double confidenceD20 = 0;
+    private double confidenceD40 = 0;
 
     public StockPrediction(String codif) {
         this.codif = codif;
@@ -75,5 +77,13 @@ public class StockPrediction implements Serializable{
 
     public void setConfidenceD20(double confidenceD20) {
         this.confidenceD20 = confidenceD20;
+    }
+
+    public void setPredictionD40(double predictionD40) {
+        PredictionD40 = predictionD40;
+    }
+
+    public void setConfidenceD40(double confidenceD40) {
+        this.confidenceD40 = confidenceD40;
     }
 }

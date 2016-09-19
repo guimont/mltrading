@@ -50,15 +50,14 @@ public class test {
     }*/
 
 
-
+/*
     public static void main(String[] args) {
         /*HistoryRawMaterialsParser rawParser = new HistoryLocalRawMaterials();
         rawParser.fetchCurrent(43);*
         Analyse a = new Analyse();
-        a.processDaily(50);*/
+        a.processDaily(50);*
 
-        Analyse a = new Analyse();
-        a.processDaily(50);
+        RealTimeParserBoursorama.loaderCache();
 
 
     }

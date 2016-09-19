@@ -34,7 +34,7 @@ public class MLPerformances  implements Serializable, Comparable<MLPerformances>
         container.put(PredictionPeriodicity.D1,new MLPerformance());
         container.put(PredictionPeriodicity.D5,new MLPerformance());
         container.put(PredictionPeriodicity.D20,new MLPerformance());
-
+        container.put(PredictionPeriodicity.D40,new MLPerformance());
     }
 
     public MLPerformances(String date) {
@@ -57,6 +57,14 @@ public class MLPerformances  implements Serializable, Comparable<MLPerformances>
     public void setMlD5(MLPerformance mlPerf) {
 
         container.put(PredictionPeriodicity.D5,mlPerf);
+    }
+
+    public MLPerformance getMlD40() {
+        return  container.get(PredictionPeriodicity.D40);
+    }
+
+    public void setMlD40(MLPerformance mlPerf) {
+        container.put(PredictionPeriodicity.D40,mlPerf);
     }
 
     public MLPerformance getMlD20() {

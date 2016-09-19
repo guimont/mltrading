@@ -28,14 +28,6 @@ public class MLPredictionResource {
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @RolesAllowed(AuthoritiesConstants.ADMIN)
-    /*public List<MLPerformances> findAll(@RequestParam(value = "key") String key) {
-        MLStocks ms = CacheMLStock.getMLStockCache().get(key);
-        List<MLPerformances> l = ms.getPerfList();
-
-        Collections.sort(l);
-
-        return l;
-    }*/
 
     public MLStatus findAll(@RequestParam(value = "key") String key) {
 
@@ -50,8 +42,9 @@ public class MLPredictionResource {
             }
 
             for (MLPerformances mlPerformances : l.getPerfList()) {
-                if (mlPerformances.getMlD5().getValue() ==0.) mlPerformances.setMlD5(null);
-                if (mlPerformances.getMlD20().getValue() ==0.) mlPerformances.setMlD20(null);
+                if (mlPerformances.getMlD5() != null && mlPerformances.getMlD5().getValue() ==0.) mlPerformances.setMlD5(null);
+                if (mlPerformances.getMlD20() != null && mlPerformances.getMlD20().getValue() ==0.) mlPerformances.setMlD20(null);
+                if (mlPerformances.getMlD40() != null && mlPerformances.getMlD40().getValue() ==0.) mlPerformances.setMlD40(null);
             }
 
             return l;

@@ -133,57 +133,25 @@ public class MlForecast {
 
                     if (null != mls) {
                         mls.getStatus().calculeAvgPrd();
-                        mls.getValidator(PredictionPeriodicity.D1).save(mls.getCodif() + saveCode + "D1", mls.getStatus().getErrorRateD1(), mls.getStatus().getAvgD1());
-                        mls.getValidator(PredictionPeriodicity.D5).save(mls.getCodif() + saveCode + "D5", mls.getStatus().getErrorRateD5(), mls.getStatus().getAvgD5());
-                        mls.getValidator(PredictionPeriodicity.D20).save(mls.getCodif() + saveCode + "D20", mls.getStatus().getErrorRateD20(), mls.getStatus().getAvgD20());
+
+                        //TODO refactor this common code
+                        mls.getValidator(PredictionPeriodicity.D1).save(mls.getCodif() + saveCode +
+                            PredictionPeriodicity.D1, mls.getStatus().getErrorRateD1(), mls.getStatus().getAvgD1());
+                        mls.getValidator(PredictionPeriodicity.D5).save(mls.getCodif() + saveCode +
+                                PredictionPeriodicity.D5, mls.getStatus().getErrorRateD5(), mls.getStatus().getAvgD5());
+                        mls.getValidator(PredictionPeriodicity.D20).save(mls.getCodif() + saveCode +
+                            PredictionPeriodicity.D20, mls.getStatus().getErrorRateD20(), mls.getStatus().getAvgD20());
+                        mls.getValidator(PredictionPeriodicity.D40).save(mls.getCodif() + saveCode +
+                            PredictionPeriodicity.D40.toString(), mls.getStatus().getErrorRate(PredictionPeriodicity.D40), mls.getStatus().getAvg(PredictionPeriodicity.D40));
                         MLStocks ref = CacheMLStock.getMLStockCache().get(mls.getCodif());
 
 
                         if (ref != null) {
-                            /**for 1 day prevision*/
-                            if (mls.getStatus().getErrorRateD1() <= ref.getStatus().getErrorRateD1() ||
-                                (mls.getStatus().getErrorRateD1() == ref.getStatus().getErrorRateD1() &&
-                                    mls.getStatus().getAvgD1() < ref.getStatus().getAvgD1())) {
-                                ref.replace(PredictionPeriodicity.D1,mls);
-                                ref.getStatus().setAvgD1(mls.getStatus().getAvgD1());
-                                ref.getStatus().setErrorRateD1(mls.getStatus().getErrorRateD1());
 
-                                try {
-                                    ref.getStatus().replaceElementList(mls.getStatus().getPerfList(), 1);
-                                    //mls.getStatus().savePerf(s.getCodif() , 1);
-                                } catch (Exception e) {
-                                }
-                            }
-
-
-                            /**for 5 day prevision*/
-                            if (mls.getStatus().getErrorRateD5() < ref.getStatus().getErrorRateD5() ||
-                                (mls.getStatus().getErrorRateD5() == ref.getStatus().getErrorRateD5() &&
-                                    mls.getStatus().getAvgD5() < ref.getStatus().getAvgD5())) {
-                                ref.replace(PredictionPeriodicity.D5, mls);
-                                ref.getStatus().setAvgD5(mls.getStatus().getAvgD5());
-                                ref.getStatus().setErrorRateD5(mls.getStatus().getErrorRateD5());
-                                try {
-                                    ref.getStatus().replaceElementList(mls.getStatus().getPerfList(), 5);
-                                } catch (Exception e) {
-                                    log.error("Cannot replace element for period 5 days" + e);
-                                }
-                            }
-
-
-                            /**for 20 day prevision*/
-                            if (mls.getStatus().getErrorRateD20() < ref.getStatus().getErrorRateD20() ||
-                                (mls.getStatus().getErrorRateD20() == ref.getStatus().getErrorRateD20() &&
-                                    mls.getStatus().getAvgD20() < ref.getStatus().getAvgD20())) {
-                                ref.replace(PredictionPeriodicity.D20, mls);
-                                ref.getStatus().setAvgD20(mls.getStatus().getAvgD20());
-                                ref.getStatus().setErrorRateD20(mls.getStatus().getErrorRateD20());
-                                try {
-                                    ref.getStatus().replaceElementList(mls.getStatus().getPerfList(), 20);
-                                } catch (Exception e) {
-                                    log.error("Cannot replace element for period 20 days" + e);
-                                }
-                            }
+                            checkResult(mls,ref,PredictionPeriodicity.D1);
+                            checkResult(mls,ref,PredictionPeriodicity.D5);
+                            checkResult(mls,ref,PredictionPeriodicity.D20);
+                            checkResult(mls,ref,PredictionPeriodicity.D40);
 
                         } else {
                             CacheMLStock.getMLStockCache().put(mls.getCodif(), mls);
@@ -219,6 +187,45 @@ public class MlForecast {
 
     }
 
+
+    /**
+     * compare result
+     * @param mls
+     * @param ref
+     * @param period
+     * @return
+     */
+    private boolean compareResult(MLStatus mls, MLStatus ref, PredictionPeriodicity period) {
+        return mls.getErrorRate(period) <= ref.getErrorRate(PredictionPeriodicity.D1) ||
+            (mls.getErrorRate(period) == ref.getErrorRate(PredictionPeriodicity.D1) &&
+            mls.getAvg(period) < ref.getAvg(period));
+    }
+
+    /**
+     * compare result and replace it if better
+     * @param mls
+     * @param ref
+     * @param period
+     * @return
+     */
+    private boolean checkResult(MLStocks mls, MLStocks ref, PredictionPeriodicity period) {
+        if (compareResult(mls.getStatus(),ref.getStatus(),period)) {
+            ref.replace(PredictionPeriodicity.D1,mls);
+            ref.getStatus().setAvg(mls.getStatus().getAvgD1(), period);
+            ref.getStatus().setErrorRate(mls.getStatus().getErrorRate(period), period);
+
+            try {
+                ref.getStatus().replaceElementList(mls.getStatus().getPerfList(), period);
+            } catch (Exception e) {
+                log.error(e.toString());
+            } finally {
+                return true;
+            }
+
+        }
+
+        return false;
+    }
 
     public void optimizeModel() {
 
@@ -271,55 +278,23 @@ public class MlForecast {
 
 
                 if (ref != null) {
-                    /**for 1 day prevision*/
-                    if (mls.getStatus().getErrorRateD1() <= ref.getStatus().getErrorRateD1() ||
-                        (mls.getStatus().getErrorRateD1() == ref.getStatus().getErrorRateD1() &&
-                            mls.getStatus().getAvgD1() < ref.getStatus().getAvgD1())) {
-                        ref.replace(PredictionPeriodicity.D1, mls);
-                        ref.getStatus().setAvgD1(mls.getStatus().getAvgD1());
-                        ref.getStatus().setErrorRateD1(mls.getStatus().getErrorRateD1());
 
-                        try {
-                            ref.getStatus().replaceElementList(mls.getStatus().getPerfList(), 1);
-                            //mls.getStatus().savePerf(s.getCodif() , 1);
-                        } catch (Exception e) {
-                        }
-                    } else {
+                    //TODO better to iterate all model => refactor
+                    if (checkResult(mls,ref,PredictionPeriodicity.D1) == false)
                         mls.getValidator(PredictionPeriodicity.D1).revertModel(mls.getValidator(PredictionPeriodicity.D1));
-                    }
 
 
-                    /**for 5 day prevision*/
-                    if (mls.getStatus().getErrorRateD5() < ref.getStatus().getErrorRateD5() ||
-                        (mls.getStatus().getErrorRateD5() == ref.getStatus().getErrorRateD5() &&
-                            mls.getStatus().getAvgD5() < ref.getStatus().getAvgD5())) {
-                        ref.replace(PredictionPeriodicity.D5, mls);
-                        ref.getStatus().setAvgD5(mls.getStatus().getAvgD5());
-                        ref.getStatus().setErrorRateD5(mls.getStatus().getErrorRateD5());
-                        try {
-                            ref.getStatus().replaceElementList(mls.getStatus().getPerfList(), 5);
-                        } catch (Exception e) {
-                            log.error("Cannot replace element for period 5 days" + e);
-                        }
-                    } else {
+                    if (checkResult(mls,ref,PredictionPeriodicity.D5) == false) {
                         mls.getValidator(PredictionPeriodicity.D5).revertModel(mls.getValidator(PredictionPeriodicity.D5));
                     }
 
 
-                    /**for 20 day prevision*/
-                    if (mls.getStatus().getErrorRateD20() < ref.getStatus().getErrorRateD20() ||
-                        (mls.getStatus().getErrorRateD20() == ref.getStatus().getErrorRateD20() &&
-                            mls.getStatus().getAvgD20() < ref.getStatus().getAvgD20())) {
-                        ref.replace(PredictionPeriodicity.D20, mls);
-                        ref.getStatus().setAvgD20(mls.getStatus().getAvgD20());
-                        ref.getStatus().setErrorRateD20(mls.getStatus().getErrorRateD20());
-                        try {
-                            ref.getStatus().replaceElementList(mls.getStatus().getPerfList(), 20);
-                        } catch (Exception e) {
-                            log.error("Cannot replace element for period 20 days" + e);
-                        }
-                    } else {
+                    if (checkResult(mls,ref,PredictionPeriodicity.D20) == false){
                         mls.getValidator(PredictionPeriodicity.D20).revertModel(mls.getValidator(PredictionPeriodicity.D20));
+                    }
+
+                    if (checkResult(mls,ref,PredictionPeriodicity.D40) == false){
+                        mls.getValidator(PredictionPeriodicity.D40).revertModel(mls.getValidator(PredictionPeriodicity.D40));
                     }
 
                 } else {
