@@ -270,6 +270,7 @@ public class FeaturesStock implements Serializable {
             return null;
         }
 
+        int dayAfterD5 = 1, dayAfterD20 = 1, dayAfterD40 = 1;
         for (String date: rangeDate) {
             FeaturesStock fs = new FeaturesStock();
             fs.setCurrentDate(date);
@@ -285,17 +286,26 @@ public class FeaturesStock implements Serializable {
                 if (res != null) {
                     fs.setResultValue(res.getValue(),PredictionPeriodicity.D5);
                     fs.setDate(res.getDay(),PredictionPeriodicity.D5);
+                }else {
+                    fs.setResultValue(0.,PredictionPeriodicity.D5);
+                    fs.setDate("J+"+dayAfterD5++, PredictionPeriodicity.D5);
                 }
                 res = StockHistory.getStockHistoryDayOffset(stock.getCodif(), date, 20);
                 if (res != null) {
                     fs.setResultValue(res.getValue(),PredictionPeriodicity.D20);
                     fs.setDate(res.getDay(),PredictionPeriodicity.D20);
+                }else {
+                    fs.setResultValue(0.,PredictionPeriodicity.D20);
+                    fs.setDate("J+"+dayAfterD20++, PredictionPeriodicity.D20);
                 }
 
                 res = StockHistory.getStockHistoryDayOffset(stock.getCodif(), date, 40);
                 if (res != null) {
                     fs.setResultValue(res.getValue(),PredictionPeriodicity.D40);
                     fs.setDate(res.getDay(),PredictionPeriodicity.D40);
+                } else {
+                    fs.setResultValue(0.,PredictionPeriodicity.D40);
+                    fs.setDate("J+"+dayAfterD40++, PredictionPeriodicity.D40);
                 }
 
             } catch (Exception e) {

@@ -102,6 +102,15 @@ function drawValue(group, pos, data,min, heightM, marge,  i ,  layer) {
     });
     group.add(pred);
 
+    var pred = new Kinetic.Circle({
+        x: pos.x * 2 + i * (10),
+        y: SIZERESY - (data[i].predD5-min) * heightM - marge,
+        width: 5,
+        height: 5,
+        opacity: 0.2,
+        fill: 'blue'
+    });
+    group.add(pred);
 
 
     var pred = new Kinetic.Circle({
@@ -109,7 +118,18 @@ function drawValue(group, pos, data,min, heightM, marge,  i ,  layer) {
         y: SIZERESY - (data[i].predD20-min) * heightM - marge,
         width: 5,
         height: 5,
+        opacity: 0.2,
         fill: 'orange'
+    });
+    group.add(pred);
+
+    var pred = new Kinetic.Circle({
+        x: pos.x * 2 + i * (10),
+        y: SIZERESY - (data[i].predD40-min) * heightM - marge,
+        width: 5,
+        height: 5,
+        opacity: 0.2,
+        fill: 'green'
     });
     group.add(pred);
     layer.draw();

@@ -212,18 +212,17 @@ public class MLStatus implements Serializable{
     }
 
 
-    static public int DATE_COLUMN = 0;
-    static public int ERROR_COLUMN = 1;
-    static public int PREDICTION_COLUMN = 2;
-    static public int REALVALUE_COLUMN = 3;
-    static public int REALYIELD_COLUMN = 4;
-    static public int SIGN_COLUMN = 5;
-    static public int VALUE_COLUMN = 6;
-    static public int YIELD_COLUMN = 7;
+    static public int DATE_COLUMN = 1;
+    static public int ERROR_COLUMN = 2;
+    static public int PREDICTION_COLUMN = 3;
+    static public int REALVALUE_COLUMN = 4;
+    static public int REALYIELD_COLUMN = 5;
+    static public int SIGN_COLUMN = 6;
+    static public int VALUE_COLUMN = 7;
+    static public int YIELD_COLUMN = 8;
 
     public static void populate(MLPerformance mlp, QueryResult meanQ, int i) {
         mlp.setDate((String) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(DATE_COLUMN));
-
         mlp.setError((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(ERROR_COLUMN));
         mlp.setPrediction((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(PREDICTION_COLUMN));
         mlp.setRealvalue((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(REALVALUE_COLUMN));
@@ -268,5 +267,26 @@ public class MLStatus implements Serializable{
         if (period == PredictionPeriodicity.D5) errorRateD5= errorRate;
         if (period == PredictionPeriodicity.D20) errorRateD20= errorRate;
         if (period == PredictionPeriodicity.D40) errorRateD40= errorRate;
+    }
+
+
+    @Override
+    public MLStatus clone()  {
+        MLStatus cloneObject = new MLStatus();
+        cloneObject.avgD1 = this.avgD1;
+        cloneObject.avgD20 = this.avgD20;
+        cloneObject.avgD5 = this.avgD5;
+        cloneObject.avgD40 = this.avgD40;
+        cloneObject.errorRateD1 = this.errorRateD1;
+        cloneObject.errorRateD5 = this.errorRateD5;
+        cloneObject.errorRateD20 = this.errorRateD20;
+        cloneObject.errorRateD40 = this.errorRateD40;
+
+        cloneObject.perfList = new ArrayList();
+        for (MLPerformances perfs : perfList) {
+            cloneObject.perfList.add(perfs.clone());
+        }
+
+        return cloneObject;
     }
 }

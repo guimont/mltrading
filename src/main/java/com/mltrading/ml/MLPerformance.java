@@ -125,7 +125,8 @@ public class MLPerformance implements Serializable{
     }
 
     public void savePerformance(BatchPoints bp, String code) {
-        Point pt = Point.measurement(code).time(new DateTime(date).getMillis() + 3600000, TimeUnit.MILLISECONDS)
+        Point pt = Point.measurement(code)
+            .field("datePred",date)
             .field("sign", sign)
             .field("yield", yield)
             .field("realyield", realyield)
@@ -136,6 +137,21 @@ public class MLPerformance implements Serializable{
             .build();
         bp.point(pt);
         InfluxDaoConnector.writePoints(bp);
+    }
+
+
+    public MLPerformance clone() {
+        MLPerformance cloneObject = new MLPerformance();
+        cloneObject.date = this.date;
+        cloneObject.sign = this.sign;
+        cloneObject.yield = this.yield;
+        cloneObject.realyield = this.realyield;
+        cloneObject.prediction = this.prediction;
+        cloneObject.realvalue = this.realvalue;
+        cloneObject.value = this.value;
+        cloneObject.error = this.error;
+
+        return cloneObject;
     }
 
 }

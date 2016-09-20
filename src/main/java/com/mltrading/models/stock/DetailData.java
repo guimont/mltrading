@@ -10,6 +10,13 @@ public class DetailData implements Serializable {
     private double value;
     private double predD1;
     private double predD5;
+    private double valueD5;
+    private boolean signD5;
+
+    private double predD40;
+    private double valueD40;
+    private boolean signD40;
+
     private double predD20;
     private double valueD20;
     private boolean signD20;
@@ -68,5 +75,45 @@ public class DetailData implements Serializable {
 
     public void setPredD20(double predD20) {
         this.predD20 = predD20;
+    }
+
+    public double getValueD5() {
+        return valueD5;
+    }
+
+    public void setValueD5(double valueD5) {
+        this.valueD5 = valueD5;
+    }
+
+    public boolean isSignD5() {
+        return signD5;
+    }
+
+    public void setSignD5(boolean signD5) {
+        this.signD5 = signD5;
+    }
+
+    public double getPredD40() {
+        return predD40;
+    }
+
+    public void setPredD40(double predD40) {
+        this.predD40 = predD40;
+    }
+
+    public double getValueD40() {
+        return valueD40;
+    }
+
+    public void setValueD40(double valueD40) {
+        this.valueD40 = valueD40;
+    }
+
+    public boolean isSignD40() {
+        return signD40;
+    }
+
+    public void setSignD40(boolean signD40) {
+        this.signD40 = signD40;
     }
 }

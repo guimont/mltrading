@@ -33,7 +33,7 @@ public class MLPredictionResource {
 
         MLStocks ms = CacheMLStock.getMLStockCache().get(key);
         if (ms != null) {
-            MLStatus l = ms.getStatus();
+            MLStatus l = ms.getStatus().clone();
             List pList = l.getPerfList();
             try {
                 Collections.sort(pList);

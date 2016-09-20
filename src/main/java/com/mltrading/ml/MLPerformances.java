@@ -90,4 +90,15 @@ public class MLPerformances  implements Serializable, Comparable<MLPerformances>
     }
 
 
+    public MLPerformances clone() {
+        MLPerformances cloneObject = new MLPerformances();
+        cloneObject.setDate(this.date);
+        for (Map.Entry<PredictionPeriodicity, MLPerformance> entry : container.entrySet()) {
+            cloneObject.setPerf(entry.getKey(), entry.getValue().clone());
+        }
+
+        return cloneObject;
+    }
+
+
 }
