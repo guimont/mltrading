@@ -1,6 +1,6 @@
 <div class="container">
-    <h2 translate="realtime.title">Detail Prediction</h2>
-    <div class="col-md-5">
+    <h3>{{detail.name}} / {{detail.code}} </h3>
+    <!--<div class="col-md-5">
         <div class="panel-heading">
             <i class="fa fa-bell fa-fw"></i> Notification
         </div>
@@ -79,12 +79,44 @@
             </div>
 
         </div>
+    </div>-->
+    <!--div class="col-md-7">
+
+    </div>-->
+
+    <div class="mypanel panel panel-primary" style="border-color:lightslategray">
+    <div class="panel-heading" style="background-color: lightslategray">
+        <i class="fa fa-bar-chart-o fa-fw" style="color:white"></i> Stock prediction
     </div>
-    <div class="col-md-7">
+    <div class="panel-body">
         <span id="result"></span>
     </div>
-    <div>
-        <span id="validator"></span>
     </div>
+
+
+
+    <div style="margin-bottom: 20px;margin-top: 20px;margin-left: 0px">
+        <span class="label label-default" style="background-color: lightslategray">Variation</span>
+        <span style="margin-left: 5px;"><span class="label label-default" style="margin-left: 5px;background-color: lightslategray">60 days </span><span class="label label-danger" style="margin-left: 5px;">4.2%</span></span>
+        <span style="margin-left: 5px;"><span class="label label-default" style="margin-left: 5px;background-color: lightslategray">5 days </span><span class="label label-success" style="margin-left: 5px;">5%</span></span>
+        <span style="margin-left: 5px;"><span class="label label-default" style="margin-left: 5px;background-color: lightslategray"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> 5 days </span><span class="label label-success" style="margin-left: 5px;">52%</span></span>
+        <span style="margin-left: 5px;"><span class="label label-default" style="margin-left: 5px;background-color: lightslategray"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> 20 days </span>
+            <span class="label label-success" style="margin-left: 5px;">{{(detail.prediction.PredictionD20 /detail.value).toFixed(2)}}</span>
+        </span>
+    </div>
+
+
+    <div class="mypanel panel panel-primary" style="border-color:lightslategray">
+        <div class="panel-heading" style="background-color: lightslategray">
+            <i class="fa fa-bar-chart-o fa-fw" style="color:white"></i> Stock Indice {{detail.indice[0].code}} / Sector
+        </div>
+        <div class="panel-body">
+            <span id="indice"></span>
+            <span id="sector"></span>
+        </div>
+    </div>
+
+
+
 
 </div>

@@ -7,13 +7,14 @@ import com.mltrading.influxdb.dto.QueryRequest;
 import com.mltrading.influxdb.dto.QueryResult;
 import org.joda.time.DateTime;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by gmo on 24/06/2015.
  */
-public class StockHistory extends Object{
+public class StockHistory extends Object implements Serializable{
 
     public static String dbName = "history";
 

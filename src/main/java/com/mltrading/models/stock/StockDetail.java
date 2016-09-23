@@ -15,15 +15,16 @@ public class StockDetail implements Serializable{
 
     private static final Logger log = LoggerFactory.getLogger(StockDetail.class);
     private String code;
+    private String name;
     private Stock stock;
+    private Float value;
 
-    private List<StockSector> sector;
-    private MatrixValidator validatorD1;
-    private MatrixValidator validatorD5;
-    private MatrixValidator validatorD20;
+    private List<StockHistory> sector;
+    private List<StockHistory> indice;
     private StockPrediction prediction;
     private List<DetailData> data;
 
+    private static int PERIOD = 40;
 
 
     public static StockDetail populate(Stock s) {
@@ -40,11 +41,15 @@ public class StockDetail implements Serializable{
         detail.setCode(s.getCodif());
         detail.setStock(s);
         detail.setPrediction(CacheStockGeneral.getCache().get(s.getCode()).getPrediction());
-        detail.setValidatorD1(mls.getValidator(PredictionPeriodicity.D1));
-        detail.setValidatorD5(mls.getValidator(PredictionPeriodicity.D5));
-        detail.setValidatorD20(mls.getValidator(PredictionPeriodicity.D20));
+        detail.setName(CacheStockGeneral.getCache().get(s.getCode()).getName());
         //detail.setSector();
         detail.setData(populateData(s));
+        detail.setValue(CacheStockGeneral.getCache().get(s.getCode()).getOpening());
+
+        detail.sector = StockHistory.getStockHistoryLast(s.getSector(), PERIOD);
+        detail.indice = StockHistory.getStockHistoryLast("PX1", PERIOD); // code cac => use transform to match indice
+
+
         return detail;
     }
 
@@ -90,12 +95,12 @@ public class StockDetail implements Serializable{
 
     private static List<DetailData> populateData(Stock s) {
         List<DetailData> data = new ArrayList<>();
-        List<StockHistory> h = StockHistory.getStockHistoryLast(s.getCodif(), 40);
+        List<StockHistory> h = StockHistory.getStockHistoryLast(s.getCodif(), PERIOD);
         MLStocks mls = CacheMLStock.getMLStockCache().get(s.getCodif());
 
         for (StockHistory he:h) {
             DetailData d = new DetailData();
-            d.setDate(he.getDay());
+            d.setDate(he.getDay().substring(5,10));
             d.setValue(he.getValue());
             d.setPredD1(findPredD1(mls.getStatus().getPerfList(),he.getDay()));
 
@@ -155,39 +160,6 @@ public class StockDetail implements Serializable{
     }
 
 
-    public List<StockSector> getSector() {
-        return sector;
-    }
-
-    public void setSector(List<StockSector> sector) {
-        this.sector = sector;
-    }
-
-    public MatrixValidator getValidatorD1() {
-        return validatorD1;
-    }
-
-    public void setValidatorD1(MatrixValidator validatorD1) {
-        this.validatorD1 = validatorD1;
-    }
-
-    public MatrixValidator getValidatorD5() {
-        return validatorD5;
-    }
-
-
-    public void setValidatorD5(MatrixValidator validatorD5) {
-        this.validatorD5 = validatorD5;
-    }
-
-    public MatrixValidator getValidatorD20() {
-        return validatorD20;
-    }
-
-    public void setValidatorD20(MatrixValidator validatorD20) {
-        this.validatorD20 = validatorD20;
-    }
-
     public StockPrediction getPrediction() {
         return prediction;
     }
@@ -202,5 +174,37 @@ public class StockDetail implements Serializable{
 
     public void setData(List<DetailData> data) {
         this.data = data;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public List<StockHistory> getSector() {
+        return sector;
+    }
+
+    public void setSector(List<StockHistory> sector) {
+        this.sector = sector;
+    }
+
+    public List<StockHistory> getIndice() {
+        return indice;
+    }
+
+    public void setIndice(List<StockHistory> indice) {
+        this.indice = indice;
+    }
+
+    public Float getValue() {
+        return value;
+    }
+
+    public void setValue(Float value) {
+        this.value = value;
     }
 }

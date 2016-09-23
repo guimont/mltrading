@@ -67,9 +67,9 @@ public class RealTimeParserBoursorama implements RealTimeParser {
 
                 StockGeneral g = CacheStockGeneral.getCache().get(CacheStockGeneral.getCode(codif));
 
-                g.setValue(new Float(link.child(3).text()));
+                g.setValue(new Float(link.child(3).text().replaceAll(" \\(c\\)", "")));
                 g.setVariation(new Float(link.child(4).text().replaceAll("%", "")));
-                g.setOpening(new Float(link.child(5).text()));
+                g.setOpening(new Float(link.child(5).text().replace("ND","0")));
                 g.setVolume(new Integer(link.child(9).text().replaceAll(" ", "")));
 
 
@@ -133,9 +133,9 @@ public class RealTimeParserBoursorama implements RealTimeParser {
                     g.setCodif(splitRes[0].substring(1));
                 }
                 g.setName(link.child(1).text());
-                g.setValue(new Float(link.child(3).text().replaceAll(" ()c","")));
+                g.setValue(new Float(link.child(3).text().replaceAll(" \\(c\\)","")));
                 g.setVariation(new Float(link.child(4).text().replaceAll("%", "")));
-                g.setOpening(new Float(link.child(5).text()));
+                g.setOpening(new Float(link.child(5).text().replace("ND","0")));
                 g.setVolume(new Integer(link.child(9).text().replaceAll(" ", "")));
 
                 g.setCode(CacheStockGeneral.getCode(g.getCodif()));
