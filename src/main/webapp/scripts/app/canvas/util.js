@@ -19,13 +19,13 @@ var fontSize = 18;
 function draw(pos, layer,c) {
 
         var group = new Kinetic.Group();
-        var max = getmaxRunResult( result[c], 'value');
-        var min = getminRunResult( result[c], 'value');
+        var max = getmaxRunResult( result[c], 'value',0);
+        var min = getminRunResult( result[c], 'value',100000);
         var heightM = ((SIZERESY)/(max-min)*0.90);
         var marge =  heightM*4;
 
         for (var i=0; i<result[c].length;i++) {
-            drawChart(group, pos, result[c], min, heightM,marge, i,  layer, 'blue');
+            drawChartStock(group, pos, result[c], min, heightM,marge, i,  layer, 'blue');
 
         }
 
@@ -37,7 +37,7 @@ function draw(pos, layer,c) {
 
 
 
-function drawChart(group, pos, data,min, heightM, marge,  i ,  layer) {
+function drawChartStock(group, pos, data,min, heightM, marge,  i ,  layer) {
 
 
     var line = new Kinetic.Rect({

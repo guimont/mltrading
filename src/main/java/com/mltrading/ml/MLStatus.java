@@ -30,6 +30,11 @@ public class MLStatus implements Serializable{
         }
     }
 
+
+    public void saveLastPerf(String code) {
+        perfList.get(perfList.size()-1).save(code);
+    }
+
     /**
      * merge perfList
      * Warning => list have to be smaller or equal than perfList

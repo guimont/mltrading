@@ -122,7 +122,7 @@ public class ExtractionService {
         timeInsert = new DateTime(l);
         diff = Math.max(diff,  check_diff(timeInsert,timeNow));
 
-        l = StockHistory.getLastDateHistory("EFCHI");
+        l = StockHistory.getLastDateHistory("PX1");
         timeInsert = new DateTime(l);
         diff = Math.max(diff,  check_diff(timeInsert,timeNow));
 

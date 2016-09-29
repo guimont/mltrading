@@ -66,6 +66,15 @@ public class CacheMLStock {
         }
     }
 
+    /**
+     * update perf list with last value
+     */
+    public static void savePerf() {
+        for (MLStocks mls:mlStockMap.values()) {
+            mls.getStatus().saveLastPerf(mls.getCodif());
+        }
+    }
+
 
     public static void deleteModel() {
         try {

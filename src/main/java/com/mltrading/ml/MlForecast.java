@@ -21,7 +21,7 @@ public class MlForecast {
     private ExecutorService executorRefRF;
     private ExecutorService executorRef;
     private static int DEFAULT_NB_THREADS_RF = 2;
-    private static int DEFAULT_NB_THREADS = 1;
+    private static int DEFAULT_NB_THREADS = 2;
 
     public void processList(List<StockGeneral> l) {
 
@@ -67,11 +67,11 @@ public class MlForecast {
      */
     public void optimize() {
 
-        //final CountDownLatch latches = new CountDownLatch(CacheStockGeneral.getIsinCache().values().size());
-        final CountDownLatch latches = new CountDownLatch(1); //testmode ORA
+        final CountDownLatch latches = new CountDownLatch(CacheStockGeneral.getIsinCache().values().size());
+        //final CountDownLatch latches = new CountDownLatch(1); //testmode ORA
 
         //For test purpose only
-        CacheStockGeneral.getIsinCache().values().stream().filter(s -> s.getCodif().equals("ORA")).forEach(s -> executorRef.submit(() -> {    //For test purpose only
+        CacheStockGeneral.getIsinCache().values().stream()./*filter(s -> s.getCodif().equals("AC")).*/forEach(s -> executorRef.submit(() -> {    //For test purpose only
             try {
                 optimize(s, 1, 1, Method.RandomForest, Type.Feature);
             } finally {
@@ -87,6 +87,16 @@ public class MlForecast {
         } catch (InterruptedException e) {
             log.error(e.getMessage());
         }
+
+        //evaluate();
+        MLPredictor predictor = new MLPredictor();
+
+        for (StockGeneral sg : CacheStockGeneral.getCache().values()) {
+            StockPrediction p = predictor.prediction(sg);
+            sg.setPrediction(p);
+        }
+        log.info("saveML");
+        CacheMLStock.save();
     }
 
     /**
@@ -175,15 +185,7 @@ public class MlForecast {
         }
 
 
-        //evaluate();
-        MLPredictor predictor = new MLPredictor();
 
-        for (StockGeneral sg : CacheStockGeneral.getCache().values()) {
-            StockPrediction p = predictor.prediction(sg);
-            sg.setPrediction(p);
-        }
-        log.info("saveML");
-        CacheMLStock.save();
 
     }
 

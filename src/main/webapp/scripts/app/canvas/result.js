@@ -57,9 +57,13 @@ function loadResult (data) {
 function chartResult(pos, layer) {
 
     var group = new Kinetic.Group();
-    var max = getmaxRunResult( result.data, 'value');
-    var min = 0; //getminRunResult( result.data, 'value');
-    var heightM = (SIZERESY/2)/(max-min*0.8);
+    var max = getmaxRunResult( result.data, 'value', 0);
+    max = getmaxRunResult( result.data, 'predD20', max);
+    max = getmaxRunResult( result.data, 'predD40', max);
+    var min = getminRunResult( result.data, 'value',100000);
+    min = getminRunResult( result.data, 'predD20',min);
+    min = getminRunResult( result.data, 'predD40',min);
+    var heightM = (SIZERESY)/(max-min*0.8);
     var marge =  heightM*4;
 
     for (var i=0; i<result.data.length;i++) {
@@ -78,8 +82,8 @@ function chartResult(pos, layer) {
     layer.add(group);
 }
 
-function getmaxRunResult( list,c) {
-    var max = 0;
+function getmaxRunResult( list,c,maxP) {
+    var max = maxP;
     for (var i=0;i<list.length;i++) {
         if (list[i][c]) {
             var v = Math.abs(list[i][c]);
@@ -89,8 +93,8 @@ function getmaxRunResult( list,c) {
     return max;
 }
 
-function getminRunResult( list,c) {
-    var min = 10000;
+function getminRunResult( list,c, minP) {
+    var min = minP;
     for (var i=0;i<list.length;i++) {
         if (list[i][c]) {
             var v = Math.abs(list[i][c]);
@@ -104,7 +108,7 @@ function getminRunResult( list,c) {
 
 var j = 40;
 var anim;
-    function effect(group,pos, data,min, heightM, marge, layer) {
+function effect(group,pos, data,min, heightM, marge, layer) {
 
     var pred5, pred20, pred40;
     var time = 0;
@@ -114,7 +118,7 @@ var anim;
         if (j < 60) {
             if (frame.time - time < 600) return;
         } else
-            if (frame.time - time < 150) return;
+        if (frame.time - time < 150) return;
         time = frame.time
         group.destroyChildren();
         if (j >= data.length) j = 40;
@@ -144,19 +148,19 @@ var anim;
             group.add(line);
 
 
-            var diff = data[j].value- data[j].predD5;
+            var diff = data[j].predD5;
             /*line = new Kinetic.Rect({
-                x: 900 ,
-                y: SIZERESY - 100,
-                width: 8,
-                height: diff *2,
-                opacity: 0.5,
-                fill: 'blue'
-            });
-            group.add(line);*/
+             x: 900 ,
+             y: SIZERESY - 100,
+             width: 8,
+             height: diff *2,
+             opacity: 0.5,
+             fill: 'blue'
+             });
+             group.add(line);*/
 
-            var sizing = -1
-            var per = (diff/data[j-40].value*sizing).toFixed(2)
+
+            var per = (diff/data[j-40].value).toFixed(2)
 
             group.add(new Kinetic.Text({
                 x: 650,
@@ -196,19 +200,19 @@ var anim;
 
             group.add(line);
 
-            var diff = data[j].value- data[j].predD20;
+            var diff = data[j].predD20;
             /*line = new Kinetic.Rect({
-                x: 930 ,
-                y: SIZERESY - 100,
-                width: 8,
-                height: diff *2,
-                opacity: 0.5,
-                fill: 'orange'
-            });
-            group.add(line);*/
+             x: 930 ,
+             y: SIZERESY - 100,
+             width: 8,
+             height: diff *2,
+             opacity: 0.5,
+             fill: 'orange'
+             });
+             group.add(line);*/
 
-            var sizing = -1
-            var per = (diff/data[j-20].value*sizing).toFixed(2)
+
+            var per = (diff/data[j-20].value).toFixed(2)
 
             group.add(new Kinetic.Text({
                 x: 680,
@@ -234,19 +238,19 @@ var anim;
             });
             group.add(pred40);
 
-            var diff = data[j].value- data[j].predD40;
+            var diff = data[j].predD40;
             /*line = new Kinetic.Rect({
-                x: 960 ,
-                y: SIZERESY - 100,
-                width: 8,
-                height: diff *2,
-                opacity: 0.5,
-                fill: 'green'
-            });
-            group.add(line);*/
+             x: 960 ,
+             y: SIZERESY - 100,
+             width: 8,
+             height: diff *2,
+             opacity: 0.5,
+             fill: 'green'
+             });
+             group.add(line);*/
 
-            var sizing = -1
-            var per = (diff/data[j-40].value*sizing).toFixed(2)
+
+            var per = (diff/data[j-40].value).toFixed(2)
 
             group.add(new Kinetic.Text({
                 x: 710,
@@ -329,7 +333,7 @@ function drawValue(group, pos, data,min, heightM, marge,  i ,  layer) {
     }
 
 
-   if (data[i].value > 0) {
+    if (data[i].value > 0) {
         var pred = new Kinetic.Rect({
             x: pos.x * 2 + i * (10) - 1,
             y: SIZERESY - (data[i].value - min) * heightM - marge,
@@ -358,7 +362,6 @@ function drawValue(group, pos, data,min, heightM, marge,  i ,  layer) {
             var pred = new Kinetic.Circle({
                 x: pos.x * 2 + i * (10),
                 y: SIZERESY - (data[i].predD20 - min) * heightM - marge,
-                width: 3,
                 height: 6,
                 opacity: 0.2,
                 fill: 'orange'
@@ -506,17 +509,17 @@ function  drawGridRes(group, pos, maxV, max,  heightM, marge) {
     }));
 
     /*group.add(new Kinetic.Rect({
-        x: pos.x,
-        y: SIZERESY - max * heightM  - marge,
-        width: SIZERESX,
-        height: 1,
-        fill: 'blue',
-        opacity: 0.2
+     x: pos.x,
+     y: SIZERESY - max * heightM  - marge,
+     width: SIZERESX,
+     height: 1,
+     fill: 'blue',
+     opacity: 0.2
 
-    }));
+     }));
 
 
-*/
+     */
     group.add(new Kinetic.Rect({
         x: pos.x,
         y: SIZERESY - max * heightM  - marge,

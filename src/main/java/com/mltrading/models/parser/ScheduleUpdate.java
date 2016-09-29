@@ -44,6 +44,20 @@ public class ScheduleUpdate {
     protected void runUpdate() {
         //System.out.print("now ?");
         updateBase();
+
+        List<StockGeneral> sg = new ArrayList(CacheStockGeneral.getIsinCache().values());
+        CacheMLStock.load(sg);
+        MlForecast ml = new MlForecast();
+        ml.processList(sg);
+        //load status
+        CacheMLStock.savePerf();
+
+        MLPredictor predictor = new MLPredictor();
+
+        for (StockGeneral s: CacheStockGeneral.getCache().values()) {
+            StockPrediction p = predictor.prediction(s);
+            s.setPrediction(p);
+        }
     }
 
 
@@ -60,7 +74,7 @@ public class ScheduleUpdate {
         this.timer.schedule(this.timerTask, t, u); // 60*60*24*100 = 8640000ms
 
 
-        //updateBase();
+        runUpdate();
     }
 
     public void stop() {
@@ -80,7 +94,7 @@ public class ScheduleUpdate {
      */
     void updateBase() {
         try {
-            int diff = service.getLastUpdateRef();
+            int diff = service.getLastUpdateRef() -1; //remove -1
             log.info("Have to extract " +  diff + " days in influxdb base");
 
             if (diff > 0)
