@@ -232,12 +232,7 @@ public class ExtractionResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String evaluate() {
 
-        MLPredictor predictor = new MLPredictor();
-
-        for (StockGeneral s: CacheStockGeneral.getCache().values()) {
-            StockPrediction p = predictor.prediction(s);
-            s.setPrediction(p);
-        }
+        MlForecast.updatePredictor();
 
 
         return "ok";

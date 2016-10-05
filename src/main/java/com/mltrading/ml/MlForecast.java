@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -71,7 +72,7 @@ public class MlForecast {
         //final CountDownLatch latches = new CountDownLatch(1); //testmode ORA
 
         //For test purpose only
-        CacheStockGeneral.getIsinCache().values().stream()./*filter(s -> s.getCodif().equals("AC")).*/forEach(s -> executorRef.submit(() -> {    //For test purpose only
+        CacheStockGeneral.getIsinCache().values().stream()/*.filter(s -> s.getRealCodif().equals("OR"))*/.forEach(s -> executorRef.submit(() -> {    //For test purpose only
             try {
                 optimize(s, 1, 1, Method.RandomForest, Type.Feature);
             } finally {
@@ -89,12 +90,9 @@ public class MlForecast {
         }
 
         //evaluate();
-        MLPredictor predictor = new MLPredictor();
+        updatePredictor();
 
-        for (StockGeneral sg : CacheStockGeneral.getCache().values()) {
-            StockPrediction p = predictor.prediction(sg);
-            sg.setPrediction(p);
-        }
+
         log.info("saveML");
         CacheMLStock.save();
     }
@@ -135,7 +133,7 @@ public class MlForecast {
 
 
                     String saveCode;
-                   {
+                    {
                         RandomForestStock rfs = new RandomForestStock();
                         mls = rfs.processRF(s, mls);
                         saveCode = "V";
@@ -148,7 +146,7 @@ public class MlForecast {
                         mls.getValidator(PredictionPeriodicity.D1).save(mls.getCodif() + saveCode +
                             PredictionPeriodicity.D1, mls.getStatus().getErrorRateD1(), mls.getStatus().getAvgD1());
                         mls.getValidator(PredictionPeriodicity.D5).save(mls.getCodif() + saveCode +
-                                PredictionPeriodicity.D5, mls.getStatus().getErrorRateD5(), mls.getStatus().getAvgD5());
+                            PredictionPeriodicity.D5, mls.getStatus().getErrorRateD5(), mls.getStatus().getAvgD5());
                         mls.getValidator(PredictionPeriodicity.D20).save(mls.getCodif() + saveCode +
                             PredictionPeriodicity.D20, mls.getStatus().getErrorRateD20(), mls.getStatus().getAvgD20());
                         mls.getValidator(PredictionPeriodicity.D40).save(mls.getCodif() + saveCode +
@@ -200,7 +198,7 @@ public class MlForecast {
     private boolean compareResult(MLStatus mls, MLStatus ref, PredictionPeriodicity period) {
         return mls.getErrorRate(period) <= ref.getErrorRate(PredictionPeriodicity.D1) ||
             (mls.getErrorRate(period) == ref.getErrorRate(PredictionPeriodicity.D1) &&
-            mls.getAvg(period) < ref.getAvg(period));
+                mls.getAvg(period) < ref.getAvg(period));
     }
 
     /**
@@ -212,7 +210,7 @@ public class MlForecast {
      */
     private boolean checkResult(MLStocks mls, MLStocks ref, PredictionPeriodicity period) {
         if (compareResult(mls.getStatus(),ref.getStatus(),period)) {
-            ref.replace(PredictionPeriodicity.D1,mls);
+            ref.replace(period,mls);
             ref.getStatus().setAvg(mls.getStatus().getAvgD1(), period);
             ref.getStatus().setErrorRate(mls.getStatus().getErrorRate(period), period);
 
@@ -314,12 +312,35 @@ public class MlForecast {
 
         log.info("evaluate");
         //evaluate();
-        MLPredictor predictor = new MLPredictor();
 
-        for (StockGeneral sg : CacheStockGeneral.getCache().values()) {
-            StockPrediction p = predictor.prediction(sg);
-            sg.setPrediction(p);
-        }
+        updatePredictor();
         log.info("saveML");
+    }
+
+
+
+    public static void updatePredictor() {
+        for (StockGeneral sg : CacheStockGeneral.getCache().values()) {
+            MLPredictor predictor = new MLPredictor();
+
+            StockPrediction p = predictor.prediction(sg);
+
+            if (p != null)
+            {
+                sg.setPrediction(p);
+                double yield20 =  (p.getPredictionD20()-sg.getValue()) / sg.getValue();
+                double yield5 =  (p.getPredictionD5()-sg.getValue()) / sg.getValue();
+                double consensus = StockHistory.getStockHistoryLast(sg.getCodif(),1).get(0).getConsensusNote();
+                sg.setPerformanceEstimate(p.getConfidenceD20()/20 * yield20 * p.getConfidenceD5() / 10 * yield5
+                    * consensus);
+
+                double essai = 0;
+            }else {
+                sg.setPerformanceEstimate(0.);
+            }
+
+
+
+        }
     }
 }

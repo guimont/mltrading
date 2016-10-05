@@ -54,44 +54,19 @@ public class StockDetail implements Serializable{
     }
 
 
-    private static double findPredD1(List<MLPerformances> perfList, String date) {
+    private static MLPerformance findPred(List<MLPerformances> perfList, String date, PredictionPeriodicity periodicity) {
         date = date.substring(0,10);
         for (MLPerformances p: perfList) {
-            if (p.getMlD1().getDate().substring(0, 10).compareTo(date) == 0) {
-                return p.getMlD1().getPrediction();
+            if (p.getMl(periodicity).getDate().substring(0, 10).compareTo(date) == 0) {
+                return p.getMl(periodicity);
             }
         }
 
-        return 0; //not found not normal
-    }
-
-    private static MLPerformance findPredD5(List<MLPerformances> perfList, String date) {
-        date = date.substring(0,10);
-        for (MLPerformances p: perfList) {
-            if (p.getMlD5() != null && (p.getMlD5().getDate().substring(0, 10).compareTo(date) == 0))
-                return p.getMlD5();
-        }
-        return null; //not found not normal
-    }
-
-    private static MLPerformance findPredD20(List<MLPerformances> perfList, String date) {
-        date = date.substring(0,10);
-        for (MLPerformances p: perfList) {
-            if (p.getMlD20() != null && p.getMlD20().getDate().substring(0, 10).compareTo(date) == 0)
-                return p.getMlD20();
-        }
-        return null; //not found not normal
+        return null; //not found
     }
 
 
-    private static MLPerformance findPredD40(List<MLPerformances> perfList, String date) {
-        date = date.substring(0,10);
-        for (MLPerformances p: perfList) {
-            if (p.getMlD40() != null && p.getMlD40().getDate().substring(0, 10).compareTo(date) == 0)
-                return p.getMlD40();
-        }
-        return null; //not found not normal
-    }
+
 
     private static List<DetailData> populateData(Stock s) {
         List<DetailData> data = new ArrayList<>();
@@ -102,18 +77,18 @@ public class StockDetail implements Serializable{
             DetailData d = new DetailData();
             d.setDate(he.getDay().substring(5,10));
             d.setValue(he.getValue());
-            d.setPredD1(findPredD1(mls.getStatus().getPerfList(),he.getDay()));
+            d.setPredD1(findPred(mls.getStatus().getPerfList(),he.getDay(), PredictionPeriodicity.D1).getPrediction());
 
-            MLPerformance perf5 = findPredD5(mls.getStatus().getPerfList(), he.getDay());
+            MLPerformance perf5 = findPred(mls.getStatus().getPerfList(), he.getDay(), PredictionPeriodicity.D5);
             d.setPredD5(perf5.getPrediction());
             d.setSignD5(perf5.isSign());
 
 
-            MLPerformance perf20 = findPredD20(mls.getStatus().getPerfList(), he.getDay());
+            MLPerformance perf20 = findPred(mls.getStatus().getPerfList(), he.getDay(), PredictionPeriodicity.D20);
             d.setPredD20(perf20.getPrediction());
             d.setSignD20(perf20.isSign());
 
-            MLPerformance perf40 = findPredD40(mls.getStatus().getPerfList(), he.getDay());
+            MLPerformance perf40 = findPred(mls.getStatus().getPerfList(), he.getDay(), PredictionPeriodicity.D40);
             d.setPredD40(perf40.getPrediction());
             d.setSignD40(perf40.isSign());
             data.add(d);
@@ -128,9 +103,9 @@ public class StockDetail implements Serializable{
                 if (mls.getStatus().getPerfList().get(size - 5 + i).getMlD5() != null)
                     d.setPredD5(mls.getStatus().getPerfList().get(size - 5 + i).getMlD5().getPrediction());
             */
-            if ( i - 5 < 0) d.setPredD5(mls.getStatus().getPerfList().get(size - 5 + i).getMlD5().getPrediction());
-            if ( i - 20 < 0) d.setPredD20(mls.getStatus().getPerfList().get(size - 20 + i).getMlD20().getPrediction());
-            d.setPredD40(mls.getStatus().getPerfList().get(size-40+i).getMlD40().getPrediction());
+            if ( i - 5 < 0) d.setPredD5(mls.getStatus().getPerfList().get(size - 5 + i).getMl(PredictionPeriodicity.D5).getPrediction());
+            if ( i - 20 < 0) d.setPredD20(mls.getStatus().getPerfList().get(size - 20 + i).getMl(PredictionPeriodicity.D20).getPrediction());
+            d.setPredD40(mls.getStatus().getPerfList().get(size-40+i).getMl(PredictionPeriodicity.D40).getPrediction());
             data.add(d);
         }
 

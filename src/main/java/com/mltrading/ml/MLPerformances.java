@@ -42,39 +42,6 @@ public class MLPerformances  implements Serializable, Comparable<MLPerformances>
         this.date = date;
     }
 
-    public MLPerformance getMlD1() {
-        return container.get(PredictionPeriodicity.D1);
-    }
-
-    public void setMlD1(MLPerformance mlPerf) {
-        container.put(PredictionPeriodicity.D1,mlPerf);
-    }
-
-    public MLPerformance getMlD5() {
-        return container.get(PredictionPeriodicity.D5);
-    }
-
-    public void setMlD5(MLPerformance mlPerf) {
-
-        container.put(PredictionPeriodicity.D5,mlPerf);
-    }
-
-    public MLPerformance getMlD40() {
-        return  container.get(PredictionPeriodicity.D40);
-    }
-
-    public void setMlD40(MLPerformance mlPerf) {
-        container.put(PredictionPeriodicity.D40,mlPerf);
-    }
-
-    public MLPerformance getMlD20() {
-        return  container.get(PredictionPeriodicity.D20);
-    }
-
-    public void setMlD20(MLPerformance mlPerf) {
-        container.put(PredictionPeriodicity.D20,mlPerf);
-    }
-
 
     @Override
     public int compareTo(MLPerformances o) {
@@ -100,5 +67,13 @@ public class MLPerformances  implements Serializable, Comparable<MLPerformances>
         return cloneObject;
     }
 
+
+    public MLPerformance getMl(PredictionPeriodicity periodicity) {
+        return container.get(periodicity);
+    }
+
+    public void setMl(MLPerformance mlPerf, PredictionPeriodicity periodicity) {
+        container.put(periodicity,mlPerf);
+    }
 
 }

@@ -17,6 +17,8 @@ public class StockGeneral {
 
     private String sector;
 
+    private double performanceEstimate;
+
     public String getSector() {
         return sector;
     }
@@ -206,4 +208,11 @@ public class StockGeneral {
     }
 
 
+    public double getPerformanceEstimate() {
+        return performanceEstimate;
+    }
+
+    public void setPerformanceEstimate(double performanceEstimate) {
+        this.performanceEstimate = performanceEstimate;
+    }
 }

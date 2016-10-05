@@ -21,7 +21,7 @@ function draw(pos, layer,c) {
         var group = new Kinetic.Group();
         var max = getmaxRunResult( result[c], 'value',0);
         var min = getminRunResult( result[c], 'value',100000);
-        var heightM = ((SIZERESY)/(max-min)*0.90);
+        var heightM = (SIZERESY)/((max-min)*1.55);
         var marge =  heightM*4;
 
         for (var i=0; i<result[c].length;i++) {
@@ -87,12 +87,11 @@ function drawChartStock(group, pos, data,min, heightM, marge,  i ,  layer) {
 
 
     if (data[i].value > 0) {
-        var pred = new Kinetic.Rect({
+        var pred = new Kinetic.Circle({
             x: pos.x * 2 + i * (10) - 1,
             y: SIZERESY - (data[i].value - min) * heightM -marge,
             width: 3,
-            opacity: 0.8,
-            height: 5,
+            opacity: 0.5,
             fill: 'grey'
         });
         group.add(pred);

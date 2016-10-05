@@ -54,12 +54,7 @@ public class ScheduleParserGeneral  {
 
         CacheMLStock.load(sg);
 
-        MLPredictor predictor = new MLPredictor();
-
-        for (StockGeneral s: CacheStockGeneral.getCache().values()) {
-            StockPrediction p = predictor.prediction(s);
-            s.setPrediction(p);
-        }
+        MlForecast.updatePredictor();
     }
 
 

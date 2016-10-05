@@ -42,9 +42,9 @@ public class MLPredictionResource {
             }
 
             for (MLPerformances mlPerformances : l.getPerfList()) {
-                if (mlPerformances.getMlD5() != null && mlPerformances.getMlD5().getValue() ==0.) mlPerformances.setMlD5(null);
-                if (mlPerformances.getMlD20() != null && mlPerformances.getMlD20().getValue() ==0.) mlPerformances.setMlD20(null);
-                if (mlPerformances.getMlD40() != null && mlPerformances.getMlD40().getValue() ==0.) mlPerformances.setMlD40(null);
+                if (mlPerformances.getMl(PredictionPeriodicity.D5) != null && mlPerformances.getMl(PredictionPeriodicity.D5).getValue() ==0.) mlPerformances.setMl(null, PredictionPeriodicity.D5);
+                if (mlPerformances.getMl(PredictionPeriodicity.D20) != null && mlPerformances.getMl(PredictionPeriodicity.D20).getValue() ==0.) mlPerformances.setMl(null, PredictionPeriodicity.D20);
+                if (mlPerformances.getMl(PredictionPeriodicity.D40) != null && mlPerformances.getMl(PredictionPeriodicity.D40).getValue() ==0.) mlPerformances.setMl(null, PredictionPeriodicity.D40);
             }
 
             return l;

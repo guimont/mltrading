@@ -44,9 +44,9 @@ public class MLStatus implements Serializable{
         if (perfList == null) perfList = list;
         else {
             for (int i = 0; i< list.size(); i++) {
-                if (list.get(i).getMlD5() != null) perfList.get(i).setMlD5(list.get(i).getMlD5());
-                if (list.get(i).getMlD20() != null) perfList.get(i).setMlD20(list.get(i).getMlD20());
-                if (list.get(i).getMlD40() != null) perfList.get(i).setMlD40(list.get(i).getMlD40());
+                if (list.get(i).getMl(PredictionPeriodicity.D5) != null) perfList.get(i).setMl(list.get(i).getMl(PredictionPeriodicity.D5), PredictionPeriodicity.D5);
+                if (list.get(i).getMl(PredictionPeriodicity.D20) != null) perfList.get(i).setMl(list.get(i).getMl(PredictionPeriodicity.D20),PredictionPeriodicity.D20);
+                if (list.get(i).getMl(PredictionPeriodicity.D40) != null) perfList.get(i).setMl(list.get(i).getMl(PredictionPeriodicity.D40),PredictionPeriodicity.D40);
             }
         }
     }
@@ -56,22 +56,27 @@ public class MLStatus implements Serializable{
         double avgD1 = 0, avgD5 =0, avgD20 =0, avgD40 =0;
         int errD1 = 0, errD5 =0, errD20 =0, errD40 =0;
         for (MLPerformances p : perfList) {
-            if (p.getMlD1() != null && p.getMlD1().getValue()!=0) {
-                avgD1 += p.getMlD1().getRealyield() - p.getMlD1().getYield();
-                errD1 += p.getMlD1().isSign() == false ? 1 : 0;
+            if (p.getMl(PredictionPeriodicity.D1) != null && p.getMl(PredictionPeriodicity.D1).getValue()!=0) {
+                avgD1 += p.getMl(PredictionPeriodicity.D1).getRealyield() - p.getMl(PredictionPeriodicity.D1).getYield();
+                errD1 += p.getMl(PredictionPeriodicity.D1).isSign() == false ? 1 : 0;
             }
-            if (p.getMlD5() != null && p.getMlD5().getValue()!=0) {
-                avgD5 += p.getMlD5().getRealyield() - p.getMlD5().getYield();
-                errD5 += p.getMlD5().isSign() == false ? 1 : 0;
+
+            if (p.getMl(PredictionPeriodicity.D5) != null && p.getMl(PredictionPeriodicity.D5).getValue()!=0) {
+                avgD5 += p.getMl(PredictionPeriodicity.D5).getRealyield() - p.getMl(PredictionPeriodicity.D5).getYield();
+                errD5 += p.getMl(PredictionPeriodicity.D5).isSign() == false ? 1 : 0;
             }
-            if (p.getMlD20() != null && p.getMlD20().getValue()!=0) {
-                avgD20 += p.getMlD20().getRealyield() - p.getMlD20().getYield();
-                errD20 += p.getMlD20().isSign() == false ? 1 : 0;
+
+
+            if (p.getMl(PredictionPeriodicity.D20) != null && p.getMl(PredictionPeriodicity.D20).getValue()!=0) {
+                avgD20 += p.getMl(PredictionPeriodicity.D20).getRealyield() - p.getMl(PredictionPeriodicity.D20).getYield();
+                errD20 += p.getMl(PredictionPeriodicity.D20).isSign() == false ? 1 : 0;
             }
-            if (p.getMlD40() != null && p.getMlD40().getValue()!=0) {
-                avgD40 += p.getMlD40().getRealyield() - p.getMlD40().getYield();
-                errD40 += p.getMlD40().isSign() == false ? 1 : 0;
+
+            if (p.getMl(PredictionPeriodicity.D40) != null && p.getMl(PredictionPeriodicity.D40).getValue()!=0) {
+                avgD40 += p.getMl(PredictionPeriodicity.D40).getRealyield() - p.getMl(PredictionPeriodicity.D40).getYield();
+                errD40 += p.getMl(PredictionPeriodicity.D40).isSign() == false ? 1 : 0;
             }
+
         }
 
         this.setAvgD1(avgD1 / 90 * 100);
@@ -158,13 +163,13 @@ public class MLStatus implements Serializable{
         int col = PredictionPeriodicity.convert(period);
         for (int i = 0; i< this.getPerfList().size(); i++) {
             switch (col) {
-                case 1: this.getPerfList().get(i).setMlD1(rep.get(i).getMlD1());
+                case 1: this.getPerfList().get(i).setMl(rep.get(i).getMl(PredictionPeriodicity.D1), PredictionPeriodicity.D1);
                         break;
-                case 5 : this.getPerfList().get(i).setMlD5(rep.get(i).getMlD5());
+                case 5 : this.getPerfList().get(i).setMl(rep.get(i).getMl(PredictionPeriodicity.D5), PredictionPeriodicity.D5);
                     break;
-                case 20 : this.getPerfList().get(i).setMlD20(rep.get(i).getMlD20());
+                case 20 : this.getPerfList().get(i).setMl(rep.get(i).getMl(PredictionPeriodicity.D20), PredictionPeriodicity.D20);
                     break;
-                case 40 : this.getPerfList().get(i).setMlD40(rep.get(i).getMlD40());
+                case 40 : this.getPerfList().get(i).setMl(rep.get(i).getMl(PredictionPeriodicity.D40), PredictionPeriodicity.D40);
                     break;
                 default: throw new Exception("replacement impossible, period unknown");
             }
@@ -202,11 +207,11 @@ public class MLStatus implements Serializable{
         for (int i = sizeP1-max; i < sizeP1; i++) {
             MLPerformances mlps = new MLPerformances();
 
-            populate(mlps.getMlD1(), listP1, i);
-            if (i < sizeP5 ) populate(mlps.getMlD5(), listP5, i); else mlps.setMlD5(null);
-            if (i < sizeP20 ) populate(mlps.getMlD20(), listP20, i);  else mlps.setMlD20(null);
-            if (i < sizeP40 ) populate(mlps.getMlD40(), listP40, i);  else mlps.setMlD40(null);
-            mlps.setDate(mlps.getMlD1().getDate());
+            populate(mlps.getMl(PredictionPeriodicity.D1), listP1, i);
+            if (i < sizeP5 ) populate(mlps.getMl(PredictionPeriodicity.D5), listP5, i); else mlps.setMl(null, PredictionPeriodicity.D5);
+            if (i < sizeP20 ) populate(mlps.getMl(PredictionPeriodicity.D20), listP20, i);  else mlps.setMl(null, PredictionPeriodicity.D20);
+            if (i < sizeP40 ) populate(mlps.getMl(PredictionPeriodicity.D40), listP40, i);  else mlps.setMl(null, PredictionPeriodicity.D40);
+            mlps.setDate(mlps.getMl(PredictionPeriodicity.D1).getDate());
 
             perfList.add(mlps);
 
