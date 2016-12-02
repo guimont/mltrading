@@ -386,7 +386,7 @@ public class StockHistory extends Object implements Serializable{
     public static List<String> getDateHistoryListOffsetLimit(final String code, int offset, int max) {
         List<String> dateList = new ArrayList<>();
         //bug .. dont get all data .. so make filter to have date only since 2013
-        String query = "SELECT * FROM "+code +" where time > '2013-06-01T00:00:00Z'";
+        String query = "SELECT * FROM "+code +" where time > '2010-01-01T00:00:00Z'";
         QueryResult list = Requester.sendRequest(new QueryRequest(query, dbName));
         int series = max + offset;
         int size = list.getResults().get(0).getSeries().get(0).getValues().size();
@@ -478,7 +478,7 @@ public class StockHistory extends Object implements Serializable{
 
         List<StockHistory> stockList = new ArrayList<>();
         //offset is mult by 2 because it is no dense data
-        String query = "SELECT * FROM "+code +" where time > '2014-06-01T00:00:00Z'";
+        String query = "SELECT * FROM "+code +" where time > '2010-01-01T00:00:00Z'";
 
         QueryResult list = Requester.sendRequest(new QueryRequest(query,dbName));
         if (list == null || list.getResults() == null || list.getResults().get(0).getSeries() == null)

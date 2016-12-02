@@ -41,10 +41,10 @@ public class HistoryParserGoogle implements HistoryParser {
 // http://www.google.com/finance/historical?q=EPA%3AAC&startdate=Jan%2029%2C%202011&num=50&start=0
     static String startUrl="http://www.google.com/finance/historical?q=";
     static String midUrl="%3A";
-    static String endUrl ="&startdate=Jan%2029%2C%202011&num=50&start=";
+    static String endUrl ="&startdate=Jan+1%2C+2010&num=200&start=";
     static String refCode = "tbody";
-    static int MAXPAGE = 1250;
-    static int PAGINATION = 50;
+    static int MAXPAGE = 1720;
+    static int PAGINATION = 200;
 
 
     /**
@@ -56,7 +56,7 @@ public class HistoryParserGoogle implements HistoryParser {
         int numPage;
         boolean retry = false;
         for (StockGeneral g : CacheStockGeneral.getIsinCache().values()) {
-            Consensus cnote = ConsensusParserInvestir.fetchStock(g.getRealCodif());
+            Consensus cnote = ConsensusParserInvestir.fetchStock(g.getCode());
 
             String url = startUrl + getPlace(g.getPlace()) + midUrl + g.getRealCodif()  + endUrl + 0;
 
@@ -193,6 +193,11 @@ public class HistoryParserGoogle implements HistoryParser {
         for (StockGeneral g: CacheStockGeneral.getIsinCache().values()) {
             Consensus cnote = ConsensusParserInvestir.fetchStock(g.getCode());
             for(numPage =0; numPage <= MAXPAGE ; numPage += PAGINATION) {
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 String url = startUrl + getPlace(g.getPlace()) + midUrl + g.getRealCodif()  + endUrl + numPage;
 
                 try {
@@ -224,11 +229,28 @@ public class HistoryParserGoogle implements HistoryParser {
                                     loopPage ++;
                                     StockHistory hist = new StockHistory(g);
                                     hist.setDayGoogle(t.get(0).text());
-                                    hist.setOpening(new Double(t.get(1).text().replaceAll(" ", "").replace(",", "")));
-                                    hist.setHighest(new Double(t.get(2).text().replaceAll(" ", "").replace(",", "")));
-                                    hist.setLowest(new Double(t.get(3).text().replaceAll(" ", "").replace(",", "")));
+                                    try {
+                                        hist.setOpening(new Double(t.get(1).text().replaceAll(" ", "").replace(",", "")));
+                                    } catch (Exception e) {
+                                        hist.setOpening(new Double(0));
+                                    }
+                                    try {
+                                        hist.setHighest(new Double(t.get(2).text().replaceAll(" ", "").replace(",", "")));
+                                    } catch (Exception e) {
+                                        hist.setHighest(new Double(0));
+                                    }
+                                    try {
+                                        hist.setLowest(new Double(t.get(3).text().replaceAll(" ", "").replace(",", "")));
+                                    } catch (Exception e) {
+                                        hist.setLowest(new Double(0));
+                                    }
+                                    //mandatory no catch
                                     hist.setValue(new Double(t.get(4).text().replaceAll(" ", "").replace(",", "")));
-                                    hist.setVolume(new Double(t.get(5).text().replaceAll(" ", "").replace(",", "")));
+                                    try {
+                                        hist.setVolume(new Double(t.get(5).text().replaceAll(" ", "").replace(",", "")));
+                                    } catch (Exception e) {
+                                        hist.setVolume(new Double(0));
+                                    }
                                     hist.setConsensusNote(cnote.getNotation(cnote.getIndice(loopPage+numPage)).getAvg());
                                     HistoryParser.saveHistory(bp, hist);
                                     System.out.println(hist.toString());

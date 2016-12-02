@@ -41,10 +41,10 @@ public class HistorySectorParserGoogle implements HistorySectorParser {
 
 
     static String startUrl="http://www.google.com/finance/historical?q=INDEXEURO%3A";
-    static String endUrl ="&startdate=Dec%204%2C%202013&num=200&start=";
+    static String endUrl ="&startdate=Jan+1%2C+2010&num=200&start=";
     static int PAGINATION = 200;
     static String refCode = "tbody";
-    static int MAXPAGE = 1518;
+    static int MAXPAGE = 1720;
 
 
     /**
@@ -79,11 +79,30 @@ public class HistorySectorParserGoogle implements HistorySectorParser {
                                 stock.setCode(g.getCode());
                                 stock.setCodif(g.getCode());
                                 stock.setDayGoogle(t.get(0).text());
-                                stock.setOpening(new Double(t.get(1).text().replaceAll(" ", "").replace(",", "")));
-                                stock.setHighest(new Double(t.get(2).text().replaceAll(" ", "").replace(",", "")));
-                                stock.setLowest(new Double(t.get(3).text().replaceAll(" ", "").replace(",", "")));
+                                try {
+                                    stock.setOpening(new Double(t.get(1).text().replaceAll(" ", "").replace(",", "")));
+                                } catch (Exception e) {
+                                    stock.setOpening(new Double(0));
+                                }
+
+                                try {
+                                    stock.setHighest(new Double(t.get(2).text().replaceAll(" ", "").replace(",", "")));
+                                } catch (Exception e) {
+                                    stock.setOpening(new Double(0));
+                                }
+
+                                try {
+                                    stock.setLowest(new Double(t.get(3).text().replaceAll(" ", "").replace(",", "")));
+                                } catch (Exception e) {
+                                    stock.setOpening(new Double(0));
+                                }
                                 stock.setValue(new Double(t.get(4).text().replaceAll(" ", "").replace(",", "")));
-                                stock.setVolume(new Double(0));
+
+                                try {
+                                    stock.setVolume(new Double(0));
+                                } catch (Exception e) {
+                                    stock.setOpening(new Double(0));
+                                }
                                 stock.setConsensusNote(new Double(0));
                                 HistoryParser.saveHistory(bp, stock);
                                 System.out.println(stock.toString());

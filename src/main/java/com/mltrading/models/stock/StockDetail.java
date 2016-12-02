@@ -56,10 +56,17 @@ public class StockDetail implements Serializable{
 
     private static MLPerformance findPred(List<MLPerformances> perfList, String date, PredictionPeriodicity periodicity) {
         date = date.substring(0,10);
-        for (MLPerformances p: perfList) {
-            if (p.getMl(periodicity).getDate().substring(0, 10).compareTo(date) == 0) {
-                return p.getMl(periodicity);
+        try {
+
+            for (MLPerformances p : perfList) {
+                String datePerf = p.getMl(periodicity).getDate();
+                if (!datePerf.contains("J+"))
+                    if (datePerf.substring(0, 10).compareTo(date) == 0) {
+                        return p.getMl(periodicity);
+                    }
             }
+        } catch (NullPointerException e) {
+            log.error(e.toString());
         }
 
         return null; //not found
@@ -80,17 +87,23 @@ public class StockDetail implements Serializable{
             d.setPredD1(findPred(mls.getStatus().getPerfList(),he.getDay(), PredictionPeriodicity.D1).getPrediction());
 
             MLPerformance perf5 = findPred(mls.getStatus().getPerfList(), he.getDay(), PredictionPeriodicity.D5);
-            d.setPredD5(perf5.getPrediction());
-            d.setSignD5(perf5.isSign());
+            if (perf5 != null) {
+                d.setPredD5(perf5.getPrediction());
+                d.setSignD5(perf5.isSign());
+            }
 
 
             MLPerformance perf20 = findPred(mls.getStatus().getPerfList(), he.getDay(), PredictionPeriodicity.D20);
-            d.setPredD20(perf20.getPrediction());
-            d.setSignD20(perf20.isSign());
+            if (perf20 != null) {
+                d.setPredD20(perf20.getPrediction());
+                d.setSignD20(perf20.isSign());
+            }
 
             MLPerformance perf40 = findPred(mls.getStatus().getPerfList(), he.getDay(), PredictionPeriodicity.D40);
-            d.setPredD40(perf40.getPrediction());
-            d.setSignD40(perf40.isSign());
+            if (perf40 != null) {
+                d.setPredD40(perf40.getPrediction());
+                d.setSignD40(perf40.isSign());
+            }
             data.add(d);
 
         }
@@ -99,7 +112,7 @@ public class StockDetail implements Serializable{
         for (int i=1; i<40; i++) {
             DetailData d = new DetailData();
             d.setDate("J+"+i);
-            /*if (i < 5) //TODO ugly code
+            /*if (i < 5) //TODO ugly codes
                 if (mls.getStatus().getPerfList().get(size - 5 + i).getMlD5() != null)
                     d.setPredD5(mls.getStatus().getPerfList().get(size - 5 + i).getMlD5().getPrediction());
             */

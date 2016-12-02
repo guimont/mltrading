@@ -32,33 +32,34 @@ public class ConsensusParserInvestir implements ConsensusParser {
 
 
     public static Consensus fetchStock(String code) {
-        StockGeneral g = CacheStockGeneral.getIsinCache().get(CacheStockGeneral.getCode(code));
+        StockGeneral g = CacheStockGeneral.getIsinCache().get(code);
 
         Consensus c = new Consensus();
-        String url = base + CacheStockGeneral.getIsinCache().get(g.getCode()).getName().toLowerCase().replaceAll(" ","-") + sep + g.getPlace().toLowerCase() + sep  + g.getCodif().toLowerCase() + sep + g.getCode().toLowerCase() +end;
-        try {
-            String text;
+           try {
+               String url = base + CacheStockGeneral.getIsinCache().get(g.getCode()).getName().toLowerCase().replaceAll(" ","-") + sep + g.getPlace().toLowerCase() + sep  + g.getCodif().toLowerCase() + sep + g.getCode().toLowerCase() +end;
 
-            text = ParserCommon.loadUrl(new URL(url));
+               String text;
 
-            if (text != null) {
-                Document doc = Jsoup.parse(text);
-                Elements links = doc.select(refCode);
-                Elements sn = links.get(0).children();
-                for (int i = 1; i < 7; i++) {
-                    c.getNotation(i).setSell(new Integer(sn.get(i).children().get(3).children().get(0).children().get(0).children().get(0).child(0).text()));
-                    c.getNotation(i).setRelieve(new Integer(sn.get(i).children().get(3).children().get(0).children().get(0).children().get(0).child(1).text()));
-                    c.getNotation(i).setKeep(new Integer(sn.get(i).children().get(3).children().get(0).children().get(0).children().get(0).child(2).text()));
-                    c.getNotation(i).setReinforce(new Integer(sn.get(i).children().get(3).children().get(0).children().get(0).children().get(0).child(3).text()));
-                    c.getNotation(i).setBuy(new Integer(sn.get(i).children().get(3).children().get(0).children().get(0).children().get(0).child(4).text()));
+                text = ParserCommon.loadUrl(new URL(url));
+
+                if (text != null) {
+                    Document doc = Jsoup.parse(text);
+                    Elements links = doc.select(refCode);
+                    Elements sn = links.get(0).children();
+                    for (int i = 1; i < 7; i++) {
+                        c.getNotation(i).setSell(new Integer(sn.get(i).children().get(3).children().get(0).children().get(0).children().get(0).child(0).text()));
+                        c.getNotation(i).setRelieve(new Integer(sn.get(i).children().get(3).children().get(0).children().get(0).children().get(0).child(1).text()));
+                        c.getNotation(i).setKeep(new Integer(sn.get(i).children().get(3).children().get(0).children().get(0).children().get(0).child(2).text()));
+                        c.getNotation(i).setReinforce(new Integer(sn.get(i).children().get(3).children().get(0).children().get(0).children().get(0).child(3).text()));
+                        c.getNotation(i).setBuy(new Integer(sn.get(i).children().get(3).children().get(0).children().get(0).children().get(0).child(4).text()));
+                    }
+
+                    System.out.println(c.toString());
                 }
 
-                System.out.println(c.toString());
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("ERROR for : " + g.getName());
+        } catch (Exception e) {
+            //e.printStackTrace();
+            System.out.println("Consensus ERROR for : " + g.getName());
         }
 
         return c;
@@ -97,8 +98,8 @@ public class ConsensusParserInvestir implements ConsensusParser {
                 }
 
             } catch (IOException e) {
-                e.printStackTrace();
-                System.out.println("ERROR for : " + g.getName());
+                //e.printStackTrace();
+                System.out.println("Consensus ERROR for : " + g.getName());
             }
         }
 

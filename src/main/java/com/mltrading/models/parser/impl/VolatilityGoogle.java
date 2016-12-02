@@ -27,10 +27,10 @@ public class VolatilityGoogle implements VolatilityParser {
     //VXN nasdaq
     //INDEXCBOE:VXFXI china
 
-    static String vol = "http://www.google.com/finance/historical?cid=6404916&startdate=Dec%204%2C%202013&num=200&start=";
+    static String vol = "http://www.google.com/finance/historical?cid=6404916&startdate=Jan+1%2C+2010&num=200&start=";
     static int PAGINATION = 200;
     static String refCode = "tbody";
-    static int MAXPAGE = 1518;
+    static int MAXPAGE = 1720;
     static String code = "VCAC";
     static String name = "CAC 40 VOLA IDX";
 
@@ -125,9 +125,23 @@ public class VolatilityGoogle implements VolatilityParser {
                                 ind.setCodif(code);
                                 ind.setName(name);
                                 ind.setDayGoogle(t.get(0).text());
-                                ind.setOpening(new Double(t.get(1).text().replaceAll(" ", "").replace(",", ".")));
-                                ind.setHighest(new Double(t.get(2).text().replaceAll(" ", "").replace(",", ".")));
-                                ind.setLowest(new Double(t.get(3).text().replaceAll(" ", "").replace(",", ".")));
+                                try {
+                                    ind.setOpening(new Double(t.get(1).text().replaceAll(" ", "").replace(",", ".")));
+                                } catch (Exception e) {
+                                    ind.setOpening(new Double(0));
+                                }
+
+                                try {
+                                    ind.setHighest(new Double(t.get(2).text().replaceAll(" ", "").replace(",", ".")));
+                                } catch (Exception e) {
+                                    ind.setHighest(new Double(0));
+                                }
+
+                                try {
+                                    ind.setLowest(new Double(t.get(3).text().replaceAll(" ", "").replace(",", ".")));
+                                } catch (Exception e) {
+                                    ind.setLowest(new Double(0));
+                                }
                                 ind.setValue(new Double(t.get(4).text().replaceAll(" ", "").replace(",", ".")));
                                 ind.setVolume(new Double(0));
                                 HistoryParser.saveHistory(bp, ind);

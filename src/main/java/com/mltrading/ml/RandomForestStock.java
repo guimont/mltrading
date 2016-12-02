@@ -42,7 +42,7 @@ public class RandomForestStock implements Serializable {
         return parsedData;
     }
 
-    static int RENDERING = 91;
+    static int RENDERING = 300;
 
     public MLStocks processRF(StockGeneral stock, MLStocks mls) {
 

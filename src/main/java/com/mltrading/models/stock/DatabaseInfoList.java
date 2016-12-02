@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public class DatabaseInfoList {
 
 
-static final int RANGE = 600 ;
+static final int RANGE = 1500 ;
     private List<DatabaseInfo> stockList = new ArrayList<>();
     private List<DatabaseInfo> indiceList = new ArrayList<>();
     private List<DatabaseInfo> sectorList = new ArrayList<>();

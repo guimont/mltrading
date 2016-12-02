@@ -243,8 +243,8 @@ public class FeaturesStock implements Serializable {
     }
 
     static int OFFSET_BASE = 50;
-    static int RANGE_MAX = 500;
-    static int RANGE_TEST = 90;
+    static int RANGE_MAX = 1500;
+    static int RANGE_TEST = 300;
 
 
     public  static List<FeaturesStock> create(StockGeneral stock, MatrixValidator validator, int range) {

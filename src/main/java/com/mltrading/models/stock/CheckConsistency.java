@@ -17,10 +17,10 @@ public class CheckConsistency {
 
 
     private static int OFFSET_BASE = 50;
-    private static int RANGE_MAX = 300;
+    private static int RANGE_MAX = 1550;
     private static int XT_PERIOD = 20;
     private static int XT_DAY = 1;
-    private static int RANGE = 200;
+    private static int RANGE = 1500;
 
     private static String STOCK = "STK";
     private static String STOCK_AT = "STKAT";

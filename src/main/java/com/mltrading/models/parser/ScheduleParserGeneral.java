@@ -64,7 +64,7 @@ public class ScheduleParserGeneral  {
 
 
     public void start() {
-        /*updateBase(); not use here but in update scheduler*/
+        //updateBase(); //not use here but in upddate scheduler*/
         RealTimeParserBoursorama.loaderCache();
         updatePredictor();
         this.extractionCycleInMs =  30000;

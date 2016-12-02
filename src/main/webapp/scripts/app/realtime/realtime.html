@@ -1,6 +1,145 @@
 <div class="container">
     <h2 translate="realtime.title">Audits</h2>
 
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="rating-block">
+                <h4>Average user rating</h4>
+                <h2 class="bold padding-bottom-7">4.3 <small>/ 5</small></h2>
+                <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
+                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
+                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
+                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
+                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
+                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                </button>
+            </div>
+        </div>
+
+        <div class="col-sm-3">
+            <div class="rating-block">
+                <h4>Average user rating</h4>
+                <h2 class="bold padding-bottom-7">4.3 <small>/ 5</small></h2>
+                <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
+                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
+                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
+                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
+                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
+                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                </button>
+            </div>
+        </div>
+
+        <div class="col-sm-3">
+            <div class="rating-block">
+                <h4>Average user rating</h4>
+                <h2 class="bold padding-bottom-7">4.3 <small>/ 5</small></h2>
+                <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
+                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
+                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
+                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
+                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
+                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                </button>
+            </div>
+        </div>
+
+        <div class="col-sm-3">
+            <div class="rating-block">
+                <h4>Average user rating</h4>
+                <h2 class="bold padding-bottom-7">4.3 <small>/ 5</small></h2>
+                <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
+                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
+                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
+                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
+                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
+                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="mypanel panel panel-primary" style="border-color:lightslategray">
+        <div class="panel-heading" style="background-color: lightslategray">
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Stock prediction ranking rising
+        </div>
+        <div class="panel-body">
+            <table class="table table-condensed table-striped table-bordered table-responsive">
+                <thead>
+                <tr>
+                    <th ng-click="predicate = 'timestamp'; reverse=!reverse"><span translate="realtime.table.header.principal">Name</span></th>
+                    <th ng-click="predicate = 'principal'; reverse=!reverse"><span translate="realtime.table.header.code">Code</span></th>
+                    <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="realtime.table.header.value">Value</span></th>
+                    <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="realtime.table.header.variation"></span></th>
+                </tr>
+                </thead>
+
+                <td><span ui-sref="detail({code: '{{top.code}}'})">{{top.name}}</span></td>
+                <td><small>{{top.code}}</small></td>
+                <td>{{top.value}}</td>
+                <td style="color: {{getcolorSign(rt.variation)}}">{{top.variation}}</td>
+            </table>
+        </div>
+    </div>
+
+
+    <div class="mypanel panel panel-primary" style="border-color:lightslategray">
+        <div class="panel-heading" style="background-color: lightslategray">
+            <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>  Stock prediction ranking falling
+        </div>
+        <div class="panel-body">
+            <table class="table table-condensed table-striped table-bordered table-responsive">
+                <thead>
+                <tr>
+                    <th ng-click="predicate = 'timestamp'; reverse=!reverse"><span translate="realtime.table.header.principal">Name</span></th>
+                    <th ng-click="predicate = 'principal'; reverse=!reverse"><span translate="realtime.table.header.code">Code</span></th>
+                    <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="realtime.table.header.value">Value</span></th>
+                    <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="realtime.table.header.variation"></span></th>
+                </tr>
+                </thead>
+
+                <td><span ui-sref="detail({code: '{{flop.code}}'})">{{flop.name}}</span></td>
+                <td><small>{{flop.code}}</small></td>
+                <td>{{flop.value}}</td>
+                <td style="color: {{getcolorSign(rt.variation)}}">{{flop.variation}}</td>
+            </table>
+
+        </div>
+    </div>
+
 
     <table class="table table-condensed table-striped table-bordered table-responsive">
         <thead>
@@ -39,6 +178,6 @@
             </td>
         </tr>
     </table>
-        </tr>
+    </tr>
     </table>
 </div>

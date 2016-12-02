@@ -68,11 +68,11 @@ public class MlForecast {
      */
     public void optimize() {
 
-        final CountDownLatch latches = new CountDownLatch(CacheStockGeneral.getIsinCache().values().size());
-        //final CountDownLatch latches = new CountDownLatch(1); //testmode ORA
+        //final CountDownLatch latches = new CountDownLatch(CacheStockGeneral.getIsinCache().values().size());
+        final CountDownLatch latches = new CountDownLatch(1); //testmode ORA
 
         //For test purpose only
-        CacheStockGeneral.getIsinCache().values().stream()/*.filter(s -> s.getRealCodif().equals("OR"))*/.forEach(s -> executorRef.submit(() -> {    //For test purpose only
+        CacheStockGeneral.getIsinCache().values().stream().filter(s -> s.getRealCodif().equals("ORA")).forEach(s -> executorRef.submit(() -> {    //For test purpose only
             try {
                 optimize(s, 1, 1, Method.RandomForest, Type.Feature);
             } finally {
@@ -196,8 +196,8 @@ public class MlForecast {
      * @return
      */
     private boolean compareResult(MLStatus mls, MLStatus ref, PredictionPeriodicity period) {
-        return mls.getErrorRate(period) <= ref.getErrorRate(PredictionPeriodicity.D1) ||
-            (mls.getErrorRate(period) == ref.getErrorRate(PredictionPeriodicity.D1) &&
+        return mls.getErrorRate(period) <= ref.getErrorRate(period) ||
+            (mls.getErrorRate(period) == ref.getErrorRate(period) &&
                 mls.getAvg(period) < ref.getAvg(period));
     }
 
@@ -329,7 +329,7 @@ public class MlForecast {
             {
                 sg.setPrediction(p);
                 double yield20 =  (p.getPredictionD20()-sg.getValue()) / sg.getValue();
-                double yield5 =  (p.getPredictionD5()-sg.getValue()) / sg.getValue();
+                double yield5 =  Math.abs((p.getPredictionD5() - sg.getValue()) / sg.getValue());
                 double consensus = StockHistory.getStockHistoryLast(sg.getCodif(),1).get(0).getConsensusNote();
                 sg.setPerformanceEstimate(p.getConfidenceD20()/20 * yield20 * p.getConfidenceD5() / 10 * yield5
                     * consensus);

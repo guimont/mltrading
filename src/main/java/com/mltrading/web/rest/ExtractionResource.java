@@ -97,7 +97,7 @@ public class ExtractionResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String getExtractionRaw() {
 
-        service.extractRawFull("localhost:8090");
+        service.extractRawFull("localhost:7090");
         return "ok";
     }
 

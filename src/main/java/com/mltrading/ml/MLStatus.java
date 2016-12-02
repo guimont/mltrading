@@ -55,34 +55,39 @@ public class MLStatus implements Serializable{
     public void calculeAvgPrd() {
         double avgD1 = 0, avgD5 =0, avgD20 =0, avgD40 =0;
         int errD1 = 0, errD5 =0, errD20 =0, errD40 =0;
+        int countD1 = 0, countD5 = 0, countD20 = 0, countD40 = 0;
         for (MLPerformances p : perfList) {
             if (p.getMl(PredictionPeriodicity.D1) != null && p.getMl(PredictionPeriodicity.D1).getValue()!=0) {
                 avgD1 += p.getMl(PredictionPeriodicity.D1).getRealyield() - p.getMl(PredictionPeriodicity.D1).getYield();
                 errD1 += p.getMl(PredictionPeriodicity.D1).isSign() == false ? 1 : 0;
+                countD1++;
             }
 
             if (p.getMl(PredictionPeriodicity.D5) != null && p.getMl(PredictionPeriodicity.D5).getValue()!=0) {
                 avgD5 += p.getMl(PredictionPeriodicity.D5).getRealyield() - p.getMl(PredictionPeriodicity.D5).getYield();
                 errD5 += p.getMl(PredictionPeriodicity.D5).isSign() == false ? 1 : 0;
+                countD5++;
             }
 
 
             if (p.getMl(PredictionPeriodicity.D20) != null && p.getMl(PredictionPeriodicity.D20).getValue()!=0) {
                 avgD20 += p.getMl(PredictionPeriodicity.D20).getRealyield() - p.getMl(PredictionPeriodicity.D20).getYield();
                 errD20 += p.getMl(PredictionPeriodicity.D20).isSign() == false ? 1 : 0;
+                countD20++;
             }
 
             if (p.getMl(PredictionPeriodicity.D40) != null && p.getMl(PredictionPeriodicity.D40).getValue()!=0) {
                 avgD40 += p.getMl(PredictionPeriodicity.D40).getRealyield() - p.getMl(PredictionPeriodicity.D40).getYield();
                 errD40 += p.getMl(PredictionPeriodicity.D40).isSign() == false ? 1 : 0;
+                countD40++;
             }
 
         }
 
-        this.setAvgD1(avgD1 / 90 * 100);
-        this.setAvgD5(avgD5 / 85 * 100);
-        this.setAvgD20(avgD20 / 70 * 100);
-        this.setAvgD40(avgD40 / 50 * 100);
+        this.setAvgD1(avgD1 / countD1 * 100);
+        this.setAvgD5(avgD5 / countD5 * 100);
+        this.setAvgD20(avgD20 / countD20 * 100);
+        this.setAvgD40(avgD40 / countD40 * 100);
 
         this.setErrorRateD1(errD1);
         this.setErrorRateD5(errD5);
@@ -183,7 +188,7 @@ public class MLStatus implements Serializable{
      * @return O or max last StockHistory
      */
     public void loadPerf(final String code) {
-        final int max = 90;
+        final int max = 300;
         perfList = new ArrayList();
 
         //offset is mult by 2 because it is no dense data

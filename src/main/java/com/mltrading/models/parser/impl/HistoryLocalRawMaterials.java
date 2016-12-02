@@ -43,7 +43,9 @@ public class HistoryLocalRawMaterials implements HistoryRawMaterialsParser {
         for (StockRawMat r: CacheRawMaterial.getCache().values()) {
             try {
                 String url = localUrl + host + path + r.getName() + ".html";
+                System.out.println("url: " + url);
                 String text = ParserCommon.loadUrl(new URL(url));
+
                 Document doc = Jsoup.parse(text);
                 Elements links = doc.select(refCode);
 
