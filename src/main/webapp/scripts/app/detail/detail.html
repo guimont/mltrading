@@ -86,7 +86,13 @@
 
     <div class="mypanel panel panel-primary" style="border-color:lightslategray">
     <div class="panel-heading" style="background-color: lightslategray">
-        <i class="fa fa-bar-chart-o fa-fw" style="color:white"></i> Stock prediction
+        <i class="fa fa-bar-chart-o fa-fw" style="color:white">Stock prediction</i>
+        <span class="label label-default" style="margin-left: 5px;background-color: lightslategray">60 days </span><span class="label label-danger" >4.2%</span></span>
+        <span class="label label-default" style="margin-left: 5px;background-color: lightslategray">5 days </span><span class="label label-success" >5%</span></span>
+        <span class="label label-default" style="margin-left: 5px;background-color: lightslategray"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> 5 days </span><span class="label label-success" >52%</span></span>
+        <span class="label label-default" style="margin-left: 5px;background-color: lightslategray"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> 20 days </span>
+            <span class="label label-success" >{{(detail.prediction.PredictionD20 /detail.value).toFixed(2)}}</span>
+        </span>
     </div>
     <div class="panel-body">
         <span id="result"></span>
@@ -95,7 +101,7 @@
 
 
 
-    <div style="margin-bottom: 20px;margin-top: 20px;margin-left: 0px">
+   <!-- <div style="margin-bottom: 20px;margin-top: 20px;margin-left: 0px">
         <span class="label label-default" style="background-color: lightslategray">Variation</span>
         <span style="margin-left: 5px;"><span class="label label-default" style="margin-left: 5px;background-color: lightslategray">60 days </span><span class="label label-danger" style="margin-left: 5px;">4.2%</span></span>
         <span style="margin-left: 5px;"><span class="label label-default" style="margin-left: 5px;background-color: lightslategray">5 days </span><span class="label label-success" style="margin-left: 5px;">5%</span></span>
@@ -103,7 +109,7 @@
         <span style="margin-left: 5px;"><span class="label label-default" style="margin-left: 5px;background-color: lightslategray"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> 20 days </span>
             <span class="label label-success" style="margin-left: 5px;">{{(detail.prediction.PredictionD20 /detail.value).toFixed(2)}}</span>
         </span>
-    </div>
+    </div>-->
 
 
     <div class="mypanel panel panel-primary" style="border-color:lightslategray">
@@ -113,6 +119,23 @@
         <div class="panel-body">
             <span id="indice"></span>
             <span id="sector"></span>
+        </div>
+    </div>
+
+    <div class="mypanel panel panel-primary" style="border-color:lightslategray">
+        <div class="panel-heading" style="background-color: lightslategray">
+            <i class="fa fa-bar-chart-o fa-fw" style="color:white"></i> Stock news
+        </div>
+        <div class="panel-body">
+            <table class="table table-condensed table-striped table-bordered table-responsive">
+                <thead>
+                <tr>
+                    <th ng-click="predicate = 'timestamp'; reverse=!reverse"><span translate="realtime.table.header.principal">Date</span></th>
+                    <th ng-click="predicate = 'principal'; reverse=!reverse"><span translate="realtime.table.header.code">Link</span></th>
+                </tr>
+                </thead>
+            </table>
+
         </div>
     </div>
 

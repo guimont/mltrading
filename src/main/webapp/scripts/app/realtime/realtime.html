@@ -1,98 +1,32 @@
 <div class="container">
     <h2 translate="realtime.title">Audits</h2>
 
-    <div class="row">
-        <div class="col-sm-3">
+    <!--<div class="row">
+        <div class="col-sm-6">
+
             <div class="rating-block">
-                <h4>Average user rating</h4>
-                <h2 class="bold padding-bottom-7">4.3 <small>/ 5</small></h2>
-                <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
-                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                </button>
-                <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
-                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                </button>
-                <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
-                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                </button>
-                <button type="button" class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
-                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                </button>
-                <button type="button" class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
-                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                </button>
+                <h4>{{top.name}}
+                <span class="glyphicon glyphicon-arrow-up" aria-hidden="true" btn-lg style="margin-left: 440px;"></span></h4>
+                <h4 class="bold padding-bottom-5">{{top.value}}</h4>
+                <h4 class="bold padding-bottom-5" style="color:{{getcolorSign(top.variation)}}">{{top.variation}}</h4>
+                <h4 class="bold padding-bottom-5" style="color:{{getcolorSign(top.performanceEstimate)}}">{{(top.performanceEstimate).toFixed(2)}}</h4>
             </div>
+
         </div>
 
-        <div class="col-sm-3">
-            <div class="rating-block">
-                <h4>Average user rating</h4>
-                <h2 class="bold padding-bottom-7">4.3 <small>/ 5</small></h2>
-                <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
-                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                </button>
-                <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
-                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                </button>
-                <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
-                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                </button>
-                <button type="button" class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
-                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                </button>
-                <button type="button" class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
-                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                </button>
+        <div class="col-sm-6">
+            <div class="rating-block" style="margin-bottom: 20px">
+                <h4>{{flop.name}}
+                <span class="glyphicon glyphicon-arrow-down" aria-hidden="true" btn-lg style="margin-left: 300px;"></span></h4>
+                <h4 class="bold padding-bottom-5">{{flop.value}}</h4>
+                <h4 class="bold padding-bottom-5" style="color:{{getcolorSign(flop.variation)}}">{{flop.variation}}</h4>
+                <h4 class="bold padding-bottom-5" style="color:{{getcolorSign(flop.performanceEstimate)}}">{{(flop.performanceEstimate).toFixed(2)}}</h4>
             </div>
         </div>
-
-        <div class="col-sm-3">
-            <div class="rating-block">
-                <h4>Average user rating</h4>
-                <h2 class="bold padding-bottom-7">4.3 <small>/ 5</small></h2>
-                <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
-                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                </button>
-                <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
-                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                </button>
-                <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
-                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                </button>
-                <button type="button" class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
-                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                </button>
-                <button type="button" class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
-                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                </button>
-            </div>
-        </div>
-
-        <div class="col-sm-3">
-            <div class="rating-block">
-                <h4>Average user rating</h4>
-                <h2 class="bold padding-bottom-7">4.3 <small>/ 5</small></h2>
-                <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
-                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                </button>
-                <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
-                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                </button>
-                <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
-                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                </button>
-                <button type="button" class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
-                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                </button>
-                <button type="button" class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
-                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                </button>
-            </div>
-        </div>
-    </div>
+-->
 
 
-    <div class="mypanel panel panel-primary" style="border-color:lightslategray">
+    <!--<div class="mypanel panel panel-primary" style="border-color:lightslategray">
         <div class="panel-heading" style="background-color: lightslategray">
             <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Stock prediction ranking rising
         </div>
@@ -138,7 +72,7 @@
             </table>
 
         </div>
-    </div>
+    </div>-->
 
 
     <table class="table table-condensed table-striped table-bordered table-responsive">
@@ -157,10 +91,10 @@
         </tr>
         </thead>
 
-        <tr ng-repeat="rt in rts | filter:filter | orderBy:'-name':true" ng-hide="audit.filtered">
-            <td  ><span ui-sref="detail({code: '{{rt.code}}'})">{{rt.name}}</span></td>
+        <tr ng-repeat="rt in rts | filter:filter | orderBy:'-name':true" ng-hide="audit.filtered" style="font-family:'Arial, sans-serif'">
+            <td  ><a ui-sref="detail({code: '{{rt.code}}'})" style="color: #003399">{{rt.name}}</a></td>
             <td><small>{{rt.code}}</small></td>
-            <td><small>{{rt.codif}}</small></td>
+            <td><small class="badge">{{rt.codif}}</small></td>
             <td>{{rt.value}}</td>
             <td>{{rt.volume}}</td>
             <td style="color: {{getcolorSign(rt.variation)}}">{{rt.variation}}</td>

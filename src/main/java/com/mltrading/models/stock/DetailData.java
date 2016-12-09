@@ -8,6 +8,8 @@ import java.io.Serializable;
 public class DetailData implements Serializable {
     private String date;
     private double value;
+    private double opening;
+    private double volume;
     private double predD1;
     private double predD5;
     private double valueD5;
@@ -20,6 +22,22 @@ public class DetailData implements Serializable {
     private double predD20;
     private double valueD20;
     private boolean signD20;
+
+    public double getOpening() {
+        return opening;
+    }
+
+    public void setOpening(double opening) {
+        this.opening = opening;
+    }
+
+    public double getVolume() {
+        return volume;
+    }
+
+    public void setVolume(double volume) {
+        this.volume = volume;
+    }
 
     public boolean isSignD20() {
         return signD20;

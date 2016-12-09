@@ -27,13 +27,25 @@ function load (data) {
 
     var stagePredictionD1 = new Kinetic.Stage({
         container: "kinetic1D",
-        width: 1120,
+        width: 1220,
+        height: 200
+    });
+
+    var stagePredictionD1Error = new Kinetic.Stage({
+        container: "kinetic1DError",
+        width: 1220,
         height: 200
     });
 
     var stagePredictionD5 = new Kinetic.Stage({
         container: "kinetic5D",
-        width: 1120,
+        width: 1220,
+        height: 200
+    });
+
+    var stagePredictionD5Error = new Kinetic.Stage({
+        container: "kinetic5DError",
+        width: 1220,
         height: 200
     });
 
@@ -43,29 +55,63 @@ function load (data) {
         height: 200
     });
 
+    var stagePredictionD20Error = new Kinetic.Stage({
+        container: "kinetic20DError",
+        width: 1220,
+        height: 200
+    });
+
+    var stagePredictionD40 = new Kinetic.Stage({
+        container: "kinetic40D",
+        width: 1220,
+        height: 200
+    });
+
+    var stagePredictionD40Error = new Kinetic.Stage({
+        container: "kinetic40DError",
+        width: 1220,
+        height: 200
+    });
+
 
     var layerChart = new Kinetic.Layer();
-    var layerChartD5 = new Kinetic.Layer();
-    var layerChartD20 = new Kinetic.Layer();
+    var layerChartError = new Kinetic.Layer();
 
+    var layerChartD5 = new Kinetic.Layer();
+    var layerChartErrorD5 = new Kinetic.Layer();
+
+    var layerChartD20 = new Kinetic.Layer();
+    var layerChartErrorD20 = new Kinetic.Layer();
+
+    var layerChartD40 = new Kinetic.Layer();
+    var layerChartErrorD40 = new Kinetic.Layer();
 
     perf = data;
 
-    chartRun({x:20,y:75}, layerChart, 'mlD1', 'yield', 'grey' , true);
-    chartRun({x:390,y:75}, layerChart, 'mlD1', 'realyield', '#96B399', false);
-    chartRun({x:760,y:75}, layerChart, 'mlD1', 'error', 'orange', false);
+    chartRun({x:20,y:75}, layerChart, 'mlD1', 'yield', 'realyield', 'grey' , true, 1);
+    chartRun({x:20,y:75}, layerChart, 'mlD1', 'realyield', 'yield', '#96B399', false,0.5);
+    chartRun({x:20,y:75}, layerChartError, 'mlD1', 'error', 'error', 'orange', false, 0.6);
 
-    chartRun({x:20,y:75}, layerChartD5, 'mlD5', 'yield', 'grey' , true);
-    chartRun({x:390,y:75}, layerChartD5, 'mlD5', 'realyield', '#96B399', false);
-    chartRun({x:760,y:75}, layerChartD5, 'mlD5', 'error', 'orange', false);
+    chartRun({x:20,y:75}, layerChartD5, 'mlD5', 'yield', 'realyield', 'grey' , true, 1);
+    chartRun({x:20,y:75}, layerChartD5, 'mlD5', 'realyield', 'yield', '#96B399', false,0.5);
+    chartRun({x:20,y:75}, layerChartErrorD5, 'mlD5', 'error', 'error', 'orange', false, 0.6);
 
-    chartRun({x:20,y:75}, layerChartD20, 'mlD40', 'yield', 'grey' , true);
-    chartRun({x:390,y:75}, layerChartD20, 'mlD40', 'realyield', '#96B399', false);
-    chartRun({x:760,y:75}, layerChartD20, 'mlD40', 'error', 'orange', false);
+    chartRun({x:20,y:75}, layerChartD20, 'mlD20', 'yield', 'realyield', 'grey' , true, 1);
+    chartRun({x:20,y:75}, layerChartD20, 'mlD20', 'realyield', 'yield', '#96B399', false,0.5);
+    chartRun({x:20,y:75}, layerChartErrorD20, 'mlD20', 'error', 'error', 'orange', false, 0.6);
+
+    chartRun({x:20,y:75}, layerChartD40, 'mlD40', 'yield', 'realyield', 'grey' , true, 1);
+    chartRun({x:20,y:75}, layerChartD40, 'mlD40', 'realyield', 'yield', '#96B399', false,0.5);
+    chartRun({x:20,y:75}, layerChartErrorD40, 'mlD40', 'error', 'error', 'orange', false, 0.6);
 
     stagePredictionD1.add(layerChart);
+    stagePredictionD1Error.add(layerChartError);
     stagePredictionD5.add(layerChartD5);
+    stagePredictionD5Error.add(layerChartErrorD5);
     stagePredictionD20.add(layerChartD20);
+    stagePredictionD20Error.add(layerChartErrorD20);
+    stagePredictionD40.add(layerChartD40);
+    stagePredictionD40Error.add(layerChartErrorD40);
 
 };
 
@@ -73,7 +119,7 @@ function load (data) {
 
 var SIZEX=380;
 var SIZEY=140;
-var marginX= 340;
+var marginX= 1220;
 
 
 var marginInverseFrameY = 80;
@@ -145,15 +191,19 @@ function getminRun( list,f,c) {
  * @param pos position in page
  * @param layer : add group to layer
  */
-function chartRun(pos, layer, col, key, color, dyn) {
+function chartRun(pos, layer, col, key, key2, color, dyn,opacity) {
 
     var group = new Kinetic.Group();
     var eltLength = perf.perfList.length;
     var eltSize = 2;
     var max = getmaxRun(perf.perfList, key, col);
+    var max2 = getmaxRun(perf.perfList, key2, col);
+    if (max2 > max) max = max2;
     var min = getminRun(perf.perfList, key, col);
-    var ref = Math.max(max , Math.abs(min))
-    var heightM = (SIZEY/2)/ref;
+    var min2 = getminRun(perf.perfList, key2, col);
+    if (min2 < min) min = min2;
+    var ref = Math.max(max , Math.abs(min));
+    var heightM = ((SIZEY-20)/2)/ref;
 
     for (var i=0; i<perf.perfList.length;i++) {
         var dyncolor = color;
@@ -161,12 +211,12 @@ function chartRun(pos, layer, col, key, color, dyn) {
         if (perf.perfList[i][col]) {
             if (dyn === true && perf.perfList[i][col].sign === false)
                 dyncolor = 'red'
-            drawChart(group, pos, perf.perfList[i][col],key,  heightM, eltSize, i, perf.perfList[i][col].date, layer, dyncolor );
+            drawChart(group, pos, perf.perfList[i][col],key,  heightM, eltSize, i, perf.perfList[i][col].date, layer, dyncolor,opacity );
         }
 
     }
 
-    drawChartMax(group, pos, max, getMeanRun(perf.perfList, key , col),min, heightM, marginX);
+    drawChartMaxStage(group, pos, max, getMeanRun(perf.perfList, key , col),min, heightM, marginX);
 
     layer.add(group);
 }
@@ -174,7 +224,7 @@ function chartRun(pos, layer, col, key, color, dyn) {
 
 
 
-function drawChartMax(group, pos, max ,mean, min, heightM, width) {
+function drawChartMaxStage(group, pos, max ,mean, min, heightM, width) {
     group.add(new Kinetic.Text({
         x:pos.x-20,
         y: pos.y - heightM*max,
@@ -244,7 +294,7 @@ function drawChartMax(group, pos, max ,mean, min, heightM, width) {
  * @param layer
  * @param color
  */
-function drawChart(group, pos, elt ,key , heightM, eltSize, i, text , layer, color) {
+function drawChart(group, pos, elt ,key , heightM, eltSize, i, text , layer, color, opacity) {
     var tooltip;
 
     var rectBack = new Kinetic.Rect({
@@ -252,32 +302,40 @@ function drawChart(group, pos, elt ,key , heightM, eltSize, i, text , layer, col
         y: pos.y*2-10,
         width: eltSize,
         height: -SIZEY+10,
+        opacity: 0.3,
         fill: '#EDEAE6'
     });
 
     group.add(rectBack);
-    if  (i%30==0) {
+
+    /*if  (i%30==0) {
 
         group.add(new Kinetic.Rect({
             x: pos.x+i*(eltSize+2)+4,
-            y: pos.y,
-            width: 1,
+            y: pos.y*2,
+            width: 2,
             height:-marginInverseFrameY+20,
+            opacity: 0.6,
             fill: '#AC7969'
         }));
 
         if (text != null) {
-        group.add(new Kinetic.Text({
-            x: pos.x+i*(eltSize+2),
-            y: pos.y,
-            text: text,
-            fontSize: 8,
-            fontFamily: 'Calibri',
-            fill: '#AC7969',
-            width: 150,
-            align: 'left'
-        }))}
-    }
+            group.add(new Kinetic.Text({
+                x: pos.x+i*(eltSize+2),
+                y: pos.y,
+                text: text,
+                fontSize: 8,
+                fontFamily: 'Calibri',
+                fill: '#AC7969',
+                width: 150,
+                align: 'left'
+            }))}
+    }*/
+
+
+
+
+
 
 
     var rect = new Kinetic.Rect({
@@ -285,14 +343,15 @@ function drawChart(group, pos, elt ,key , heightM, eltSize, i, text , layer, col
         y: pos.y,
         width: eltSize,
         height: -elt[key]*heightM,
+        opacity: opacity,
         fill: color
     });
 
 
     var rectLayer = new Kinetic.Rect({
-        x: pos.x+i*(eltSize+2)-1,
+        x: pos.x+i*(eltSize+2)-2,
         y: pos.y,
-        width: eltSize+2,
+        width: eltSize+4,
         height: -marginInverseFrameY+20
     });
 
@@ -312,6 +371,9 @@ function drawChart(group, pos, elt ,key , heightM, eltSize, i, text , layer, col
         chartGroup.remove();
         layer.draw();
     });
+
+
+
 
 
 
@@ -359,6 +421,7 @@ function drawChart(group, pos, elt ,key , heightM, eltSize, i, text , layer, col
         drawRunPie(tooltip, spos, elt);
 
         chartGroup.add(tooltip);
+
 
         layer.draw();
     });

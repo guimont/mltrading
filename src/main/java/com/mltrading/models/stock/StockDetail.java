@@ -55,9 +55,9 @@ public class StockDetail implements Serializable{
 
 
     private static MLPerformance findPred(List<MLPerformances> perfList, String date, PredictionPeriodicity periodicity) {
-        date = date.substring(0,10);
-        try {
 
+        try {
+            date = date.substring(0,10);
             for (MLPerformances p : perfList) {
                 String datePerf = p.getMl(periodicity).getDate();
                 if (!datePerf.contains("J+"))
@@ -65,7 +65,7 @@ public class StockDetail implements Serializable{
                         return p.getMl(periodicity);
                     }
             }
-        } catch (NullPointerException e) {
+        } catch (Exception e) {
             log.error(e.toString());
         }
 
@@ -84,7 +84,16 @@ public class StockDetail implements Serializable{
             DetailData d = new DetailData();
             d.setDate(he.getDay().substring(5,10));
             d.setValue(he.getValue());
-            d.setPredD1(findPred(mls.getStatus().getPerfList(),he.getDay(), PredictionPeriodicity.D1).getPrediction());
+            if (he.getOpening() != null) d.setOpening(he.getOpening());
+            else d.setOpening(he.getValue());
+
+
+            MLPerformance perf = findPred(mls.getStatus().getPerfList(), he.getDay(), PredictionPeriodicity.D5);
+            if (perf != null) {
+                d.setPredD1(perf.getPrediction());
+            }
+
+
 
             MLPerformance perf5 = findPred(mls.getStatus().getPerfList(), he.getDay(), PredictionPeriodicity.D5);
             if (perf5 != null) {

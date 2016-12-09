@@ -22,6 +22,9 @@ public class MLStatus implements Serializable{
     private int errorRateD20 = 0;
     private int errorRateD40 = 0;
 
+
+    private int countD1 = 0, countD5 = 0, countD20 = 0, countD40 = 0;
+
     private List<MLPerformances> perfList;
 
     public void savePerf(String code) {
@@ -83,6 +86,11 @@ public class MLStatus implements Serializable{
             }
 
         }
+
+        this.setCountD1(countD1);
+        this.setCountD5(countD5);
+        this.setCountD20(countD20);
+        this.setCountD40(countD40);
 
         this.setAvgD1(avgD1 / countD1 * 100);
         this.setAvgD5(avgD5 / countD5 * 100);
@@ -158,6 +166,38 @@ public class MLStatus implements Serializable{
 
     public void setErrorRateD20(int errorRateD6) {
         this.errorRateD20 = errorRateD6;
+    }
+
+    public int getCountD1() {
+        return countD1;
+    }
+
+    public void setCountD1(int countD1) {
+        this.countD1 = countD1;
+    }
+
+    public int getCountD5() {
+        return countD5;
+    }
+
+    public void setCountD5(int countD5) {
+        this.countD5 = countD5;
+    }
+
+    public int getCountD20() {
+        return countD20;
+    }
+
+    public void setCountD20(int countD20) {
+        this.countD20 = countD20;
+    }
+
+    public int getCountD40() {
+        return countD40;
+    }
+
+    public void setCountD40(int countD40) {
+        this.countD40 = countD40;
     }
 
     public List<MLPerformances> getPerfList() {
@@ -296,6 +336,11 @@ public class MLStatus implements Serializable{
         cloneObject.errorRateD5 = this.errorRateD5;
         cloneObject.errorRateD20 = this.errorRateD20;
         cloneObject.errorRateD40 = this.errorRateD40;
+
+        cloneObject.countD1 = this.countD1;
+        cloneObject.countD5 = this.countD5;
+        cloneObject.countD20 = this.countD20;
+        cloneObject.countD40 = this.countD40;
 
         cloneObject.perfList = new ArrayList();
         for (MLPerformances perfs : perfList) {

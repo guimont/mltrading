@@ -2,15 +2,22 @@
     <h2 style="margin-bottom: 60px" translate="performance.title">Performance</h2>
     <h2 style="margin-bottom: 60px">{{preds.codif}}</h2>
 
-    <span class="label label-danger">{{preds.errorRateD1}} / 90</span>
+    <span class="label label-danger">{{preds.errorRateD1}} / {{preds.countD1}}</span>
     <span class="label label-warning">{{preds.avgD1.toFixed(3)}}</span>
     <span id="kinetic1D"></span>
-    <span class="label label-danger">{{preds.errorRateD5}} / 85</span>
+    <span id="kinetic1DError"></span>
+    <span class="label label-danger">{{preds.errorRateD5}} / {{preds.countD5}}</span>
     <span class="label label-warning">{{preds.avgD5.toFixed(3)}}</span>
     <span id="kinetic5D"></span>
-    <span class="label label-danger">{{preds.errorRateD40}} / 50</span>
-    <span class="label label-warning">{{preds.avgD40.toFixed(3)}}</span>
+    <span id="kinetic5DError"></span>
+    <span class="label label-danger">{{preds.errorRateD20}} / {{preds.countD20}}</span>
+    <span class="label label-warning">{{preds.avgD20.toFixed(3)}}</span>
     <span id="kinetic20D"></span>
+    <span id="kinetic20DError"></span>
+    <span class="label label-danger">{{preds.errorRateD40}} / {{preds.countD40}}</span>
+    <span class="label label-warning">{{preds.avgD40.toFixed(3)}}</span>
+    <span id="kinetic40D"></span>
+    <span id="kinetic40DError"></span>
 
     <table style="margin-top: 40px" class="table table-condensed table-striped table-bordered table-responsive">
         <thead>

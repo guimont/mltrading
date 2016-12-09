@@ -68,11 +68,11 @@ public class MlForecast {
      */
     public void optimize() {
 
-        //final CountDownLatch latches = new CountDownLatch(CacheStockGeneral.getIsinCache().values().size());
-        final CountDownLatch latches = new CountDownLatch(1); //testmode ORA
+        final CountDownLatch latches = new CountDownLatch(CacheStockGeneral.getIsinCache().values().size());
+        //final CountDownLatch latches = new CountDownLatch(1); //testmode ORA
 
         //For test purpose only
-        CacheStockGeneral.getIsinCache().values().stream().filter(s -> s.getRealCodif().equals("ORA")).forEach(s -> executorRef.submit(() -> {    //For test purpose only
+        CacheStockGeneral.getIsinCache().values().stream()/*.filter(s -> s.getRealCodif().equals("ORA"))*/.forEach(s -> executorRef.submit(() -> {    //For test purpose only
             try {
                 optimize(s, 1, 1, Method.RandomForest, Type.Feature);
             } finally {

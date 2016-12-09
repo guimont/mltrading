@@ -31,8 +31,8 @@ public class CacheMLStock {
         mlStockMap = new HashMap<>();
     }
 
-    //static SparkConf sparkConf = new SparkConf().setAppName("JavaRandomForest").setMaster("local[*]");
-    static SparkConf sparkConf = new SparkConf().setSparkHome("file:///C:/temp").setAppName("JavaRandomForest").setMaster("spark://NB120249:7077").setJars(new String[]{"target/com.mltrading-1.0-SNAPSHOT.jar"});
+    static SparkConf sparkConf = new SparkConf().setAppName("JavaRandomForest").setMaster("local[*]");
+    //static SparkConf sparkConf = new SparkConf().setSparkHome("file:///C:/temp").setAppName("JavaRandomForest").setMaster("spark://NB120249:7077").setJars(new String[]{"target/com.mltrading-1.0-SNAPSHOT.jar"});
     static JavaSparkContext sc = new JavaSparkContext(sparkConf);
 
     public static void load(List<StockGeneral> sl) {

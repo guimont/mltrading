@@ -141,7 +141,7 @@ public class RandomForestStock implements Serializable {
         );
 
 
-        mls.setTestData(predictionAndLabel);
+        //mls.setTestData(predictionAndLabel);
 
         JavaRDD<MLPerformances> res =
             predictionAndLabel.map(new Function <FeaturesStock, MLPerformances>() {
@@ -231,7 +231,7 @@ public class RandomForestStock implements Serializable {
         );
 
 
-        mls.setTestData(predictionAndLabel);
+        //mls.setTestData(predictionAndLabel);
 
         JavaRDD<MLPerformances> res =
             predictionAndLabel.map(new Function <FeaturesStock, MLPerformances>() {

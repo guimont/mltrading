@@ -21,8 +21,8 @@ function draw(pos, layer,c) {
         var group = new Kinetic.Group();
         var max = getmaxRunResult( result[c], 'value',0);
         var min = getminRunResult( result[c], 'value',100000);
-        var heightM = (SIZERESY)/((max-min)*1.55);
-        var marge =  heightM*4;
+        var heightM = (SIZERESY)/((max-min)*2);
+        var marge =  SIZERESY/10;
 
         for (var i=0; i<result[c].length;i++) {
             drawChartStock(group, pos, result[c], min, heightM,marge, i,  layer, 'blue');
@@ -42,9 +42,9 @@ function drawChartStock(group, pos, data,min, heightM, marge,  i ,  layer) {
 
     var line = new Kinetic.Rect({
         x: pos.x * 2 + i * (10),
-        y: 60,
+        y: 30,
         width: 3,
-        height: SIZERESY - 20,
+        height: SIZERESY - 50,
         fill: 'lightgrey',
         opacity: 0.4
     });
@@ -52,9 +52,9 @@ function drawChartStock(group, pos, data,min, heightM, marge,  i ,  layer) {
 
     var ref = new Kinetic.Rect({
         x: pos.x * 2 + i * (10) - 5,
-        y: 60,
+        y: 30,
         width: 10,
-        height: SIZERESY - 20,
+        height: SIZERESY - 50,
         opacity: 0
     });
 
@@ -65,7 +65,7 @@ function drawChartStock(group, pos, data,min, heightM, marge,  i ,  layer) {
     if (i % 4 == 0) {
 
         group.add(new Kinetic.Rect({
-            x: pos.x * 2 + i * (10),
+            x: pos.x * 2 + i * (10)+1,
             y: 55,
             width: 1,
             height: SIZERESY -80,
@@ -88,11 +88,28 @@ function drawChartStock(group, pos, data,min, heightM, marge,  i ,  layer) {
 
     if (data[i].value > 0) {
         var pred = new Kinetic.Circle({
-            x: pos.x * 2 + i * (10) - 1,
-            y: SIZERESY - (data[i].value - min) * heightM -marge,
-            width: 3,
-            opacity: 0.5,
+            x: pos.x * 2 + i * (10) +1,
+            y: SIZERESY - (data[i].value - min) * heightM - marge,
+            width: 5,
+            opacity: 1,
             fill: 'grey'
+        });
+        group.add(pred);
+    }
+
+    if (data[i].value > 0) {
+        var pred = new Kinetic.Rect({
+            x: pos.x * 2 + i * (10),
+            y: SIZERESY - (data[i].value - min) * heightM - marge,
+            width: 2,
+            height: (data[i].value - min) * heightM + 5,
+            opacity: 0.6,
+            fill: 'grey',
+            shadowColor: 'black',
+            shadowBlur: 5,
+            shadowOffset: {x : 2, y : 2},
+            shadowOpacity: 0.4
+
         });
         group.add(pred);
     }
