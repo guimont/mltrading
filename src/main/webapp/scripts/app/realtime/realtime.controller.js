@@ -18,7 +18,7 @@ angular.module('mltradingApp')
         $scope.showIndice = function() {
             RealtimeService.findIndice().then(function (data) {
                 $scope.indice = data;
-                loadIndice($scope.indice,"indicePanel","PX1 stock");
+                loadIndice($scope.indice,"indicePanel","PX1 stock", false);
             });
         };
 

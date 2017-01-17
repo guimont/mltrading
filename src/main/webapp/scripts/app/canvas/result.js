@@ -39,8 +39,8 @@ function loadResult (data) {
     chartResult({x:30,y:20}, layerChart, true);
     stageResult.add(layerChart);
 
-    loadIndice(result.indice,"indicePanel","")
-    loadIndice(result.sector,"sectorPanel","")
+    loadIndice(result.indice,"indicePanel","", true)
+    loadIndice(result.sector,"sectorPanel","", true)
 
 
    /* var layerChartIndice = new Kinetic.Layer();

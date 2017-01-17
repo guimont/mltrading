@@ -6,7 +6,7 @@
  */
 
 
-function loadIndice(dataV, id, label) {
+function loadIndice(dataV, id, label,bdate) {
 
     var data = {
         labels: [],
@@ -54,7 +54,7 @@ function loadIndice(dataV, id, label) {
                 },
                 scales: {
                     xAxes: [{
-                        display: true,
+                        display: bdate,
                         scaleLabel: {
                             display: true
                         },
