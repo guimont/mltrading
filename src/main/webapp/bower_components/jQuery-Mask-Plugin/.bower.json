@@ -1,0 +1,22 @@
+{
+  "name": "jquery-mask-plugin",
+  "version": "1.13.9",
+  "main": "dist/jquery.mask.js",
+  "ignore": [
+    "deploy.rb",
+    "jquery.mask.json",
+    "Gruntfile.js",
+    "test/*",
+    ".*"
+  ],
+  "homepage": "https://github.com/igorescobar/jQuery-Mask-Plugin",
+  "_release": "1.13.9",
+  "_resolution": {
+    "type": "version",
+    "tag": "v1.13.9",
+    "commit": "3bcd442e739016ad89afe2c658a8f9b3d5f62be6"
+  },
+  "_source": "https://github.com/igorescobar/jQuery-Mask-Plugin.git",
+  "_target": "~1.13.4",
+  "_originalSource": "jQuery-Mask-Plugin"
+}

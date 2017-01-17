@@ -1,9 +1,6 @@
 package com.mltrading.web.rest;
 
-import com.mltrading.models.stock.CacheStockGeneral;
-import com.mltrading.models.stock.Stock;
-import com.mltrading.models.stock.StockDetail;
-import com.mltrading.models.stock.StockGeneral;
+import com.mltrading.models.stock.*;
 import com.mltrading.repository.StockRepository;
 import com.mltrading.security.AuthoritiesConstants;
 import org.springframework.boot.actuate.audit.AuditEvent;
@@ -36,6 +33,27 @@ public class RealTimeResource {
         List<StockGeneral> l = new ArrayList<>(CacheStockGeneral.getCache().values());
         return l;
     }
+
+    @RequestMapping(value = "/rt/sector",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @RolesAllowed(AuthoritiesConstants.ADMIN)
+    public List<StockSector> findAllSector() {
+
+        List<StockSector> l = new ArrayList<>(CacheStockSector.getSectorCache().values());
+        return l;
+    }
+
+    @RequestMapping(value = "/rt/px1",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @RolesAllowed(AuthoritiesConstants.ADMIN)
+    public List<StockHistory> findPx1() {
+
+        return StockHistory.getStockHistoryLast("PX1",60);
+
+    }
+
 
 
     @RequestMapping(value = "/rt/detail",

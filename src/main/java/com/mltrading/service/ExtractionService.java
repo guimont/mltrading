@@ -105,9 +105,11 @@ public class ExtractionService {
     }
 
     static int DAYS_BY_MONTH = 31;
+    static int DAYS_BY_YEAR = 365;
 
     private int check_diff( DateTime timeInsert , DateTime timeNow ) {
-        return (timeNow.getDayOfMonth()+timeNow.getMonthOfYear()*DAYS_BY_MONTH) - (timeInsert.getDayOfMonth()+timeInsert.getMonthOfYear()*DAYS_BY_MONTH);
+        int shift = (timeNow.getYear() - timeInsert.getYear()) * DAYS_BY_YEAR;
+        return (timeNow.getDayOfMonth()+timeNow.getMonthOfYear()*DAYS_BY_MONTH + shift) - (timeInsert.getDayOfMonth()+timeInsert.getMonthOfYear()*DAYS_BY_MONTH);
     }
 
     public int getLastUpdateRef() {

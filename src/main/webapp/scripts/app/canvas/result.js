@@ -19,7 +19,7 @@ function loadResult (data) {
     });
 
 
-    var stageIndice = new Kinetic.Stage({
+   /* var stageIndice = new Kinetic.Stage({
         container: "indice",
         width: SIZERESX/2,
         height: SIZERESY
@@ -29,7 +29,7 @@ function loadResult (data) {
         container: "sector",
         width: SIZERESX/2,
         height: SIZERESY
-    });
+    });*/
 
 
     var layerChart = new Kinetic.Layer();
@@ -39,14 +39,17 @@ function loadResult (data) {
     chartResult({x:30,y:20}, layerChart, true);
     stageResult.add(layerChart);
 
+    loadIndice(result.indice,"indicePanel","")
+    loadIndice(result.sector,"sectorPanel","")
 
-    var layerChartIndice = new Kinetic.Layer();
+
+   /* var layerChartIndice = new Kinetic.Layer();
     draw({x:30,y:20},layerChartIndice,'indice')
     stageIndice.add(layerChartIndice);
 
     var layerChartSector = new Kinetic.Layer();
     draw({x:30,y:20},layerChartSector,'sector')
-    stageSector.add(layerChartSector);
+    stageSector.add(layerChartSector);*/
 
 };
 

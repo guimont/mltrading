@@ -7,6 +7,10 @@ package com.mltrading.models.stock;
  */
 public class StockSector extends StockHistory{
 
+    /**
+     * current variation with opening price
+     */
+    private Float variation;
 
     private String urlInvestir;
 
@@ -32,6 +36,11 @@ public class StockSector extends StockHistory{
     }
 
 
+    public Float getVariation() {
+        return variation;
+    }
 
-
+    public void setVariation(Float variation) {
+        this.variation = variation;
+    }
 }

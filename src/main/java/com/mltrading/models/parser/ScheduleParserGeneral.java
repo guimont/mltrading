@@ -12,6 +12,7 @@ import com.mltrading.ml.MLPredictor;
 import com.mltrading.ml.MlForecast;
 import com.mltrading.models.parser.impl.RealTimeParserBoursorama;
 import com.mltrading.models.parser.impl.RealTimeParserYahoo;
+import com.mltrading.models.parser.impl.RealTimeSectorGoogle;
 import com.mltrading.models.stock.*;
 import com.mltrading.models.util.ThreadFactory;
 import com.mltrading.repository.StockRepository;
@@ -60,6 +61,7 @@ public class ScheduleParserGeneral  {
 
     protected void runExtraction() {
         RealTimeParserBoursorama.refreshCache();
+        RealTimeSectorGoogle.refreshCache();
     }
 
 

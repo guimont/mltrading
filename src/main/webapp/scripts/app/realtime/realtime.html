@@ -1,5 +1,6 @@
-<div class="container">
-    <h2 translate="realtime.title">Audits</h2>
+<div class="container" style="width: 95%">
+
+        <div class="content">
 
     <!--<div class="row">
         <div class="col-sm-6">
@@ -74,44 +75,158 @@
         </div>
     </div>-->
 
+            <div class="content-body" style="margin-top: 30px">
+                <!-- RESUME BLOCK -->
+                <div class="row">
+                    <div class="col-lg-6 col-md-6">
+                        <div class="panel">
+                            <canvas id="sectorPanel" width="400" height="150"></canvas>
+                        </div><!-- /.panel -->
+                    </div><!-- /.cols -->
 
-    <table class="table table-condensed table-striped table-bordered table-responsive">
-        <thead>
-        <tr>
-            <th ng-click="predicate = 'timestamp'; reverse=!reverse"><span translate="realtime.table.header.principal">Name</span></th>
-            <th ng-click="predicate = 'principal'; reverse=!reverse"><span translate="realtime.table.header.code">Code</span></th>
-            <th ng-click="predicate = 'type'; reverse=!reverse"><span translate="realtime.table.header.codeIsin">Code Isin</span></th>
-            <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="realtime.table.header.value"></span></th>
-            <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="realtime.table.header.volume"></span></th>
-            <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="realtime.table.header.variation"></span></th>
-            <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="realtime.table.header.prediction1D"></span></th>
-            <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="realtime.table.header.prediction5D"></span></th>
-            <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="realtime.table.header.prediction20D"></span></th>
-            <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="realtime.table.header.detail"></span></th>
-        </tr>
-        </thead>
+                    <div class="col-lg-6 col-md-6">
+                        <div class="panel">
+                            <canvas id="indicePanel" width="400" height="150"></canvas>
+                        </div><!-- /.panel -->
+                    </div><!-- /.cols -->
 
-        <tr ng-repeat="rt in rts | filter:filter | orderBy:'-name':true" ng-hide="audit.filtered" style="font-family:'Arial, sans-serif'">
-            <td  ><a ui-sref="detail({code: '{{rt.code}}'})" style="color: #003399">{{rt.name}}</a></td>
-            <td><small>{{rt.code}}</small></td>
-            <td><small class="badge">{{rt.codif}}</small></td>
-            <td>{{rt.value}}</td>
-            <td>{{rt.volume}}</td>
-            <td style="color: {{getcolorSign(rt.variation)}}">{{rt.variation}}</td>
-            <td style="color: {{getcolor(rt.prediction.confidenceD1)}}">{{prediction(rt.prediction.predictionD1, rt.prediction.confidenceD1)}}
-                <!--a ui-sref="detail({code: '{{rt.code}}'})" ><i style="margin-left: 5px" class="glyphicon glyphicon-eye-open"/></a-->
-            </td>
-            <td style="color: {{getcolor(rt.prediction.confidenceD5)}}">{{prediction(rt.prediction.predictionD5, rt.prediction.confidenceD5)}}
-                <!--a ui-sref="performance({code: '{{rt.codif}}'})" ><i style="margin-left: 5px" class="glyphicon glyphicon-eye-open"/></a-->
-            </td>
-            <td style="color: {{getcolor(rt.prediction.confidenceD20)}}">{{prediction(rt.prediction.predictionD20, rt.prediction.confidenceD20)}}
-                <!--a ui-sref="performance({code: '{{rt.codif}}'})" ><i style="margin-left: 5px" class="glyphicon glyphicon-eye-open"/></a-->
-            </td>
-            <td>
-                <a ui-sref="performance({code: '{{rt.codif}}'})" ><i style="margin-left: 5px" class="glyphicon glyphicon-eye-open"/></a>
-            </td>
-        </tr>
-    </table>
-    </tr>
-    </table>
+
+                </div><!-- /.row -->
+                <!-- /RESUME BLOCK -->
+
+
+                <div class="content-body" style="margin-top: 30px">
+                    <!-- RESUME BLOCK -->
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6">
+                            <div class="panel">
+                                <div class="panel-body" style="overflow-x:hidden;">
+                                    <p class="pull-right">
+                                        <a href="#" class="text-muted no-decor" data-toggle="tooltip" data-container="body" title="View details" aria-label="View details"><i class="icon-arrow-right-circle fa-lg"></i></a>
+                                    </p>
+                                    <p><strong  class="badge" style="width: 45px; background-color: silver; "><span>{{top.codif}}</span> <small class="text-muted" style="margin-left: 20px">{{top.name}}</small></strong></p>
+                                    <div>
+                                        <span id="spark-posts"></span>
+                                    </div>
+                                    <p><strong class="fa-lg">{{top.value}}</strong></p>
+                                    <p><strong class="fa-lg" style="color:{{getcolorSign(top.variation)}}">{{top.variation}}</strong></p>
+                                </div><!-- /.panel-body -->
+                                <div class="progress progress-xs no-margin" data-toggle="tooltip" data-container="body" title="173/200 of max post today" style="height: 3px">
+                                    <div class="progress-bar bg-teal" style="width:62%"></div>
+                                </div>
+                            </div><!-- /.panel -->
+                        </div><!-- /.cols -->
+
+                        <div class="col-lg-6 col-md-6">
+                            <div class="panel">
+                                <div class="panel-body" style="overflow-x:hidden;">
+                                    <p class="pull-right">
+                                        <a href="#" class="text-muted no-decor" data-toggle="tooltip" data-container="body" title="View details" aria-label="View details"><i class="icon-arrow-right-circle fa-lg"></i></a>
+                                    </p>
+                                    <p><strong  class="badge" style="width: 45px; background-color: silver; "><span>{{flop.codif}}</span> <small class="text-muted" style="margin-left: 20px">{{flop.name}}</small></strong></p>
+                                    <div>
+                                        <span id="spark-posts"></span>
+                                    </div>
+                                    <p><strong class="fa-lg">{{flop.value}}</strong></p>
+                                    <p><strong class="fa-lg" style="color:{{getcolorSign(flop.variation)}}">{{flop.variation}}</strong></p>
+                                </div><!-- /.panel-body -->
+                                <div class="progress progress-xs no-margin" data-toggle="tooltip" data-container="body" title="173/200 of max post today" style="height: 3px">
+                                    <div class="progress-bar bg-violet" style="width:62%"></div>
+                                </div>
+                            </div><!-- /.panel -->
+                        </div><!-- /.cols -->
+
+
+                    </div><!-- /.row -->
+                    <!-- /RESUME BLOCK -->
+
+    <div class="col-md-12">
+        <h3>Responsive tables</h3>
+        <div class="table-responsive" style="background-color: #fff;box-shadow: 0 1px 3px -1px rgba(22,24,27,.26);">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th ng-click="predicate = 'timestamp'; reverse=!reverse"><span translate="realtime.table.header.principal">Name</span></th>
+                    <th ng-click="predicate = 'principal'; reverse=!reverse"><span translate="realtime.table.header.code">Code</span></th>
+                    <th ng-click="predicate = 'type'; reverse=!reverse"><span translate="realtime.table.header.codeIsin">Code Isin</span></th>
+                    <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="realtime.table.header.sector">Sector</span></th>
+                    <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="realtime.table.header.value"></span></th>
+                    <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="realtime.table.header.volume"></span></th>
+                    <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="realtime.table.header.variation"></span></th>
+                    <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="realtime.table.header.prediction20D"></span></th>
+                    <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="realtime.table.header.detail"></span></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="rt in rts | filter:filter | orderBy:'-name':true" ng-hide="audit.filtered">
+                    <td  ><a ui-sref="detail({code: '{{rt.code}}'})">{{rt.name}}</a></td>
+                    <td><small>{{rt.code}}</small></td>
+                    <td><small class="badge" style="width: 45px; background-color: silver">{{rt.codif}}</small></td>
+                    <td><i style="margin-left: 5px;color: lightslategrey" class="{{getIcon(rt.sector)}}" data-toggle="tooltip" data-container="body" title="View details" aria-label="View details"/></td>
+                    <td>{{rt.value}}</td>
+                    <td>{{rt.volume}}</td>
+                    <td style="color: {{getcolorSign(rt.variation)}}">{{rt.variation}}</td>
+                    <td style="color: {{getcolor(rt.prediction.confidenceD20)}}">{{prediction(rt.prediction.predictionD20, rt.prediction.confidenceD20)}}</td>
+                    <td>
+                        <a ui-sref="performance({code: '{{rt.codif}}'})" ><i style="margin-left: 5px" class="glyphicon glyphicon-eye-open"/></a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div><!-- /.table-responsive -->
+    </div><!-- /.cols -->
+
+
+        </div><!-- /.content -->
+
+            <!-- techno       glyphicon glyphicon-phone
+            telecom         glyphicon glyphicon-earphone
+            petrole         glyphicon glyphicon-oil
+            santé           glyphicon glyphicon-briefcase glyphicon glyphicon-heart
+            bien conso      glyphicon glyphicon-shopping-cart
+            finance         glyphicon glyphicon-usd
+            mat de const    glyphicon glyphicon-home
+
+
+
+
+          <!-- <table class="table table-condensed table-striped table-bordered table-responsive">
+               <thead>
+               <tr>
+                   <th ng-click="predicate = 'timestamp'; reverse=!reverse"><span translate="realtime.table.header.principal">Name</span></th>
+                   <th ng-click="predicate = 'principal'; reverse=!reverse"><span translate="realtime.table.header.code">Code</span></th>
+                   <th ng-click="predicate = 'type'; reverse=!reverse"><span translate="realtime.table.header.codeIsin">Code Isin</span></th>
+                   <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="realtime.table.header.value"></span></th>
+                   <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="realtime.table.header.volume"></span></th>
+                   <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="realtime.table.header.variation"></span></th>
+                   <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="realtime.table.header.prediction1D"></span></th>
+                   <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="realtime.table.header.prediction5D"></span></th>
+                   <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="realtime.table.header.prediction20D"></span></th>
+                   <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="realtime.table.header.detail"></span></th>
+               </tr>
+               </thead>
+
+               <tr ng-repeat="rt in rts | filter:filter | orderBy:'-name':true" ng-hide="audit.filtered" style="font-family:'Arial, sans-serif'">
+                   <td  ><a ui-sref="detail({code: '{{rt.code}}'})" style="color: #003399">{{rt.name}}</a></td>
+                   <td><small>{{rt.code}}</small></td>
+                   <td><small class="badge">{{rt.codif}}</small></td>
+                   <td>{{rt.value}}</td>
+                   <td>{{rt.volume}}</td>
+                   <td style="color: {{getcolorSign(rt.variation)}}">{{rt.variation}}</td>
+                   <td style="color: {{getcolor(rt.prediction.confidenceD1)}}">{{prediction(rt.prediction.predictionD1, rt.prediction.confidenceD1)}}
+                       &lt;!&ndash;a ui-sref="detail({code: '{{rt.code}}'})" ><i style="margin-left: 5px" class="glyphicon glyphicon-eye-open"/></a&ndash;&gt;
+                   </td>
+                   <td style="color: {{getcolor(rt.prediction.confidenceD5)}}">{{prediction(rt.prediction.predictionD5, rt.prediction.confidenceD5)}}
+                       &lt;!&ndash;a ui-sref="performance({code: '{{rt.codif}}'})" ><i style="margin-left: 5px" class="glyphicon glyphicon-eye-open"/></a&ndash;&gt;
+                   </td>
+                   <td style="color: {{getcolor(rt.prediction.confidenceD20)}}">{{prediction(rt.prediction.predictionD20, rt.prediction.confidenceD20)}}
+                       &lt;!&ndash;a ui-sref="performance({code: '{{rt.codif}}'})" ><i style="margin-left: 5px" class="glyphicon glyphicon-eye-open"/></a&ndash;&gt;
+                   </td>
+                   <td>
+                       <a ui-sref="performance({code: '{{rt.codif}}'})" ><i style="margin-left: 5px" class="glyphicon glyphicon-eye-open"/></a>
+                   </td>
+               </tr>
+           </table>
+           </tr>
+           </table>-->
 </div>

@@ -114,11 +114,35 @@
 
     <div class="mypanel panel panel-primary" style="border-color:lightslategray">
         <div class="panel-heading" style="background-color: lightslategray">
-            <i class="fa fa-bar-chart-o fa-fw" style="color:white"></i> Stock Indice {{detail.indice[0].code}} / Sector
+            <i class="fa fa-bar-chart-o fa-fw" style="color:white"></i> Stock Indice {{detail.indice[0].code}}
         </div>
         <div class="panel-body">
-            <span id="indice"></span>
-            <span id="sector"></span>
+            <!--div class="col-lg-6 col-md-6">
+                <div class="panel">
+                    <canvas id="indicePanel" width="400" height="150"></canvas>
+                </div>
+            </div-->
+            <div class="panel">
+                <canvas id="indicePanel" width="1000" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="mypanel panel panel-primary" style="border-color:lightslategray">
+        <div class="panel-heading" style="background-color: lightslategray">
+            <i class="fa fa-bar-chart-o fa-fw" style="color:white"></i>  Sector {{detail.sector[0].code}}
+        </div>
+        <div class="panel-body">
+            <!--div class="col-lg-6 col-md-6">
+                <div class="panel">
+                    <canvas id="indicePanel" width="400" height="150"></canvas>
+                </div>
+            </div-->
+
+            <div class="panel">
+                <canvas id="sectorPanel" width="1000" height="250"></canvas>
+            </div>
+
         </div>
     </div>
 

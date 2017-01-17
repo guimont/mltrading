@@ -4,6 +4,26 @@ angular.module('mltradingApp')
     .controller('RealtimeController', function ($scope, $http, RealtimeService) {
 
 
+        $scope.showSector = function() {
+            RealtimeService.findSector().then(function (data) {
+                $scope.sectors = data;
+                loadSector($scope.sectors);
+
+            });
+        };
+
+        $scope.showSector()
+
+
+        $scope.showIndice = function() {
+            RealtimeService.findIndice().then(function (data) {
+                $scope.indice = data;
+                loadIndice($scope.indice,"indicePanel","PX1 stock");
+            });
+        };
+
+        $scope.showIndice()
+
         var findMax = function (data) {
             var max = 0;
             var index = 0;
@@ -47,6 +67,22 @@ angular.module('mltradingApp')
         };
 
 
+        $scope.getIcon = function(val) {
+
+            if(val ==="FRIN") return 'glyphicon glyphicon-briefcase'
+            if(val ==="FRBM") return 'glyphicon glyphicon-home'
+            if(val ==="FROG") return 'glyphicon glyphicon-oil'
+            if(val ==="FRCG") return 'glyphicon glyphicon-shopping-cart'
+            if(val ==="FRHC") return 'glyphicon glyphicon-heart'
+            if(val ==="FRCS") return 'glyphicon glyphicon-credit-card'
+            if(val ==="FRTEL") return 'glyphicon glyphicon-earphone'
+            if(val ==="FRUT") return 'glyphicon glyphicon-refresh' //Services aux collectivités
+            if(val ==="FRFIN") return 'glyphicon glyphicon-usd'
+            if(val ==="FRTEC") return 'glyphicon glyphicon-phone'
+
+        }
+
+
 
         $scope.onChangeDate();
 
@@ -71,8 +107,8 @@ angular.module('mltradingApp')
         }
 
         $scope.getcolorSign = function(val) {
-            if (val < 0) return 'red';
-            return 'green';
+            if (val < 0) return '#ED5565!important';
+            return '#48CFAD!important';
         }
 
 

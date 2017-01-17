@@ -7,6 +7,7 @@
                 "principal": "Name",
                 "code": "Code",
                 "codeIsin": "Code Isin",
+                "sector": "Sector",
                 "value": "Value",
                 "volume": "Volume",
                 "variation" : "Variation",
