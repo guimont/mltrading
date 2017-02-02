@@ -1,9 +1,11 @@
 package com.mltrading.models.stock;
 
+import java.io.Serializable;
+
 /**
  * Created by gmo on 17/06/2015.
  */
-public class StockGeneral {
+public class StockGeneral implements Serializable {
 
     private String code;
 

@@ -4,7 +4,11 @@ package com.mltrading.ml;
 import com.mltrading.dao.InfluxDaoConnector;
 import com.mltrading.models.stock.StockGeneral;
 import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.api.java.function.Function;
+import org.apache.spark.mllib.linalg.Vectors;
+import org.apache.spark.mllib.regression.LabeledPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.commons.io.FileUtils;
@@ -19,7 +23,7 @@ import java.util.Map;
  * Created by gmo on 15/12/2015.
  */
 public class CacheMLStock {
-     //
+    //
 
 
     private static final Logger log = LoggerFactory.getLogger(CacheMLStock.class);
@@ -36,6 +40,66 @@ public class CacheMLStock {
     static JavaSparkContext sc = new JavaSparkContext(sparkConf);
 
     public static void load(List<StockGeneral> sl) {
+
+        //JavaRDD<StockGeneral> data = sc.parallelize(sl);
+
+        deleteModel();
+
+        for (StockGeneral s : sl) {
+            MLStocks mls = new MLStocks(s.getCodif());
+            mls.distibute();
+            //mls.send(sc);
+        }
+
+
+        //to test
+        /*List<MLStocks>  resMLLoad= data.map(
+            new Function<StockGeneral, MLStocks>() {
+                public MLStocks call(StockGeneral s) {
+                    try {
+                        MLStocks mls = new MLStocks(s.getCodif());
+                        mls.load();
+                        return mls;
+                    } catch (Exception e) {
+                        log.error(e.toString());
+                        return null;
+                    }
+                }
+            }
+        ).collect();
+
+
+        for (MLStocks mls:resMLLoad) {
+            mls.getStatus().loadPerf(mls.getCodif());
+            mlStockMap.put(mls.getCodif(), mls);
+        }*/
+
+
+        /*
+        List<MLStocks>  resMLLoad= data.map(
+            new Function<StockGeneral, MLStocks>() {
+                public MLStocks call(StockGeneral s) {
+                    try {
+                        MLStocks mls = new MLStocks(s.getCodif());
+                        mls.distibute();
+                        return mls;
+                    } catch (Exception e) {
+                        log.error(e.toString());
+                        return null;
+                    }
+                }
+            }
+        ).collect();
+
+
+        if (resMLLoad != null) {
+            for (MLStocks mls : resMLLoad) {
+
+                System.out.println(mls.getCodif());
+            }
+        }*/
+
+
         for (StockGeneral s : sl) {
             try {
                 MLStocks mls = new MLStocks(s.getCodif());
@@ -57,6 +121,13 @@ public class CacheMLStock {
     public static JavaSparkContext getJavaSparkContext() {
         return sc;
     }
+
+    public static void saveDB() {
+        for (MLStocks mls:mlStockMap.values()) {
+            mls.saveDB();
+        }
+    }
+
 
     public static void save() {
         deleteModel();

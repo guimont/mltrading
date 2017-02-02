@@ -50,7 +50,7 @@ public class ArticlesParserEchos implements ArticlesParser {
         loaderFrom(g, "2010-01-01");
     }
 
-    static int MAXPAGE = 12;
+    static int MAXPAGE = 1;
 
 
     private void loaderFrom(StockGeneral g, String dateRef) {
@@ -110,7 +110,7 @@ public class ArticlesParserEchos implements ArticlesParser {
         for (StockGeneral g : CacheStockGeneral.getIsinCache().values()) {
 
             for (int page = 1; page <= MAXPAGE; page += 1) {
-                String url = base + CacheStockGeneral.getIsinCache().get(g.getCode()).getName().toLowerCase().replaceAll(" ", "-") + sep + g.getPlace().toLowerCase() + sep + g.getCodif().toLowerCase() + sep + g.getCode().toLowerCase() + end + page;
+                String url = base + CacheStockGeneral.getIsinCache().get(g.getCode()).getName().toLowerCase().replaceAll(" ", "-") + sep + g.getPlace().toLowerCase() + sep + g.getRealCodif().toLowerCase() + sep + g.getCode().toLowerCase() + end + page;
 
                 try {
                     try {

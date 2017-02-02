@@ -6,6 +6,7 @@ package com.mltrading.ml;
 
 
 import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.mllib.tree.model.RandomForestModel;
 
 import java.io.Serializable;
@@ -158,5 +159,23 @@ public class MLStocks  implements Serializable {
 
         return copy;
 
+    }
+
+    public void distibute() {
+        for (Map.Entry<PredictionPeriodicity, MLStock> entry : container.entrySet()) {
+            entry.getValue().distibute();
+        }
+    }
+
+    public void send(JavaSparkContext sc) {
+        for (Map.Entry<PredictionPeriodicity, MLStock> entry : container.entrySet()) {
+            entry.getValue().send(sc);
+        }
+    }
+
+    public void saveDB() {
+        for (Map.Entry<PredictionPeriodicity, MLStock> entry : container.entrySet()) {
+            entry.getValue().saveModelDB();
+        }
     }
 }

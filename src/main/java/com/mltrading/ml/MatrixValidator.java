@@ -242,26 +242,30 @@ public class MatrixValidator implements Serializable,Cloneable {
 
     public void loadValidator(String code) {
 
-        String query = "SELECT * FROM " + code;
-        QueryResult result = InfluxDaoConnector.getPoints(query,dbNameModel);
+        try {
+            String query = "SELECT * FROM " + code;
+            QueryResult result = InfluxDaoConnector.getPoints(query, dbNameModel);
 
-        int size = result.getResults().get(0).getSeries().get(0).getValues().size() -1;
+            int size = result.getResults().get(0).getSeries().get(0).getValues().size() - 1;
 
-        for (int i = 0 ; i < globalROW; i++) {
-            for (int j = 0; j < globalCOL; j++){
-                matrix[i][j] = new Integer(((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(size).get(i*globalCOL+j+1))).intValue());
+            for (int i = 0; i < globalROW; i++) {
+                for (int j = 0; j < globalCOL; j++) {
+                    matrix[i][j] = new Integer(((Double) (result.getResults().get(0).getSeries().get(0).getValues().get(size).get(i * globalCOL + j + 1))).intValue());
+                }
             }
-        }
 
-        int index = globalROW*globalCOL+1;
-        this.error = (double) result.getResults().get(0).getSeries().get(0).getValues().get(size).get(index++);
-        this.maxBins = new Integer(((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(size).get(index++))).intValue());
-        this.maxDepth = new Integer(((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(size).get(index++))).intValue());
-        this.numTrees = new Integer(((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(size).get(index++))).intValue());
-        this.rate = ((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(size).get(index++))).intValue();
-        this.seed = new Integer(((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(size).get(index++))).intValue());
-        this.vectorSize = new Integer(((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(size).get(index++))).intValue());
-        this.vSize = new Integer(((Double)(result.getResults().get(0).getSeries().get(0).getValues().get(size).get(index++))).intValue());
+            int index = globalROW * globalCOL + 1;
+            this.error = (double) result.getResults().get(0).getSeries().get(0).getValues().get(size).get(index++);
+            this.maxBins = new Integer(((Double) (result.getResults().get(0).getSeries().get(0).getValues().get(size).get(index++))).intValue());
+            this.maxDepth = new Integer(((Double) (result.getResults().get(0).getSeries().get(0).getValues().get(size).get(index++))).intValue());
+            this.numTrees = new Integer(((Double) (result.getResults().get(0).getSeries().get(0).getValues().get(size).get(index++))).intValue());
+            this.rate = ((Double) (result.getResults().get(0).getSeries().get(0).getValues().get(size).get(index++))).intValue();
+            this.seed = new Integer(((Double) (result.getResults().get(0).getSeries().get(0).getValues().get(size).get(index++))).intValue());
+            this.vectorSize = new Integer(((Double) (result.getResults().get(0).getSeries().get(0).getValues().get(size).get(index++))).intValue());
+            this.vSize = new Integer(((Double) (result.getResults().get(0).getSeries().get(0).getValues().get(size).get(index++))).intValue());
+        } catch (Exception e) {
+
+        }
     }
 
     public void saveModel(String code) {

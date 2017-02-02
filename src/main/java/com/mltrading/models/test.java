@@ -4,6 +4,7 @@ import breeze.optimize.AdaptiveGradientDescent;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.mltrading.domain.User;
+import com.mltrading.ml.CacheMLStock;
 import com.mltrading.ml.MatrixValidator;
 import com.mltrading.ml.RandomForestStock;
 import com.mltrading.models.parser.*;
@@ -16,6 +17,9 @@ import com.mltrading.service.UserService;
 import org.joda.time.DateTime;
 
 import javax.inject.Inject;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -49,21 +53,21 @@ public class test {
         }
     }*/
 
-
+/*
 
     public static void main(String[] args) {
         /*HistoryRawMaterialsParser rawParser = new HistoryLocalRawMaterials();
         rawParser.fetchCurrent(43);
         Analyse a = new Analyse();
         a.processDaily(50);
-*/
+*
         //RealTimeParserBoursorama.loaderCache();
 
         RealTimeSectorGoogle.refreshCache();
 
 
     }
-
+*/
 
 
 
@@ -132,13 +136,28 @@ public class test {
         ap.fetchSpecific(g);
     }*/
 
+    public static void main(String[] args) {
+
+        List<StockGeneral> sl = new ArrayList(CacheStockGeneral.getIsinCache().values());
+        CacheMLStock.load(sl);
+        CacheMLStock.saveDB();
+
+        /*try {
+            String text = ParserCommon.loadUrl(new URL("http://localhost:4567/save"));
+            System.out.print(text);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }*/
+    }
 
 
-    /*public static void main(String[] args) {
+
+/*
+    public static void main(String[] args) {
         ArticlesParserEchos as = new ArticlesParserEchos();
-        //as.fetch();
-        ArticleParserEchos a = new ArticleParserEchos();
-        //a.fetch();
+        as.fetch();
+        /*ArticleParserEchos a = new ArticleParserEchos();
+        a.fetch();*
         //HistogramDocument hd = new HistogramDocument();
         //hd.test();
         //List<Double> l = StockDocument.getStockDocument("ORAR","2016-03-01", 10);

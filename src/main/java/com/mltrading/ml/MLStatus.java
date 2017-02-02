@@ -228,7 +228,7 @@ public class MLStatus implements Serializable{
      * @return O or max last StockHistory
      */
     public void loadPerf(final String code) {
-        final int max = 300;
+        final int max = 50;
         perfList = new ArrayList();
 
         //offset is mult by 2 because it is no dense data
