@@ -3,6 +3,7 @@ package com.mltrading.models;
 import breeze.optimize.AdaptiveGradientDescent;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.mltrading.config.MLProperties;
 import com.mltrading.domain.User;
 import com.mltrading.ml.CacheMLStock;
 import com.mltrading.ml.MatrixValidator;
@@ -138,16 +139,19 @@ public class test {
 
     public static void main(String[] args) {
 
-        List<StockGeneral> sl = new ArrayList(CacheStockGeneral.getIsinCache().values());
+        /*List<StockGeneral> sl = new ArrayList(CacheStockGeneral.getIsinCache().values());
         CacheMLStock.load(sl);
-        CacheMLStock.saveDB();
+        CacheMLStock.saveDB();*/
 
-        /*try {
-            String text = ParserCommon.loadUrl(new URL("http://localhost:4567/save"));
+        MLProperties.load();
+        String uri = MLProperties.getProperty("worker");
+
+        try {
+            String text = ParserCommon.loadUrl(new URL("http://"+uri+"/ping"));
             System.out.print(text);
         } catch (MalformedURLException e) {
             e.printStackTrace();
-        }*/
+        }
     }
 
 

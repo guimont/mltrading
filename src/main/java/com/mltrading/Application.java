@@ -1,6 +1,8 @@
 package com.mltrading;
 
 import com.mltrading.config.Constants;
+import com.mltrading.config.MLProperties;
+import com.mltrading.ml.SynchWorker;
 import com.mltrading.models.parser.ScheduleParserGeneral;
 import com.mltrading.models.parser.ScheduleUpdate;
 import com.mltrading.repository.StockRepository;
@@ -72,6 +74,10 @@ public class Application {
         SimpleCommandLinePropertySource source = new SimpleCommandLinePropertySource(args);
         addDefaultProfile(app, source);
         Environment env = app.run(args).getEnvironment();
+
+        MLProperties.load();
+        SynchWorker.init();
+
 
         /*update data from web*/
         ScheduleUpdate update = new ScheduleUpdate();

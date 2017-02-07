@@ -2,6 +2,7 @@ package com.mltrading.ml;
 
 
 import com.mltrading.dao.InfluxDaoConnector;
+import com.mltrading.models.stock.CacheStockGeneral;
 import com.mltrading.models.stock.StockGeneral;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
@@ -15,6 +16,7 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,65 +41,22 @@ public class CacheMLStock {
     static SparkConf sparkConf = new SparkConf().setSparkHome("file:///C:/temp").setAppName("JavaRandomForest").setMaster("spark://NB120249:7077").setJars(new String[]{"target/com.mltrading-1.0-SNAPSHOT.jar"});
     static JavaSparkContext sc = new JavaSparkContext(sparkConf);
 
+
+
+
+
     public static void load(List<StockGeneral> sl) {
 
-        //JavaRDD<StockGeneral> data = sc.parallelize(sl);
+        deleteDB();
+        SynchWorker.delete();
+        // load model on worker
+        SynchWorker.load();
 
-        deleteModel();
-
+        //load model local
         for (StockGeneral s : sl) {
             MLStocks mls = new MLStocks(s.getCodif());
             mls.distibute();
-            //mls.send(sc);
         }
-
-
-        //to test
-        /*List<MLStocks>  resMLLoad= data.map(
-            new Function<StockGeneral, MLStocks>() {
-                public MLStocks call(StockGeneral s) {
-                    try {
-                        MLStocks mls = new MLStocks(s.getCodif());
-                        mls.load();
-                        return mls;
-                    } catch (Exception e) {
-                        log.error(e.toString());
-                        return null;
-                    }
-                }
-            }
-        ).collect();
-
-
-        for (MLStocks mls:resMLLoad) {
-            mls.getStatus().loadPerf(mls.getCodif());
-            mlStockMap.put(mls.getCodif(), mls);
-        }*/
-
-
-        /*
-        List<MLStocks>  resMLLoad= data.map(
-            new Function<StockGeneral, MLStocks>() {
-                public MLStocks call(StockGeneral s) {
-                    try {
-                        MLStocks mls = new MLStocks(s.getCodif());
-                        mls.distibute();
-                        return mls;
-                    } catch (Exception e) {
-                        log.error(e.toString());
-                        return null;
-                    }
-                }
-            }
-        ).collect();
-
-
-        if (resMLLoad != null) {
-            for (MLStocks mls : resMLLoad) {
-
-                System.out.println(mls.getCodif());
-            }
-        }*/
 
 
         for (StockGeneral s : sl) {
@@ -123,18 +82,34 @@ public class CacheMLStock {
     }
 
     public static void saveDB() {
-        for (MLStocks mls:mlStockMap.values()) {
+        List<StockGeneral> sl = new ArrayList(CacheStockGeneral.getIsinCache().values());
+        for (StockGeneral s:sl) {
+            MLStocks mls = new MLStocks(s.getCodif());
             mls.saveDB();
+        }
+    }
+
+
+    public static void loadDB() {
+        List<StockGeneral> sl = new ArrayList(CacheStockGeneral.getIsinCache().values());
+        for (StockGeneral s:sl) {
+            MLStocks mls = new MLStocks(s.getCodif());
+            mls.loadDB();
         }
     }
 
 
     public static void save() {
         deleteModel();
+        SynchWorker.delete();
+
         for (MLStocks mls:mlStockMap.values()) {
             mls.save();
+            mls.saveDB();
             mls.getStatus().savePerf(mls.getCodif());
         }
+
+        SynchWorker.save();
     }
 
     /**
@@ -147,9 +122,24 @@ public class CacheMLStock {
     }
 
 
-    public static void deleteModel() {
+    public static void deleteDB() {
+        String path="c:/";
+        if (System.getProperty("os.name").contains("Windows"))
+            path = "/";
         try {
-            FileUtils.deleteDirectory(new File("model"));
+            FileUtils.deleteDirectory(new File(path+"model"));
+        } catch (IOException e) {
+            log.error("Cannot remove folder model: " + e);
+        }
+    }
+
+
+    public static void deleteModel() {
+        String path="c:/";
+        if (System.getProperty("os.name").contains("Windows"))
+            path = "/";
+        try {
+            FileUtils.deleteDirectory(new File(path+"model"));
             InfluxDaoConnector.deleteDB(MatrixValidator.dbNameModel);
         } catch (IOException e) {
             log.error("Cannot remove folder model: " + e);

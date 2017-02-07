@@ -178,4 +178,10 @@ public class MLStocks  implements Serializable {
             entry.getValue().saveModelDB();
         }
     }
+
+    public void loadDB() {
+        for (Map.Entry<PredictionPeriodicity, MLStock> entry : container.entrySet()) {
+            entry.getValue().loadModelDB();
+        }
+    }
 }

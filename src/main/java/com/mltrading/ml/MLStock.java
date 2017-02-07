@@ -14,9 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
-import java.net.UnknownHostException;
 import java.util.Collection;
 
 
@@ -58,8 +56,11 @@ public class MLStock  implements Serializable {
     }
 
     public void saveModelDB() {
+        MongoClient mongoClient = null;
         try {
-            MongoClient mongoClient = new MongoClient( "172.22.30.111" , 27017 );
+            if (System.getProperty("os.name").contains("Windows"))
+                path = "/";
+            mongoClient = new MongoClient( "172.22.30.111" , 27017 );
             GridFS gfsModel = new GridFS(mongoClient.getDB("model"), "model/Model" + period.toString() + codif);
             File dir = new File(path+"model/Model" + period.toString() + codif);
             Collection<File> files = FileUtils.listFiles(dir , null, true);
@@ -71,10 +72,12 @@ public class MLStock  implements Serializable {
                     gfsFile.setFilename(f.getPath());
                 gfsFile.save();
             }
-        } catch (UnknownHostException e) {
+        } catch (Exception e) {
             log.error("saveModel: " + codif + e);
-        } catch (IOException e) {
-            log.error("saveModel: " + codif + e);
+        }
+        finally {
+            if (null != mongoClient)
+                mongoClient.close();
         }
     }
 
@@ -86,35 +89,6 @@ public class MLStock  implements Serializable {
     private static String path="c:/";
 
     public void loadModel() {
-
-
-        /*try {
-            if (System.getProperty("os.name").contains("Windows"))
-                path = "/";
-
-            MongoClient mongoClient = new MongoClient( "172.22.30.111" , 27017 );
-            GridFS gfsModel = new GridFS(mongoClient.getDB("model"), "model/Model" + period.toString() + codif);
-
-
-            DBCursor cursor = gfsModel.getFileList();
-            while (cursor.hasNext()) {
-                File dir = new File(path+"model/Model" + period.toString() + codif+"/data");
-                if (!dir.exists())
-                    FileUtils.forceMkdir(dir);
-                File dirmeta = new File(path+"model/Model" + period.toString() + codif+"/metadata");
-                if (!dirmeta.exists())
-                    FileUtils.forceMkdir(dirmeta);
-                GridFSDBFile f = gfsModel.findOne(cursor.next());
-                f.writeTo(path+f.getFilename());
-
-            }
-        } catch (UnknownHostException e) {
-            log.error("loadModel: " + codif + e);
-        } catch (IOException e) {
-            log.error("loadModel: " + codif + e);
-        }*/
-
-
         this.model = RandomForestModel.load(CacheMLStock.getJavaSparkContext().sc(), path+"model/Model"+period.toString()+codif);
     }
 
@@ -131,10 +105,11 @@ public class MLStock  implements Serializable {
 
 
     public void distibute() {
+        MongoClient mongoClient = null;
         try {
             if (!System.getProperty("os.name").contains("Windows"))
                 path = "/";
-            MongoClient mongoClient = new MongoClient( "172.22.30.111" , 27017 );
+            mongoClient = new MongoClient( "172.22.30.111" , 27017 );
             GridFS gfsModel = new GridFS(mongoClient.getDB("model"), "model/Model" + period.toString() + codif);
 
 
@@ -147,12 +122,14 @@ public class MLStock  implements Serializable {
                 if (!dirmeta.exists())
                     FileUtils.forceMkdir(dirmeta);
                 GridFSDBFile f = gfsModel.findOne(cursor.next());
-                f.writeTo(path+f.getFilename());
+                f.writeTo(f.getFilename());
             }
-        } catch (UnknownHostException e) {
-            log.error("loadModel: " + codif + e);
-        } catch (IOException e) {
-            log.error("loadModel: " + codif + e);
+        } catch (Exception e) {
+            log.error("saveModel: " + codif + e);
+        }
+        finally {
+            if (null != mongoClient)
+                mongoClient.close();
         }
     }
 
@@ -167,5 +144,9 @@ public class MLStock  implements Serializable {
         }catch (Exception e) {
             log.error("send: " + codif + e);
         }
+    }
+
+    public void loadModelDB() {
+        distibute();
     }
 }
