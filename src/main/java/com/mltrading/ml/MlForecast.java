@@ -3,6 +3,7 @@ package com.mltrading.ml;
 import com.mltrading.ml.util.FixedThreadPoolExecutor;
 import com.mltrading.models.stock.*;
 
+import com.mltrading.models.util.MLActivities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -71,6 +72,8 @@ public class MlForecast {
         final CountDownLatch latches = new CountDownLatch(CacheStockGeneral.getIsinCache().values().size());
         //final CountDownLatch latches = new CountDownLatch(1); //testmode ORA
 
+        CacheMLActivities.addActivities(new MLActivities("optimize forecast", "","start",0,0,false));
+
         //For test purpose only
         CacheStockGeneral.getIsinCache().values().stream()/*.filter(s -> s.getRealCodif().equals("ORA"))*/.forEach(s -> executorRef.submit(() -> {    //For test purpose only
             try {
@@ -88,13 +91,16 @@ public class MlForecast {
         } catch (InterruptedException e) {
             log.error(e.getMessage());
         }
+        CacheMLActivities.addActivities(new MLActivities("optimize forecast", "","end",0,0,true));
 
         //evaluate();
         updatePredictor();
 
 
+        CacheMLActivities.addActivities(new MLActivities("save forecast model", "","start",0,0,false));
         log.info("saveML");
         CacheMLStock.save();
+        CacheMLActivities.addActivities(new MLActivities("save forecast model", "","end",0,0,true));
     }
 
     /**
@@ -126,6 +132,8 @@ public class MlForecast {
                 try {
                     MLStocks mls = new MLStocks(s.getCodif());
 
+                    CacheMLActivities.addActivities(new MLActivities("optimize", s.getCodif(),"start",loop,0,false));
+
                     if (type == Type.Feature) {
                         //mls.generateValidator("generate"); too big for test
                         mls.generateValidator("generateSimpleModel");
@@ -156,14 +164,33 @@ public class MlForecast {
 
                         if (ref != null) {
 
-                            checkResult(mls,ref,PredictionPeriodicity.D1);
-                            checkResult(mls,ref,PredictionPeriodicity.D5);
-                            checkResult(mls,ref,PredictionPeriodicity.D20);
-                            checkResult(mls,ref,PredictionPeriodicity.D40);
+                            if (checkResult(mls,ref,PredictionPeriodicity.D1))
+                                CacheMLActivities.addActivities(new MLActivities("optimize", s.getCodif(), "increase model: " + PredictionPeriodicity.D1, loop, 1, true));
+                            else
+                                CacheMLActivities.addActivities(new MLActivities("optimize", s.getCodif(), "not increase model: " + PredictionPeriodicity.D1, loop, 0, true));
+
+                            if (checkResult(mls,ref,PredictionPeriodicity.D5))
+                                CacheMLActivities.addActivities(new MLActivities("optimize", s.getCodif(), "increase model: " + PredictionPeriodicity.D5, loop, 1, true));
+                            else
+                                CacheMLActivities.addActivities(new MLActivities("optimize", s.getCodif(), "not increase model: " + PredictionPeriodicity.D5, loop, 0, true));
+
+                            if (checkResult(mls,ref,PredictionPeriodicity.D20))
+                                CacheMLActivities.addActivities(new MLActivities("optimize", s.getCodif(), "increase model: " + PredictionPeriodicity.D20, loop, 1, true));
+                            else
+                                CacheMLActivities.addActivities(new MLActivities("optimize", s.getCodif(), "not increase model: " + PredictionPeriodicity.D20, loop, 0, true));
+
+                            if (checkResult(mls,ref,PredictionPeriodicity.D40))
+                                CacheMLActivities.addActivities(new MLActivities("optimize", s.getCodif(), "increase model: " + PredictionPeriodicity.D40, loop, 1, true));
+                            else
+                                CacheMLActivities.addActivities(new MLActivities("optimize", s.getCodif(), "not increase model: " + PredictionPeriodicity.D40, loop, 0, true));
+
 
                         } else {
                             CacheMLStock.getMLStockCache().put(mls.getCodif(), mls);
+                            CacheMLActivities.addActivities(new MLActivities("optimize", s.getCodif(),"empty model",loop,0,true));
                         }
+                    } else {
+                        CacheMLActivities.addActivities(new MLActivities("optimize", s.getCodif(),"failed",loop,0,true));
                     }
                 } finally {
                     {

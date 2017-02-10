@@ -2,10 +2,10 @@ package com.mltrading.ml;
 
 import java.util.*;
 
-import com.mltrading.models.stock.Stock;
+
 import com.mltrading.models.stock.StockGeneral;
+import com.mltrading.models.util.MLActivities;
 import org.apache.spark.mllib.linalg.*;
-import org.apache.spark.storage.StorageLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.Serializable;
@@ -42,11 +42,13 @@ public class RandomForestStock implements Serializable {
         return parsedData;
     }
 
-    static int RENDERING = 50;
+    static int RENDERING = 300;
 
     public MLStocks processRF(StockGeneral stock, MLStocks mls) {
 
+        CacheMLActivities.addActivities(new MLActivities("FeaturesStock", stock.getCodif(),"start",0,0,false));
         List<FeaturesStock> fsL = FeaturesStock.create(stock, mls.getValidator(PredictionPeriodicity.D1), FeaturesStock.RANGE_MAX);
+        CacheMLActivities.addActivities(new MLActivities("FeaturesStock", stock.getCodif(),"start",0,0,true));
 
         if (null == fsL) return null;
 

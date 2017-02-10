@@ -1,0 +1,16 @@
+{
+    "mlactivities": {
+        "title": "ML Activities information",
+        "table": {
+            "header": {
+                "action": "Action",
+                "model": "Stock code",
+                "startdate": "Start Date",
+                "enddate" : "End Date",
+                "status" : "Status op",
+                "progres": "up",
+                "loop": "iteration"
+            }
+        }
+    }
+}

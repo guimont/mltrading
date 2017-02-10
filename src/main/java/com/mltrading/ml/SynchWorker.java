@@ -57,4 +57,10 @@ public class SynchWorker {
         if (uri != null)
             addUri(uri);
     }
+
+
+    public static void add(String uri) {
+        if (uri != null)
+            addUri(uri);
+    }
 }

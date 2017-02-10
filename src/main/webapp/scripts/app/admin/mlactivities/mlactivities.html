@@ -1,0 +1,27 @@
+
+<div class="container">
+    <h2 translate="mlactivities.title">Extractions</h2>
+    <table class="table table-condensed table-striped table-bordered table-responsive">
+        <thead>
+        <tr>
+            <th ng-click="predicate = 'timestamp'; reverse=!reverse"><span translate="mlactivities.table.header.action">Code</span></th>
+            <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="mlactivities.table.header.model"></span></th>
+            <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="mlactivities.table.header.startdate"></span></th>
+            <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="mlactivities.table.header.enddate"></span></th>
+            <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="mlactivities.table.header.status"></span></th>
+            <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="mlactivities.table.header.progres"></span></th>
+            <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="mlactivities.table.header.loop"></span></th>
+        </tr>
+        </thead>
+
+        <tr ng-repeat="act in data| filter:filter | orderBy:'-name':true" ng-hide="audit.filtered">
+            <td><small>{{act.action}}</small></td>
+            <td><small>{{act.model}}</small></td>
+            <td><small>{{act.startDate}}</small></td>
+            <td><small>{{act.endDate}}</small></td>
+            <td><small>{{act.status}}</small></td>
+            <td><small>{{act.loop}}</small></td>
+            <td><small>{{act.upturn}}</small></td>
+        </tr>
+    </table>
+ </div>

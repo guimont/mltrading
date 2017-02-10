@@ -27,23 +27,23 @@ public class StockDetail implements Serializable{
     private static int PERIOD = 40;
 
 
-    public static StockDetail populate(Stock s) {
+    public static StockDetail populate(Stock s, String codif) {
         StockDetail detail = new StockDetail();
         if (s != null)
-            log.info(s.getCodif());
+            log.info(codif);
         else
             log.info("s null error");
 
         log.info("cache size:" + CacheMLStock.getMLStockCache().size());
-        MLStocks mls = CacheMLStock.getMLStockCache().get(s.getCodif());
+        MLStocks mls = CacheMLStock.getMLStockCache().get(codif);
         if (mls == null )
             log.info("mls null error");
-        detail.setCode(s.getCodif());
+        detail.setCode(codif);
         detail.setStock(s);
         detail.setPrediction(CacheStockGeneral.getCache().get(s.getCode()).getPrediction());
         detail.setName(CacheStockGeneral.getCache().get(s.getCode()).getName());
         //detail.setSector();
-        detail.setData(populateData(s));
+        detail.setData(populateData(codif));
         detail.setValue(CacheStockGeneral.getCache().get(s.getCode()).getOpening());
 
         detail.sector = StockHistory.getStockHistoryLast(s.getSector(), PERIOD);
@@ -75,10 +75,10 @@ public class StockDetail implements Serializable{
 
 
 
-    private static List<DetailData> populateData(Stock s) {
+    private static List<DetailData> populateData(String codif) {
         List<DetailData> data = new ArrayList<>();
-        List<StockHistory> h = StockHistory.getStockHistoryLast(s.getCodif(), PERIOD);
-        MLStocks mls = CacheMLStock.getMLStockCache().get(s.getCodif());
+        List<StockHistory> h = StockHistory.getStockHistoryLast(codif, PERIOD);
+        MLStocks mls = CacheMLStock.getMLStockCache().get(codif);
 
         for (StockHistory he:h) {
             DetailData d = new DetailData();

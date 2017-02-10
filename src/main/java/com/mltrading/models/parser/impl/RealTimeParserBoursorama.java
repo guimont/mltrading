@@ -56,8 +56,11 @@ public class RealTimeParserBoursorama implements RealTimeParser {
 
                 String codif;
                 /* specific format for solvay*/
+                /* specific format for solvay*/
                 if (balise.contains("SOLB")) {
                     codif = "SOLB";
+                } else if (balise.contains("OREAL")) {
+                    codif = "OREAL";
                 } else {
 
                     String splitRes[] = balise.split("=1r");
@@ -126,6 +129,8 @@ public class RealTimeParserBoursorama implements RealTimeParser {
                 /* specific format for solvay*/
                 if (balise.contains("SOLB")) {
                     g.setCodif("SOLB");
+                } else if (balise.contains("OREAL")) {
+                    g.setCodif("OREAL");
                 } else {
 
                     String splitRes[] = balise.split("=1r");

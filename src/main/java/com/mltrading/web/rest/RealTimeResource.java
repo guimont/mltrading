@@ -64,7 +64,7 @@ public class RealTimeResource {
 
         Stock s = stockRepository.findOne(key);
 
-        StockDetail detail = StockDetail.populate(s);
+        StockDetail detail = StockDetail.populate(s,CacheStockGeneral.getIsinCache().get(key).getCodif());
 
         return detail;
     }

@@ -222,9 +222,9 @@ public class FeaturesStock implements Serializable {
     public void linearize(StockAnalyse sa,  MatrixValidator validator, int indice) {
         if (validator.getATMMA20(indice)) this.vector[currentVectorPos++] = sa.getMma20();
         if (validator.getATMMA50(indice)) this.vector[currentVectorPos++] = sa.getMma50();
-        //if (validator.getATMME12(indice)) this.vector[currentVectorPos++] = sa.getMme12();
-        //if (validator.getATMME26(indice)) this.vector[currentVectorPos++] = sa.getMme26();
-        //if (validator.getATMACD(indice)) this.vector[currentVectorPos++] = sa.getMacd();
+        if (validator.getATMME12(indice)) this.vector[currentVectorPos++] = sa.getMme12();
+        if (validator.getATMME26(indice)) this.vector[currentVectorPos++] = sa.getMme26();
+        if (validator.getATMACD(indice)) this.vector[currentVectorPos++] = sa.getMacd();
         if (validator.getATMOMENTUM(indice)) this.vector[currentVectorPos++] = sa.getMomentum();
         if (validator.getATSTDDEV(indice)) this.vector[currentVectorPos++] = sa.getStdDev();
 
@@ -243,7 +243,7 @@ public class FeaturesStock implements Serializable {
     }
 
     static int OFFSET_BASE = 50;
-    static int RANGE_MAX = 180;
+    static int RANGE_MAX = 1500;
     static int RANGE_TEST = 50;
 
 

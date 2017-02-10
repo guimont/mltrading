@@ -4,6 +4,7 @@ package com.mltrading.ml;
 import com.mltrading.dao.InfluxDaoConnector;
 import com.mltrading.models.stock.CacheStockGeneral;
 import com.mltrading.models.stock.StockGeneral;
+import com.mltrading.models.util.MLActivities;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -47,10 +48,15 @@ public class CacheMLStock {
 
     public static void load(List<StockGeneral> sl) {
 
+        MLActivities g = new MLActivities("CacheMLStock", "","load",0,0,false);
+
+        CacheMLActivities.addActivities(g);
+
         deleteDB();
         SynchWorker.delete();
         // load model on worker
         SynchWorker.load();
+
 
         //load model local
         for (StockGeneral s : sl) {
@@ -60,16 +66,22 @@ public class CacheMLStock {
 
 
         for (StockGeneral s : sl) {
+            MLActivities a = new MLActivities("CacheMLStock", "","load",0,0,false);
             try {
+
                 MLStocks mls = new MLStocks(s.getCodif());
                 mls.load();
                 mls.getStatus().loadPerf(s.getCodif());
                 mlStockMap.put(s.getCodif(), mls);
+                CacheMLActivities.addActivities(a.setEndDate().setStatus("Success"));
 
             }catch (Exception e) {
                 log.error(e.toString());
+                CacheMLActivities.addActivities(a.setEndDate().setStatus("Failed"));
             }
         }
+
+        CacheMLActivities.addActivities(g.setEndDate());
 
     }
 

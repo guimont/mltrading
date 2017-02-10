@@ -98,14 +98,14 @@ public class CacheStockGeneral {
 
     public static String getCode(String codif) {
         for (StockGeneral g: CacheStockGeneral.getIsinCache().values()) {
-            if (g.getRealCodif().equals(codif)) return g.getCode();
+            if (g.getCodif().equals(codif)) return g.getCode();
         }
         return null;
     }
 
     public static String getPlace(String codif) {
         for (StockGeneral g: CacheStockGeneral.getIsinCache().values()) {
-            if (g.getRealCodif().equals(codif)) return g.getPlace();
+            if (g.getCodif().equals(codif)) return g.getPlace();
         }
         return null;
     }
@@ -113,7 +113,7 @@ public class CacheStockGeneral {
 
     public static String getSector(String codif) {
         for (StockGeneral g: CacheStockGeneral.getIsinCache().values()) {
-            if (g.getRealCodif().equals(codif)) return g.getSector();
+            if (g.getCodif().equals(codif)) return g.getSector();
         }
         return null;
     }

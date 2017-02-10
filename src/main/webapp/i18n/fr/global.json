@@ -27,7 +27,8 @@
                 "audits": "Audits",
                 "apidocs": "API",
                 "database": "Base de données",
-                "extraction": "Extraction"
+                "extraction": "Extraction",
+                "mlactivities": "Activities"
             },
             "language": "Langue"
         },
