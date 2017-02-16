@@ -1,5 +1,6 @@
 package com.mltrading.ml;
 
+import com.mltrading.config.MLProperties;
 import com.mltrading.ml.util.FixedThreadPoolExecutor;
 import com.mltrading.models.stock.*;
 
@@ -31,7 +32,7 @@ public class MlForecast {
             RandomForestStock rfs = new RandomForestStock();
             MLStocks mls = CacheMLStock.getMLStockCache().get(s.getCodif());
             if (mls != null) {
-                mls = rfs.processRFResult(s, mls);
+                mls = rfs.processRFResult(s.getCodif(), mls);
                 mls.getStatus().calculeAvgPrd();
             }
         }
@@ -47,10 +48,15 @@ public class MlForecast {
     }
 
     public MlForecast() {
-        this.executorRefRF = new FixedThreadPoolExecutor(DEFAULT_NB_THREADS_RF,
+
+        int nbThreadRF = MLProperties.getProperty("DEFAULT_NB_THREADS_RF",DEFAULT_NB_THREADS_RF);
+        int nbThread = MLProperties.getProperty("DEFAULT_NB_THREADS",DEFAULT_NB_THREADS);
+
+
+        this.executorRefRF = new FixedThreadPoolExecutor(nbThreadRF,
             "ExtractionRefThreadPool");
 
-        this.executorRef = new FixedThreadPoolExecutor(DEFAULT_NB_THREADS,
+        this.executorRef = new FixedThreadPoolExecutor(nbThread,
             "ExtractionRefThreadPool");
     }
 
@@ -77,7 +83,7 @@ public class MlForecast {
         //For test purpose only
         CacheStockGeneral.getIsinCache().values().stream()/*.filter(s -> s.getRealCodif().equals("ORA"))*/.forEach(s -> executorRef.submit(() -> {    //For test purpose only
             try {
-                optimize(s, 1, 1, Method.RandomForest, Type.Feature);
+                optimize(s.getCodif(), 1, 1, Method.RandomForest, Type.Feature);
             } finally {
                 {
                     latches.countDown();
@@ -103,6 +109,47 @@ public class MlForecast {
         CacheMLActivities.addActivities(new MLActivities("save forecast model", "","end",0,0,true));
     }
 
+
+    /**
+     * optimize by model randomization
+     */
+    public void optimizeSector() {
+
+        final CountDownLatch latches = new CountDownLatch(CacheStockGeneral.getIsinCache().values().size());
+        //final CountDownLatch latches = new CountDownLatch(1); //testmode ORA
+
+        CacheMLActivities.addActivities(new MLActivities("optimize forecast sector", "","start",0,0,false));
+
+        //For test purpose only
+        CacheStockSector.getSectorCache().values().stream()/*.filter(s -> s.getRealCodif().equals("ORA"))*/.forEach(s -> executorRef.submit(() -> {    //For test purpose only
+            try {
+                optimize(s.getCodif(), 1, 1, Method.RandomForest, Type.Feature);
+            } finally {
+                {
+                    latches.countDown();
+                }
+            }
+        }));
+
+        // Wait for completion
+        try {
+            latches.await();
+        } catch (InterruptedException e) {
+            log.error(e.getMessage());
+        }
+        CacheMLActivities.addActivities(new MLActivities("optimize forecast", "","end",0,0,true));
+
+        //evaluate();
+        updatePredictor();
+
+
+        CacheMLActivities.addActivities(new MLActivities("save forecast model", "","start",0,0,false));
+        log.info("saveML");
+        CacheMLStock.save();
+        CacheMLActivities.addActivities(new MLActivities("save forecast model", "","end",0,0,true));
+    }
+
+
     /**
      * optimize model with processing validator sample
      *
@@ -112,13 +159,13 @@ public class MlForecast {
      * @param method
      * @param type
      */
-    public void optimize(StockGeneral s, int loop, int backloop, Method method, Type type) {
+    public void optimize(String codif, int loop, int backloop, Method method, Type type) {
         for (int i = 0; i < backloop; i++) {
-            optimize(s, loop, method, type);
+            optimize(codif, loop, method, type);
         }
     }
 
-    private void optimize(StockGeneral s, int loop, Method method, Type type) {
+    private void optimize(String codif, int loop, Method method, Type type) {
 
         /**
          * to have some results faster, 2 iterations loop
@@ -130,9 +177,9 @@ public class MlForecast {
         for (int i = 0; i < loop; i++) {
             executorRefRF.submit(() -> {
                 try {
-                    MLStocks mls = new MLStocks(s.getCodif());
+                    MLStocks mls = new MLStocks(codif);
 
-                    CacheMLActivities.addActivities(new MLActivities("optimize", s.getCodif(),"start",loop,0,false));
+                    CacheMLActivities.addActivities(new MLActivities("optimize", codif,"start",loop,0,false));
 
                     if (type == Type.Feature) {
                         //mls.generateValidator("generate"); too big for test
@@ -143,7 +190,7 @@ public class MlForecast {
                     String saveCode;
                     {
                         RandomForestStock rfs = new RandomForestStock();
-                        mls = rfs.processRF(s, mls);
+                        mls = rfs.processRFRef(codif, mls);
                         saveCode = "V";
                     }
 
@@ -165,32 +212,32 @@ public class MlForecast {
                         if (ref != null) {
 
                             if (checkResult(mls,ref,PredictionPeriodicity.D1))
-                                CacheMLActivities.addActivities(new MLActivities("optimize", s.getCodif(), "increase model: " + PredictionPeriodicity.D1, loop, 1, true));
+                                CacheMLActivities.addActivities(new MLActivities("optimize", codif, "increase model: " + PredictionPeriodicity.D1, loop, 1, true));
                             else
-                                CacheMLActivities.addActivities(new MLActivities("optimize", s.getCodif(), "not increase model: " + PredictionPeriodicity.D1, loop, 0, true));
+                                CacheMLActivities.addActivities(new MLActivities("optimize", codif, "not increase model: " + PredictionPeriodicity.D1, loop, 0, true));
 
                             if (checkResult(mls,ref,PredictionPeriodicity.D5))
-                                CacheMLActivities.addActivities(new MLActivities("optimize", s.getCodif(), "increase model: " + PredictionPeriodicity.D5, loop, 1, true));
+                                CacheMLActivities.addActivities(new MLActivities("optimize", codif, "increase model: " + PredictionPeriodicity.D5, loop, 1, true));
                             else
-                                CacheMLActivities.addActivities(new MLActivities("optimize", s.getCodif(), "not increase model: " + PredictionPeriodicity.D5, loop, 0, true));
+                                CacheMLActivities.addActivities(new MLActivities("optimize", codif, "not increase model: " + PredictionPeriodicity.D5, loop, 0, true));
 
                             if (checkResult(mls,ref,PredictionPeriodicity.D20))
-                                CacheMLActivities.addActivities(new MLActivities("optimize", s.getCodif(), "increase model: " + PredictionPeriodicity.D20, loop, 1, true));
+                                CacheMLActivities.addActivities(new MLActivities("optimize", codif, "increase model: " + PredictionPeriodicity.D20, loop, 1, true));
                             else
-                                CacheMLActivities.addActivities(new MLActivities("optimize", s.getCodif(), "not increase model: " + PredictionPeriodicity.D20, loop, 0, true));
+                                CacheMLActivities.addActivities(new MLActivities("optimize", codif, "not increase model: " + PredictionPeriodicity.D20, loop, 0, true));
 
                             if (checkResult(mls,ref,PredictionPeriodicity.D40))
-                                CacheMLActivities.addActivities(new MLActivities("optimize", s.getCodif(), "increase model: " + PredictionPeriodicity.D40, loop, 1, true));
+                                CacheMLActivities.addActivities(new MLActivities("optimize", codif, "increase model: " + PredictionPeriodicity.D40, loop, 1, true));
                             else
-                                CacheMLActivities.addActivities(new MLActivities("optimize", s.getCodif(), "not increase model: " + PredictionPeriodicity.D40, loop, 0, true));
+                                CacheMLActivities.addActivities(new MLActivities("optimize", codif, "not increase model: " + PredictionPeriodicity.D40, loop, 0, true));
 
 
                         } else {
                             CacheMLStock.getMLStockCache().put(mls.getCodif(), mls);
-                            CacheMLActivities.addActivities(new MLActivities("optimize", s.getCodif(),"empty model",loop,0,true));
+                            CacheMLActivities.addActivities(new MLActivities("optimize", codif,"empty model",loop,0,true));
                         }
                     } else {
-                        CacheMLActivities.addActivities(new MLActivities("optimize", s.getCodif(),"failed",loop,0,true));
+                        CacheMLActivities.addActivities(new MLActivities("optimize", codif,"failed",loop,0,true));
                     }
                 } finally {
                     {
@@ -290,9 +337,9 @@ public class MlForecast {
 
 
             RandomForestStock rfs = new RandomForestStock();
-            mls = rfs.processRF(s, mls, PredictionPeriodicity.D1);
-            mls = rfs.processRF(s, mls, PredictionPeriodicity.D5);
-            mls = rfs.processRF(s, mls, PredictionPeriodicity.D20);
+            mls = rfs.processRF(s.getCodif(), mls, PredictionPeriodicity.D1);
+            mls = rfs.processRF(s.getCodif(), mls, PredictionPeriodicity.D5);
+            mls = rfs.processRF(s.getCodif(), mls, PredictionPeriodicity.D20);
             String saveCode = "V";
 
 

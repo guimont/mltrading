@@ -17,10 +17,10 @@ public class Requester {
 
     final static Timeout timeout = new Timeout((FiniteDuration) Duration.apply("30 seconds"));
 
-    static public QueryResult sendRequest(QueryRequest request) {
+    static public Object sendRequest(Object request) {
         Future<?> future = Patterns.ask(Dispatcher.getDispatcher(), request, timeout);
         try {
-            return (QueryResult) Await.result(future, timeout.duration());
+            return Await.result(future, timeout.duration());
         } catch (Exception e) {
             return null;
         }

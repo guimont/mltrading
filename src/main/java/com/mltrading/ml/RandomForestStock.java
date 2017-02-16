@@ -42,17 +42,18 @@ public class RandomForestStock implements Serializable {
         return parsedData;
     }
 
-    static int RENDERING = 300;
 
-    public MLStocks processRF(StockGeneral stock, MLStocks mls) {
 
-        CacheMLActivities.addActivities(new MLActivities("FeaturesStock", stock.getCodif(),"start",0,0,false));
-        List<FeaturesStock> fsL = FeaturesStock.create(stock, mls.getValidator(PredictionPeriodicity.D1), FeaturesStock.RANGE_MAX);
-        CacheMLActivities.addActivities(new MLActivities("FeaturesStock", stock.getCodif(),"start",0,0,true));
+    @Deprecated
+    public MLStocks processRF(String codif, MLStocks mls) {
+
+        CacheMLActivities.addActivities(new MLActivities("FeaturesStock", codif,"start",0,0,false));
+        List<FeaturesStock> fsL = FeaturesStock.create(codif, mls.getValidator(PredictionPeriodicity.D1), CacheMLStock.RANGE_MAX);
+        CacheMLActivities.addActivities(new MLActivities("FeaturesStock", codif,"start",0,0,true));
 
         if (null == fsL) return null;
 
-        int born = fsL.size() - RENDERING;
+        int born = fsL.size() - CacheMLStock.RENDERING;
 
         List<FeaturesStock> fsLTrain =fsL.subList(0,born);
         List<FeaturesStock> fsLTest =fsL.subList(born, fsL.size());
@@ -176,14 +177,118 @@ public class RandomForestStock implements Serializable {
 
     }
 
-    public MLStocks processRF(StockGeneral stock, MLStocks mls, PredictionPeriodicity period) {
-        MatrixValidator validator = mls.getSock(period).getValidator();
 
-        List<FeaturesStock> fsL = FeaturesStock.create(stock, validator , FeaturesStock.RANGE_MAX);
+
+    public MLStocks processRFRef(String codif, MLStocks mls) {
+
+        CacheMLActivities.addActivities(new MLActivities("FeaturesStock", codif, "start", 0, 0, false));
+        List<FeaturesStock> fsL = FeaturesStock.create(codif, mls.getValidator(PredictionPeriodicity.D1), CacheMLStock.RANGE_MAX);
+        CacheMLActivities.addActivities(new MLActivities("FeaturesStock", codif, "start", 0, 0, true));
+
+        subprocessRF( mls,  fsL, PredictionPeriodicity.D1);
+        subprocessRF( mls,  fsL, PredictionPeriodicity.D5);
+        subprocessRF( mls,  fsL, PredictionPeriodicity.D20);
+        subprocessRF( mls,  fsL, PredictionPeriodicity.D40);
+
+
+        return mls;
+    }
+
+
+
+    public MLStocks subprocessRF(MLStocks mls,  List<FeaturesStock> fsL, PredictionPeriodicity period) {
+
 
         if (null == fsL) return null;
 
-        int born = fsL.size() - RENDERING;
+        int born = fsL.size() - CacheMLStock.RENDERING;
+
+        List<FeaturesStock> fsLTrain =fsL.subList(0,born);
+        List<FeaturesStock> fsLTest =fsL.subList(born, fsL.size());
+
+        JavaSparkContext sc = CacheMLStock.getJavaSparkContext();
+
+        // Load and parse the data file.
+        JavaRDD<LabeledPoint> trainingData = createRDD(sc, fsLTrain, period);
+
+        JavaRDD<FeaturesStock> testData = sc.parallelize(fsLTest);
+
+        // Split the data into training and test sets (30% held out for testing)
+
+        // Set parameters.
+        //  Empty categoricalFeaturesInfo indicates all features are continuous.
+        Map<Integer, Integer> categoricalFeaturesInfo = new HashMap<Integer, Integer>();
+
+        String impurity = "variance";
+
+        String featureSubsetStrategy = "auto"; // Let the algorithm choose.
+
+
+        // Train a RandomForest model.
+        final RandomForestModel model = RandomForest.trainRegressor(trainingData,
+            categoricalFeaturesInfo, mls.getValidator(period).getNumTrees(), featureSubsetStrategy, impurity,
+            mls.getValidator(period).getMaxDepth(), mls.getValidator(period).getMaxBins(),
+            mls.getValidator(period).getSeed());
+
+
+        mls.setModel(period, model);
+
+
+
+        mls.getValidator(period).setVectorSize(fsL.get(0).currentVectorPos);
+
+
+        JavaRDD<FeaturesStock> predictionAndLabel = testData.map(
+            new Function<FeaturesStock, FeaturesStock>() {
+                public FeaturesStock call(FeaturesStock fs) {
+
+                    double pred = model.predict(Vectors.dense(fs.vectorize()));
+                    FeaturesStock fsResult = new FeaturesStock(fs, pred, period);
+
+                    fsResult.setPredictionValue(pred,period);
+                    fsResult.setDate(fs.getDate(period), period);
+
+                    return fsResult;
+                }
+            }
+        );
+
+
+
+        JavaRDD<MLPerformances> res =
+            predictionAndLabel.map(new Function <FeaturesStock, MLPerformances>() {
+                public MLPerformances call(FeaturesStock pl) {
+                    System.out.println("estimate: " + pl.getPredictionValue(period));
+                    System.out.println("result: " + pl.getResultValue(period));
+                    //Double diff = pl.getPredictionValue() - pl.getResultValue();
+                    MLPerformances perf = new MLPerformances(pl.getCurrentDate());
+                    perf.setMl(MLPerformance.calculYields(pl.getDate(period), pl.getPredictionValue(period), pl.getResultValue(period), pl.getCurrentValue()), period);
+
+                    return perf;
+
+                }
+            });
+
+
+        try {
+            mls.getStatus().setPerfList(res.collect(),period);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return mls;
+
+    }
+
+
+    public MLStocks processRF(String codif, MLStocks mls, PredictionPeriodicity period) {
+        MatrixValidator validator = mls.getSock(period).getValidator();
+
+        List<FeaturesStock> fsL = FeaturesStock.create(codif, validator , CacheMLStock.RANGE_MAX);
+
+        if (null == fsL) return null;
+
+        int born = fsL.size() - CacheMLStock.RENDERING;
 
         List<FeaturesStock> fsLTrain =fsL.subList(0,born);
         List<FeaturesStock> fsLTest =fsL.subList(born, fsL.size());
@@ -259,28 +364,28 @@ public class RandomForestStock implements Serializable {
 
 
 
-    public MLStocks processRFResult(StockGeneral stock, MLStocks mls) {
+    public MLStocks processRFResult(String codif, MLStocks mls) {
 
-        List<FeaturesStock> fsLD1 = FeaturesStock.create(stock, mls.getValidator(PredictionPeriodicity.D1), FeaturesStock.RANGE_TEST);
+        List<FeaturesStock> fsLD1 = FeaturesStock.create(codif, mls.getValidator(PredictionPeriodicity.D1), FeaturesStock.RANGE_TEST);
         if( fsLD1.get(0).currentVectorPos != mls.getValidator(PredictionPeriodicity.D1).getVectorSize())    {
             log.error("size vector not corresponding");
             log.error("validator: " + mls.getValidator(PredictionPeriodicity.D1).getVectorSize());
             log.error("vector: " + fsLD1.get(0).currentVectorPos );
         }
-        List<FeaturesStock> fsLD5 = FeaturesStock.create(stock, mls.getValidator(PredictionPeriodicity.D5), FeaturesStock.RANGE_TEST);
+        List<FeaturesStock> fsLD5 = FeaturesStock.create(codif, mls.getValidator(PredictionPeriodicity.D5), FeaturesStock.RANGE_TEST);
         if( fsLD5.get(0).currentVectorPos != mls.getValidator(PredictionPeriodicity.D5).getVectorSize())    {
             log.error("size vector not corresponding");
             log.error("validator: " + mls.getValidator(PredictionPeriodicity.D5).getVectorSize());
             log.error("vector: " + fsLD5.get(0).currentVectorPos );
         }
-        List<FeaturesStock> fsLD20 = FeaturesStock.create(stock, mls.getValidator(PredictionPeriodicity.D20), FeaturesStock.RANGE_TEST);
+        List<FeaturesStock> fsLD20 = FeaturesStock.create(codif, mls.getValidator(PredictionPeriodicity.D20), FeaturesStock.RANGE_TEST);
         if( fsLD20.get(0).currentVectorPos != mls.getValidator(PredictionPeriodicity.D20).getVectorSize())    {
             log.error("size vector not corresponding");
             log.error("validator: " + mls.getValidator(PredictionPeriodicity.D20).getVectorSize());
             log.error("vector: " + fsLD20.get(0).currentVectorPos );
         }
 
-        List<FeaturesStock> fsLD40 = FeaturesStock.create(stock, mls.getValidator(PredictionPeriodicity.D40), FeaturesStock.RANGE_TEST);
+        List<FeaturesStock> fsLD40 = FeaturesStock.create(codif, mls.getValidator(PredictionPeriodicity.D40), FeaturesStock.RANGE_TEST);
         if( fsLD40.get(0).currentVectorPos != mls.getValidator(PredictionPeriodicity.D40).getVectorSize())    {
             log.error("size vector not corresponding");
             log.error("validator: " + mls.getValidator(PredictionPeriodicity.D40).getVectorSize());

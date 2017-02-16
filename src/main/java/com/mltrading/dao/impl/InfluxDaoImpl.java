@@ -1,5 +1,6 @@
 package com.mltrading.dao.impl;
 
+import com.mltrading.config.MLProperties;
 import com.mltrading.dao.InfluxDao;
 import com.mltrading.influxdb.InfluxDB;
 import com.mltrading.influxdb.InfluxDBFactory;
@@ -13,12 +14,12 @@ public class InfluxDaoImpl implements InfluxDao{
 
     @Override
     public void createConnection() {
-        this.influxDB = InfluxDBFactory.connect("http://"+host+":"+port, login, pwd);
+        this.influxDB = InfluxDBFactory.connect("http://"+ MLProperties.getProperty("influxdb")+":"+ new Integer(MLProperties.getProperty("influxdbPort")), login, pwd);
     }
 
 
     public void createConnection(String hostDist) {
-        this.influxDB = InfluxDBFactory.connect("http://"+hostDist+":"+port, login, pwd);
+        this.influxDB = InfluxDBFactory.connect("http://"+hostDist+":"+new Integer(MLProperties.getProperty("influxdbPort")), login, pwd);
     }
 
     @Override

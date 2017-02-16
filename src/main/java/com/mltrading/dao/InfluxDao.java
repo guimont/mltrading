@@ -7,9 +7,7 @@ import com.mltrading.influxdb.InfluxDB;
  */
 public interface InfluxDao {
 
-    public String host="localhost";
-    //String host="192.168.0.24";
-    Integer port=8086;
+
 
     String login="root";
     String pwd="root";

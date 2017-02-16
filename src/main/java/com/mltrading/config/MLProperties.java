@@ -45,6 +45,12 @@ public class MLProperties {
         return prop.getProperty(key);
     }
 
+
+    public static int getProperty(String key, int defaultValue) {
+        String val = getProperty(key);
+        return (val == null) ? defaultValue : new Integer(val);
+    }
+
     public static List<String> getProperties(String key) {
         List<String> l = new ArrayList<>();
 

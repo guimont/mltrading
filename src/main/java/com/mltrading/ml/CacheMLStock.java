@@ -29,6 +29,9 @@ public class CacheMLStock {
     //
 
 
+    public static int RENDERING = 300;
+    public static int RANGE_MAX = 1500;
+
     private static final Logger log = LoggerFactory.getLogger(CacheMLStock.class);
 
     private static final Map<String, MLStocks> mlStockMap;

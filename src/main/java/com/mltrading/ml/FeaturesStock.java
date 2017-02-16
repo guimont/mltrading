@@ -243,30 +243,30 @@ public class FeaturesStock implements Serializable {
     }
 
     static int OFFSET_BASE = 50;
-    static int RANGE_MAX = 1500;
+
     static int RANGE_TEST = 50;
 
 
-    public  static List<FeaturesStock> create(StockGeneral stock, MatrixValidator validator, int range) {
+    public  static List<FeaturesStock> create(String codif, MatrixValidator validator, int range) {
         //Xt,Xt-1,...,Xn ,Consensus AT => StockHistory
         //Indice Xt,..Xn, AT => StockIndice
         //Secteur Xt,..Xn, AT => StockSecteur
         //Vola Cac Xt,..Xn, AT
         //indice etranger
 
-        log.info("create FeaturesStock for: " + stock.getCodif());
+        log.info("create FeaturesStock for: " + codif);
 
         List<FeaturesStock> fsL = new ArrayList<>();
 
         List<String> rangeDate = null;
         try {
-            rangeDate = StockHistory.getDateHistoryListOffsetLimit(stock.getCodif(), OFFSET_BASE, range);
+            rangeDate = StockHistory.getDateHistoryListOffsetLimit(codif, OFFSET_BASE, range);
             if (rangeDate.size() < range * 0.7) { //why this code ????
-                log.error("Cannot get date list for: " + stock.getCodif() + " not enough element");
+                log.error("Cannot get date list for: " + codif + " not enough element");
                 return null;
             }
         } catch (Exception e) {
-            log.error("Cannot get date list for: " + stock.getCodif() + "  //exception:" + e);
+            log.error("Cannot get date list for: " + codif + "  //exception:" + e);
             return null;
         }
 
@@ -277,12 +277,12 @@ public class FeaturesStock implements Serializable {
 
 
             try {
-                StockHistory  res = StockHistory.getStockHistoryDayAfter(stock.getCodif(), date);
+                StockHistory  res = StockHistory.getStockHistoryDayAfter(codif, date);
                 fs.setResultValue(res.getValue(),PredictionPeriodicity.D1);
                 fs.setDate(res.getDay(),PredictionPeriodicity.D1);
 
                 //cannot catch exception for this perdiod
-                res = StockHistory.getStockHistoryDayOffset(stock.getCodif(), date, 5);
+                res = StockHistory.getStockHistoryDayOffset(codif, date, 5);
                 if (res != null) {
                     fs.setResultValue(res.getValue(),PredictionPeriodicity.D5);
                     fs.setDate(res.getDay(),PredictionPeriodicity.D5);
@@ -290,7 +290,7 @@ public class FeaturesStock implements Serializable {
                     fs.setResultValue(0.,PredictionPeriodicity.D5);
                     fs.setDate("J+"+dayAfterD5++, PredictionPeriodicity.D5);
                 }
-                res = StockHistory.getStockHistoryDayOffset(stock.getCodif(), date, 20);
+                res = StockHistory.getStockHistoryDayOffset(codif, date, 20);
                 if (res != null) {
                     fs.setResultValue(res.getValue(),PredictionPeriodicity.D20);
                     fs.setDate(res.getDay(),PredictionPeriodicity.D20);
@@ -299,7 +299,7 @@ public class FeaturesStock implements Serializable {
                     fs.setDate("J+"+dayAfterD20++, PredictionPeriodicity.D20);
                 }
 
-                res = StockHistory.getStockHistoryDayOffset(stock.getCodif(), date, 40);
+                res = StockHistory.getStockHistoryDayOffset(codif, date, 40);
                 if (res != null) {
                     fs.setResultValue(res.getValue(),PredictionPeriodicity.D40);
                     fs.setDate(res.getDay(),PredictionPeriodicity.D40);
@@ -309,7 +309,7 @@ public class FeaturesStock implements Serializable {
                 }
 
             } catch (Exception e) {
-                log.error("Cannot get date for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
+                log.error("Cannot get date for: " + codif + " and date: " + date + " //exception:" + e);
                 continue;
             }
 
@@ -317,24 +317,24 @@ public class FeaturesStock implements Serializable {
              * stock
              */
             try {
-            List<StockHistory> sh = StockHistory.getStockHistoryDateInvert(stock.getCodif(), date, validator.getPeriodStockHist());
-            fs.linearize(sh);
-            StockHistory current = StockHistory.getStockHistory(stock.getCodif(), date);
-            fs.linearize(current, validator);
-            fs.setCurrentValue(current.getValue());
+                List<StockHistory> sh = StockHistory.getStockHistoryDateInvert(codif, date, validator.getPeriodStockHist());
+                fs.linearize(sh);
+                StockHistory current = StockHistory.getStockHistory(codif, date);
+                fs.linearize(current, validator);
+                fs.setCurrentValue(current.getValue());
 
             } catch (Exception e) {
-                log.error("Cannot get stock history for: " + stock.getCode() + " and date: " + date +  " //exception:" + e);
+                log.error("Cannot get stock history for: " + codif + " and date: " + date +  " //exception:" + e);
                 throw  e ;
             }
 
 
             try {
-                StockAnalyse ash = StockAnalyse.getAnalyse(stock.getCodif(), date);
+                StockAnalyse ash = StockAnalyse.getAnalyse(codif, date);
                 fs.linearize(ash, validator, MatrixValidator.HS_POS);
 
             } catch (Exception e) {
-                log.error("Cannot get analyse stock for: " + stock.getCode() + " and date: " + date +  " //exception:" + e);
+                log.error("Cannot get analyse stock for: " + codif + " and date: " + date +  " //exception:" + e);
                 throw  e ;
             }
 
@@ -344,29 +344,29 @@ public class FeaturesStock implements Serializable {
              * so special loop for this validator
              */
             try {
-                int rowS = validator.getIndice(CacheStockSector.getSectorCache().get(stock.getSector()).getRow(), MatrixValidator.TypeHistory.SEC);
+                /*int rowS = validator.getIndice(CacheStockSector.getSectorCache().get(stock.getSector()).getRow(), MatrixValidator.TypeHistory.SEC);
                 List<StockHistory> ss = StockHistory.getStockHistoryDateInvert(stock.getSector(), date,
                     validator.getPeriodHist(rowS));
                 fs.linearize(ss);
 
                 StockAnalyse ass = StockAnalyse.getAnalyse(stock.getSector(), ss.get(0).getDay());
-                fs.linearize(ass, validator, rowS);
+                fs.linearize(ass, validator, rowS);*/
 
                 /** ALL sector*/
                 for (StockSector g : CacheStockSector.getSectorCache().values()) {
                     int row = validator.getIndice(g.getRow(), MatrixValidator.TypeHistory.SEC);
-                    if (row != rowS) { //if same row, sector of this stock already done
+                    //if (row != rowS) { //if same row, sector of this stock already done
                         if (validator.getPeriodEnable(row)) {
                             List<StockHistory> si = StockHistory.getStockHistoryDateInvert(g.getCode(), date, validator.getPeriodHist(row));
                             fs.linearize(si);
                             StockAnalyse asi = StockAnalyse.getAnalyse(g.getCode(), si.get(0).getDay());
                             fs.linearize(asi, validator, row);
                         }
-                    }
+                    //}
                 }
 
             } catch (Exception e) {
-                log.error("Cannot get sector/analyse stock for: " + stock.getSector() + " and date: " + date + " //exception:" + e);
+                log.error("Cannot get sector/analyse stock for: " + codif + " and date: " + date + " //exception:" + e);
                 throw  e ;
             }
 
@@ -401,260 +401,260 @@ public class FeaturesStock implements Serializable {
             /**
              * indice cac
              *
-            try {
+             try {
 
 
-                if (validator.cac) {
-                    List<StockHistory> si = StockHistory.getStockHistoryDateInvert("EFCHI", date, validator.perdiodCac);
-                    fs.linearize(si);
+             if (validator.cac) {
+             List<StockHistory> si = StockHistory.getStockHistoryDateInvert("EFCHI", date, validator.perdiodCac);
+             fs.linearize(si);
 
-                    if (validator.cacAT) {
-                        StockAnalyse asi = StockAnalyse.getAnalyse("EFCHI", si.get(0).getDay());
-                        fs.linearize(asi, validator);
-                    }
-                }
-            } catch (Exception e) {
-                log.error("Cannot get indice/analyse stock for: " + "EFCHI" + " and date: " + date +  " //exception:" + e);
-                throw  e ;
-            }
+             if (validator.cacAT) {
+             StockAnalyse asi = StockAnalyse.getAnalyse("EFCHI", si.get(0).getDay());
+             fs.linearize(asi, validator);
+             }
+             }
+             } catch (Exception e) {
+             log.error("Cannot get indice/analyse stock for: " + "EFCHI" + " and date: " + date +  " //exception:" + e);
+             throw  e ;
+             }
 
-            /**
+             /**
              * indice down jons
              *
-            if (validator.indiceDJI) {
-                try {
+             if (validator.indiceDJI) {
+             try {
 
-                    List<StockHistory> si = StockHistory.getStockHistoryDateInvert("EDJI", date, validator.perdiodDJI);
-                    fs.linearize(si);
-                    if (validator.DJIAT) {
-                        StockAnalyse asi = StockAnalyse.getAnalyse("EDJI", si.get(0).getDay());
-                        fs.linearize(asi, validator);
-                    }
-                } catch (Exception e) {
-                    log.error("Cannot get indice/analyse stock for: " + "EDJI" + " and date: " + date + " //exception:" + e);
-                    throw  e ;
-                }
-            }
+             List<StockHistory> si = StockHistory.getStockHistoryDateInvert("EDJI", date, validator.perdiodDJI);
+             fs.linearize(si);
+             if (validator.DJIAT) {
+             StockAnalyse asi = StockAnalyse.getAnalyse("EDJI", si.get(0).getDay());
+             fs.linearize(asi, validator);
+             }
+             } catch (Exception e) {
+             log.error("Cannot get indice/analyse stock for: " + "EDJI" + " and date: " + date + " //exception:" + e);
+             throw  e ;
+             }
+             }
 
-            /**
+             /**
              * indice nikkei
              *
-            if (validator.indiceN225) {
-                try {
+             if (validator.indiceN225) {
+             try {
 
-                    List<StockHistory> si = StockHistory.getStockHistoryDateInvert("EN225", date, validator.perdiodN225);
-                    fs.linearize(si);
-                    if (validator.N225AT) {
-                        StockAnalyse asi = StockAnalyse.getAnalyse("EN225", si.get(0).getDay());
-                        fs.linearize(asi, validator);
-                    }
-                } catch (Exception e) {
-                    log.error("Cannot get indice/analyse stock for: " + "EN225" + " and date: " + date + " //exception:" + e);
-                    throw  e ;
-                }
-            }
+             List<StockHistory> si = StockHistory.getStockHistoryDateInvert("EN225", date, validator.perdiodN225);
+             fs.linearize(si);
+             if (validator.N225AT) {
+             StockAnalyse asi = StockAnalyse.getAnalyse("EN225", si.get(0).getDay());
+             fs.linearize(asi, validator);
+             }
+             } catch (Exception e) {
+             log.error("Cannot get indice/analyse stock for: " + "EN225" + " and date: " + date + " //exception:" + e);
+             throw  e ;
+             }
+             }
 
-            /**
+             /**
              * indice FTSE london
              *
-            if (validator.indiceFTSE) {
-                try {
+             if (validator.indiceFTSE) {
+             try {
 
-                    List<StockHistory> si = StockHistory.getStockHistoryDateInvert("EFTSE", date, validator.perdiodFTSE);
-                    fs.linearize(si);
-                    if (validator.FTSEAT) {
-                        StockAnalyse asi = StockAnalyse.getAnalyse("EFTSE", si.get(0).getDay());
-                        fs.linearize(asi, validator);
-                    }
-                } catch (Exception e) {
-                    log.error("Cannot get indice/analyse stock for: " + "EFTSE" + " and date: " + date + " //exception:" + e);
-                    throw  e ;
-                }
-            }
+             List<StockHistory> si = StockHistory.getStockHistoryDateInvert("EFTSE", date, validator.perdiodFTSE);
+             fs.linearize(si);
+             if (validator.FTSEAT) {
+             StockAnalyse asi = StockAnalyse.getAnalyse("EFTSE", si.get(0).getDay());
+             fs.linearize(asi, validator);
+             }
+             } catch (Exception e) {
+             log.error("Cannot get indice/analyse stock for: " + "EFTSE" + " and date: " + date + " //exception:" + e);
+             throw  e ;
+             }
+             }
 
-            /**
+             /**
              * indice DAX london
              *
-            if (validator.indiceDAX) {
-                try {
+             if (validator.indiceDAX) {
+             try {
 
-                    List<StockHistory> si = StockHistory.getStockHistoryDateInvert("EGDAXI", date, validator.perdiodDAX);
-                    fs.linearize(si);
-                    if (validator.DAXIAT) {
-                        StockAnalyse asi = StockAnalyse.getAnalyse("EGDAXI", si.get(0).getDay());
-                        fs.linearize(asi, validator);
-                    }
-                } catch (Exception e) {
-                    log.error("Cannot get indice/analyse stock for: " + "EGDAXI" + " and date: " + date + " //exception:" + e);
-                    throw  e ;
-                }
-            }
+             List<StockHistory> si = StockHistory.getStockHistoryDateInvert("EGDAXI", date, validator.perdiodDAX);
+             fs.linearize(si);
+             if (validator.DAXIAT) {
+             StockAnalyse asi = StockAnalyse.getAnalyse("EGDAXI", si.get(0).getDay());
+             fs.linearize(asi, validator);
+             }
+             } catch (Exception e) {
+             log.error("Cannot get indice/analyse stock for: " + "EGDAXI" + " and date: " + date + " //exception:" + e);
+             throw  e ;
+             }
+             }
 
-           /**
+             /**
              * indice STOXX50 london
              *
-            if (validator.indiceSTOXX50) {
-                try {
+             if (validator.indiceSTOXX50) {
+             try {
 
-                    List<StockIndice> si = StockIndice.getStockIndiceDateInvert("ESTOXX50E", date, validator.perdiodSTOXX50);
-                    fs.linearize(si);
-                    //log.info("find " + si.size() + " ESTOXX50E for " + validator.perdiodSTOXX50 + " and date: " + date);
-                    if (validator.STOXX50AT) {
-                        StockAnalyse asi = StockAnalyse.getAnalyse("ESTOXX50E", si.get(0).getDay());
-                        //log.info("find " + asi.toString() + " ESTOXX50E for " + validator.perdiodSTOXX50 + " and date: " + si.get(0).getDay());
-                        fs.linearize(asi, validator);
-                    }
-                } catch (Exception e) {
-                    log.error("Cannot get indice/analyse stock for: " + "ESTOXX50E" + " and date: " + date + " //exception:" + e);
-                    throw  e ;
-                }
-            }   */
+             List<StockIndice> si = StockIndice.getStockIndiceDateInvert("ESTOXX50E", date, validator.perdiodSTOXX50);
+             fs.linearize(si);
+             //log.info("find " + si.size() + " ESTOXX50E for " + validator.perdiodSTOXX50 + " and date: " + date);
+             if (validator.STOXX50AT) {
+             StockAnalyse asi = StockAnalyse.getAnalyse("ESTOXX50E", si.get(0).getDay());
+             //log.info("find " + asi.toString() + " ESTOXX50E for " + validator.perdiodSTOXX50 + " and date: " + si.get(0).getDay());
+             fs.linearize(asi, validator);
+             }
+             } catch (Exception e) {
+             log.error("Cannot get indice/analyse stock for: " + "ESTOXX50E" + " and date: " + date + " //exception:" + e);
+             throw  e ;
+             }
+             }   */
 
 
 
             /**
              * volatility cac
              *
-            if (validator.cacVola) {
-                try {
-                    List<StockHistory> sVCac = StockHistory.getStockHistoryDateInvert("VCAC", date, validator.perdiodcacVola);
-                    fs.linearize(sVCac);
+             if (validator.cacVola) {
+             try {
+             List<StockHistory> sVCac = StockHistory.getStockHistoryDateInvert("VCAC", date, validator.perdiodcacVola);
+             fs.linearize(sVCac);
 
-                } catch (Exception e) {
-                    log.error("Cannot get vcac stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
-                    throw  e ;
-                }
-            }*/
+             } catch (Exception e) {
+             log.error("Cannot get vcac stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
+             throw  e ;
+             }
+             }*/
 
             /**
              * taux de change $/€
              *
-            if (validator.DOLLAR) {
-                try {
-                    List<StockHistory> sDE = StockHistory.getStockHistoryDateInvert("DTOE", date, validator.perdiodDOLLAR);
-                    fs.linearize(sDE);
+             if (validator.DOLLAR) {
+             try {
+             List<StockHistory> sDE = StockHistory.getStockHistoryDateInvert("DTOE", date, validator.perdiodDOLLAR);
+             fs.linearize(sDE);
 
-                } catch (Exception e) {
-                    log.error("Cannot get dollar stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
-                    throw  e ;
-                }
-            }
+             } catch (Exception e) {
+             log.error("Cannot get dollar stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
+             throw  e ;
+             }
+             }
 
-            /**
+             /**
              * prix du petrole
              *
-            if (validator.PETROL) {
-                try {
-                    List<StockHistory> sDE = StockHistory.getStockHistoryDateInvert("PETB", date, validator.perdiodPETROL);
-                    fs.linearize(sDE);
+             if (validator.PETROL) {
+             try {
+             List<StockHistory> sDE = StockHistory.getStockHistoryDateInvert("PETB", date, validator.perdiodPETROL);
+             fs.linearize(sDE);
 
-                } catch (Exception e) {
-                    log.error("Cannot get petrol stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
-                    throw  e ;
-                }
-            }
+             } catch (Exception e) {
+             log.error("Cannot get petrol stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
+             throw  e ;
+             }
+             }
 
 
-            /**
+             /**
              * Euribor 1 mois
              *
-            if (validator.EURI1M) {
-                try {
-                    List<StockHistory> sDE = StockHistory.getStockHistoryDateInvert("EURI1M", date, validator.perdiodEURI1M);
-                    fs.linearize(sDE);
+             if (validator.EURI1M) {
+             try {
+             List<StockHistory> sDE = StockHistory.getStockHistoryDateInvert("EURI1M", date, validator.perdiodEURI1M);
+             fs.linearize(sDE);
 
-                } catch (Exception e) {
-                    log.error("Cannot get euribord 1 month stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
-                    throw  e ;
-                }
-            }
+             } catch (Exception e) {
+             log.error("Cannot get euribord 1 month stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
+             throw  e ;
+             }
+             }
 
-            /**
+             /**
              * Euribor 1 année
              *
-            if (validator.EURI1Y) {
-                try {
-                    List<StockHistory> sDE = StockHistory.getStockHistoryDateInvert("EURI1Y", date, validator.perdiodEURI1Y);
-                    fs.linearize(sDE);
+             if (validator.EURI1Y) {
+             try {
+             List<StockHistory> sDE = StockHistory.getStockHistoryDateInvert("EURI1Y", date, validator.perdiodEURI1Y);
+             fs.linearize(sDE);
 
-                } catch (Exception e) {
-                    log.error("Cannot get euribord 1 year stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
-                    throw  e ;
-                }
-            }
+             } catch (Exception e) {
+             log.error("Cannot get euribord 1 year stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
+             throw  e ;
+             }
+             }
 
-            /**
+             /**
              * Euribor 10 année
              *
-            if (validator.EURI10Y) {
-                try {
-                    List<StockHistory> sDE = StockHistory.getStockHistoryDateInvert("EURI10Y", date, validator.perdiodEURI10Y);
-                    fs.linearize(sDE);
+             if (validator.EURI10Y) {
+             try {
+             List<StockHistory> sDE = StockHistory.getStockHistoryDateInvert("EURI10Y", date, validator.perdiodEURI10Y);
+             fs.linearize(sDE);
 
-                } catch (Exception e) {
-                    log.error("Cannot get euribord 10 years stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
-                    throw  e ;
-                }
-            }
+             } catch (Exception e) {
+             log.error("Cannot get euribord 10 years stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
+             throw  e ;
+             }
+             }
 
 
-            /**
+             /**
              * Usribor 1 mois
              *
-            if (validator.USRI1M) {
-                try {
-                    List<StockHistory> sDE = StockHistory.getStockHistoryDateInvert("USRI1M", date, validator.perdiodUSRI1M);
-                    fs.linearize(sDE);
+             if (validator.USRI1M) {
+             try {
+             List<StockHistory> sDE = StockHistory.getStockHistoryDateInvert("USRI1M", date, validator.perdiodUSRI1M);
+             fs.linearize(sDE);
 
-                } catch (Exception e) {
-                    log.error("Cannot get usribord 1 month stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
-                    throw  e ;
-                }
-            }
+             } catch (Exception e) {
+             log.error("Cannot get usribord 1 month stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
+             throw  e ;
+             }
+             }
 
-            /**
+             /**
              * Usribor 1 année
              *
-            if (validator.USRI1Y) {
-                try {
-                    List<StockHistory> sDE = StockHistory.getStockHistoryDateInvert("USRI1Y", date, validator.perdiodUSRI1Y);
-                    fs.linearize(sDE);
+             if (validator.USRI1Y) {
+             try {
+             List<StockHistory> sDE = StockHistory.getStockHistoryDateInvert("USRI1Y", date, validator.perdiodUSRI1Y);
+             fs.linearize(sDE);
 
-                } catch (Exception e) {
-                    log.error("Cannot get usribord 1 year stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
-                    throw  e ;
-                }
-            }
+             } catch (Exception e) {
+             log.error("Cannot get usribord 1 year stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
+             throw  e ;
+             }
+             }
 
-            /**
+             /**
              * Usribor 10 année
              *
-            if (validator.USRI10Y) {
-                try {
-                    List<StockHistory> sDE = StockHistory.getStockHistoryDateInvert("USRI10Y", date, validator.perdiodUSRI10Y);
-                    fs.linearize(sDE);
+             if (validator.USRI10Y) {
+             try {
+             List<StockHistory> sDE = StockHistory.getStockHistoryDateInvert("USRI10Y", date, validator.perdiodUSRI10Y);
+             fs.linearize(sDE);
 
-                } catch (Exception e) {
-                    log.error("Cannot get usribord 10 years stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
-                    throw  e ;
-                }
-            }
+             } catch (Exception e) {
+             log.error("Cannot get usribord 10 years stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
+             throw  e ;
+             }
+             }
 
-            /**
+             /**
              * document number
              *
-            if (validator.useDocument) {
-                List<Double> sdL = StockDocument.getStockDocument(stock.getCodif(), date, validator.perdiodDocument);
-                fs.linearizeNote(sdL);
-            }
+             if (validator.useDocument) {
+             List<Double> sdL = StockDocument.getStockDocument(stock.getCodif(), date, validator.perdiodDocument);
+             fs.linearizeNote(sdL);
+             }
 
-            /**
+             /**
              * document note
              *
-            if (validator.useNotation) {
-                List<Double> sdL = HistogramDocument.getSumDocument(stock.getCodif(), date, validator.perdiodDocument);
-                fs.linearizeNote(sdL);
-            }*/
+             if (validator.useNotation) {
+             List<Double> sdL = HistogramDocument.getSumDocument(stock.getCodif(), date, validator.perdiodDocument);
+             fs.linearizeNote(sdL);
+             }*/
 
 
 

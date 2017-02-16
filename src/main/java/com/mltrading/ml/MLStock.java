@@ -2,8 +2,10 @@ package com.mltrading.ml;
 
 
 
+import com.mltrading.dao.Requester;
+import com.mltrading.dao.mongoFile.QueryMongoRequest;
 import com.mongodb.DBCursor;
-import com.mongodb.MongoClient;
+
 import com.mongodb.gridfs.GridFS;
 import com.mongodb.gridfs.GridFSDBFile;
 import com.mongodb.gridfs.GridFSInputFile;
@@ -56,12 +58,11 @@ public class MLStock  implements Serializable {
     }
 
     public void saveModelDB() {
-        MongoClient mongoClient = null;
+
         try {
             if (System.getProperty("os.name").contains("Windows"))
                 path = "/";
-            mongoClient = new MongoClient( "172.22.30.111" , 27017 );
-            GridFS gfsModel = new GridFS(mongoClient.getDB("model"), "model/Model" + period.toString() + codif);
+            GridFS gfsModel = (GridFS) Requester.sendRequest(new QueryMongoRequest("model/Model" + period.toString() + codif));
             File dir = new File(path+"model/Model" + period.toString() + codif);
             Collection<File> files = FileUtils.listFiles(dir , null, true);
             for (File f:files) {
@@ -74,10 +75,6 @@ public class MLStock  implements Serializable {
             }
         } catch (Exception e) {
             log.error("saveModel: " + codif + e);
-        }
-        finally {
-            if (null != mongoClient)
-                mongoClient.close();
         }
     }
 
@@ -105,12 +102,14 @@ public class MLStock  implements Serializable {
 
 
     public void distibute() {
-        MongoClient mongoClient = null;
+        //MongoClient mongoClient = null;
         try {
             if (!System.getProperty("os.name").contains("Windows"))
                 path = "/";
-            mongoClient = new MongoClient( "172.22.30.111" , 27017 );
-            GridFS gfsModel = new GridFS(mongoClient.getDB("model"), "model/Model" + period.toString() + codif);
+            //mongoClient = new MongoClient( "172.22.30.111" , 27017 );
+
+
+            GridFS gfsModel = (GridFS) Requester.sendRequest(new QueryMongoRequest("model/Model" + period.toString() + codif));
 
 
             DBCursor cursor = gfsModel.getFileList();
@@ -126,10 +125,6 @@ public class MLStock  implements Serializable {
             }
         } catch (Exception e) {
             log.error("saveModel: " + codif + e);
-        }
-        finally {
-            if (null != mongoClient)
-                mongoClient.close();
         }
     }
 

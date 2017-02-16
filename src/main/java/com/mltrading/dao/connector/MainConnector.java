@@ -3,6 +3,7 @@ import akka.actor.ActorRef;
 import akka.actor.Props;
 
 import akka.routing.SmallestMailboxPool;
+import com.mltrading.dao.mongoFile.QueryMongoRequest;
 import com.mltrading.influxdb.dto.QueryRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +12,7 @@ import org.slf4j.LoggerFactory;
  * Created by gmo on 08/09/2016.
  */
 public class MainConnector extends Supervisor{
-    private final ActorRef worker;
+    private final ActorRef worker,workerMongo ;
     private static final Logger log = LoggerFactory.getLogger(MainConnector.class);
 
 
@@ -23,6 +24,7 @@ public class MainConnector extends Supervisor{
         //create the worker dispatcher
         int WORKER_NB = 5;
         worker = this.getContext().actorOf(new SmallestMailboxPool(WORKER_NB).props(Props.create(WorkerConnector.class)), "workerRouter");
+        workerMongo = this.getContext().actorOf(new SmallestMailboxPool(WORKER_NB).props(Props.create(WorkerMongoConnector.class)), "workerMongoRouter");
 
     }
 
@@ -37,6 +39,9 @@ public class MainConnector extends Supervisor{
         }
         else if (message instanceof QueryRequest) {
             worker.tell(message, getSender());
+        }
+        else if (message instanceof QueryMongoRequest) {
+            workerMongo.tell(message, getSender());
         }
         else  {
             log.debug("Akka main connector message unknown");

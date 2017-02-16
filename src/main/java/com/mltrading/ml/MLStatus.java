@@ -205,21 +205,10 @@ public class MLStatus implements Serializable{
     }
 
     public void replaceElementList(List<MLPerformances> rep, PredictionPeriodicity period) throws Exception {
-        int col = PredictionPeriodicity.convert(period);
-        for (int i = 0; i< this.getPerfList().size(); i++) {
-            switch (col) {
-                case 1: this.getPerfList().get(i).setMl(rep.get(i).getMl(PredictionPeriodicity.D1), PredictionPeriodicity.D1);
-                        break;
-                case 5 : this.getPerfList().get(i).setMl(rep.get(i).getMl(PredictionPeriodicity.D5), PredictionPeriodicity.D5);
-                    break;
-                case 20 : this.getPerfList().get(i).setMl(rep.get(i).getMl(PredictionPeriodicity.D20), PredictionPeriodicity.D20);
-                    break;
-                case 40 : this.getPerfList().get(i).setMl(rep.get(i).getMl(PredictionPeriodicity.D40), PredictionPeriodicity.D40);
-                    break;
-                default: throw new Exception("replacement impossible, period unknown");
-            }
-        }
 
+        for (int i = 0; i< this.getPerfList().size(); i++) {
+            this.getPerfList().get(i).setMl(rep.get(i).getMl(period), period);
+        }
     }
 
     /**
@@ -228,7 +217,7 @@ public class MLStatus implements Serializable{
      * @return O or max last StockHistory
      */
     public void loadPerf(final String code) {
-        final int max = 50;
+        final int max = CacheMLStock.RENDERING;
         perfList = new ArrayList();
 
         //offset is mult by 2 because it is no dense data
@@ -290,6 +279,13 @@ public class MLStatus implements Serializable{
 
     public void setPerfList(List<MLPerformances> perfList) {
         this.perfList = perfList;
+    }
+
+
+    public void setPerfList(List<MLPerformances> perfList,PredictionPeriodicity p) throws Exception {
+        if (p == PredictionPeriodicity.D1)
+            this.perfList = perfList;
+        else replaceElementList(perfList,p);
     }
 
 
