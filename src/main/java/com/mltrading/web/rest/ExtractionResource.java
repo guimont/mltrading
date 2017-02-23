@@ -161,7 +161,7 @@ public class ExtractionResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String processML() {
 
-        forecast.processList(new ArrayList(CacheStockGeneral.getIsinCache().values()));
+        forecast.processList();
 
         return "ok";
     }
@@ -215,11 +215,10 @@ public class ExtractionResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String loadML() {
 
-        List<StockGeneral> sl = new ArrayList(CacheStockGeneral.getIsinCache().values());
 
-        CacheMLStock.load(sl);
+        CacheMLStock.load();
         MlForecast ml = new MlForecast();
-        ml.processList(sl);
+        ml.processList();
 
         return "ok";
     }

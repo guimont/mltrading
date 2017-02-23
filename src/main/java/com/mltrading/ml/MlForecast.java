@@ -9,10 +9,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
+import java.util.stream.Stream;
 
 /**
  * Created by gmo on 08/01/2016.
@@ -26,7 +28,9 @@ public class MlForecast {
     private static int DEFAULT_NB_THREADS_RF = 2;
     private static int DEFAULT_NB_THREADS = 2;
 
-    public void processList(List<StockGeneral> l) {
+    public void processList() {
+
+        List<StockGeneral> l = new ArrayList(CacheStockGeneral.getIsinCache().values());
 
         for (StockGeneral s : l) {
             RandomForestStock rfs = new RandomForestStock();
@@ -36,6 +40,19 @@ public class MlForecast {
                 mls.getStatus().calculeAvgPrd();
             }
         }
+
+
+        List<StockSector> ls = new ArrayList(CacheStockSector.getSectorCache().values());
+
+        for (StockSector s : ls) {
+            RandomForestStock rfs = new RandomForestStock();
+            MLStocks mls = CacheMLStock.getMLStockCache().get(s.getCodif());
+            if (mls != null) {
+                mls = rfs.processRFResult(s.getCodif(), mls);
+                mls.getStatus().calculeAvgPrd();
+            }
+        }
+
 
         //check
 
@@ -75,13 +92,28 @@ public class MlForecast {
      */
     public void optimize() {
 
-        final CountDownLatch latches = new CountDownLatch(CacheStockGeneral.getIsinCache().values().size());
+        optimize(CacheStockGeneral.getIsinCache().values().stream());
+    }
+
+    /**
+     * optimize sector by model randomization
+     */
+    public void optimizeSector() {
+
+        optimize(CacheStockSector.getSectorCache().values().stream());
+    }
+
+
+
+    public void optimize(Stream<? extends StockHistory>  stream) {
+
+        final CountDownLatch latches = new CountDownLatch((int)stream.count());
         //final CountDownLatch latches = new CountDownLatch(1); //testmode ORA
 
         CacheMLActivities.addActivities(new MLActivities("optimize forecast", "","start",0,0,false));
 
         //For test purpose only
-        CacheStockGeneral.getIsinCache().values().stream()/*.filter(s -> s.getRealCodif().equals("ORA"))*/.forEach(s -> executorRef.submit(() -> {    //For test purpose only
+        stream/*.filter(s -> s.getRealCodif().equals("ORA"))*/.forEach(s -> executorRef.submit(() -> {    //For test purpose only
             try {
                 optimize(s.getCodif(), 1, 1, Method.RandomForest, Type.Feature);
             } finally {
@@ -109,51 +141,12 @@ public class MlForecast {
         CacheMLActivities.addActivities(new MLActivities("save forecast model", "","end",0,0,true));
     }
 
-
-    /**
-     * optimize by model randomization
-     */
-    public void optimizeSector() {
-
-        final CountDownLatch latches = new CountDownLatch(CacheStockSector.getSectorCache().values().size());
-        //final CountDownLatch latches = new CountDownLatch(1); //testmode ORA
-
-        CacheMLActivities.addActivities(new MLActivities("optimize forecast sector", "","start",0,0,false));
-
-        //For test purpose only
-        CacheStockSector.getSectorCache().values().stream()/*.filter(s -> s.getRealCodif().equals("ORA"))*/.forEach(s -> executorRef.submit(() -> {    //For test purpose only
-            try {
-                optimize(s.getCodif(), 1, 1, Method.RandomForest, Type.Feature);
-            } finally {
-                {
-                    latches.countDown();
-                }
-            }
-        }));
-
-        // Wait for completion
-        try {
-            latches.await();
-        } catch (InterruptedException e) {
-            log.error(e.getMessage());
-        }
-        CacheMLActivities.addActivities(new MLActivities("optimize forecast", "","end",0,0,true));
-
-        //evaluate();
-        updatePredictor();
-
-
-        CacheMLActivities.addActivities(new MLActivities("save forecast model", "","start",0,0,false));
-        log.info("saveML");
-        CacheMLStock.save();
-        CacheMLActivities.addActivities(new MLActivities("save forecast model", "","end",0,0,true));
-    }
 
 
     /**
      * optimize model with processing validator sample
      *
-     * @param s
+     * @param codif
      * @param loop
      * @param backloop
      * @param method

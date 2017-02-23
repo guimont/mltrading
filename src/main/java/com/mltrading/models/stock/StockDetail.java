@@ -17,7 +17,7 @@ public class StockDetail implements Serializable{
     private String code;
     private String name;
     private Stock stock;
-    private Float value;
+    private Double value;
 
     private List<StockHistory> sector;
     private List<StockHistory> indice;
@@ -197,11 +197,11 @@ public class StockDetail implements Serializable{
         this.indice = indice;
     }
 
-    public Float getValue() {
+    public Double getValue() {
         return value;
     }
 
-    public void setValue(Float value) {
+    public void setValue(Double value) {
         this.value = value;
     }
 }

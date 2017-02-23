@@ -51,9 +51,9 @@ public class ScheduleParserGeneral  {
     }
 
     private void updatePredictor() {
-        List<StockGeneral> sg = new ArrayList(CacheStockGeneral.getIsinCache().values());
 
-        CacheMLStock.load(sg);
+
+        CacheMLStock.load();
 
         MlForecast.updatePredictor();
     }

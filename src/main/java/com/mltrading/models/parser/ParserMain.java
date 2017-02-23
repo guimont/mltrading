@@ -59,7 +59,7 @@ public class ParserMain {
                             g.setName(e.text());
                         if (!linkField.isEmpty() && linkField.compareToIgnoreCase("valorisation") == 0)      {
                             String t = e.text().replace(',','.');
-                            g.setValue(Float.parseFloat(t));
+                            g.setValue(Double.parseDouble(t));
                         }
 
                     }
@@ -69,29 +69,29 @@ public class ParserMain {
                         String linkField = e.attr("data-field");
                                           if (!linkField.isEmpty() && linkField.compareToIgnoreCase("open") == 0)      {
                             String t = e.text().replace(',','.');
-                            g.setOpening(Float.parseFloat(t));
+                            g.setOpening(Double.parseDouble(t));
                         }
                         if (!linkField.isEmpty() && linkField.compareToIgnoreCase("high") == 0)      {
                             String t = e.text().replace(',','.');
-                            g.setHighest(Float.parseFloat(t));
+                            g.setHighest(Double.parseDouble(t));
                         }
                         if (!linkField.isEmpty() && linkField.compareToIgnoreCase("low") == 0)      {
                             String t = e.text().replace(',','.');
-                            g.setLowest(Float.parseFloat(t));
+                            g.setLowest(Double.parseDouble(t));
                         }
 
                         if (!linkField.isEmpty() && linkField.compareToIgnoreCase("variation") == 0)      {
                             String t = e.text().replace(',','.').replace('%',' ');//.replace('+','0');
-                            g.setVariation(Float.parseFloat(t));
+                            g.setVariation(Double.parseDouble(t));
                         }
                         if (!linkField.isEmpty() && linkField.compareToIgnoreCase("variationY") == 0)      {
                             String t = e.text().replace(',','.').replace('%',' ');
-                            g.setFirstJanuaryVariation(Float.parseFloat(t));
+                            g.setFirstJanuaryVariation(Double.parseDouble(t));
                         }
 
                         if (!linkField.isEmpty() && linkField.compareToIgnoreCase("volume") == 0)      {
                             String t = e.text().replace('�',' ').replaceAll(" ","");
-                            g.setVolume(Integer.parseInt(t));
+                            g.setVolume(Double.parseDouble(t));
                         }
 
 

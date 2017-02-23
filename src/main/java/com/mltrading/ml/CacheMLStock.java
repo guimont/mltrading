@@ -3,7 +3,9 @@ package com.mltrading.ml;
 
 import com.mltrading.dao.InfluxDaoConnector;
 import com.mltrading.models.stock.CacheStockGeneral;
+import com.mltrading.models.stock.CacheStockSector;
 import com.mltrading.models.stock.StockGeneral;
+import com.mltrading.models.stock.StockHistory;
 import com.mltrading.models.util.MLActivities;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
@@ -47,9 +49,7 @@ public class CacheMLStock {
 
 
 
-
-
-    public static void load(List<StockGeneral> sl) {
+    public static void load() {
 
         MLActivities g = new MLActivities("CacheMLStock", "","load",0,0,false);
 
@@ -60,15 +60,26 @@ public class CacheMLStock {
         // load model on worker
         SynchWorker.load();
 
+        load(new ArrayList(CacheStockGeneral.getIsinCache().values()));
+        load(new ArrayList(CacheStockSector.getSectorCache().values()));
+
+        CacheMLActivities.addActivities(g.setEndDate());
+    }
+
+
+
+
+    public static void load(List<? extends StockHistory> sl) {
+
 
         //load model local
-        for (StockGeneral s : sl) {
+        for (StockHistory s : sl) {
             MLStocks mls = new MLStocks(s.getCodif());
             mls.distibute();
         }
 
 
-        for (StockGeneral s : sl) {
+        for (StockHistory s : sl) {
             MLActivities a = new MLActivities("CacheMLStock", "","load",0,0,false);
             try {
 
@@ -84,7 +95,7 @@ public class CacheMLStock {
             }
         }
 
-        CacheMLActivities.addActivities(g.setEndDate());
+
 
     }
 

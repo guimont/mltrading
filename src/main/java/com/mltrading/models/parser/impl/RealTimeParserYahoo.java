@@ -56,7 +56,7 @@ public class RealTimeParserYahoo implements RealTimeParser {
                                 String[] refSplit = t.get(0).text().split(Pattern.quote("."));
 
                                 String codif = refSplit[0];
-                                Float value = new Float(t.get(2).child(0).text().replace(",", "."));
+                                Double value = new Double(t.get(2).child(0).text().replace(",", "."));
                                 //System.out.println(g.getName());
 
                                 StockGeneral g = CacheStockGeneral.getCache().get(CacheStockGeneral.getCode(codif));
@@ -66,13 +66,13 @@ public class RealTimeParserYahoo implements RealTimeParser {
                                     float sign = (float) 1.;
                                     if (!t.get(3).child(0).child(1).attributes().toString().contains("#008800"))
                                         sign = (float) -1.;
-                                    g.setVariation(new Float(t.get(3).child(0).child(1).text().replace(",", "."))*sign);
-                                    g.setVolume(new Integer(t.get(4).child(0).text().replaceAll(" ", "")));
+                                    g.setVariation(new Double(t.get(3).child(0).child(1).text().replace(",", "."))*sign);
+                                    g.setVolume(new Double(t.get(4).child(0).text().replaceAll(" ", "")));
                                 }
                                 catch (IndexOutOfBoundsException e){
 
                                     //g.setVariation(new Float(t.get(3).child(1).text().replace(",", ".")));
-                                    g.setVolume(new Integer(t.get(4).text().replaceAll(" ", "")));
+                                    g.setVolume(new Double(t.get(4).text().replaceAll(" ", "")));
                                    /* try {
 
                                         g.setVariation(new Float(t.get(3).child(1).text().replace(",", ".")));
@@ -120,15 +120,15 @@ public class RealTimeParserYahoo implements RealTimeParser {
                             g.setName(t.get(1).text());
                             g.setPlaceCodif(refSplit[1]);
                             g.setCodif(refSplit[0]);
-                            g.setValue(new Float(t.get(2).child(0).text().replace(",", ".")));
+                            g.setValue(new Double(t.get(2).child(0).text().replace(",", ".")));
                             //System.out.println(g.getName());
                             try {
-                                g.setVariation(new Float(t.get(3).child(0).child(1).text().replace(",", ".")));
-                                g.setVolume(new Integer(t.get(4).child(0).text().replaceAll(" ", "")));
+                                g.setVariation(new Double(t.get(3).child(0).child(1).text().replace(",", ".")));
+                                g.setVolume(new Double(t.get(4).child(0).text().replaceAll(" ", "")));
                             }
                             catch (IndexOutOfBoundsException e){
                                 //g.setVariation(new Float(t.get(3).child(1).text().replace(",", ".")));
-                                g.setVolume(new Integer(t.get(4).text().replaceAll(" ", "")));
+                                g.setVolume(new Double(t.get(4).text().replaceAll(" ", "")));
                             }
 
                             g.setCode(CacheStockGeneral.getCode(g.getCodif()));

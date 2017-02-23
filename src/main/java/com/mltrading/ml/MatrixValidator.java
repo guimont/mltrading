@@ -192,6 +192,50 @@ public class MatrixValidator implements Serializable,Cloneable {
         }
     }
 
+    /**
+     * Generate a random matrix validator for features selection
+     */
+    public void generateCompleteModel() {
+        //hs stock => enable
+        //stock sector => enable
+        //all indice => enable
+        //raw and other => disable
+
+        matrix[HS_POS][HS_COL] = TRUEBOOL;
+        matrix[HS_POS][HS_PERIOD_COL] = DEFAULTPERIOD;
+        matrix[HS_POS][HS_VOLUME_COL] = TRUEBOOL;
+        for (int j = N_HS_COL; j < globalCOL; j++)
+            matrix[HS_POS][j] = TRUEBOOL;
+
+        //stock sector => disable
+        for (int i = N_HS ; i < N_HS+CacheStockSector.N_SECTOR; i++) {
+            matrix[i][HS_COL] = TRUEBOOL;
+            matrix[i][HS_PERIOD_COL] = DEFAULTPERIOD;
+            matrix[i][HS_VOLUME_COL] = FALSEBOOL;
+            for (int j = N_HS_COL; j < globalCOL; j++)
+                matrix[i][j] = TRUEBOOL;
+        }
+
+        //stock indice => enable
+        for (int i = N_HS+CacheStockSector.N_SECTOR ; i < N_HS+CacheStockSector.N_SECTOR+CacheStockIndice.N_INDICE; i++) {
+            matrix[i][HS_COL] = TRUEBOOL;
+            matrix[i][HS_PERIOD_COL] = DEFAULTPERIOD;
+            matrix[i][HS_VOLUME_COL] = FALSEBOOL;
+            for (int j = N_HS_COL; j < globalCOL; j++)
+                matrix[i][j] = TRUEBOOL;
+        }
+
+        //stock raw => enable
+        for (int i = N_HS+CacheStockSector.N_SECTOR+CacheStockIndice.N_INDICE ; i < globalROW; i++) {
+            matrix[i][HS_COL] = TRUEBOOL;
+            matrix[i][HS_PERIOD_COL] = DEFAULTPERIOD;
+            matrix[i][HS_VOLUME_COL] = FALSEBOOL;
+            for (int j = N_HS_COL; j < globalCOL; j++)
+                matrix[i][j] = TRUEBOOL;
+        }
+    }
+
+
     public boolean randomizeModel(MatrixValidator mv) {
         if (col >= globalROW) return false;
 

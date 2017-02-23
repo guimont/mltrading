@@ -135,7 +135,7 @@
                                 <td><i style="margin-left: 5px;color: lightslategrey" class="{{getIcon(rt.codif)}}" data-toggle="tooltip" data-container="body" title="View details" aria-label="View details"/></td>
                                 <td>{{rt.value}}</td>
                                 <td style="color: {{getcolorSign(rt.variation)}}">{{rt.variation}}</td>
-                                <td style="color: {{getcolor(rt.prediction.confidenceD20)}}"></td>
+                                <td style="color: {{getcolor(rt.prediction.confidenceD20)}}">{{prediction(rt.prediction.predictionD20, rt.prediction.confidenceD20)}}</td>
                                 <td>
                                     <a ui-sref="performance({code: '{{rt.codif}}'})" ><i style="margin-left: 5px" class="glyphicon glyphicon-eye-open"/></a>
                                 </td>

@@ -47,10 +47,10 @@ public class ScheduleUpdate {
         //System.out.print("now ?");
         updateBase();
 
-        List<StockGeneral> sg = new ArrayList(CacheStockGeneral.getIsinCache().values());
-        CacheMLStock.load(sg);
+
+        CacheMLStock.load();
         MlForecast ml = new MlForecast();
-        ml.processList(sg);
+        ml.processList();
         //load status
         CacheMLStock.savePerf();
 
