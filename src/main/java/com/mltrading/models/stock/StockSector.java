@@ -14,10 +14,32 @@ public class StockSector extends StockHistory{
 
     private String urlInvestir;
 
+    private StockPrediction prediction;
+
+    private double performanceEstimate;
+
+    public double getPerformanceEstimate() {
+        return performanceEstimate;
+    }
+
+    public void setPerformanceEstimate(double performanceEstimate) {
+        this.performanceEstimate = performanceEstimate;
+    }
+
+
+    public StockPrediction getPrediction() {
+        return prediction;
+    }
+
+    public void setPrediction(StockPrediction prediction) {
+        this.prediction = prediction;
+    }
+
 
 
     public StockSector(String code, String name, String place, String url, int row) {
         this.setCode(code);
+        this.setCodif(code);
         this.setPlace(place);
         this.setName(name);
         this.setUrlInvestir(url);

@@ -192,9 +192,7 @@ public class ExtractionResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String optimizeMLLR() {
 
-        forecast.optimizeModel();
-
-
+        forecast.optimizeSector();
         return "ok";
     }
 

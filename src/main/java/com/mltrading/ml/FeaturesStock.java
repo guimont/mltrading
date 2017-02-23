@@ -666,14 +666,14 @@ public class FeaturesStock implements Serializable {
     }
 
 
-    public static FeaturesStock createRT(StockGeneral stock, MatrixValidator validator, String date) {
+    public static FeaturesStock createRT(String codif, MatrixValidator validator, String date) {
         //Xt,Xt-1,...,Xn ,Consensus AT => StockHistory
         //Indice Xt,..Xn, AT => StockIndice
         //Secteur Xt,..Xn, AT => StockSecteur
         //Vola Cac Xt,..Xn, AT
         //indice etranger
 
-        log.info("create FeaturesStock for: " + stock.getCodif());
+        log.info("create FeaturesStock for: " + codif);
 
 
         FeaturesStock fs = new FeaturesStock();
@@ -683,24 +683,24 @@ public class FeaturesStock implements Serializable {
          * stock
          */
         try {
-            List<StockHistory> sh = StockHistory.getStockHistoryDateInvert(stock.getCodif(), date, validator.getPeriodStockHist());
+            List<StockHistory> sh = StockHistory.getStockHistoryDateInvert(codif, date, validator.getPeriodStockHist());
             fs.linearize(sh);
-            StockHistory current = StockHistory.getStockHistory(stock.getCodif(), date);
+            StockHistory current = StockHistory.getStockHistory(codif, date);
             fs.linearize(current, validator);
             fs.setCurrentValue(current.getValue());
 
         } catch (Exception e) {
-            log.error("Cannot get stock history for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
+            log.error("Cannot get stock history for: " + codif + " and date: " + date + " //exception:" + e);
             return null;
         }
 
 
         try {
-            StockAnalyse ash = StockAnalyse.getAnalyse(stock.getCodif(), date);
+            StockAnalyse ash = StockAnalyse.getAnalyse(codif, date);
             fs.linearize(ash, validator, MatrixValidator.HS_POS);
 
         } catch (Exception e) {
-            log.error("Cannot get analyse stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
+            log.error("Cannot get analyse stock for: " + codif + " and date: " + date + " //exception:" + e);
             return null;
         }
 
@@ -708,28 +708,28 @@ public class FeaturesStock implements Serializable {
          * sector
          */
         try {
-            int rowS = validator.getIndice(CacheStockSector.getSectorCache().get(stock.getSector()).getRow(), MatrixValidator.TypeHistory.SEC);
+            /*int rowS = validator.getIndice(CacheStockSector.getSectorCache().get(stock.getSector()).getRow(), MatrixValidator.TypeHistory.SEC);
             List<StockHistory> ss = StockHistory.getStockHistoryDateInvert(stock.getSector(), date,
                 validator.getPeriodHist(rowS));
             fs.linearize(ss);
 
             StockAnalyse ass = StockAnalyse.getAnalyse(stock.getSector(), ss.get(0).getDay());
-            fs.linearize(ass, validator, rowS);
+            fs.linearize(ass, validator, rowS);*/
 
             /** ALL sector*/
             for (StockSector g : CacheStockSector.getSectorCache().values()) {
                 int row = validator.getIndice(g.getRow(), MatrixValidator.TypeHistory.IND);
-                if (row != rowS) { //if same row, sector of this stock already done
+                //if (row != rowS) { //if same row, sector of this stock already done
                     if (validator.getPeriodEnable(row)) {
                         List<StockHistory> si = StockHistory.getStockHistoryDateInvert(g.getCode(), date, validator.getPeriodHist(row));
                         fs.linearize(si);
                         StockAnalyse asi = StockAnalyse.getAnalyse(g.getCode(), si.get(0).getDay());
                         fs.linearize(asi, validator, row);
                     }
-                }
+                //}
             }
         } catch (Exception e) {
-            log.error("Cannot get sector/analyse stock for: " + stock.getSector() + " and date: " + date + " //exception:" + e);
+            log.error("Cannot get sector/analyse stock for: " + codif + " and date: " + date + " //exception:" + e);
             return null;
         }
 

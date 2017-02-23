@@ -115,7 +115,7 @@ public class MlForecast {
      */
     public void optimizeSector() {
 
-        final CountDownLatch latches = new CountDownLatch(CacheStockGeneral.getIsinCache().values().size());
+        final CountDownLatch latches = new CountDownLatch(CacheStockSector.getSectorCache().values().size());
         //final CountDownLatch latches = new CountDownLatch(1); //testmode ORA
 
         CacheMLActivities.addActivities(new MLActivities("optimize forecast sector", "","start",0,0,false));
@@ -397,7 +397,7 @@ public class MlForecast {
         for (StockGeneral sg : CacheStockGeneral.getCache().values()) {
             MLPredictor predictor = new MLPredictor();
 
-            StockPrediction p = predictor.prediction(sg);
+            StockPrediction p = predictor.prediction(sg.getCodif());
 
             if (p != null)
             {
@@ -412,9 +412,30 @@ public class MlForecast {
             }else {
                 sg.setPerformanceEstimate(0.);
             }
-
-
-
         }
+
+        for (StockSector sg : CacheStockSector.getSectorCache().values()) {
+            MLPredictor predictor = new MLPredictor();
+
+            StockPrediction p = predictor.prediction(sg.getCodif());
+
+            if (p != null)
+            {
+                sg.setPrediction(p);
+                double yield20 =  (p.getPredictionD20()-sg.getValue()) / sg.getValue();
+                double yield5 =  Math.abs((p.getPredictionD5() - sg.getValue()) / sg.getValue());
+                double consensus = StockHistory.getStockHistoryLast(sg.getCodif(),1).get(0).getConsensusNote();
+                sg.setPerformanceEstimate(p.getConfidenceD20()/20 * yield20 * p.getConfidenceD5() / 10 * yield5
+                    * consensus);
+
+                double essai = 0;
+            }else {
+                sg.setPerformanceEstimate(0.);
+            }
+        }
+
+
+
+
     }
 }
