@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -23,9 +22,7 @@ import java.util.stream.Stream;
 public class MlForecast {
 
     private static final Logger log = LoggerFactory.getLogger(MlForecast.class);
-    private ExecutorService executorRefRF;
     private ExecutorService executorRef;
-    private static int DEFAULT_NB_THREADS_RF = 2;
     private static int DEFAULT_NB_THREADS = 2;
 
     public void processList() {
@@ -66,12 +63,7 @@ public class MlForecast {
 
     public MlForecast() {
 
-        int nbThreadRF = MLProperties.getProperty("DEFAULT_NB_THREADS_RF",DEFAULT_NB_THREADS_RF);
-        int nbThread = MLProperties.getProperty("DEFAULT_NB_THREADS",DEFAULT_NB_THREADS);
-
-
-        this.executorRefRF = new FixedThreadPoolExecutor(nbThreadRF,
-            "ExtractionRefThreadPool");
+        int nbThread = MLProperties.getProperty("DEFAULT_NB_THREADS", DEFAULT_NB_THREADS);
 
         this.executorRef = new FixedThreadPoolExecutor(nbThread,
             "ExtractionRefThreadPool");
@@ -87,38 +79,60 @@ public class MlForecast {
         None, RF
     }
 
-    /**
-     * optimize by model randomization
-     */
-    public void optimize() {
-
-        optimize(CacheStockGeneral.getIsinCache().values().stream());
-    }
 
     /**
-     * optimize sector by model randomization
+     * optimization for matrix validator
+     * @param loop: indicate loop for each save model
+     * @param backloop: iteration before save
+     * @param validator: validator model
+     * @param target: PX1 or sector only
      */
-    public void optimizeSector() {
+    public void optimize(int loop, int backloop, String validator, String target) {
 
-        optimize(CacheStockSector.getSectorCache().values().stream());
+        for (int i = 0; i < loop; i++) {
+            if (target.equals("PX1"))
+                optimize(CacheStockGeneral.getIsinCache().values().stream(), CacheStockGeneral.getIsinCache().values().size(), backloop, validator, Method.RandomForest);
+            else
+                optimize(CacheStockSector.getSectorCache().values().stream(), CacheStockSector.getSectorCache().values().size(), backloop, validator, Method.RandomForest);
+
+            updatePredictor();
+
+
+            CacheMLActivities.addActivities(new MLActivities("save forecast model", "", "start", 0, 0, false));
+            log.info("saveML");
+            CacheMLStock.save();
+            CacheMLActivities.addActivities(new MLActivities("save forecast model", "", "end", 0, 0, true));
+        }
+
+        //evaluate();
+
     }
 
 
+    /**
+     * sub function to iterate and use threadpool
+     * @param stream
+     * @param size
+     * @param backloop
+     * @param validator
+     * @param method
+     */
+    public void optimize(Stream<? extends StockHistory> stream, int size, int backloop, String validator, Method method) {
 
-    public void optimize(Stream<? extends StockHistory>  stream) {
-
-        final CountDownLatch latches = new CountDownLatch((int)stream.count());
+        final CountDownLatch latches = new CountDownLatch(size);
         //final CountDownLatch latches = new CountDownLatch(1); //testmode ORA
+        CacheMLActivities.setCountGlobal(latches.getCount());
 
-        CacheMLActivities.addActivities(new MLActivities("optimize forecast", "","start",0,0,false));
+        CacheMLActivities.addActivities(new MLActivities("optimize forecast", "", "start", 0, 0, false));
 
         //For test purpose only
         stream/*.filter(s -> s.getRealCodif().equals("ORA"))*/.forEach(s -> executorRef.submit(() -> {    //For test purpose only
             try {
-                optimize(s.getCodif(), 1, 1, Method.RandomForest, Type.Feature);
+                optimize(s.getCodif(), backloop, method, validator);
             } finally {
                 {
                     latches.countDown();
+                    CacheMLActivities.setCountGlobal(latches.getCount());
                 }
             }
         }));
@@ -129,134 +143,98 @@ public class MlForecast {
         } catch (InterruptedException e) {
             log.error(e.getMessage());
         }
-        CacheMLActivities.addActivities(new MLActivities("optimize forecast", "","end",0,0,true));
-
-        //evaluate();
-        updatePredictor();
+        CacheMLActivities.addActivities(new MLActivities("optimize forecast", "", "end", 0, 0, true));
 
 
-        CacheMLActivities.addActivities(new MLActivities("save forecast model", "","start",0,0,false));
-        log.info("saveML");
-        CacheMLStock.save();
-        CacheMLActivities.addActivities(new MLActivities("save forecast model", "","end",0,0,true));
     }
-
 
 
     /**
-     * optimize model with processing validator sample
-     *
-     * @param codif
-     * @param loop
-     * @param backloop
-     * @param method
-     * @param type
+     * processing machaine learning algorithm
+     * @param codif name
+     * @param loop sub iteration
+     * @param method not use
+     * @param validator  validator model
      */
-    public void optimize(String codif, int loop, int backloop, Method method, Type type) {
-        for (int i = 0; i < backloop; i++) {
-            optimize(codif, loop, method, type);
-        }
-    }
-
-    private void optimize(String codif, int loop, Method method, Type type) {
+    private void optimize(String codif, int loop, Method method, String validator) {
 
         /**
          * to have some results faster, 2 iterations loop
          */
 
-        final CountDownLatch latches = new CountDownLatch(loop);
-
-
         for (int i = 0; i < loop; i++) {
-            executorRefRF.submit(() -> {
-                try {
-                    MLStocks mls = new MLStocks(codif);
 
-                    CacheMLActivities.addActivities(new MLActivities("optimize", codif,"start",loop,0,false));
+            MLStocks mls = new MLStocks(codif);
 
-                    if (type == Type.Feature) {
-                        //mls.generateValidator("generate"); too big for test
-                        mls.generateValidator("generateSimpleModel");
-                    }
+            CacheMLActivities.addActivities(new MLActivities("optimize", codif, "start", loop, 0, false));
 
 
-                    String saveCode;
-                    {
-                        RandomForestStock rfs = new RandomForestStock();
-                        mls = rfs.processRFRef(codif, mls);
-                        saveCode = "V";
-                    }
-
-                    if (null != mls) {
-                        mls.getStatus().calculeAvgPrd();
-
-                        //TODO refactor this common code
-                        mls.getValidator(PredictionPeriodicity.D1).save(mls.getCodif() + saveCode +
-                            PredictionPeriodicity.D1, mls.getStatus().getErrorRateD1(), mls.getStatus().getAvgD1());
-                        mls.getValidator(PredictionPeriodicity.D5).save(mls.getCodif() + saveCode +
-                            PredictionPeriodicity.D5, mls.getStatus().getErrorRateD5(), mls.getStatus().getAvgD5());
-                        mls.getValidator(PredictionPeriodicity.D20).save(mls.getCodif() + saveCode +
-                            PredictionPeriodicity.D20, mls.getStatus().getErrorRateD20(), mls.getStatus().getAvgD20());
-                        mls.getValidator(PredictionPeriodicity.D40).save(mls.getCodif() + saveCode +
-                            PredictionPeriodicity.D40.toString(), mls.getStatus().getErrorRate(PredictionPeriodicity.D40), mls.getStatus().getAvg(PredictionPeriodicity.D40));
-                        MLStocks ref = CacheMLStock.getMLStockCache().get(mls.getCodif());
+            //mls.generateValidator("generate"); too big for test
+            mls.generateValidator(validator);
 
 
-                        if (ref != null) {
+            String saveCode;
+            {
+                RandomForestStock rfs = new RandomForestStock();
+                mls = rfs.processRFRef(codif, mls, false);
+                saveCode = "V";
+            }
 
-                            if (checkResult(mls,ref,PredictionPeriodicity.D1))
-                                CacheMLActivities.addActivities(new MLActivities("optimize", codif, "increase model: " + PredictionPeriodicity.D1, loop, 1, true));
-                            else
-                                CacheMLActivities.addActivities(new MLActivities("optimize", codif, "not increase model: " + PredictionPeriodicity.D1, loop, 0, true));
+            if (null != mls) {
+                mls.getStatus().calculeAvgPrd();
 
-                            if (checkResult(mls,ref,PredictionPeriodicity.D5))
-                                CacheMLActivities.addActivities(new MLActivities("optimize", codif, "increase model: " + PredictionPeriodicity.D5, loop, 1, true));
-                            else
-                                CacheMLActivities.addActivities(new MLActivities("optimize", codif, "not increase model: " + PredictionPeriodicity.D5, loop, 0, true));
-
-                            if (checkResult(mls,ref,PredictionPeriodicity.D20))
-                                CacheMLActivities.addActivities(new MLActivities("optimize", codif, "increase model: " + PredictionPeriodicity.D20, loop, 1, true));
-                            else
-                                CacheMLActivities.addActivities(new MLActivities("optimize", codif, "not increase model: " + PredictionPeriodicity.D20, loop, 0, true));
-
-                            if (checkResult(mls,ref,PredictionPeriodicity.D40))
-                                CacheMLActivities.addActivities(new MLActivities("optimize", codif, "increase model: " + PredictionPeriodicity.D40, loop, 1, true));
-                            else
-                                CacheMLActivities.addActivities(new MLActivities("optimize", codif, "not increase model: " + PredictionPeriodicity.D40, loop, 0, true));
+                //TODO refactor this common code
+                mls.getValidator(PredictionPeriodicity.D1).save(mls.getCodif() + saveCode +
+                    PredictionPeriodicity.D1, mls.getStatus().getErrorRateD1(), mls.getStatus().getAvgD1());
+                mls.getValidator(PredictionPeriodicity.D5).save(mls.getCodif() + saveCode +
+                    PredictionPeriodicity.D5, mls.getStatus().getErrorRateD5(), mls.getStatus().getAvgD5());
+                mls.getValidator(PredictionPeriodicity.D20).save(mls.getCodif() + saveCode +
+                    PredictionPeriodicity.D20, mls.getStatus().getErrorRateD20(), mls.getStatus().getAvgD20());
+                mls.getValidator(PredictionPeriodicity.D40).save(mls.getCodif() + saveCode +
+                    PredictionPeriodicity.D40.toString(), mls.getStatus().getErrorRate(PredictionPeriodicity.D40), mls.getStatus().getAvg(PredictionPeriodicity.D40));
+                MLStocks ref = CacheMLStock.getMLStockCache().get(mls.getCodif());
 
 
-                        } else {
-                            CacheMLStock.getMLStockCache().put(mls.getCodif(), mls);
-                            CacheMLActivities.addActivities(new MLActivities("optimize", codif,"empty model",loop,0,true));
-                        }
-                    } else {
-                        CacheMLActivities.addActivities(new MLActivities("optimize", codif,"failed",loop,0,true));
-                    }
-                } finally {
-                    {
-                        latches.countDown();
-                    }
+                if (ref != null) {
+
+                    if (checkResult(mls, ref, PredictionPeriodicity.D1))
+                        CacheMLActivities.addActivities(new MLActivities("optimize", codif, "increase model: " + PredictionPeriodicity.D1, loop, 1, true));
+                    else
+                        CacheMLActivities.addActivities(new MLActivities("optimize", codif, "not increase model: " + PredictionPeriodicity.D1, loop, 0, true));
+
+                    if (checkResult(mls, ref, PredictionPeriodicity.D5))
+                        CacheMLActivities.addActivities(new MLActivities("optimize", codif, "increase model: " + PredictionPeriodicity.D5, loop, 1, true));
+                    else
+                        CacheMLActivities.addActivities(new MLActivities("optimize", codif, "not increase model: " + PredictionPeriodicity.D5, loop, 0, true));
+
+                    if (checkResult(mls, ref, PredictionPeriodicity.D20))
+                        CacheMLActivities.addActivities(new MLActivities("optimize", codif, "increase model: " + PredictionPeriodicity.D20, loop, 1, true));
+                    else
+                        CacheMLActivities.addActivities(new MLActivities("optimize", codif, "not increase model: " + PredictionPeriodicity.D20, loop, 0, true));
+
+                    if (checkResult(mls, ref, PredictionPeriodicity.D40))
+                        CacheMLActivities.addActivities(new MLActivities("optimize", codif, "increase model: " + PredictionPeriodicity.D40, loop, 1, true));
+                    else
+                        CacheMLActivities.addActivities(new MLActivities("optimize", codif, "not increase model: " + PredictionPeriodicity.D40, loop, 0, true));
+
+
+                } else {
+                    CacheMLStock.getMLStockCache().put(mls.getCodif(), mls);
+                    CacheMLActivities.addActivities(new MLActivities("optimize", codif, "empty model", loop, 0, true));
                 }
-
-            });
+            } else {
+                CacheMLActivities.addActivities(new MLActivities("optimize", codif, "failed", loop, 0, true));
+            }
         }
-
-
-        // Wait for completion
-        try {
-            latches.await();
-        } catch (InterruptedException e) {
-            log.error(e.getMessage());
-        }
-
-
-
 
     }
 
 
+
+
     /**
      * compare result
+     *
      * @param mls
      * @param ref
      * @param period
@@ -270,14 +248,15 @@ public class MlForecast {
 
     /**
      * compare result and replace it if better
+     *
      * @param mls
      * @param ref
      * @param period
      * @return
      */
     private boolean checkResult(MLStocks mls, MLStocks ref, PredictionPeriodicity period) {
-        if (compareResult(mls.getStatus(),ref.getStatus(),period)) {
-            ref.replace(period,mls);
+        if (compareResult(mls.getStatus(), ref.getStatus(), period)) {
+            ref.replace(period, mls);
             ref.getStatus().setAvg(mls.getStatus().getAvgD1(), period);
             ref.getStatus().setErrorRate(mls.getStatus().getErrorRate(period), period);
 
@@ -294,9 +273,43 @@ public class MlForecast {
         return false;
     }
 
+
+    /**
+     * compare result and replace it if better
+     *
+     * @param mls
+     * @param ref
+     * @param period
+     * @return
+     */
+    private boolean checkResultReplace(MLStocks mls, MLStocks ref, PredictionPeriodicity period) {
+        if (compareResult(mls.getStatus(), ref.getStatus(), period)) {
+            ref.insert(period, mls);
+            ref.getStatus().setAvg(mls.getStatus().getAvgD1(), period);
+            ref.getStatus().setErrorRate(mls.getStatus().getErrorRate(period), period);
+
+            try {
+                ref.getStatus().replaceElementList(mls.getStatus().getPerfList(), period);
+            } catch (Exception e) {
+                log.error(e.toString());
+            } finally {
+                return true;
+            }
+
+        }
+
+        return false;
+    }
+
+    /**
+     * optimization for matrix validator
+     * use iteration on model not only one model
+     * proccessing very long
+     */
     public void optimizeModel() {
 
-        final CountDownLatch latches = new CountDownLatch(CacheStockGeneral.getIsinCache().values().size());
+        //final CountDownLatch latches = new CountDownLatch(CacheStockGeneral.getIsinCache().values().size());
+        final CountDownLatch latches = new CountDownLatch(1);
 
         CacheStockGeneral.getIsinCache().values().stream().filter(s -> s.getCodif().equals("ORA")).forEach(s -> executorRef.submit(() -> {    //For test purpose only
             try {
@@ -307,6 +320,22 @@ public class MlForecast {
                 }
             }
         }));
+
+        // Wait for completion
+        try {
+            latches.await();
+        } catch (InterruptedException e) {
+            log.error(e.getMessage());
+        }
+
+        updatePredictor();
+
+
+        CacheMLActivities.addActivities(new MLActivities("save forecast model", "", "start", 0, 0, false));
+        log.info("saveML");
+        CacheMLStock.save();
+        CacheMLActivities.addActivities(new MLActivities("save forecast model", "", "end", 0, 0, true));
+
     }
 
 
@@ -321,18 +350,20 @@ public class MlForecast {
          * to have some results faster, 2 iterations loop
          */
 
+        MLStocks ref = null;
+
+
+        MLStocks validatorModel = new MLStocks(s.getCodif());
+        validatorModel.generateValidator("generateSimpleModel");
+
         MLStocks mls = new MLStocks(s.getCodif());
-
         mls.generateValidator("generateSimpleModel");
-
 
         while (mls.randomizeModel()) {
 
-
             RandomForestStock rfs = new RandomForestStock();
-            mls = rfs.processRF(s.getCodif(), mls, PredictionPeriodicity.D1);
-            mls = rfs.processRF(s.getCodif(), mls, PredictionPeriodicity.D5);
-            mls = rfs.processRF(s.getCodif(), mls, PredictionPeriodicity.D20);
+            mls = rfs.processRFRef(s.getCodif(), mls, true);
+
             String saveCode = "V";
 
 
@@ -341,94 +372,66 @@ public class MlForecast {
                 mls.getValidator(PredictionPeriodicity.D1).save(mls.getCodif() + saveCode + "D1", mls.getStatus().getErrorRateD1(), mls.getStatus().getAvgD1());
                 mls.getValidator(PredictionPeriodicity.D5).save(mls.getCodif() + saveCode + "D5", mls.getStatus().getErrorRateD5(), mls.getStatus().getAvgD5());
                 mls.getValidator(PredictionPeriodicity.D20).save(mls.getCodif() + saveCode + "D20", mls.getStatus().getErrorRateD20(), mls.getStatus().getAvgD20());
-                MLStocks ref = CacheMLStock.getMLStockCache().get(mls.getCodif());
 
+                int col = mls.getValidator(PredictionPeriodicity.D1).getCol() -1;
 
                 if (ref != null) {
 
-                    //TODO better to iterate all model => refactor
-                    if (checkResult(mls,ref,PredictionPeriodicity.D1) == false)
-                        mls.getValidator(PredictionPeriodicity.D1).revertModel(mls.getValidator(PredictionPeriodicity.D1));
 
 
-                    if (checkResult(mls,ref,PredictionPeriodicity.D5) == false) {
-                        mls.getValidator(PredictionPeriodicity.D5).revertModel(mls.getValidator(PredictionPeriodicity.D5));
-                    }
+                    if (compareResult(mls.getStatus(), ref.getStatus(), PredictionPeriodicity.D1))
+                        validatorModel.getValidator(PredictionPeriodicity.D1).validate(col);
 
+                    if (compareResult(mls.getStatus(), ref.getStatus(), PredictionPeriodicity.D5))
+                        validatorModel.getValidator(PredictionPeriodicity.D5).validate(col);
 
-                    if (checkResult(mls,ref,PredictionPeriodicity.D20) == false){
-                        mls.getValidator(PredictionPeriodicity.D20).revertModel(mls.getValidator(PredictionPeriodicity.D20));
-                    }
+                    if (compareResult(mls.getStatus(), ref.getStatus(), PredictionPeriodicity.D20))
+                        validatorModel.getValidator(PredictionPeriodicity.D20).validate(col);
 
-                    if (checkResult(mls,ref,PredictionPeriodicity.D40) == false){
-                        mls.getValidator(PredictionPeriodicity.D40).revertModel(mls.getValidator(PredictionPeriodicity.D40));
-                    }
+                    if (compareResult(mls.getStatus(), ref.getStatus(), PredictionPeriodicity.D40))
+                        validatorModel.getValidator(PredictionPeriodicity.D40).validate(col);
+
 
                 } else {
-                    CacheMLStock.getMLStockCache().put(mls.getCodif(), mls);
-                    ref = mls;
+                    ref = mls.clone();
                 }
 
+                mls = new MLStocks(s.getCodif());
+                mls.generateValidator("generateSimpleModel");
+                mls.updateColValidator(col+1);
 
-                mls = mls.replaceValidator(ref);
+
 
             }
 
 
         }
-
-        log.info("evaluate");
-        //evaluate();
-
-        updatePredictor();
-        log.info("saveML");
     }
-
 
 
     public static void updatePredictor() {
-        for (StockGeneral sg : CacheStockGeneral.getCache().values()) {
-            MLPredictor predictor = new MLPredictor();
+        CacheStockGeneral.getCache().values().forEach(com.mltrading.ml.MlForecast::updatePredictor);
 
-            StockPrediction p = predictor.prediction(sg.getCodif());
-
-            if (p != null)
-            {
-                sg.setPrediction(p);
-                double yield20 =  (p.getPredictionD20()-sg.getValue()) / sg.getValue();
-                double yield5 =  Math.abs((p.getPredictionD5() - sg.getValue()) / sg.getValue());
-                double consensus = StockHistory.getStockHistoryLast(sg.getCodif(),1).get(0).getConsensusNote();
-                sg.setPerformanceEstimate(p.getConfidenceD20()/20 * yield20 * p.getConfidenceD5() / 10 * yield5
-                    * consensus);
-
-                double essai = 0;
-            }else {
-                sg.setPerformanceEstimate(0.);
-            }
-        }
-
-        for (StockSector sg : CacheStockSector.getSectorCache().values()) {
-            MLPredictor predictor = new MLPredictor();
-
-            StockPrediction p = predictor.prediction(sg.getCodif());
-
-            if (p != null)
-            {
-                sg.setPrediction(p);
-                double yield20 =  (p.getPredictionD20()-sg.getValue()) / sg.getValue();
-                double yield5 =  Math.abs((p.getPredictionD5() - sg.getValue()) / sg.getValue());
-                double consensus = StockHistory.getStockHistoryLast(sg.getCodif(),1).get(0).getConsensusNote();
-                sg.setPerformanceEstimate(p.getConfidenceD20()/20 * yield20 * p.getConfidenceD5() / 10 * yield5
-                    * consensus);
-
-                double essai = 0;
-            }else {
-                sg.setPerformanceEstimate(0.);
-            }
-        }
-
-
-
-
+        CacheStockSector.getSectorCache().values().forEach(com.mltrading.ml.MlForecast::updatePredictor);
     }
+
+    private static void updatePredictor(StockHistory sg) {
+        MLPredictor predictor = new MLPredictor();
+
+        StockPrediction p = predictor.prediction(sg.getCodif());
+
+        if (p != null) {
+            sg.setPrediction(p);
+            double yield20 = (p.getPredictionD20() - sg.getValue()) / sg.getValue();
+            double yield5 = Math.abs((p.getPredictionD5() - sg.getValue()) / sg.getValue());
+            double consensus = StockHistory.getStockHistoryLast(sg.getCodif(), 1).get(0).getConsensusNote();
+            sg.setPerformanceEstimate(p.getConfidenceD20() / 20 * yield20 * p.getConfidenceD5() / 10 * yield5
+                * consensus);
+
+            double essai = 0;
+        } else {
+            sg.setPerformanceEstimate(0.);
+        }
+    }
+
 }

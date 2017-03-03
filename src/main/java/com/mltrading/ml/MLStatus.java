@@ -43,13 +43,11 @@ public class MLStatus implements Serializable{
      * Warning => list have to be smaller or equal than perfList
      * @param list
      */
-    public void mergeList(List<MLPerformances> list) {
+    public void mergeList(List<MLPerformances> list, PredictionPeriodicity period) {
         if (perfList == null) perfList = list;
         else {
             for (int i = 0; i< list.size(); i++) {
-                if (list.get(i).getMl(PredictionPeriodicity.D5) != null) perfList.get(i).setMl(list.get(i).getMl(PredictionPeriodicity.D5), PredictionPeriodicity.D5);
-                if (list.get(i).getMl(PredictionPeriodicity.D20) != null) perfList.get(i).setMl(list.get(i).getMl(PredictionPeriodicity.D20),PredictionPeriodicity.D20);
-                if (list.get(i).getMl(PredictionPeriodicity.D40) != null) perfList.get(i).setMl(list.get(i).getMl(PredictionPeriodicity.D40),PredictionPeriodicity.D40);
+                if (list.get(i).getMl(period) != null) perfList.get(i).setMl(list.get(i).getMl(period), period);
             }
         }
     }

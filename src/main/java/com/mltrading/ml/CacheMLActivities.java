@@ -13,6 +13,7 @@ import java.util.List;
 @Singleton
 public class CacheMLActivities {
     private static List<MLActivities> cache = new ArrayList<>();
+    private static long countGlobal = 0;
 
 
     public static void addActivities(MLActivities a) {
@@ -24,6 +25,11 @@ public class CacheMLActivities {
         return cache;
     }
 
+    public static long getCountGlobal() {
+        return countGlobal;
+    }
 
-
+    public static void setCountGlobal(long countGlobal) {
+        CacheMLActivities.countGlobal = countGlobal;
+    }
 }

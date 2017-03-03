@@ -21,6 +21,8 @@ public class MatrixValidator implements Serializable,Cloneable {
         this.col = col;
     }
 
+
+
     /** Controls the perdiod */
     public enum TypeHistory {
         /** stock history */
@@ -38,7 +40,7 @@ public class MatrixValidator implements Serializable,Cloneable {
     Integer numTrees = 100; // Use more in practice.
     Integer seed = 12345;
 
-    int col = N_HS;
+    int col = 0;
 
     public double error;
     public double rate;
@@ -125,6 +127,15 @@ public class MatrixValidator implements Serializable,Cloneable {
     }
 
 
+    public void replace(MatrixValidator validator) {
+        this.matrix[validator.getCol()-1][HS_COL] = TRUEBOOL;
+    }
+
+    public void validate(int col) {
+        this.matrix[col][HS_COL] = TRUEBOOL;
+    }
+
+
 
 
     public MatrixValidator() {
@@ -134,7 +145,7 @@ public class MatrixValidator implements Serializable,Cloneable {
     /**
      * Generate a random matrix validator for features selection
      */
-    public MatrixValidator generate() {
+    public MatrixValidator generateRandomModel() {
         for (int i = HS_POS ; i < globalROW; i++) {
             matrix[i][HS_COL] = randomiBool();
             matrix[i][HS_PERIOD_COL] = randomPeriod(2, 100);
@@ -236,7 +247,7 @@ public class MatrixValidator implements Serializable,Cloneable {
     }
 
 
-    public boolean randomizeModel(MatrixValidator mv) {
+    public boolean optimizeModel(MatrixValidator mv) {
         if (col >= globalROW) return false;
 
         mv.matrix[col][HS_COL] = TRUEBOOL;

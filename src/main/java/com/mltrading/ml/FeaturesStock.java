@@ -244,7 +244,7 @@ public class FeaturesStock implements Serializable {
 
     static int OFFSET_BASE = 50;
 
-    static int RANGE_TEST = 50;
+
 
 
     public  static List<FeaturesStock> create(String codif, MatrixValidator validator, int range) {

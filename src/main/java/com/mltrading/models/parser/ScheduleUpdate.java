@@ -48,7 +48,7 @@ public class ScheduleUpdate {
         updateBase();
 
 
-        CacheMLStock.load();
+        //CacheMLStock.load(); not need !!
         MlForecast ml = new MlForecast();
         ml.processList();
         //load status

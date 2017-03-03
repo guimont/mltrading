@@ -115,7 +115,7 @@ public class MLStocks  implements Serializable {
         boolean checkContinue =true;
 
         for (Map.Entry<PredictionPeriodicity, MLStock> entry : container.entrySet()) {
-            checkContinue &= entry.getValue().getValidator().randomizeModel(entry.getValue().getValidator());
+            checkContinue &= entry.getValue().getValidator().optimizeModel(entry.getValue().getValidator());
         }
 
         return checkContinue;
@@ -148,18 +148,59 @@ public class MLStocks  implements Serializable {
         this.setValidator(p, ref.getValidator(p));
     }
 
+
+    /**
+     * recopy mlStock from MLStocks ref for period
+     * @param p
+     * @param ref
+     */
+    public void insert(PredictionPeriodicity p,MLStocks ref) {
+        this.setModel(p,ref.getModel(p));
+        this.getValidator(p).replace(ref.getValidator(p));
+    }
+
+
+
+
+
+
+    /**
+     *
+     * @param ref
+     * @return
+     */
     public MLStocks replaceValidator(MLStocks ref) {
         int position = this.getValidator(PredictionPeriodicity.D1).getCol();
         MLStocks copy = new MLStocks(this.getCodif());
 
         for (Map.Entry<PredictionPeriodicity, MLStock> entry : container.entrySet()) {
-            copy.setValidator(entry.getKey(),ref.getValidator(entry.getKey()));
+            copy.setValidator(entry.getKey(),ref.getValidator(entry.getKey()).clone());
             copy.getValidator(entry.getKey()).setCol(position);
         }
 
         return copy;
-
     }
+
+
+    /**
+     *
+     * @return
+     */
+    @Override
+    public MLStocks clone() {
+
+        MLStocks copy = new MLStocks(this.getCodif());
+
+        for (Map.Entry<PredictionPeriodicity, MLStock> entry : container.entrySet()) {
+            copy.setValidator(entry.getKey(), this.getValidator(entry.getKey()).clone());
+        }
+
+        copy.setStatus(this.getStatus().clone());
+
+        return copy;
+    }
+
+
 
     public void distibute() {
         for (Map.Entry<PredictionPeriodicity, MLStock> entry : container.entrySet()) {
@@ -182,6 +223,12 @@ public class MLStocks  implements Serializable {
     public void loadDB() {
         for (Map.Entry<PredictionPeriodicity, MLStock> entry : container.entrySet()) {
             entry.getValue().loadModelDB();
+        }
+    }
+
+    public void updateColValidator(int col) {
+        for (Map.Entry<PredictionPeriodicity, MLStock> entry : container.entrySet()) {
+            entry.getValue().getValidator().setCol(col);
         }
     }
 }

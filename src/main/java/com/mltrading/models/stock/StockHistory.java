@@ -91,6 +91,28 @@ public class StockHistory extends Object implements Serializable{
 
     private Double consensusNote;
 
+    private StockPrediction prediction;
+
+    private double performanceEstimate;
+
+    public double getPerformanceEstimate() {
+        return performanceEstimate;
+    }
+
+    public void setPerformanceEstimate(double performanceEstimate) {
+        this.performanceEstimate = performanceEstimate;
+    }
+
+
+    public StockPrediction getPrediction() {
+        return prediction;
+    }
+
+    public void setPrediction(StockPrediction prediction) {
+        this.prediction = prediction;
+    }
+
+
 
     public StockHistory(StockGeneral g) {
         this.setCode(g.getCode());

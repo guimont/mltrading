@@ -179,16 +179,16 @@ public class RandomForestStock implements Serializable {
 
 
 
-    public MLStocks processRFRef(String codif, MLStocks mls) {
+    public MLStocks processRFRef(String codif, MLStocks mls, boolean merge) {
 
         CacheMLActivities.addActivities(new MLActivities("FeaturesStock", codif, "start", 0, 0, false));
         List<FeaturesStock> fsL = FeaturesStock.create(codif, mls.getValidator(PredictionPeriodicity.D1), CacheMLStock.RANGE_MAX);
         CacheMLActivities.addActivities(new MLActivities("FeaturesStock", codif, "start", 0, 0, true));
 
-        subprocessRF( mls,  fsL, PredictionPeriodicity.D1);
-        subprocessRF( mls,  fsL, PredictionPeriodicity.D5);
-        subprocessRF( mls,  fsL, PredictionPeriodicity.D20);
-        subprocessRF( mls,  fsL, PredictionPeriodicity.D40);
+        subprocessRF( mls,  fsL, PredictionPeriodicity.D1, merge);
+        subprocessRF( mls,  fsL, PredictionPeriodicity.D5, merge);
+        subprocessRF( mls,  fsL, PredictionPeriodicity.D20, merge);
+        subprocessRF( mls,  fsL, PredictionPeriodicity.D40, merge);
 
 
         return mls;
@@ -196,7 +196,7 @@ public class RandomForestStock implements Serializable {
 
 
 
-    public MLStocks subprocessRF(MLStocks mls,  List<FeaturesStock> fsL, PredictionPeriodicity period) {
+    public MLStocks subprocessRF(MLStocks mls,  List<FeaturesStock> fsL, PredictionPeriodicity period, boolean merge) {
 
 
         if (null == fsL) return null;
@@ -232,7 +232,6 @@ public class RandomForestStock implements Serializable {
 
 
         mls.setModel(period, model);
-
 
 
         mls.getValidator(period).setVectorSize(fsL.get(0).currentVectorPos);
@@ -271,7 +270,9 @@ public class RandomForestStock implements Serializable {
 
 
         try {
-            mls.getStatus().setPerfList(res.collect(),period);
+            /* merge for optimize model only else replace*/
+            if (!merge) mls.getStatus().setPerfList(res.collect(),period);
+            else mls.getStatus().mergeList(res.collect(),period);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -281,6 +282,7 @@ public class RandomForestStock implements Serializable {
     }
 
 
+    @Deprecated
     public MLStocks processRF(String codif, MLStocks mls, PredictionPeriodicity period) {
         MatrixValidator validator = mls.getSock(period).getValidator();
 
@@ -356,7 +358,7 @@ public class RandomForestStock implements Serializable {
             });
 
 
-        mls.getStatus().mergeList(res.collect());
+        //mls.getStatus().mergeList(res.collect());
 
         return mls;
 
@@ -366,26 +368,26 @@ public class RandomForestStock implements Serializable {
 
     public MLStocks processRFResult(String codif, MLStocks mls) {
 
-        List<FeaturesStock> fsLD1 = FeaturesStock.create(codif, mls.getValidator(PredictionPeriodicity.D1), FeaturesStock.RANGE_TEST);
+        List<FeaturesStock> fsLD1 = FeaturesStock.create(codif, mls.getValidator(PredictionPeriodicity.D1), CacheMLStock.RENDERING);
         if( fsLD1.get(0).currentVectorPos != mls.getValidator(PredictionPeriodicity.D1).getVectorSize())    {
             log.error("size vector not corresponding");
             log.error("validator: " + mls.getValidator(PredictionPeriodicity.D1).getVectorSize());
             log.error("vector: " + fsLD1.get(0).currentVectorPos );
         }
-        List<FeaturesStock> fsLD5 = FeaturesStock.create(codif, mls.getValidator(PredictionPeriodicity.D5), FeaturesStock.RANGE_TEST);
+        List<FeaturesStock> fsLD5 = FeaturesStock.create(codif, mls.getValidator(PredictionPeriodicity.D5), CacheMLStock.RENDERING);
         if( fsLD5.get(0).currentVectorPos != mls.getValidator(PredictionPeriodicity.D5).getVectorSize())    {
             log.error("size vector not corresponding");
             log.error("validator: " + mls.getValidator(PredictionPeriodicity.D5).getVectorSize());
             log.error("vector: " + fsLD5.get(0).currentVectorPos );
         }
-        List<FeaturesStock> fsLD20 = FeaturesStock.create(codif, mls.getValidator(PredictionPeriodicity.D20), FeaturesStock.RANGE_TEST);
+        List<FeaturesStock> fsLD20 = FeaturesStock.create(codif, mls.getValidator(PredictionPeriodicity.D20), CacheMLStock.RENDERING);
         if( fsLD20.get(0).currentVectorPos != mls.getValidator(PredictionPeriodicity.D20).getVectorSize())    {
             log.error("size vector not corresponding");
             log.error("validator: " + mls.getValidator(PredictionPeriodicity.D20).getVectorSize());
             log.error("vector: " + fsLD20.get(0).currentVectorPos );
         }
 
-        List<FeaturesStock> fsLD40 = FeaturesStock.create(codif, mls.getValidator(PredictionPeriodicity.D40), FeaturesStock.RANGE_TEST);
+        List<FeaturesStock> fsLD40 = FeaturesStock.create(codif, mls.getValidator(PredictionPeriodicity.D40), CacheMLStock.RENDERING);
         if( fsLD40.get(0).currentVectorPos != mls.getValidator(PredictionPeriodicity.D40).getVectorSize())    {
             log.error("size vector not corresponding");
             log.error("validator: " + mls.getValidator(PredictionPeriodicity.D40).getVectorSize());

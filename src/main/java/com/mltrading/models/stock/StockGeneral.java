@@ -14,17 +14,6 @@ public class StockGeneral extends StockHistory implements Serializable {
     private Double variation;
     private Double firstJanuaryVariation;
 
-    private StockPrediction prediction;
-
-    private double performanceEstimate;
-
-    public double getPerformanceEstimate() {
-        return performanceEstimate;
-    }
-
-    public void setPerformanceEstimate(double performanceEstimate) {
-        this.performanceEstimate = performanceEstimate;
-    }
 
 
 
@@ -35,15 +24,6 @@ public class StockGeneral extends StockHistory implements Serializable {
     public void setSector(String sector) {
         this.sector = sector;
     }
-
-    public StockPrediction getPrediction() {
-        return prediction;
-    }
-
-    public void setPrediction(StockPrediction prediction) {
-        this.prediction = prediction;
-    }
-
 
 
     public String getRealCodif() {
