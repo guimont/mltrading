@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Created by gmo on 24/06/2015.
  */
-public class StockHistory extends Object implements Serializable{
+public class StockHistory extends Object implements Serializable , Comparable<StockHistory>{
 
     public static String dbName = "history";
 
@@ -112,6 +112,11 @@ public class StockHistory extends Object implements Serializable{
         this.prediction = prediction;
     }
 
+
+    @Override
+    public int compareTo(StockHistory o) {
+        return o.day.compareTo(this.day);
+    }
 
 
     public StockHistory(StockGeneral g) {
