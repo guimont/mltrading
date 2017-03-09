@@ -2,12 +2,7 @@ package com.mltrading.models.parser;
 
 
 import com.mltrading.ml.CacheMLStock;
-import com.mltrading.ml.MLPredictor;
 import com.mltrading.ml.MlForecast;
-import com.mltrading.models.parser.impl.RealTimeParserYahoo;
-import com.mltrading.models.stock.CacheStockGeneral;
-import com.mltrading.models.stock.StockGeneral;
-import com.mltrading.models.stock.StockPrediction;
 import com.mltrading.service.ExtractionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

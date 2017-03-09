@@ -19,7 +19,9 @@ public interface TimeSeriesDao {
     public StockHistory extractSpecificOffset(final String code, final String date, int offset);
     public List<StockHistory>  extractLasts(final String code, int count);
     List<StockHistory> extractDateInvert(final String code, final String date, int offset);
+    public  StockHistory extractLastHistory(final String code);
 
-    public List<StockAnalyse> getAnalyse(final String code);
-    public StockAnalyse getAnalyse(final String code, final String date);
+    public List<StockAnalyse> extractAnalyse(final String code);
+    public StockAnalyse extractAnalyseSpecific(final String code, final String date);
+    public List<StockAnalyse> extractAnalyse(final String code, final Map<String,Map<String, Integer>> indexCache ,final Map<String,List<StockAnalyse>> historyCache );
 }

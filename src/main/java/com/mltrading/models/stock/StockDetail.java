@@ -1,6 +1,7 @@
 package com.mltrading.models.stock;
 
 import com.mltrading.ml.*;
+import com.mltrading.models.stock.cache.CacheStockGeneral;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

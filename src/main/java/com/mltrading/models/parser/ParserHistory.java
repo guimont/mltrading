@@ -1,20 +1,6 @@
 package com.mltrading.models.parser;
 
-import com.mltrading.dao.InfluxDaoConnector;
-import com.mltrading.influxdb.dto.BatchPoints;
-import com.mltrading.influxdb.dto.Point;
-import com.mltrading.models.stock.CacheStockGeneral;
-import com.mltrading.models.stock.StockGeneral;
-import com.mltrading.models.stock.StockHistory;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by gmo on 24/06/2015.

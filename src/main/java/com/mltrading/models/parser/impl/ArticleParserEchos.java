@@ -1,11 +1,10 @@
 package com.mltrading.models.parser.impl;
 
 import com.google.inject.Singleton;
-import com.mltrading.dao.InfluxDaoConnectorNotation;
-import com.mltrading.influxdb.dto.BatchPoints;
 import com.mltrading.models.parser.ArticleParser;
 import com.mltrading.models.parser.ParserCommon;
 import com.mltrading.models.stock.*;
+import com.mltrading.models.stock.cache.CacheStockGeneral;
 import com.mltrading.repository.ArticleRepository;
 import org.joda.time.DateTime;
 import org.jsoup.Jsoup;
@@ -15,14 +14,8 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by gmo on 09/03/2016.

@@ -1,7 +1,7 @@
 package com.mltrading.model;
 
 import com.mltrading.config.MLProperties;
-import com.mltrading.models.stock.CacheStockHistory;
+import com.mltrading.models.stock.cache.CacheStockHistory;
 
 import com.mltrading.models.stock.StockHistory;
 import org.junit.Test;
@@ -58,6 +58,20 @@ public class CacheStockHistoryTest {
 
     }
 
+    @Test
+    public void testCacheSimple() {
+        MLProperties.load();
+        CacheStockHistory cache = CacheStockHistory.CacheStockHistoryHolder();
+
+        String date = cache.getLastDateHistory("ORA");
+        assertThat(date).isNotNull();
+
+
+        StockHistory sh = cache.getStockHistory("AC", "2014-11-12");
+        assertThat(sh).isNotNull();
+
+    }
+
 
     @Test
     public void testCacheLast() {
@@ -76,8 +90,14 @@ public class CacheStockHistoryTest {
         MLProperties.load();
         CacheStockHistory cache = CacheStockHistory.CacheStockHistoryHolder();
 
-        List<StockHistory> list = cache.getStockHistoryDateInvert("ORA", "2014-11-12", 5 , true);
+        List<StockHistory> list = cache.getStockHistoryDateInvert("ORA", "2014-11-12", 5, true);
         assertThat(list.size()).isEqualTo(5);
+
+        List<StockHistory> list2 = cache.getStockHistoryDateInvert("ORA", "2014-11-12", 5, true);
+        assertThat(list2.size()).isEqualTo(5);
+
+
+        assertThat(list.get(0).getDay()).isEqualTo(list2.get(0).getDay());
 
     }
 

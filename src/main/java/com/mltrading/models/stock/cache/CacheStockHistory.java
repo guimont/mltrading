@@ -1,4 +1,4 @@
-package com.mltrading.models.stock;
+package com.mltrading.models.stock.cache;
 
 /**
  * Created by gmo on 08/03/2017.
@@ -7,15 +7,18 @@ package com.mltrading.models.stock;
 
 import com.mltrading.dao.TimeSeriesDao.TimeSeriesDao;
 import com.mltrading.dao.TimeSeriesDao.impl.TimeSeriesDaoInfluxImpl;
+import com.mltrading.models.stock.StockHistory;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * cache for improve I/O perfrormance with influxdb
  * refresh cache every day
  */
-public class CacheStockHistory<T> {
+public class CacheStockHistory {
 
     private static TimeSeriesDao timeSeries = null;
 
@@ -57,7 +60,7 @@ public class CacheStockHistory<T> {
 
         if (inMemory == true) {
 
-            List<StockHistory> list = this.historyCache.get(code);
+            List<StockHistory> list = getInCache(code);
             Integer index = getInCache(list, code, date);
 
             return findElement(list, index);
@@ -80,19 +83,51 @@ public class CacheStockHistory<T> {
         List<String> dateList = new ArrayList<>();
         List<StockHistory> list = getInCache(code);
 
+        if (list == null) return null;
         int size = list.size();
         if (size < max)
             return null;
 
         for (int i = size-max; i < size; i++) {
-            dateList.add(list.get(i).day);
+            dateList.add(list.get(i).getDay());
         }
         return dateList;
     }
 
 
+    /**
+     * get day of last element in cache
+     * @param code
+     * @return
+     */
+    public  String getLastDateHistory(final String code) {return getLastDateHistory(code,true);}
 
 
+    /**
+     * get day of last element in cache
+     * @param code
+     * @param inMemory
+     * @return
+     */
+    public  String getLastDateHistory(final String code, boolean inMemory) {
+
+        if (inMemory == true) {
+            List<StockHistory> list = getInCache(code);
+            if (list == null) return null;
+            return list.get(list.size()-1).getDay();
+        }
+        else
+            return timeSeries.extractLastHistory(code).getDay();
+
+    }
+
+
+    /**
+     * return element a day after
+     * @param code
+     * @param date
+     * @return
+     */
     public StockHistory getStockHistoryDayAfter(final String code, String date) {
         return getStockHistoryDayAfter(code,date,true);
     }
@@ -107,7 +142,7 @@ public class CacheStockHistory<T> {
     public StockHistory getStockHistoryDayAfter(final String code, String date, boolean inMemory) {
         if (inMemory == true) {
 
-            List<StockHistory> list = this.historyCache.get(code);
+            List<StockHistory> list = getInCache(code);
             Integer index = getInCache(list, code, date);
 
             /* order is most recent to oldest*/
@@ -119,7 +154,7 @@ public class CacheStockHistory<T> {
 
 
     public StockHistory getStockHistoryDayBefore(final String code, String date) {
-        return getStockHistoryDayAfter(code,date,true);
+        return getStockHistoryDayBefore(code, date, true);
     }
 
     /**
@@ -132,7 +167,7 @@ public class CacheStockHistory<T> {
     public StockHistory getStockHistoryDayBefore(final String code, String date, boolean inMemory) {
         if (inMemory == true) {
 
-            List<StockHistory> list = this.historyCache.get(code);
+            List<StockHistory> list = getInCache(code);
             Integer index = getInCache(list, code, date);
 
             /* order is most recent to oldest*/
@@ -154,6 +189,7 @@ public class CacheStockHistory<T> {
         return getStockHistoryDayOffset(code, date, offset, true);
     }
 
+
     /**
      *
      * @param code
@@ -165,7 +201,7 @@ public class CacheStockHistory<T> {
     public StockHistory getStockHistoryDayOffset(final String code, String date, int offset, boolean inMemory) {
         if (inMemory == true) {
 
-            List<StockHistory> list = this.historyCache.get(code);
+            List<StockHistory> list = getInCache(code);
             Integer index = getInCache(list,code, date);
 
             return findElement(list, index+offset);
@@ -193,10 +229,42 @@ public class CacheStockHistory<T> {
      */
     public List<StockHistory> getStockHistoryLast(final String code, int count, boolean inMemory) {
         if (inMemory == true) {
-            return this.historyCache.get(code).subList(0, count);
+            List<StockHistory> list = getInCache(code);
+            if (list == null) return null;
+            return list.subList(0, count);
         }
         else
             return timeSeries.extractLasts(code, count);
+    }
+
+
+    /**
+     *  get count last element
+     * @param code
+     * @param count
+     * @return
+     */
+    public List<StockHistory> getStockHistoryLastInvert(final String code, int count) {return getStockHistoryLastInvert(code, count, true);}
+
+
+    /**
+     * get count last element
+     * @param code
+     * @param count
+     * @param inMemory
+     * @return
+     */
+    public List<StockHistory> getStockHistoryLastInvert(final String code, int count, boolean inMemory) {
+        if (inMemory == true) {
+            List<StockHistory> list = getInCache(code);
+            if (list == null || list.size()-count < 0) return null;
+            List<StockHistory> subList= new CopyOnWriteArrayList(list.subList(list.size() - count, list.size()));
+            Collections.sort(subList);
+            return(subList);
+        }
+        else
+            throw  new NotImplementedException();
+
     }
 
 
@@ -219,14 +287,17 @@ public class CacheStockHistory<T> {
      * @param inMemory
      * @return
      */
+    static int exclusiveOffset = 1;
     public  List<StockHistory> getStockHistoryDateInvert(final String code, final String date, int offset, boolean inMemory) {
+
 
         if (inMemory == true) {
 
-            List<StockHistory> list = this.historyCache.get(code);
+            List<StockHistory> list = getInCache(code);
             Integer index = getInCache(list,code, date);
 
-            List<StockHistory> subList = list.subList(index, index + offset);
+            if (list == null || index - offset < 0) return null;
+            List<StockHistory> subList= new CopyOnWriteArrayList(list.subList(index - offset + exclusiveOffset, index + exclusiveOffset));
 
             Collections.sort(subList);
 
@@ -257,7 +328,7 @@ public class CacheStockHistory<T> {
         if (res == null) {
             int curser = 0;
             while (curser  < list.size()) {
-                if (list.get(curser).day.compareTo(date) < 0) curser ++;
+                if (list.get(curser).getDay().compareTo(date) < 0) curser ++;
                 else {
                     res = curser;
                     break;
@@ -291,6 +362,8 @@ public class CacheStockHistory<T> {
      */
 
     private StockHistory findElement(List<StockHistory> list , Integer index) {
+        if (list == null) return null;
+
         if (index != null)
             return index < list.size()  ? list.get(index) : null;
 
@@ -303,7 +376,7 @@ public class CacheStockHistory<T> {
      * @param code
      * @return
      */
-    private List<StockHistory> fillCache(final String code) {
+    private synchronized List<StockHistory> fillCache(final String code) {
 
         return timeSeries.extract(code,this.indexCache, this.historyCache);
     }

@@ -3,7 +3,7 @@ package com.mltrading.service;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.mltrading.models.parser.*;
-import com.mltrading.models.stock.CacheStockGeneral;
+import com.mltrading.models.stock.cache.CacheStockGeneral;
 import com.mltrading.models.stock.StockGeneral;
 import com.mltrading.models.stock.StockHistory;
 import com.mltrading.models.stock.StockRawMat;

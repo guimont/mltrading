@@ -1,20 +1,9 @@
 package com.mltrading.models.parser.impl;
 
 import com.google.inject.Singleton;
-import com.mltrading.dao.InfluxDaoConnector;
-import com.mltrading.influxdb.dto.BatchPoints;
 import com.mltrading.models.parser.HistorySectorParser;
-import com.mltrading.models.parser.ParserCommon;
-import com.mltrading.models.stock.CacheStockSector;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
-import java.io.IOException;
-import java.net.URL;
 
 /**
  * Created by gmo on 15/01/2016.

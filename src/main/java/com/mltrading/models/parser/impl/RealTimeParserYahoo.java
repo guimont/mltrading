@@ -3,7 +3,7 @@ package com.mltrading.models.parser.impl;
 import com.google.inject.Singleton;
 import com.mltrading.models.parser.ParserCommon;
 import com.mltrading.models.parser.RealTimeParser;
-import com.mltrading.models.stock.CacheStockGeneral;
+import com.mltrading.models.stock.cache.CacheStockGeneral;
 import com.mltrading.models.stock.StockGeneral;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

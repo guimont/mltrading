@@ -1,5 +1,10 @@
 package com.mltrading.models.stock;
 
+import com.mltrading.models.stock.cache.CacheRawMaterial;
+import com.mltrading.models.stock.cache.CacheStockGeneral;
+import com.mltrading.models.stock.cache.CacheStockIndice;
+import com.mltrading.models.stock.cache.CacheStockSector;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;

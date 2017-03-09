@@ -2,17 +2,13 @@ package com.mltrading.ml;
 
 
 import com.mltrading.dao.InfluxDaoConnector;
-import com.mltrading.models.stock.CacheStockGeneral;
-import com.mltrading.models.stock.CacheStockSector;
+import com.mltrading.models.stock.cache.CacheStockGeneral;
+import com.mltrading.models.stock.cache.CacheStockSector;
 import com.mltrading.models.stock.StockGeneral;
 import com.mltrading.models.stock.StockHistory;
 import com.mltrading.models.util.MLActivities;
 import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.api.java.function.Function;
-import org.apache.spark.mllib.linalg.Vectors;
-import org.apache.spark.mllib.regression.LabeledPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.commons.io.FileUtils;

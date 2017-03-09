@@ -1,4 +1,6 @@
-package com.mltrading.models.stock;
+package com.mltrading.models.stock.cache;
+
+import com.mltrading.models.stock.StockGeneral;
 
 import java.util.Collections;
 import java.util.HashMap;

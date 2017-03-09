@@ -1,6 +1,7 @@
 package com.mltrading.models.stock;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.mltrading.models.stock.cache.CacheStockGeneral;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 

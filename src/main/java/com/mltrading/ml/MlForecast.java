@@ -4,6 +4,8 @@ import com.mltrading.config.MLProperties;
 import com.mltrading.ml.util.FixedThreadPoolExecutor;
 import com.mltrading.models.stock.*;
 
+import com.mltrading.models.stock.cache.CacheStockGeneral;
+import com.mltrading.models.stock.cache.CacheStockSector;
 import com.mltrading.models.util.MLActivities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

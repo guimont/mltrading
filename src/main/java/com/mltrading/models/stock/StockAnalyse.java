@@ -3,11 +3,16 @@ package com.mltrading.models.stock;
 import com.mltrading.dao.Requester;
 import com.mltrading.influxdb.dto.QueryRequest;
 import com.mltrading.influxdb.dto.QueryResult;
+import com.mltrading.models.stock.cache.CacheStockAnalyse;
 
 /**
  * Created by gmo on 16/11/2015.
  */
 public class StockAnalyse extends Object{
+
+
+
+    private static CacheStockAnalyse cache = CacheStockAnalyse.CacheStockAnalyseHolder();
 
 
     public static int COL_MMA20_POS  = 0;
@@ -123,7 +128,9 @@ public class StockAnalyse extends Object{
     static private int STDDEV_COLUMN = 6;
 
     public static StockAnalyse getAnalyse(String code, String date) {
-        StockAnalyse a = new StockAnalyse();
+        return cache.getStockAnalyse(code, date);
+
+        /*StockAnalyse a = new StockAnalyse();
 
         String query = "SELECT * FROM " + code + "T where time = '" + date + "'";
         QueryResult list = (QueryResult) Requester.sendRequest(new QueryRequest(query, StockHistory.dbName));
@@ -136,7 +143,7 @@ public class StockAnalyse extends Object{
         a.setStdDev(new Double(list.getResults().get(0).getSeries().get(0).getValues().get(0).get(STDDEV_COLUMN).toString()));
         a.setMacd(a.getMme26()-a.getMme12());
 
-        return a;
+        return a;*/
     }
 
     @Override

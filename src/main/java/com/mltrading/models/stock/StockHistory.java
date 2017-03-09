@@ -5,6 +5,7 @@ package com.mltrading.models.stock;
 import com.mltrading.dao.Requester;
 import com.mltrading.influxdb.dto.QueryRequest;
 import com.mltrading.influxdb.dto.QueryResult;
+import com.mltrading.models.stock.cache.CacheStockHistory;
 import org.joda.time.DateTime;
 
 import java.io.Serializable;
@@ -35,6 +36,8 @@ public class StockHistory extends Object implements Serializable , Comparable<St
     private String placeCodif;
 
     private int row;
+
+    private static CacheStockHistory cache = CacheStockHistory.CacheStockHistoryHolder();
 
 
     public String getCodif() {
@@ -363,7 +366,9 @@ public class StockHistory extends Object implements Serializable , Comparable<St
     }
 
     public static StockHistory getStockHistory(final String code, String date) {
-        StockHistory sh = new StockHistory();
+        return cache.getStockHistory(code, date);
+
+        /*StockHistory sh = new StockHistory();
 
         String query = "SELECT * FROM "+code+" where time = '" + date + "'";
         QueryResult list = (QueryResult) Requester.sendRequest(new QueryRequest(query, dbName));
@@ -373,11 +378,13 @@ public class StockHistory extends Object implements Serializable , Comparable<St
 
         //sh.setAnalyse_tech(StockAnalyse.getAnalyse(code, date));
 
-        return sh;
+        return sh;*/
     }
 
     public static StockHistory getStockHistoryDayAfter(final String code, String date) {
-        StockHistory sh = new StockHistory();
+        return cache.getStockHistoryDayAfter(code, date);
+
+        /*StockHistory sh = new StockHistory();
 
         String query = "SELECT * FROM "+code+" where time > '" + date + "' limit 1";
         QueryResult list = (QueryResult) Requester.sendRequest(new QueryRequest(query, dbName));
@@ -387,11 +394,14 @@ public class StockHistory extends Object implements Serializable , Comparable<St
 
         //sh.setAnalyse_tech(StockAnalyse.getAnalyse(code, date));
 
-        return sh;
+        return sh;*/
     }
 
     public static StockHistory getStockHistoryDayOffset(final String code, String date, int offset) {
-        StockHistory sh = new StockHistory();
+
+        return cache.getStockHistoryDayOffset(code, date, offset);
+
+       /* StockHistory sh = new StockHistory();
 
         String query = "SELECT * FROM "+code+" where time >= '" + date + "' limit " + offset;
         QueryResult list = (QueryResult) Requester.sendRequest(new QueryRequest(query, dbName));
@@ -404,14 +414,15 @@ public class StockHistory extends Object implements Serializable , Comparable<St
 
         sh.setCode(code);
         populate(sh, list, offset-1);
-        return sh;
+        return sh;*/
     }
 
 
 
 
     public static List<String> getDateHistoryListOffsetLimit(final String code, int offset, int max) {
-        List<String> dateList = new ArrayList<>();
+        return cache.getDateHistoryListOffsetLimit(code, max);
+        /*List<String> dateList = new ArrayList<>();
         //bug .. dont get all data .. so make filter to have date only since 2013
         String query = "SELECT * FROM "+code +" where time > '2010-01-01T00:00:00Z'";
         QueryResult list = (QueryResult) Requester.sendRequest(new QueryRequest(query, dbName));
@@ -424,26 +435,29 @@ public class StockHistory extends Object implements Serializable , Comparable<St
         for (int i = size-max; i < size; i++) {
             dateList.add((String) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(0));
         }
-        return dateList;
+        return dateList;*/
     }
 
     public static String getLastDateHistory(final String code) {
 
+        return cache.getLastDateHistory(code);
+
         //suppose base is filled
-        String query = "SELECT * FROM "+code +" where time > '2015-06-01T00:00:00Z'";
+        /*String query = "SELECT * FROM "+code +" where time > '2015-06-01T00:00:00Z'";
         QueryResult list = (QueryResult) Requester.sendRequest(new QueryRequest(query, dbName));
 
         int size = list.getResults().get(0).getSeries().get(0).getValues().size();
 
 
-        return (String) list.getResults().get(0).getSeries().get(0).getValues().get(size-1).get(0);
+        return (String) list.getResults().get(0).getSeries().get(0).getValues().get(size-1).get(0);*/
 
     }
 
 
     public static List<StockHistory> getStockHistoryDateInvert(final String code, final String date, int offset) {
 
-        List<StockHistory> stockList = new ArrayList<>();
+        return cache.getStockHistoryDateInvert(code, date,offset);
+        /*List<StockHistory> stockList = new ArrayList<>();
         //offset is mult by 2 because it is no dense data
         String query = "SELECT * FROM " + code + " where time <= '" + date + "' and time > '"+ date + "' - "+  Integer.toString(offset*4) +"d";
         QueryResult list = (QueryResult) Requester.sendRequest(new QueryRequest(query, dbName));
@@ -460,7 +474,7 @@ public class StockHistory extends Object implements Serializable , Comparable<St
             stockList.add(sh);
         }
 
-        return stockList;
+        return stockList;*/
 
     }
 
@@ -473,7 +487,9 @@ public class StockHistory extends Object implements Serializable , Comparable<St
      */
     public static List<StockHistory> getStockHistoryLast(final String code, int max) {
 
-        List<StockHistory> stockList = new ArrayList<>();
+        return cache.getStockHistoryLast(code, max);
+
+        /*List<StockHistory> stockList = new ArrayList<>();
         //offset is mult by 2 because it is no dense data
         String query = "SELECT * FROM "+code +" where time > '2015-06-01T00:00:00Z'";
         QueryResult list = (QueryResult) Requester.sendRequest(new QueryRequest(query, dbName));
@@ -490,7 +506,7 @@ public class StockHistory extends Object implements Serializable , Comparable<St
             stockList.add(sh);
         }
 
-        return stockList;
+        return stockList;*/
 
     }
 
@@ -503,7 +519,8 @@ public class StockHistory extends Object implements Serializable , Comparable<St
      */
     public static List<StockHistory> getStockHistoryLastInvert(final String code, int max) {
 
-        List<StockHistory> stockList = new ArrayList<>();
+        return cache.getStockHistoryLastInvert(code,max);
+        /*List<StockHistory> stockList = new ArrayList<>();
         //offset is mult by 2 because it is no dense data
         String query = "SELECT * FROM "+code +" where time > '2010-01-01T00:00:00Z'";
 
@@ -523,7 +540,7 @@ public class StockHistory extends Object implements Serializable , Comparable<St
             stockList.add(sh);
         }
 
-        return stockList;
+        return stockList;*/
 
     }
 

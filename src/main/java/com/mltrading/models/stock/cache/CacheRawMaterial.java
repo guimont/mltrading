@@ -1,9 +1,10 @@
-package com.mltrading.models.stock;
+package com.mltrading.models.stock.cache;
+
+import com.mltrading.models.stock.StockRawMat;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * Created by gmo on 17/06/2015.

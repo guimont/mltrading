@@ -3,7 +3,7 @@ package com.mltrading.models.parser.impl;
 
 import com.mltrading.models.parser.ParserCommon;
 import com.mltrading.models.parser.StockParser;
-import com.mltrading.models.stock.CacheStockGeneral;
+import com.mltrading.models.stock.cache.CacheStockGeneral;
 import com.mltrading.models.stock.Stock;
 import com.mltrading.models.stock.StockGeneral;
 import com.mltrading.repository.StockRepository;

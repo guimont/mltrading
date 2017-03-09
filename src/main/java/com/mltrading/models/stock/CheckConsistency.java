@@ -1,7 +1,9 @@
 package com.mltrading.models.stock;
 
-import com.mltrading.dao.InfluxDaoConnector;
-import com.mltrading.influxdb.dto.QueryResult;
+import com.mltrading.models.stock.cache.CacheRawMaterial;
+import com.mltrading.models.stock.cache.CacheStockGeneral;
+import com.mltrading.models.stock.cache.CacheStockIndice;
+import com.mltrading.models.stock.cache.CacheStockSector;
 import com.mltrading.models.util.CsvFileWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

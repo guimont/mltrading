@@ -2,27 +2,19 @@ package com.mltrading.web.rest;
 
 
 import com.mltrading.ml.CacheMLStock;
-import com.mltrading.ml.MLPredictor;
 import com.mltrading.ml.MlForecast;
 import com.mltrading.models.stock.CheckConsistency;
-import com.mltrading.models.stock.CacheStockGeneral;
 import com.mltrading.models.stock.Stock;
-import com.mltrading.models.stock.StockGeneral;
-import com.mltrading.models.stock.StockPrediction;
 import com.mltrading.repository.ArticleRepository;
 import com.mltrading.repository.StockRepository;
 import com.mltrading.service.ExtractionService;
-import com.mltrading.web.rest.dto.ForecastDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.ArrayList;
+
 import java.util.List;
 
-import javax.validation.Valid;
 /**
  * Created by gmo on 07/01/2016.
  */

@@ -1,6 +1,8 @@
 package com.mltrading.models.stock;
 
 
+import com.mltrading.models.stock.cache.CacheStockIndice;
+
 /**
  * Created by gmo on 06/12/2015.
  */
@@ -30,7 +32,7 @@ public class StockIndice extends StockHistory {
     //probleme with belgium indice
     static public String translate(String investir) {
 
-        for (StockIndice si:CacheStockIndice.getIndiceCache().values()) {
+        for (StockIndice si: CacheStockIndice.getIndiceCache().values()) {
             if ("cac 40".equalsIgnoreCase(si.getName()))
                 return si.getCode();
         }

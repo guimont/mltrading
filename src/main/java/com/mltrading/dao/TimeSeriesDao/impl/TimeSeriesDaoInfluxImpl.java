@@ -31,6 +31,22 @@ public class TimeSeriesDaoInfluxImpl implements TimeSeriesDao{
     /**
      * populate stockHistory with influxdb response
      * @param sh
+     * @param data
+     */
+    private static void populate(StockHistory sh, List data) {
+        sh.setDay((String) data.get(DATE_COLUMN));
+        sh.setConsensusNote((Double)  data.get(CONSENSUS_COLUMN_HIST));
+        sh.setHighest((Double)  data.get(HIGHEST_COLUMN_HIST));
+        sh.setLowest((Double)  data.get(LOWEST_COLUMN_HIST));
+        sh.setOpening((Double)  data.get(OPENING_COLUMN_HIST));
+        sh.setValue((Double)  data.get(VALUE_COLUMN_HIST));
+        sh.setVolume((Double)  data.get(VOLUME_COLUMN_HIST));
+    }
+
+
+    /**
+     * populate stockHistory with influxdb response
+     * @param sh
      * @param meanQ
      * @param i
      */
@@ -64,20 +80,25 @@ public class TimeSeriesDaoInfluxImpl implements TimeSeriesDao{
      */
     @Override
     public List<StockHistory> extract(final String code, final Map<String,Map<String, Integer>> indexCache ,final  Map<String,List<StockHistory>> historyCache ) {
-        String query = "SELECT * FROM "+code +" where time > '2010-01-01T00:00:00Z'";
+        String query = "SELECT * FROM "+code +" where time > '2010-01-01T00:00:00Z' ORDER BY ASC";
         QueryResult list = (QueryResult) Requester.sendRequest(new QueryRequest(query, dbName));
 
-        int size = list.getResults().get(0).getSeries().get(0).getValues().size();
+        if (list == null || list.getResults() == null
+            || list.getResults().get(0) == null
+            || list.getResults().get(0).getSeries() == null
+            || list.getResults().get(0).getSeries().get(0) == null)
+            return null;
+
 
         List<StockHistory> stockList = new ArrayList<>();
 
         Map<String, Integer> indexMap = new HashMap<>();
-        for (int i = 0; i < size; i++) {
+
+        for (List data :list.getResults().get(0).getSeries().get(0).getValues()) {
             StockHistory sh = new StockHistory();
             sh.setCode(code);
-            populate(sh, list, i);
+            populate(sh, data);
             stockList.add(sh);
-
             indexMap.put(sh.getDay(),stockList.indexOf(sh));
         }
 
@@ -196,38 +217,67 @@ public class TimeSeriesDaoInfluxImpl implements TimeSeriesDao{
     }
 
     @Override
-    public List<StockAnalyse> getAnalyse(String code) {
-
-        String query = "SELECT * FROM " + code + "T where time > '2010-01-01T00:00:00Z'";
+    public StockHistory extractLastHistory(String code) {
+        String query = "SELECT * FROM "+code +" where time > '2015-06-01T00:00:00Z'";
         QueryResult list = (QueryResult) Requester.sendRequest(new QueryRequest(query, dbName));
 
         int size = list.getResults().get(0).getSeries().get(0).getValues().size();
 
+        StockHistory sh = new StockHistory();
+        populate(sh, list, size-1);
+
+        return sh;
+    }
+
+    @Override
+    public List<StockAnalyse> extractAnalyse(String code) {
+        return extractAnalyse(code, null, null);
+    }
+
+    @Override
+    public StockAnalyse extractAnalyseSpecific(String code, String date) {
+        return null;
+    }
+
+    @Override
+    public List<StockAnalyse> extractAnalyse(String code, Map<String, Map<String, Integer>> indexCache, Map<String, List<StockAnalyse>> historyCache) {
+        String query = "SELECT * FROM " + code + "T where time > '2010-01-01T00:00:00Z'";
+        QueryResult list = (QueryResult) Requester.sendRequest(new QueryRequest(query, dbName));
+
+        if (list == null || list.getResults() == null
+            || list.getResults().get(0) == null
+            || list.getResults().get(0).getSeries() == null
+            || list.getResults().get(0).getSeries().get(0) == null)
+            return null;
+
+
         List<StockAnalyse> stockList = new ArrayList<>();
 
         Map<String, Integer> indexMap = new HashMap<>();
-        for (int i = 0; i < size; i++) {
+
+        for (List data :list.getResults().get(0).getSeries().get(0).getValues()) {
             StockAnalyse a = new StockAnalyse();
-            a.setDay((String) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(DATE_COLUMN));
-            a.setMma20(new Double(list.getResults().get(0).getSeries().get(0).getValues().get(0).get(MMA20_COLUMN).toString()));
-            a.setMma50(new Double(list.getResults().get(0).getSeries().get(0).getValues().get(0).get(MMA50_COLUMN).toString()));
-            a.setMme12(new Double(list.getResults().get(0).getSeries().get(0).getValues().get(0).get(MME12_COLUMN).toString()));
-            a.setMme26(new Double(list.getResults().get(0).getSeries().get(0).getValues().get(0).get(MME26_COLUMN).toString()));
-            a.setMomentum(new Double(list.getResults().get(0).getSeries().get(0).getValues().get(0).get(MOMENTUM_COLUMN).toString()));
-            a.setStdDev(new Double(list.getResults().get(0).getSeries().get(0).getValues().get(0).get(STDDEV_COLUMN).toString()));
+            a.setDay((String)data.get(DATE_COLUMN));
+            a.setMma20(new Double(data.get(MMA20_COLUMN).toString()));
+            a.setMma50(new Double(data.get(MMA50_COLUMN).toString()));
+            a.setMme12(new Double(data.get(MME12_COLUMN).toString()));
+            a.setMme26(new Double(data.get(MME26_COLUMN).toString()));
+            a.setMomentum(new Double(data.get(MOMENTUM_COLUMN).toString()));
+            a.setStdDev(new Double(data.get(STDDEV_COLUMN).toString()));
             a.setMacd(a.getMme26() - a.getMme12());
             stockList.add(a);
-
             indexMap.put(a.getDay(),stockList.indexOf(a));
         }
 
 
-        /*if (historyCache != null) historyCache.put(code,stockList);
+        if (historyCache != null) historyCache.put(code,stockList);
         if (indexCache != null) indexCache.put(code, indexMap);
-*/
-        return stockList;
 
+        return stockList;
     }
+
+
+
 
 
     static private int MMA20_COLUMN = 1;

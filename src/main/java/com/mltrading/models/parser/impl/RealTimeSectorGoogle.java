@@ -2,7 +2,7 @@ package com.mltrading.models.parser.impl;
 
 import com.mltrading.models.parser.ParserCommon;
 import com.mltrading.models.parser.RealTimeParser;
-import com.mltrading.models.stock.CacheStockSector;
+import com.mltrading.models.stock.cache.CacheStockSector;
 import com.mltrading.models.stock.StockSector;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

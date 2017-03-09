@@ -1,9 +1,10 @@
 package com.mltrading.web.rest;
 
 import com.mltrading.models.stock.*;
+import com.mltrading.models.stock.cache.CacheStockGeneral;
+import com.mltrading.models.stock.cache.CacheStockSector;
 import com.mltrading.repository.StockRepository;
 import com.mltrading.security.AuthoritiesConstants;
-import org.springframework.boot.actuate.audit.AuditEvent;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;

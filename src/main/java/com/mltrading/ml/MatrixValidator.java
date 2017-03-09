@@ -4,9 +4,9 @@ import com.mltrading.dao.InfluxDaoConnector;
 import com.mltrading.influxdb.dto.BatchPoints;
 import com.mltrading.influxdb.dto.Point;
 import com.mltrading.influxdb.dto.QueryResult;
-import com.mltrading.models.stock.CacheRawMaterial;
-import com.mltrading.models.stock.CacheStockIndice;
-import com.mltrading.models.stock.CacheStockSector;
+import com.mltrading.models.stock.cache.CacheRawMaterial;
+import com.mltrading.models.stock.cache.CacheStockIndice;
+import com.mltrading.models.stock.cache.CacheStockSector;
 import com.mltrading.models.stock.StockAnalyse;
 
 import java.io.Serializable;

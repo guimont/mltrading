@@ -1,8 +1,7 @@
 package com.mltrading.models.parser;
 
 
-import com.mltrading.models.stock.CacheRawMaterial;
-import com.mltrading.models.stock.CacheStockGeneral;
+import com.mltrading.models.stock.cache.CacheStockGeneral;
 import com.mltrading.models.stock.StockGeneral;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

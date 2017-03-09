@@ -1,5 +1,7 @@
 package com.mltrading.models.stock;
 
+import com.mltrading.models.stock.cache.CacheStockGeneral;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;

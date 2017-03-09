@@ -2,12 +2,11 @@ package com.mltrading.models.parser.impl;
 
 import com.mltrading.models.parser.ConsensusParser;
 import com.mltrading.models.parser.ParserCommon;
-import com.mltrading.models.stock.CacheStockGeneral;
+import com.mltrading.models.stock.cache.CacheStockGeneral;
 import com.mltrading.models.stock.Consensus;
 import com.mltrading.models.stock.StockGeneral;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
