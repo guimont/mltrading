@@ -80,13 +80,13 @@ public class MLStock  implements Serializable {
 
 
     public void saveModel() {
-        this.model.save(CacheMLStock.getJavaSparkContext().sc(), path+"model/Model" + period.toString() + codif);
+        this.model.save(CacheMLStock.getJavaSparkContext().sc(), path + "model/Model" + period.toString() + codif);
     }
 
     private static String path="c:/";
 
     public void loadModel() {
-        this.model = RandomForestModel.load(CacheMLStock.getJavaSparkContext().sc(), path+"model/Model"+period.toString()+codif);
+        this.model = RandomForestModel.load(CacheMLStock.getJavaSparkContext().sc(), path + "model/Model" + period.toString() + codif);
     }
 
 

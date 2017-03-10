@@ -51,7 +51,7 @@ public class RealTimeResource {
     @RolesAllowed(AuthoritiesConstants.ADMIN)
     public List<StockHistory> findPx1() {
 
-        return StockHistory.getStockHistoryLast("PX1",60);
+        return StockHistory.getStockHistoryLast("PX1", 60);
 
     }
 
@@ -65,9 +65,15 @@ public class RealTimeResource {
 
         Stock s = stockRepository.findOne(key);
 
-        StockDetail detail = StockDetail.populate(s,CacheStockGeneral.getIsinCache().get(key).getCodif());
+        StockHistory sh = null;
+        if (CacheStockGeneral.getIsinCache().get(key) != null ) sh = CacheStockGeneral.getIsinCache().get(key);
+        else sh = CacheStockSector.getSectorCache().get(key);
+
+        StockDetail detail = StockDetail.populate(s,sh);
 
         return detail;
     }
+
+
 
 }

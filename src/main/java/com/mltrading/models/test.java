@@ -1,27 +1,14 @@
 package com.mltrading.models;
 
-import breeze.optimize.AdaptiveGradientDescent;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import com.mltrading.config.MLProperties;
-import com.mltrading.domain.User;
-import com.mltrading.ml.CacheMLStock;
-import com.mltrading.ml.MatrixValidator;
-import com.mltrading.ml.RandomForestStock;
 import com.mltrading.models.parser.*;
-import com.mltrading.models.parser.impl.*;
-import com.mltrading.models.stock.*;
-import com.mltrading.models.util.CsvFileReader;
 import com.mltrading.service.ExtractionService;
 
 import com.mltrading.service.UserService;
-import org.joda.time.DateTime;
 
 import javax.inject.Inject;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by gmo on 18/06/2015.

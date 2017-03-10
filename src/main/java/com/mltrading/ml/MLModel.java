@@ -1,6 +1,5 @@
 package com.mltrading.ml;
 
-import com.mltrading.ml.RandomForestStock;
 import org.apache.spark.mllib.linalg.Vectors;
 
 import org.apache.spark.mllib.tree.model.GradientBoostedTreesModel;
@@ -26,4 +25,7 @@ public class MLModel {
     }
 
 
+    public RandomForestModel getModel() {
+        return modelRF;
+    }
 }

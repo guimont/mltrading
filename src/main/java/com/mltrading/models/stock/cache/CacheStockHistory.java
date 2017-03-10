@@ -18,19 +18,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * cache for improve I/O perfrormance with influxdb
  * refresh cache every day
  */
-public class CacheStockHistory {
+public class CacheStockHistory  extends CacheStockTimeSeries<String, Integer,StockHistory> {
 
-    private static TimeSeriesDao timeSeries = null;
 
     final static CacheStockHistory instance = new CacheStockHistory();
 
-
-    private Map<String,Map<String, Integer>> indexCache = new HashMap<>();
-    private Map<String,List<StockHistory>> historyCache = new HashMap<>();
-
-    private CacheStockHistory() {
-        timeSeries = new TimeSeriesDaoInfluxImpl();
-    }
 
     public static CacheStockHistory CacheStockHistoryHolder() {
         /** Instance unique non pre-initialise */
@@ -230,8 +222,8 @@ public class CacheStockHistory {
     public List<StockHistory> getStockHistoryLast(final String code, int count, boolean inMemory) {
         if (inMemory == true) {
             List<StockHistory> list = getInCache(code);
-            if (list == null) return null;
-            return list.subList(0, count);
+            if (list == null || list.size()-count < 0) return null;
+            return list.subList(list.size()-count, list.size());
         }
         else
             return timeSeries.extractLasts(code, count);
@@ -310,77 +302,21 @@ public class CacheStockHistory {
 
 
 
-
-
-
-
-
-
-    /**
-     * return index and filled cache if empty
-     * @param code
-     * @return
-     */
-    private  Integer getInCache(List<StockHistory> list , String code, String date) {
-        Map<String, Integer> indexMap = this.indexCache.get(code);
-        if (indexMap == null) fillCache(code);
-        Integer res =  this.indexCache.get(code).get(date);
-        if (res == null) {
-            int curser = 0;
-            while (curser  < list.size()) {
-                if (list.get(curser).getDay().compareTo(date) < 0) curser ++;
-                else {
-                    res = curser;
-                    break;
-                }
-            }
-        }
-
-        return res;
-    }
-
-
-    /**
-     * return list and filled cache if empty
-     * @param code
-     * @return
-     */
-    private  List<StockHistory> getInCache(String code) {
-        List<StockHistory> list = this.historyCache.get(code);
-        if (list == null)
-            list = fillCache(code);
-
-        return list;
-    }
-
-
-    /**
-     * find element for a date
-     * @param list
-     * @param index
-     * @return
-     */
-
-    private StockHistory findElement(List<StockHistory> list , Integer index) {
-        if (list == null) return null;
-
-        if (index != null)
-            return index < list.size()  ? list.get(index) : null;
-
-        return null;
-    }
-
-
     /**
      * filled cache
      * @param code
      * @return
      */
-    private synchronized List<StockHistory> fillCache(final String code) {
+    @Override
+    protected synchronized List<StockHistory> fillCache(final String code) {
 
         return timeSeries.extract(code,this.indexCache, this.historyCache);
     }
 
 
-
+    @Override
+    protected Integer apply(int curser) {
+        return curser;
+    }
 }
+

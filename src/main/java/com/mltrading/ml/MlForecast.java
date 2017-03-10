@@ -1,6 +1,7 @@
 package com.mltrading.ml;
 
 import com.mltrading.config.MLProperties;
+import com.mltrading.ml.model.RandomForestStock;
 import com.mltrading.ml.util.FixedThreadPoolExecutor;
 import com.mltrading.models.stock.*;
 

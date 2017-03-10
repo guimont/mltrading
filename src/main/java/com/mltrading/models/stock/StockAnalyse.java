@@ -8,9 +8,7 @@ import com.mltrading.models.stock.cache.CacheStockAnalyse;
 /**
  * Created by gmo on 16/11/2015.
  */
-public class StockAnalyse extends Object{
-
-
+public class StockAnalyse extends StockBase{
 
     private static CacheStockAnalyse cache = CacheStockAnalyse.CacheStockAnalyseHolder();
 
@@ -26,7 +24,6 @@ public class StockAnalyse extends Object{
 
     public static int N_AT = 7;
 
-    protected String day;
 
     private Double mma20;
 
@@ -98,13 +95,6 @@ public class StockAnalyse extends Object{
         this.stdDev = stdDev;
     }
 
-    public String getDay() {
-        return day;
-    }
-
-    public void setDay(String day) {
-        this.day = day;
-    }
 
     @Override
     public String toString() {

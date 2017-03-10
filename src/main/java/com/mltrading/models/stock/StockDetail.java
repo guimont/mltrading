@@ -28,26 +28,25 @@ public class StockDetail implements Serializable{
     private static int PERIOD = 40;
 
 
-    public static StockDetail populate(Stock s, String codif) {
+    public static StockDetail populate(Stock s, StockHistory sh) {
         StockDetail detail = new StockDetail();
-        if (s != null)
-            log.info(codif);
-        else
-            log.info("s null error");
 
         log.info("cache size:" + CacheMLStock.getMLStockCache().size());
-        MLStocks mls = CacheMLStock.getMLStockCache().get(codif);
+        MLStocks mls = CacheMLStock.getMLStockCache().get(sh.getCodif());
         if (mls == null )
             log.info("mls null error");
-        detail.setCode(codif);
+        detail.setCode(sh.getCodif());
         detail.setStock(s);
-        detail.setPrediction(CacheStockGeneral.getCache().get(s.getCode()).getPrediction());
-        detail.setName(CacheStockGeneral.getCache().get(s.getCode()).getName());
+        detail.setPrediction(sh.getPrediction());
+        detail.setName(sh.getName());
         //detail.setSector();
-        detail.setData(populateData(codif));
-        detail.setValue(CacheStockGeneral.getCache().get(s.getCode()).getOpening());
+        detail.setData(populateData(sh.getCodif()));
+        detail.setValue(sh.getOpening());
 
-        detail.sector = StockHistory.getStockHistoryLast(s.getSector(), PERIOD);
+        if (s != null)
+            detail.sector = StockHistory.getStockHistoryLast(s.getSector(), PERIOD);
+        else
+            detail.sector = StockHistory.getStockHistoryLast(sh.getCodif(), PERIOD); //itself
         detail.indice = StockHistory.getStockHistoryLast("PX1", PERIOD); // code cac => use transform to match indice
 
 

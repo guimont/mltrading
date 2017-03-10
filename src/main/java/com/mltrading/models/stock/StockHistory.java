@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Created by gmo on 24/06/2015.
  */
-public class StockHistory extends Object implements Serializable , Comparable<StockHistory>{
+public class StockHistory extends StockBase implements Serializable , Comparable<StockHistory>{
 
     public static String dbName = "history";
 
@@ -24,8 +24,6 @@ public class StockHistory extends Object implements Serializable , Comparable<St
     private String name;
 
     private String place;
-
-    protected String day;
 
     DateTime timeInsert;
 
@@ -231,9 +229,6 @@ public class StockHistory extends Object implements Serializable , Comparable<St
         return place;
     }
 
-    public String getDay() {
-        return day;
-    }
 
 
     public Double getConsensusNote() {
@@ -244,10 +239,6 @@ public class StockHistory extends Object implements Serializable , Comparable<St
         this.consensusNote = consensusNote;
     }
 
-
-    public void setDay(String day) {
-        this.day = day;
-    }
 
 
     /**

@@ -1,10 +1,8 @@
 package com.mltrading.models.stock.cache;
 
 import com.mltrading.models.stock.StockAnalyse;
-
-
 import java.util.List;
-import java.util.Map;
+
 
 /**
  * Created by gmo on 09/03/2017.
@@ -26,6 +24,11 @@ public class CacheStockAnalyse extends CacheStockTimeSeries<String, Integer,Stoc
         super();
     }
 
+    @Override
+    protected Integer apply(int curser) {
+        return curser;
+    }
+
 
     /**
      * @param code
@@ -43,28 +46,7 @@ public class CacheStockAnalyse extends CacheStockTimeSeries<String, Integer,Stoc
 
 
 
-    /**
-     * return index and filled cache if empty
-     * @param code
-     * @return
-     */
-    private  Integer getInCache(List<StockAnalyse> list , String code, String date) {
-        Map<String, Integer> indexMap = this.indexCache.get(code);
-        if (indexMap == null) fillCache(code);
-        Integer res =  this.indexCache.get(code).get(date);
-        if (res == null) {
-            int curser = 0;
-            while (curser  < list.size()) {
-                if (list.get(curser).getDay().compareTo(date) < 0) curser ++;
-                else {
-                    res = curser;
-                    break;
-                }
-            }
-        }
 
-        return res;
-    }
 
 
     /**

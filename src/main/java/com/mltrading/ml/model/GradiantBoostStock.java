@@ -1,5 +1,6 @@
-package com.mltrading.ml;
+package com.mltrading.ml.model;
 
+import com.mltrading.ml.*;
 import com.mltrading.models.util.MLActivities;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
