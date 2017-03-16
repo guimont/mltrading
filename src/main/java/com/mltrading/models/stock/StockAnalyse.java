@@ -1,8 +1,6 @@
 package com.mltrading.models.stock;
 
-import com.mltrading.dao.Requester;
-import com.mltrading.influxdb.dto.QueryRequest;
-import com.mltrading.influxdb.dto.QueryResult;
+
 import com.mltrading.models.stock.cache.CacheStockAnalyse;
 
 /**
@@ -109,13 +107,6 @@ public class StockAnalyse extends StockBase{
             '}';
     }
 
-    static private int DATE_COLUMN = 0;
-    static private int MMA20_COLUMN = 1;
-    static private int MMA50_COLUMN = 2;
-    static private int MME12_COLUMN = 3;
-    static private int MME26_COLUMN = 4;
-    static private int MOMENTUM_COLUMN = 5;
-    static private int STDDEV_COLUMN = 6;
 
     public static StockAnalyse getAnalyse(String code, String date) {
         return cache.getStockAnalyse(code, date);

@@ -2,12 +2,13 @@ package com.mltrading.models.parser.impl;
 
 import com.google.inject.Singleton;
 import com.mltrading.dao.InfluxDaoConnectorDocument;
-import com.mltrading.influxdb.dto.BatchPoints;
+
 import com.mltrading.models.parser.ArticlesParser;
 import com.mltrading.models.parser.ParserCommon;
 import com.mltrading.models.stock.cache.CacheStockGeneral;
 import com.mltrading.models.stock.StockDocument;
 import com.mltrading.models.stock.StockGeneral;
+import org.influxdb.dto.BatchPoints;
 import org.joda.time.DateTime;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

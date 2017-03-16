@@ -1,23 +1,15 @@
 package com.mltrading.models.parser.impl;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+
 import com.google.inject.Singleton;
-import com.mltrading.dao.InfluxDaoConnector;
-import com.mltrading.influxdb.dto.BatchPoints;
-import com.mltrading.models.parser.ConsensusParser;
+
 import com.mltrading.models.parser.HistoryParser;
-import com.mltrading.models.parser.ParserCommon;
-import com.mltrading.models.parser.ServiceParser;
+
 import com.mltrading.models.stock.*;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import java.io.IOException;
-import java.net.URL;
+
 
 /**
  * Created by gmo on 23/11/2015.

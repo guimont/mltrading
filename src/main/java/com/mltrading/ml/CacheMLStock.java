@@ -1,6 +1,7 @@
 package com.mltrading.ml;
 
 
+import com.mltrading.config.MLProperties;
 import com.mltrading.dao.InfluxDaoConnector;
 import com.mltrading.models.stock.cache.CacheStockGeneral;
 import com.mltrading.models.stock.cache.CacheStockSector;
@@ -26,6 +27,7 @@ import java.util.Map;
 public class CacheMLStock {
     //
 
+    public static String SPARK_DEFAULT_MEMORY = "4g";
 
     public static int RENDERING = 300;
     public static int RANGE_MAX = 1500;
@@ -33,21 +35,32 @@ public class CacheMLStock {
     private static final Logger log = LoggerFactory.getLogger(CacheMLStock.class);
 
     private static final Map<String, MLStocks> mlStockMap;
+
     static {
-        System.setProperty("hadoop.home.dir", "C:\\spark-2.0.0-bin-hadoop2.7\\");
-        System.setProperty("spark.sql.warehouse.dir","file:///C:/temp");
+        System.setProperty("hadoop.home.dir", MLProperties.getProperty("spark.hadoop.path"));
+        System.setProperty("spark.sql.warehouse.dir", MLProperties.getProperty("spark.warehouse"));
         mlStockMap = new HashMap<>();
     }
 
     //static SparkConf sparkConf = new SparkConf().setAppName("JavaRandomForest").setMaster("local[*]");
-    static SparkConf sparkConf = new SparkConf().setSparkHome("file:///C:/temp").setAppName("JavaRandomForest").setMaster("spark://NB120249:7077").setJars(new String[]{"target/com.mltrading-1.0-SNAPSHOT.jar"});
+    static String url = "spark://" + MLProperties.getProperty("spark.master") + ":" +
+        MLProperties.getProperty("spark.master.port");
+    static SparkConf sparkConf = new SparkConf()/*.setSparkHome("file:///C:/temp")*/.setAppName("JavaRandomForest")
+        .set("spark.driver.maxResultSize",MLProperties.getProperty("spark.driver.maxResultSize", SPARK_DEFAULT_MEMORY))
+        .set("spark.driver.memory",MLProperties.getProperty("spark.driver.memory",SPARK_DEFAULT_MEMORY))
+        .set("spark.executor.memory",MLProperties.getProperty("spark.executor.memory",SPARK_DEFAULT_MEMORY))
+
+        .setMaster(url).setJars(new String[]{MLProperties.getProperty("spark.jars")});
     static JavaSparkContext sc = new JavaSparkContext(sparkConf);
 
 
-
+    /**
+     * load model and MLStocks map to apply model
+     */
     public static void load() {
 
-        MLActivities g = new MLActivities("CacheMLStock", "","load",0,0,false);
+        /* trace */
+        MLActivities g = new MLActivities("CacheMLStock", "", "load", 0, 0, false);
 
         CacheMLActivities.addActivities(g);
 
@@ -63,8 +76,10 @@ public class CacheMLStock {
     }
 
 
-
-
+    /**
+     * load model for each stock
+     * @param sl stock list (px1 or sector)
+     */
     public static void load(List<? extends StockHistory> sl) {
 
 
@@ -76,7 +91,7 @@ public class CacheMLStock {
 
 
         for (StockHistory s : sl) {
-            MLActivities a = new MLActivities("CacheMLStock", "","load",0,0,false);
+            MLActivities a = new MLActivities("CacheMLStock", "", "load", 0, 0, false);
             try {
 
                 MLStocks mls = new MLStocks(s.getCodif());
@@ -85,39 +100,22 @@ public class CacheMLStock {
                 mlStockMap.put(s.getCodif(), mls);
                 CacheMLActivities.addActivities(a.setEndDate().setStatus("Success"));
 
-            }catch (Exception e) {
+            } catch (Exception e) {
                 log.error(e.toString());
                 CacheMLActivities.addActivities(a.setEndDate().setStatus("Failed"));
             }
         }
 
 
-
     }
 
 
-    public static Map<String,MLStocks> getMLStockCache() {
+    public static Map<String, MLStocks> getMLStockCache() {
         return mlStockMap;
     }
+
     public static JavaSparkContext getJavaSparkContext() {
         return sc;
-    }
-
-    public static void saveDB() {
-        List<StockGeneral> sl = new ArrayList(CacheStockGeneral.getIsinCache().values());
-        for (StockGeneral s:sl) {
-            MLStocks mls = new MLStocks(s.getCodif());
-            mls.saveDB();
-        }
-    }
-
-
-    public static void loadDB() {
-        List<StockGeneral> sl = new ArrayList(CacheStockGeneral.getIsinCache().values());
-        for (StockGeneral s:sl) {
-            MLStocks mls = new MLStocks(s.getCodif());
-            mls.loadDB();
-        }
     }
 
 
@@ -125,7 +123,7 @@ public class CacheMLStock {
         deleteModel();
         SynchWorker.delete();
 
-        for (MLStocks mls:mlStockMap.values()) {
+        for (MLStocks mls : mlStockMap.values()) {
             mls.save();
             mls.saveDB();
             mls.getStatus().savePerf(mls.getCodif());
@@ -138,18 +136,17 @@ public class CacheMLStock {
      * update perf list with last value
      */
     public static void savePerf() {
-        for (MLStocks mls:mlStockMap.values()) {
+        for (MLStocks mls : mlStockMap.values()) {
             mls.getStatus().saveLastPerf(mls.getCodif());
         }
     }
 
 
     public static void deleteDB() {
-        String path="c:/";
-        if (System.getProperty("os.name").contains("Windows"))
-            path = "/";
+        String path = MLStock.path;
+
         try {
-            FileUtils.deleteDirectory(new File(path+"model"));
+            FileUtils.deleteDirectory(new File(path + "model"));
         } catch (IOException e) {
             log.error("Cannot remove folder model: " + e);
         }
@@ -157,16 +154,41 @@ public class CacheMLStock {
 
 
     public static void deleteModel() {
-        String path="c:/";
-        if (System.getProperty("os.name").contains("Windows"))
-            path = "/";
+        String path = MLStock.path;
+
         try {
-            FileUtils.deleteDirectory(new File(path+"model"));
+            FileUtils.deleteDirectory(new File(path + "model"));
             InfluxDaoConnector.deleteDB(MatrixValidator.dbNameModel);
         } catch (IOException e) {
             log.error("Cannot remove folder model: " + e);
         }
     }
 
+
+
+    /**
+     *
+     * sync server function
+     * not use in main jar
+     *
+     */
+
+
+    public static void saveDB() {
+        List<StockGeneral> sl = new ArrayList(CacheStockGeneral.getIsinCache().values());
+        for (StockGeneral s : sl) {
+            MLStocks mls = new MLStocks(s.getCodif());
+            mls.saveDB();
+        }
+    }
+
+
+    public static void loadDB() {
+        List<StockGeneral> sl = new ArrayList(CacheStockGeneral.getIsinCache().values());
+        for (StockGeneral s : sl) {
+            MLStocks mls = new MLStocks(s.getCodif());
+            mls.loadDB();
+        }
+    }
 
 }

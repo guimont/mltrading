@@ -3,8 +3,7 @@ package com.mltrading.dao;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
 import com.mltrading.dao.connector.Dispatcher;
-import com.mltrading.influxdb.dto.QueryRequest;
-import com.mltrading.influxdb.dto.QueryResult;
+
 import scala.concurrent.Await;
 import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;

@@ -1,9 +1,10 @@
 package com.mltrading.models.util;
 
 import com.mltrading.dao.InfluxDaoConnector;
-import com.mltrading.influxdb.dto.BatchPoints;
+
 import com.mltrading.models.parser.HistoryParser;
 import com.mltrading.models.stock.StockHistory;
+import org.influxdb.dto.BatchPoints;
 
 import java.io.*;
 

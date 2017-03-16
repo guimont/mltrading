@@ -2,8 +2,9 @@ package com.mltrading.dao.impl;
 
 import com.mltrading.config.MLProperties;
 import com.mltrading.dao.InfluxDao;
-import com.mltrading.influxdb.InfluxDB;
-import com.mltrading.influxdb.InfluxDBFactory;
+import org.influxdb.InfluxDB;
+import org.influxdb.InfluxDBFactory;
+
 
 /**
  * Created by gmo on 29/06/2015.
@@ -14,7 +15,7 @@ public class InfluxDaoImpl implements InfluxDao{
 
     @Override
     public void createConnection() {
-        this.influxDB = InfluxDBFactory.connect("http://"+ MLProperties.getProperty("influxdb")+":"+ new Integer(MLProperties.getProperty("influxdbPort")), login, pwd);
+        this.influxDB = InfluxDBFactory.connect("http://" + MLProperties.getProperty("influxdb") + ":" + new Integer(MLProperties.getProperty("influxdbPort")), login, pwd);
     }
 
 

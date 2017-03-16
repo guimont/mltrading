@@ -2,6 +2,7 @@ package com.mltrading.ml;
 
 
 
+import com.mltrading.config.MLProperties;
 import com.mltrading.dao.Requester;
 import com.mltrading.dao.mongoFile.QueryMongoRequest;
 import com.mongodb.DBCursor;
@@ -83,7 +84,7 @@ public class MLStock  implements Serializable {
         this.model.save(CacheMLStock.getJavaSparkContext().sc(), path + "model/Model" + period.toString() + codif);
     }
 
-    private static String path="c:/";
+    public static String path= MLProperties.getProperty("model.path");
 
     public void loadModel() {
         this.model = RandomForestModel.load(CacheMLStock.getJavaSparkContext().sc(), path + "model/Model" + period.toString() + codif);

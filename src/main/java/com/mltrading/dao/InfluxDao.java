@@ -1,6 +1,7 @@
 package com.mltrading.dao;
 
-import com.mltrading.influxdb.InfluxDB;
+
+import org.influxdb.InfluxDB;
 
 /**
  * Created by gmo on 29/06/2015.

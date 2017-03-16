@@ -3,9 +3,10 @@ package com.mltrading.dao.TimeSeriesDao.impl;
 import com.mltrading.dao.Requester;
 import com.mltrading.dao.TimeSeriesDao.TimeSeriesDao;
 import com.mltrading.influxdb.dto.QueryRequest;
-import com.mltrading.influxdb.dto.QueryResult;
+
 import com.mltrading.models.stock.StockAnalyse;
 import com.mltrading.models.stock.StockHistory;
+import org.influxdb.dto.QueryResult;
 
 import java.util.ArrayList;
 import java.util.HashMap;

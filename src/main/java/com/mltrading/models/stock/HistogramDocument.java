@@ -1,9 +1,9 @@
 package com.mltrading.models.stock;
 
-import com.mltrading.dao.InfluxDaoConnector;
-import com.mltrading.dao.InfluxDaoConnectorDocument;
+
 import com.mltrading.dao.InfluxDaoConnectorNotation;
-import com.mltrading.influxdb.dto.QueryResult;
+
+import org.influxdb.dto.QueryResult;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

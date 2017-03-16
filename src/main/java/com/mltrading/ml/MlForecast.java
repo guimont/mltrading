@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -23,6 +24,9 @@ import java.util.stream.Stream;
  */
 @Service
 public class MlForecast {
+
+    private static final List<PredictionPeriodicity> periodicity = Arrays.asList(PredictionPeriodicity.D1, PredictionPeriodicity.D5, PredictionPeriodicity.D20, PredictionPeriodicity.D40);
+
 
     private static final Logger log = LoggerFactory.getLogger(MlForecast.class);
     private ExecutorService executorRef;
@@ -66,7 +70,7 @@ public class MlForecast {
 
     public MlForecast() {
 
-        int nbThread = MLProperties.getProperty("DEFAULT_NB_THREADS", DEFAULT_NB_THREADS);
+        int nbThread = MLProperties.getProperty("optimize.threads", DEFAULT_NB_THREADS);
 
         this.executorRef = new FixedThreadPoolExecutor(nbThread,
             "ExtractionRefThreadPool");
@@ -129,7 +133,7 @@ public class MlForecast {
         CacheMLActivities.addActivities(new MLActivities("optimize forecast", "", "start", 0, 0, false));
 
         //For test purpose only
-        stream/*.filter(s -> s.getRealCodif().equals("ORA"))*/.forEach(s -> executorRef.submit(() -> {    //For test purpose only
+        stream./*filter(s -> s.getCodif().equals("ORA")).*/forEach(s -> executorRef.submit(() -> {    //For test purpose only
             try {
                 optimize(s.getCodif(), backloop, method, validator);
             } finally {
@@ -167,7 +171,7 @@ public class MlForecast {
 
         for (int i = 0; i < loop; i++) {
 
-            MLStocks mls = new MLStocks(codif);
+            final MLStocks mls = new MLStocks(codif);
 
             CacheMLActivities.addActivities(new MLActivities("optimize", codif, "start", loop, 0, false));
 
@@ -179,22 +183,17 @@ public class MlForecast {
             String saveCode;
             {
                 RandomForestStock rfs = new RandomForestStock();
-                mls = rfs.processRFRef(codif, mls, false);
+                rfs.processRFRef(codif, mls, false);
                 saveCode = "V";
             }
 
             if (null != mls) {
                 mls.getStatus().calculeAvgPrd();
 
-                //TODO refactor this common code
-                mls.getValidator(PredictionPeriodicity.D1).save(mls.getCodif() + saveCode +
-                    PredictionPeriodicity.D1, mls.getStatus().getErrorRateD1(), mls.getStatus().getAvgD1());
-                mls.getValidator(PredictionPeriodicity.D5).save(mls.getCodif() + saveCode +
-                    PredictionPeriodicity.D5, mls.getStatus().getErrorRateD5(), mls.getStatus().getAvgD5());
-                mls.getValidator(PredictionPeriodicity.D20).save(mls.getCodif() + saveCode +
-                    PredictionPeriodicity.D20, mls.getStatus().getErrorRateD20(), mls.getStatus().getAvgD20());
-                mls.getValidator(PredictionPeriodicity.D40).save(mls.getCodif() + saveCode +
-                    PredictionPeriodicity.D40.toString(), mls.getStatus().getErrorRate(PredictionPeriodicity.D40), mls.getStatus().getAvg(PredictionPeriodicity.D40));
+                periodicity.forEach(p -> mls.getValidator(p).save(mls.getCodif() + saveCode +
+                    p, mls.getStatus().getErrorRate(p), mls.getStatus().getAvg(p)));
+
+
                 MLStocks ref = CacheMLStock.getMLStockCache().get(mls.getCodif());
 
 

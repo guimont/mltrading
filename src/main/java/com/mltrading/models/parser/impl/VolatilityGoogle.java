@@ -1,14 +1,12 @@
 package com.mltrading.models.parser.impl;
 
 import com.mltrading.dao.InfluxDaoConnector;
-import com.mltrading.influxdb.dto.BatchPoints;
-import com.mltrading.models.parser.HistoryIndiceParser;
 import com.mltrading.models.parser.HistoryParser;
 import com.mltrading.models.parser.ParserCommon;
 import com.mltrading.models.parser.VolatilityParser;
 
 import com.mltrading.models.stock.StockHistory;
-import com.mltrading.models.stock.StockIndice;
+import org.influxdb.dto.BatchPoints;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;

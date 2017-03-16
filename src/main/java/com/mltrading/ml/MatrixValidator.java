@@ -1,13 +1,14 @@
 package com.mltrading.ml;
 
 import com.mltrading.dao.InfluxDaoConnector;
-import com.mltrading.influxdb.dto.BatchPoints;
-import com.mltrading.influxdb.dto.Point;
-import com.mltrading.influxdb.dto.QueryResult;
+
 import com.mltrading.models.stock.cache.CacheRawMaterial;
 import com.mltrading.models.stock.cache.CacheStockIndice;
 import com.mltrading.models.stock.cache.CacheStockSector;
 import com.mltrading.models.stock.StockAnalyse;
+import org.influxdb.dto.BatchPoints;
+import org.influxdb.dto.Point;
+import org.influxdb.dto.QueryResult;
 
 import java.io.Serializable;
 

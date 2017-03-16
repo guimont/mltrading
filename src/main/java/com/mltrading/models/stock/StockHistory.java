@@ -4,7 +4,7 @@ package com.mltrading.models.stock;
 
 import com.mltrading.dao.Requester;
 import com.mltrading.influxdb.dto.QueryRequest;
-import com.mltrading.influxdb.dto.QueryResult;
+
 import com.mltrading.models.stock.cache.CacheStockHistory;
 import org.joda.time.DateTime;
 
@@ -330,23 +330,6 @@ public class StockHistory extends StockBase implements Serializable , Comparable
         return timeInsert;
     }
 
-    static public int DATE_COLUMN = 0;
-    static public int CONSENSUS_COLUMN_HIST = 1;
-    static public int HIGHEST_COLUMN_HIST = 2;
-    static public int LOWEST_COLUMN_HIST = 3;
-    static public int OPENING_COLUMN_HIST = 4;
-    static public int VALUE_COLUMN_HIST = 5;
-    static public int VOLUME_COLUMN_HIST = 6;
-
-    public static void populate(StockHistory sh, QueryResult meanQ, int i) {
-        sh.setDay((String) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(DATE_COLUMN));
-        sh.setConsensusNote((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(CONSENSUS_COLUMN_HIST));
-        sh.setHighest((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(HIGHEST_COLUMN_HIST));
-        sh.setLowest((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(LOWEST_COLUMN_HIST));
-        sh.setOpening((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(OPENING_COLUMN_HIST));
-        sh.setValue((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(VALUE_COLUMN_HIST));
-        sh.setVolume((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(VOLUME_COLUMN_HIST));
-    }
 
     public StockAnalyse getAnalyse_tech() {
         return analyse_tech;
@@ -571,72 +554,5 @@ public class StockHistory extends StockBase implements Serializable , Comparable
     }
 
 
-    /**
-     * NOT USE RANGE FUNCTION
-     */
-
-    @Deprecated
-    public static List<StockHistory> getStockAnalyseList(final String code) {
-        List<StockHistory> stockList = new ArrayList<StockHistory>();
-        String query = "SELECT * FROM "+code+ "T";
-        QueryResult list = (QueryResult) Requester.sendRequest(new QueryRequest(query, dbName));
-
-        for (int i =0;i<list.getResults().get(0).getSeries().get(0).getValues().size();i++)
-            stockList.add(getStockHistory(code, (String) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(0)));
-
-        return stockList;
-    }
-
-    @Deprecated
-    public static List<StockHistory> getStockHistoryList(final String code) {
-        List<StockHistory> stockList = new ArrayList<StockHistory>();
-        String query = "SELECT * FROM "+code;
-        QueryResult list = (QueryResult) Requester.sendRequest(new QueryRequest(query, dbName));
-
-        for (int i =0;i<list.getResults().get(0).getSeries().get(0).getValues().size();i++)
-            stockList.add(getStockHistory(code, (String) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(0)));
-
-        return stockList;
-    }
-
-    @Deprecated
-    public static List<StockHistory> getStockHistoryListOffsetWithAT(final String code, int offset) {
-        List<StockHistory> stockList = new ArrayList<>();
-        String query = "SELECT * FROM "+code;
-        QueryResult list = (QueryResult) Requester.sendRequest(new QueryRequest(query, dbName));
-
-        int size = list.getResults().get(0).getSeries().get(0).getValues().size();
-
-        if (size < offset)
-            return null;
-
-        for (int i = size-1; i < list.getResults().get(0).getSeries().get(0).getValues().size(); i++) {
-            StockHistory sh = new StockHistory();
-            String date = (String) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(0);
-            sh.setCode(code);
-            populate(sh, list, i);  sh.setAnalyse_tech(StockAnalyse.getAnalyse(code, date));
-            stockList.add(sh);
-        }
-
-        return stockList;
-    }
-
-
-    @Deprecated
-    public static List<String> getDateHistoryListOffset(final String code, int offset) {
-        List<String> dateList = new ArrayList<>();
-        String query = "SELECT * FROM "+code;
-        QueryResult list = (QueryResult) Requester.sendRequest(new QueryRequest(query, dbName));
-
-        if (list.getResults().get(0).getSeries().get(0).getValues().size()< offset)
-            return null;
-
-        for (int i = offset; i < list.getResults().get(0).getSeries().get(0).getValues().size(); i++) {
-            StockHistory sh = new StockHistory();
-            dateList.add((String) list.getResults().get(0).getSeries().get(0).getValues().get(i).get(0));
-
-        }
-        return dateList;
-    }
 
 }

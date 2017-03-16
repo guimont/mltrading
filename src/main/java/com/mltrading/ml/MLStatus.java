@@ -1,7 +1,8 @@
 package com.mltrading.ml;
 
 import com.mltrading.dao.InfluxDaoConnector;
-import com.mltrading.influxdb.dto.QueryResult;
+import org.influxdb.dto.QueryResult;
+
 
 import java.io.Serializable;
 import java.util.ArrayList;

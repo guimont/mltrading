@@ -103,7 +103,7 @@ public class FeaturesStock implements Serializable {
     }
 
 
-    public double getResultValue(PredictionPeriodicity t) {
+    public Double getResultValue(PredictionPeriodicity t) {
         switch (t) {
             case D1 :
                 return resultValueD1;
@@ -116,7 +116,7 @@ public class FeaturesStock implements Serializable {
         }
 
         //default
-        return 0;
+        return new Double(0);
     }
 
     public void setResultValue(double resultValue, PredictionPeriodicity t) {

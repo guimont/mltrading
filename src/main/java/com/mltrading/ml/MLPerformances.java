@@ -1,7 +1,8 @@
 package com.mltrading.ml;
 
 import com.mltrading.dao.InfluxDaoConnector;
-import com.mltrading.influxdb.dto.BatchPoints;
+import org.influxdb.dto.BatchPoints;
+
 
 import java.io.Serializable;
 import java.util.HashMap;

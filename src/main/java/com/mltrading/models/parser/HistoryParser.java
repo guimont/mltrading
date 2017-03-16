@@ -1,9 +1,10 @@
 package com.mltrading.models.parser;
 
-import com.mltrading.influxdb.dto.BatchPoints;
-import com.mltrading.influxdb.dto.Point;
+
 import com.mltrading.models.stock.StockGeneral;
 import com.mltrading.models.stock.StockHistory;
+import org.influxdb.dto.BatchPoints;
+import org.influxdb.dto.Point;
 
 import java.util.concurrent.TimeUnit;
 

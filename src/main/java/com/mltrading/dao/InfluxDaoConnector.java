@@ -1,12 +1,14 @@
 package com.mltrading.dao;
 
 import com.mltrading.dao.impl.InfluxDaoImpl;
-import com.mltrading.influxdb.dto.BatchPoints;
-import com.mltrading.influxdb.dto.Query;
+
 import com.mltrading.influxdb.dto.QueryRequest;
-import com.mltrading.influxdb.dto.QueryResult;
+
 import com.mltrading.ml.MatrixValidator;
 import com.mltrading.models.stock.StockHistory;
+import org.influxdb.dto.BatchPoints;
+import org.influxdb.dto.Query;
+import org.influxdb.dto.QueryResult;
 
 import java.util.List;
 

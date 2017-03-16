@@ -45,6 +45,10 @@ public class MLProperties {
         return prop.getProperty(key);
     }
 
+    public static String getProperty(String key, String defaultValue) {
+        String val = getProperty(key);
+        return (val == null) ? defaultValue : val;
+    }
 
     public static int getProperty(String key, int defaultValue) {
         String val = getProperty(key);

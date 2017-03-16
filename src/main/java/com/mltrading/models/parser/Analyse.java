@@ -1,14 +1,16 @@
 package com.mltrading.models.parser;
 
 import com.mltrading.dao.InfluxDaoConnector;
-import com.mltrading.influxdb.dto.BatchPoints;
-import com.mltrading.influxdb.dto.Point;
-import com.mltrading.influxdb.dto.QueryResult;
+
+import com.mltrading.dao.TimeSeriesDao.impl.TimeSeriesDaoInfluxImpl;
 import com.mltrading.models.stock.*;
 import com.mltrading.models.stock.cache.CacheRawMaterial;
 import com.mltrading.models.stock.cache.CacheStockGeneral;
 import com.mltrading.models.stock.cache.CacheStockIndice;
 import com.mltrading.models.stock.cache.CacheStockSector;
+import org.influxdb.dto.BatchPoints;
+import org.influxdb.dto.Point;
+import org.influxdb.dto.QueryResult;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +37,7 @@ public class Analyse {
     private static String STDDEV = "stddev";
     private static String MOMENTUM = "momentum";
 
-    private static int columnValue = StockHistory.VALUE_COLUMN_HIST;
+    private static int columnValue = TimeSeriesDaoInfluxImpl.VALUE_COLUMN_HIST;
 
 
 

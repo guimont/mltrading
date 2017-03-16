@@ -1,12 +1,11 @@
 package com.mltrading.ml;
 
 import com.mltrading.dao.InfluxDaoConnector;
-import com.mltrading.influxdb.dto.BatchPoints;
-import com.mltrading.influxdb.dto.Point;
-import org.joda.time.DateTime;
+import org.influxdb.dto.BatchPoints;
+import org.influxdb.dto.Point;
 
 import java.io.Serializable;
-import java.util.concurrent.TimeUnit;
+
 
 /**
  * Created by gmo on 19/01/2016.
