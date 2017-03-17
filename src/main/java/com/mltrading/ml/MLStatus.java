@@ -344,4 +344,13 @@ public class MLStatus implements Serializable{
 
         return cloneObject;
     }
+
+    public int getCount(PredictionPeriodicity period) {
+        if (period == PredictionPeriodicity.D1) return countD1;
+        if (period == PredictionPeriodicity.D5) return countD5;
+        if (period == PredictionPeriodicity.D20) return countD20;
+        if (period == PredictionPeriodicity.D40) return countD40;
+
+        return 0;
+    }
 }

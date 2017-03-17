@@ -3,10 +3,12 @@ package com.mltrading.service;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.mltrading.models.parser.*;
+import com.mltrading.models.stock.cache.CacheStockAnalyse;
 import com.mltrading.models.stock.cache.CacheStockGeneral;
 import com.mltrading.models.stock.StockGeneral;
 import com.mltrading.models.stock.StockHistory;
 import com.mltrading.models.stock.StockRawMat;
+import com.mltrading.models.stock.cache.CacheStockHistory;
 import com.mltrading.models.util.CsvFileReader;
 import com.mltrading.repository.ArticleRepository;
 import com.mltrading.repository.StockRepository;
@@ -92,6 +94,9 @@ public class ExtractionService {
         //article.fetchCurrent();
         Analyse a = new Analyse();
         a.processDaily(period);
+
+        CacheStockHistory.CacheStockHistoryHolder().clearCache();
+        CacheStockAnalyse.CacheStockAnalyseHolder().clearCache();
     }
     //
 

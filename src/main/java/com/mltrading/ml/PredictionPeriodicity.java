@@ -1,9 +1,14 @@
 package com.mltrading.ml;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Created by gmo on 31/08/2016.
  */
 public enum PredictionPeriodicity {
+
+
     /** 1 day */
     D1,
     /** 5 days    mid range */
@@ -22,3 +27,4 @@ public enum PredictionPeriodicity {
         return 0;
     }
 }
+

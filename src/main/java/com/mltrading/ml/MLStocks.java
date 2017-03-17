@@ -70,6 +70,12 @@ public class MLStocks  implements Serializable {
         }
     }
 
+    public void loadValidator() {
+        for (Map.Entry<PredictionPeriodicity, MLStock> entry : container.entrySet()) {
+            entry.getValue().getValidator().loadValidator(codif+"V"+entry.getKey().toString());
+        }
+    }
+
     public void save() {
         for (Map.Entry<PredictionPeriodicity, MLStock> entry : container.entrySet()) {
             entry.getValue().save();

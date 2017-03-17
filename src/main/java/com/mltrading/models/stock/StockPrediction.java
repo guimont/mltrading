@@ -1,5 +1,7 @@
 package com.mltrading.models.stock;
 
+import com.mltrading.ml.PredictionPeriodicity;
+
 import java.io.Serializable;
 
 /**
@@ -85,5 +87,20 @@ public class StockPrediction implements Serializable{
 
     public void setConfidenceD40(double confidenceD40) {
         this.confidenceD40 = confidenceD40;
+    }
+
+    public void setPrediction(double predict, PredictionPeriodicity period) {
+        if (period == PredictionPeriodicity.D1) setPredictionD1(predict);
+        if (period == PredictionPeriodicity.D5) setPredictionD5(predict);
+        if (period == PredictionPeriodicity.D20) setPredictionD20(predict);
+        if (period == PredictionPeriodicity.D40) setPredictionD40(predict);
+
+    }
+
+    public void setConfidence(int i, PredictionPeriodicity period) {
+        if (period == PredictionPeriodicity.D1) setConfidenceD1(i);
+        if (period == PredictionPeriodicity.D5) setConfidenceD5(i);
+        if (period == PredictionPeriodicity.D20) setConfidenceD20(i);
+        if (period == PredictionPeriodicity.D40) setConfidenceD40(i);
     }
 }
