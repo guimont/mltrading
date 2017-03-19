@@ -3,6 +3,7 @@
 ######################
 /src/main/webapp/dist
 /src/main/webapp/assets/images/MP4
+/src/main/resources/config/**
 
 ######################
 # Node

@@ -122,13 +122,13 @@ public class test {
         as.fetchSpecific(g);
         ArticleParserEchos ap = new ArticleParserEchos();
         ap.fetchSpecific(g);
-    }*/
+    }*
 
     public static void main(String[] args) {
 
         /*List<StockGeneral> sl = new ArrayList(CacheStockGeneral.getIsinCache().values());
         CacheMLStock.load(sl);
-        CacheMLStock.saveDB();*/
+        CacheMLStock.saveDB();*
 
         MLProperties.load();
         String uri = MLProperties.getProperty("worker");
