@@ -124,9 +124,16 @@ public class CacheMLStock {
         SynchWorker.delete();
 
         for (MLStocks mls : mlStockMap.values()) {
-            mls.save();
-            mls.saveDB();
+            PeriodicityList.periodicity.forEach(p -> {
+                if (mls.getSock(p).isModelImprove() == true) {
+                    mls.saveModel(p);
+                    mls.saveDB(p);
+                }
+            });
+            /* saveValidator Validator each time because old validator is deleted*/
             mls.getStatus().savePerf(mls.getCodif());
+            mls.saveValidator();
+
         }
 
         SynchWorker.save();

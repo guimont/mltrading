@@ -126,11 +126,11 @@ public class HistoryParserGoogle implements HistoryParser {
 
         int numPage;
         boolean retry;
-        String startUrl="http://www.google.com/finance/historical?q=FRA%3A";
+
 
         Consensus cnote = ConsensusParserInvestir.fetchStock(g.getCode());
         for(numPage =0; numPage <= MAXPAGE ; numPage += PAGINATION) {
-            String url = startUrl + g.getCodif() + endUrl + numPage;
+            String url = startUrl + getPlace(g.getPlace()) + midUrl + g.getRealCodif()  + endUrl + numPage;
             try {
                 String text;
                 int loopPage = 0;
@@ -158,15 +158,30 @@ public class HistoryParserGoogle implements HistoryParser {
                                 loopPage ++;
                                 StockHistory hist = new StockHistory(g);
                                 hist.setDayGoogle(t.get(0).text());
-
-                                hist.setOpening(new Double(t.get(1).text().replaceAll(" ", "").replace(",", "").replace("-","0")));
-                                hist.setHighest(new Double(t.get(2).text().replaceAll(" ", "").replace(",", "").replace("-","0")));
-                                hist.setLowest(new Double(t.get(3).text().replaceAll(" ", "").replace(",", "").replace("-","0")));
-                                hist.setValue(new Double(t.get(4).text().replaceAll(" ", "").replace(",", "").replace("-","0")));
-                                hist.setVolume(new Double(t.get(5).text().replaceAll(" ", "").replace(",", "").replace("-","0")));
+                                try {
+                                    hist.setOpening(new Double(t.get(1).text().replaceAll(" ", "").replace(",", "")));
+                                } catch (Exception e) {
+                                    hist.setOpening(new Double(0));
+                                }
+                                try {
+                                    hist.setHighest(new Double(t.get(2).text().replaceAll(" ", "").replace(",", "")));
+                                } catch (Exception e) {
+                                    hist.setHighest(new Double(0));
+                                }
+                                try {
+                                    hist.setLowest(new Double(t.get(3).text().replaceAll(" ", "").replace(",", "")));
+                                } catch (Exception e) {
+                                    hist.setLowest(new Double(0));
+                                }
+                                //mandatory no catch
+                                hist.setValue(new Double(t.get(4).text().replaceAll(" ", "").replace(",", "")));
+                                try {
+                                    hist.setVolume(new Double(t.get(5).text().replaceAll(" ", "").replace(",", "")));
+                                } catch (Exception e) {
+                                    hist.setVolume(new Double(0));
+                                }
                                 hist.setConsensusNote(cnote.getNotation(cnote.getIndice(loopPage + numPage)).getAvg());
-
-                                HistoryParser.saveHistory(bp, hist); //dont save no trading day
+                                HistoryParser.saveHistory(bp, hist);
                                 System.out.println(hist.toString());
                             }
                         }

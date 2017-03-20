@@ -26,12 +26,21 @@ public class MLStock  implements Serializable {
     private PredictionPeriodicity period;
     private RandomForestModel model;
     private MatrixValidator validator;
+    private boolean modelImprove;
     private static final Logger log = LoggerFactory.getLogger(MLStock.class);
 
     public MLStock(String codif, PredictionPeriodicity period) {
         this.period = period;
         this.codif = codif;
         validator = new MatrixValidator();
+    }
+
+    public boolean isModelImprove() {
+        return modelImprove;
+    }
+
+    public void setModelImprove(boolean modelImprove) {
+        this.modelImprove = modelImprove;
     }
 
     public MatrixValidator getValidator() {
@@ -59,30 +68,29 @@ public class MLStock  implements Serializable {
     }
 
     public void saveModelDB() {
+        if (isModelImprove()) {
 
-        try {
-            if (System.getProperty("os.name").contains("Windows"))
-                path = "/";
-            GridFS gfsModel = (GridFS) Requester.sendRequest(new QueryMongoRequest("model/Model" + period.toString() + codif));
-            File dir = new File(path+"model/Model" + period.toString() + codif);
-            Collection<File> files = FileUtils.listFiles(dir , null, true);
-            for (File f:files) {
-                GridFSInputFile gfsFile = gfsModel.createFile(f);
-                if (f.getPath().contains("_temporary"))
-                    gfsFile.setFilename(f.getPath().split("_temporary")[0]+f.getName());
-                else
-                    gfsFile.setFilename(f.getPath());
-                gfsFile.save();
+            try {
+                if (System.getProperty("os.name").contains("Windows"))
+                    path = "/";
+                GridFS gfsModel = (GridFS) Requester.sendRequest(new QueryMongoRequest("model/Model" + period.toString() + codif));
+                File dir = new File(path + "model/Model" + period.toString() + codif);
+                Collection<File> files = FileUtils.listFiles(dir, null, true);
+                for (File f : files) {
+                    GridFSInputFile gfsFile = gfsModel.createFile(f);
+                    if (f.getPath().contains("_temporary"))
+                        gfsFile.setFilename(f.getPath().split("_temporary")[0] + f.getName());
+                    else
+                        gfsFile.setFilename(f.getPath());
+                    gfsFile.save();
+                }
+            } catch (Exception e) {
+                log.error("saveModel: " + codif + e);
             }
-        } catch (Exception e) {
-            log.error("saveModel: " + codif + e);
         }
     }
 
 
-    public void saveModel() {
-        this.model.save(CacheMLStock.getJavaSparkContext().sc(), path + "model/Model" + period.toString() + codif);
-    }
 
     public static String path= MLProperties.getProperty("model.path");
 
@@ -96,10 +104,16 @@ public class MLStock  implements Serializable {
         validator.loadValidator(codif+"V"+period.toString());
     }
 
-    public void save() {
-        saveModel();
-        validator.saveModel(codif+"V"+period.toString());
+
+
+    public void saveModel() {
+        this.model.save(CacheMLStock.getJavaSparkContext().sc(), path + "model/Model" + period.toString() + codif);
     }
+
+    public void saveValidator() {
+        validator.saveModel(codif + "V" + period.toString());
+    }
+
 
 
     public void distibute() {

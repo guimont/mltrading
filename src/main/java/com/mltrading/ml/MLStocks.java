@@ -76,10 +76,18 @@ public class MLStocks  implements Serializable {
         }
     }
 
-    public void save() {
+    public void saveValidator() {
         for (Map.Entry<PredictionPeriodicity, MLStock> entry : container.entrySet()) {
-            entry.getValue().save();
+            entry.getValue().saveValidator();
         }
+    }
+
+    /**
+     * saveValidator for specific perdiod
+     * @param p
+     */
+    public void saveModel(PredictionPeriodicity p) {
+        container.get(p).saveModel();
     }
 
     public void generateValidator(String methodName) {
@@ -188,6 +196,18 @@ public class MLStocks  implements Serializable {
     }
 
 
+    public void resetScoring() {
+        setScoring(false);
+    }
+
+
+    public void setScoring(boolean scoring) {
+        for (Map.Entry<PredictionPeriodicity, MLStock> entry : container.entrySet()) {
+            entry.getValue().setModelImprove(scoring);
+        }
+    }
+
+
     /**
      *
      * @return
@@ -224,6 +244,11 @@ public class MLStocks  implements Serializable {
         for (Map.Entry<PredictionPeriodicity, MLStock> entry : container.entrySet()) {
             entry.getValue().saveModelDB();
         }
+    }
+
+
+    public void saveDB(PredictionPeriodicity p) {
+        container.get(p).saveModelDB();
     }
 
     public void loadDB() {

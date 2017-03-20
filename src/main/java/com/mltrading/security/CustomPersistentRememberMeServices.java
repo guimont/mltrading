@@ -121,7 +121,7 @@ public class CustomPersistentRememberMeServices extends
             persistentTokenRepository.save(token);
             addCookie(token, request, response);
         } catch (DataAccessException e) {
-            log.error("Failed to save persistent token ", e);
+            log.error("Failed to saveValidator persistent token ", e);
         }
     }
 

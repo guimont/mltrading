@@ -67,18 +67,21 @@ public class RealTimeParserBoursorama implements RealTimeParser {
                     codif = splitRes[0].substring(1);
                 }
 
-                StockGeneral g = CacheStockGeneral.getCache().get(CacheStockGeneral.getCode(codif));
+                String code = CacheStockGeneral.getCode(codif);
+                if (code != null) {
+                    StockGeneral g = CacheStockGeneral.getCache().get(code);
 
-                g.setValue(new Double(link.child(3).text().replaceAll(" \\(c\\)", "")));
-                g.setVariation(new Double(link.child(4).text().replaceAll("%", "")));
-                g.setOpening(new Double(link.child(5).text().replace("ND","0")));
-                g.setVolume(new Double(link.child(9).text().replaceAll(" ", "")));
+                    g.setValue(new Double(link.child(3).text().replaceAll(" \\(c\\)", "")));
+                    g.setVariation(new Double(link.child(4).text().replaceAll("%", "")));
+                    g.setOpening(new Double(link.child(5).text().replace("ND","0")));
+                    g.setVolume(new Double(link.child(9).text().replaceAll(" ", "")));
 
 
-                try {
-                    CacheStockGeneral.getCache().put(g.getCode(), g);
-                } catch (Exception e) {
-                    System.out.print(e);
+                    try {
+                        CacheStockGeneral.getCache().put(g.getCode(), g);
+                    } catch (Exception e) {
+                        System.out.print(e);
+                    }
                 }
             }
 

@@ -28,10 +28,27 @@ public class MLStatus implements Serializable{
 
     private List<MLPerformances> perfList;
 
+
+    /**
+     * save perf for all period
+     * @param code
+     */
     public void savePerf(String code) {
         for (MLPerformances perfs : perfList) {
             perfs.save(code);
         }
+    }
+
+    /**
+     * save perf for specific period
+     * @param code
+     * @param p
+     */
+    public void savePerf(String code, PredictionPeriodicity p) {
+        for (MLPerformances perfs : perfList) {
+            perfs.save(code,p);
+        }
+
     }
 
 
@@ -353,4 +370,8 @@ public class MLStatus implements Serializable{
 
         return 0;
     }
+
+
+
+
 }

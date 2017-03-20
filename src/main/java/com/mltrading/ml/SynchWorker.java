@@ -34,7 +34,7 @@ public class SynchWorker {
     public static void save() {
         for (String uri : uriList) {
             try {
-                ParserCommon.loadUrl(new URL("http://"+uri+"/save"));
+                ParserCommon.loadUrl(new URL("http://"+uri+"/saveValidator"));
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }

@@ -88,7 +88,7 @@ public class HistoryParserYahoo implements HistoryParser {
                                 hist.setVolume(new Double(t.get(5).text().replaceAll(" ", "")));
                                 hist.setConsensusNote(cnote.getNotation(cnote.getIndice(loopPage + 0)).getAvg());
                                 if (hist.getVolume() > 0)
-                                    HistoryParser.saveHistory(bp, hist); //dont save no trading day
+                                    HistoryParser.saveHistory(bp, hist); //dont saveValidator no trading day
                                 System.out.println(hist.toString());
                                 if (count++ >= range)
                                     break;
@@ -148,7 +148,7 @@ public class HistoryParserYahoo implements HistoryParser {
                                 hist.setValue(new Double(t.get(4).text().replace(",", ".")));
                                 hist.setVolume(new Double(t.get(5).text().replaceAll(" ", "")));
                                 hist.setConsensusNote(cnote.getNotation(cnote.getIndice(loopPage+numPage)).getAvg());
-                                if (hist.getVolume() > 0) HistoryParser.saveHistory(bp, hist); //dont save no trading day
+                                if (hist.getVolume() > 0) HistoryParser.saveHistory(bp, hist); //dont saveValidator no trading day
                                 System.out.println(hist.toString());
                             }
                         }
@@ -208,7 +208,7 @@ public class HistoryParserYahoo implements HistoryParser {
                                     hist.setValue(new Double(t.get(4).text().replace(",", ".")));
                                     hist.setVolume(new Double(t.get(5).text().replaceAll(" ", "")));
                                     hist.setConsensusNote(cnote.getNotation(cnote.getIndice(loopPage+numPage)).getAvg());
-                                    if (hist.getVolume() > 0) HistoryParser.saveHistory(bp, hist); //dont save no trading day
+                                    if (hist.getVolume() > 0) HistoryParser.saveHistory(bp, hist); //dont saveValidator no trading day
                                     System.out.println(hist.toString());
                                 }
                             }

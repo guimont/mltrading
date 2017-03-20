@@ -89,14 +89,15 @@ public class MlForecast {
 
     /**
      * optimization for matrix validator
-     * @param loop: indicate loop for each save model
-     * @param backloop: iteration before save
+     * @param loop: indicate loop for each saveValidator model
+     * @param backloop: iteration before saveValidator
      * @param validator: validator model
      * @param target: PX1 or sector only
      */
     public void optimize(int loop, int backloop, String validator, String target) {
 
         for (int i = 0; i < loop; i++) {
+            CacheMLStock.getMLStockCache().values().forEach(m -> m.resetScoring());
             if (target.equals("PX1"))
                 optimize(CacheStockGeneral.getIsinCache().values().stream(), CacheStockGeneral.getIsinCache().values().size(), backloop, validator, Method.RandomForest);
             else
@@ -105,10 +106,10 @@ public class MlForecast {
             updatePredictor();
 
 
-            CacheMLActivities.addActivities(new MLActivities("save forecast model", "", "start", 0, 0, false));
+            CacheMLActivities.addActivities(new MLActivities("saveValidator forecast model", "", "start", 0, 0, false));
             log.info("saveML");
             CacheMLStock.save();
-            CacheMLActivities.addActivities(new MLActivities("save forecast model", "", "end", 0, 0, true));
+            CacheMLActivities.addActivities(new MLActivities("saveValidator forecast model", "", "end", 0, 0, true));
         }
 
         //evaluate();
@@ -126,14 +127,14 @@ public class MlForecast {
      */
     public void optimize(Stream<? extends StockHistory> stream, int size, int backloop, String validator, Method method) {
 
-        final CountDownLatch latches = new CountDownLatch(size);
-        //final CountDownLatch latches = new CountDownLatch(1); //testmode ORA
+        //final CountDownLatch latches = new CountDownLatch(size);
+        final CountDownLatch latches = new CountDownLatch(1); //testmode ORA
         CacheMLActivities.setCountGlobal(latches.getCount());
 
         CacheMLActivities.addActivities(new MLActivities("optimize forecast", "", "start", 0, 0, false));
 
         //For test purpose only
-        stream./*filter(s -> s.getCodif().equals("ORA")).*/forEach(s -> executorRef.submit(() -> {    //For test purpose only
+        stream.filter(s -> s.getCodif().equals("ORA")).forEach(s -> executorRef.submit(() -> {    //For test purpose only
             try {
                 optimize(s.getCodif(), backloop, method, validator);
             } finally {
@@ -221,6 +222,8 @@ public class MlForecast {
 
 
                 } else {
+                    /* empty ref so improve scoring yes*/
+                    mls.setScoring(true);
                     CacheMLStock.getMLStockCache().put(mls.getCodif(), mls);
                     CacheMLActivities.addActivities(new MLActivities("optimize", codif, "empty model", loop, 0, true));
                 }
@@ -261,7 +264,7 @@ public class MlForecast {
             ref.replace(period, mls);
             ref.getStatus().setAvg(mls.getStatus().getAvgD1(), period);
             ref.getStatus().setErrorRate(mls.getStatus().getErrorRate(period), period);
-
+            ref.getSock(period).setModelImprove(true);
             try {
                 ref.getStatus().replaceElementList(mls.getStatus().getPerfList(), period);
             } catch (Exception e) {
@@ -333,10 +336,10 @@ public class MlForecast {
         updatePredictor();
 
 
-        CacheMLActivities.addActivities(new MLActivities("save forecast model", "", "start", 0, 0, false));
+        CacheMLActivities.addActivities(new MLActivities("saveValidator forecast model", "", "start", 0, 0, false));
         log.info("saveML");
         CacheMLStock.save();
-        CacheMLActivities.addActivities(new MLActivities("save forecast model", "", "end", 0, 0, true));
+        CacheMLActivities.addActivities(new MLActivities("saveValidator forecast model", "", "end", 0, 0, true));
 
     }
 

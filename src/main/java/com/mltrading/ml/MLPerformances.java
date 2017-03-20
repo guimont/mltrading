@@ -92,10 +92,15 @@ public class MLPerformances  implements Serializable, Comparable<MLPerformances>
 
 
     void save(String code) {
-        BatchPoints bp = InfluxDaoConnector.getBatchPoints(MatrixValidator.dbNameModel);
+        BatchPoints bp = InfluxDaoConnector.getBatchPointsV1(MatrixValidator.dbNameModel);
         for (Map.Entry<PredictionPeriodicity, MLPerformance> entry : container.entrySet()) {
             entry.getValue().savePerformance(bp,code+"P"+entry.getKey());
         }
+    }
+
+    void save(String code, PredictionPeriodicity p) {
+        BatchPoints bp = InfluxDaoConnector.getBatchPointsV1(MatrixValidator.dbNameModel);
+        container.get(p).savePerformance(bp,code+"P"+p.toString());
     }
 
 

@@ -65,6 +65,13 @@ public class InfluxDaoConnector {
         }
     }
 
+    public static BatchPoints getBatchPointsV1(String dbName) {
+        return BatchPoints
+            .database(dbName)
+            .retentionPolicy("autogen")
+            .build();
+    }
+
 
     public static BatchPoints getBatchPoints(String dbName) {
         return BatchPoints
