@@ -21,6 +21,10 @@ import java.io.Serializable;
 import java.util.Collection;
 
 
+/**
+ * Machine learning stock
+ * class to define object for ml
+ */
 public class MLStock  implements Serializable {
     private String codif;
     private PredictionPeriodicity period;
@@ -35,6 +39,11 @@ public class MLStock  implements Serializable {
         validator = new MatrixValidator();
     }
 
+    /**
+     * check is improve model to know if model could be save
+     * save is a long process so have to optimize it
+     * @return
+     */
     public boolean isModelImprove() {
         return modelImprove;
     }
@@ -67,6 +76,9 @@ public class MLStock  implements Serializable {
         this.model = model;
     }
 
+    /**
+     * save mllib model on mongoDB
+     */
     public void saveModelDB() {
         if (isModelImprove()) {
 
@@ -94,28 +106,42 @@ public class MLStock  implements Serializable {
 
     public static String path= MLProperties.getProperty("model.path");
 
+    /**
+     * load spark ml model form filesystem
+     */
     public void loadModel() {
         this.model = RandomForestModel.load(CacheMLStock.getJavaSparkContext().sc(), path + "model/Model" + period.toString() + codif);
     }
 
 
+    /**
+     * loader
+     */
     public void load() {
         loadModel();
         validator.loadValidator(codif+"V"+period.toString());
     }
 
 
-
+    /**
+     * save model, spark model on file system
+     */
     public void saveModel() {
         this.model.save(CacheMLStock.getJavaSparkContext().sc(), path + "model/Model" + period.toString() + codif);
     }
 
+    /**
+     * save validator in influxdb modelNote database
+     * fomat is 'codif''V''period'. Example ORAVD5
+     */
     public void saveValidator() {
         validator.saveModel(codif + "V" + period.toString());
     }
 
 
-
+    /**
+     * load model form mongoDB on file system
+     */
     public void distibute() {
         //MongoClient mongoClient = null;
         try {

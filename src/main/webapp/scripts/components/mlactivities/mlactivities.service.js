@@ -7,6 +7,12 @@ angular.module('mltradingApp')
                 return $http.get('api//MLActivities/all').then(function (response) {
                     return response.data;
                 });
+            },
+
+            resume: function () {
+                return $http.get('api/resume').then(function (response) {
+                    return response.data;
+                });
             }
         };
     });

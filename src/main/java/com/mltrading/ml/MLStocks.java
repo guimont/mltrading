@@ -17,6 +17,7 @@ import java.util.Map;
 
 /**
  * basic class implementation for machine learning status
+ * container of MLStock and MLStatus for result
  */
 public class MLStocks  implements Serializable {
     private String codif;
@@ -183,6 +184,7 @@ public class MLStocks  implements Serializable {
      * @param ref
      * @return
      */
+    @Deprecated
     public MLStocks replaceValidator(MLStocks ref) {
         int position = this.getValidator(PredictionPeriodicity.D1).getCol();
         MLStocks copy = new MLStocks(this.getCodif());

@@ -64,7 +64,7 @@ public class MatrixValidator implements Serializable,Cloneable {
     static private int HS_VOLUME_COL = 2;
     static private int N_HS_COL = 3;
 
-    private int vSize = 300;
+    private int vSize = 0;
 
 
     public int getCol() {

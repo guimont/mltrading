@@ -2,6 +2,8 @@ package com.mltrading.web.rest;
 
 import com.mltrading.ml.CacheMLActivities;
 import com.mltrading.ml.MlForecast;
+import com.mltrading.models.stock.StockPerformance;
+import com.mltrading.models.stock.StockPerformanceList;
 import com.mltrading.models.util.MLActivities;
 import com.mltrading.security.AuthoritiesConstants;
 import com.mltrading.web.rest.dto.ForecastDTO;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -57,6 +60,15 @@ public class ForecastResource {
             forecast.optimize(fcDTO.getGlobalLoop(), fcDTO.getInputLoop(), fcDTO.getValidator(), fcDTO.getTarget());
 
         return "ok";
+    }
+
+
+    @RequestMapping(value = "/resume",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    public StockPerformanceList resumePerformance() {
+
+        return new StockPerformanceList().processingList();
     }
 
 }

@@ -8,6 +8,10 @@ angular.module('mltradingApp')
             MLActivitiesService.findAll().then(function (data) {
                 $scope.data = data;
             });
+
+            MLActivitiesService.resume().then(function (data) {
+                $scope.resume = data;
+            });
         };
 
         $scope.onLoad();
@@ -28,6 +32,8 @@ angular.module('mltradingApp')
                 return response.data;
             });
         }
+
+
 
 
     });
