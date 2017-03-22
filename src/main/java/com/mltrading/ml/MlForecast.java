@@ -127,14 +127,14 @@ public class MlForecast {
      */
     public void optimize(Stream<? extends StockHistory> stream, int size, int backloop, String validator, Method method) {
 
-        //final CountDownLatch latches = new CountDownLatch(size);
-        final CountDownLatch latches = new CountDownLatch(1); //testmode ORA
+        final CountDownLatch latches = new CountDownLatch(size);
+        //final CountDownLatch latches = new CountDownLatch(1); //testmode ORA
         CacheMLActivities.setCountGlobal(latches.getCount());
 
         CacheMLActivities.addActivities(new MLActivities("optimize forecast", "", "start", 0, 0, false));
 
         //For test purpose only
-        stream.filter(s -> s.getCodif().equals("ORA")).forEach(s -> executorRef.submit(() -> {    //For test purpose only
+        stream/*.filter(s -> s.getCodif().equals("ORA"))*/.forEach(s -> executorRef.submit(() -> {    //For test purpose only
             try {
                 optimize(s.getCodif(), backloop, method, validator);
             } finally {

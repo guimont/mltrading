@@ -22,7 +22,7 @@ public class CacheMLActivities {
 
 
     public static List<MLActivities> getActivities() {
-        return cache;
+        return cache.subList(cache.size()-100 > 0 ? cache.size()-100:0, cache.size());
     }
 
     public static long getCountGlobal() {

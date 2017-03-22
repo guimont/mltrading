@@ -2,6 +2,7 @@ package com.mltrading.models;
 
 import com.mltrading.config.MLProperties;
 import com.mltrading.models.parser.*;
+import com.mltrading.models.parser.impl.HistoryLocalRawMaterials;
 import com.mltrading.service.ExtractionService;
 
 import com.mltrading.service.UserService;
@@ -41,21 +42,17 @@ public class test {
         }
     }*/
 
-/*
+
+
 
     public static void main(String[] args) {
-        /*HistoryRawMaterialsParser rawParser = new HistoryLocalRawMaterials();
-        rawParser.fetchCurrent(43);
+        MLProperties.load();
+        HistoryRawMaterialsParser rawParser = new HistoryLocalRawMaterials();
+        rawParser.fetchCurrent(15);
         Analyse a = new Analyse();
-        a.processDaily(50);
-*
-        //RealTimeParserBoursorama.loaderCache();
-
-        RealTimeSectorGoogle.refreshCache();
-
-
+        a.processAllRaw();
     }
-*/
+
 
 
 

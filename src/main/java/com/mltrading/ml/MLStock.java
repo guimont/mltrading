@@ -76,16 +76,35 @@ public class MLStock  implements Serializable {
         this.model = model;
     }
 
+
+    /**
+     * load model form mongoDB on file system
+     */
+    public void removeModelDB() {
+        try {
+            GridFS gfsModel = (GridFS) Requester.sendRequest(new QueryMongoRequest("model/Model" + period.toString() + codif));
+
+            DBCursor cursor = gfsModel.getFileList();
+            while (cursor.hasNext()) {
+                GridFSDBFile f = gfsModel.findOne(cursor.next());
+                gfsModel.remove(f.getFilename());
+            }
+        } catch (Exception e) {
+            log.error("remove: " + codif + e);
+        }
+    }
+
+
     /**
      * save mllib model on mongoDB
      */
     public void saveModelDB() {
         if (isModelImprove()) {
+            removeModelDB();
 
             try {
-                if (System.getProperty("os.name").contains("Windows"))
-                    path = "/";
                 GridFS gfsModel = (GridFS) Requester.sendRequest(new QueryMongoRequest("model/Model" + period.toString() + codif));
+
                 File dir = new File(path + "model/Model" + period.toString() + codif);
                 Collection<File> files = FileUtils.listFiles(dir, null, true);
                 for (File f : files) {
@@ -143,15 +162,8 @@ public class MLStock  implements Serializable {
      * load model form mongoDB on file system
      */
     public void distibute() {
-        //MongoClient mongoClient = null;
         try {
-            if (!System.getProperty("os.name").contains("Windows"))
-                path = "/";
-            //mongoClient = new MongoClient( "172.22.30.111" , 27017 );
-
-
             GridFS gfsModel = (GridFS) Requester.sendRequest(new QueryMongoRequest("model/Model" + period.toString() + codif));
-
 
             DBCursor cursor = gfsModel.getFileList();
             while (cursor.hasNext()) {

@@ -2,7 +2,7 @@
 <div class="container">
 
 
-    <div class="content-body" style="margin-top: 20px;" ng-submit="forecast()" ng-controller="MLActivitiesController">
+    <div class="content-body" style="margin-top: 20px;" ng-submit="forecast()" >
         <div class="row">
             <div class="col-md-12">
                 <div class="panel" data-fill-color="true">
@@ -66,50 +66,86 @@
         </div><!-- /row -->
     </div><!-- /content-body -->
 
-    <!--<form class="form-horizontal" style="margin-top: 20px;" ng-submit="forecast()" ng-controller="MLActivitiesController">
-        <div class="form-group">
-            <label for="globalLoop" class="col-sm-2 control-label">Global Loop</label>
-            <div class="col-sm-10">
-                <input type="text" class="form-control" id="globalLoop" placeholder="1" ng-model="form.globalLoop">
-            </div>
-        </div>
 
-        <div class="form-group">
-            <label for="inputLoop" class="col-sm-2 control-label">Save Loop</label>
-            <div class="col-sm-10">
-                <input type="text" class="form-control" id="inputLoop" placeholder="2" ng-model="form.inputLoop">
-            </div>
-        </div>
+    <h2 translate="mlactivities.title">Extractions</h2>
+    <table class="table table-condensed table-striped table-bordered table-responsive">
+        <thead>
+        <tr>
+            <th ng-click="predicate = 'timestamp'; reverse=!reverse"><span translate="mlactivities.table.header.name">Code</span></th>
+            <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="mlactivities.table.header.model"></span></th>
+            <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="mlactivities.table.header.lastdate"></span></th>
+            <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="mlactivities.table.header.statD1"></span></th>
+            <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="mlactivities.table.header.vSize"></span></th>
+            <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="mlactivities.table.header.statD5"></span></th>
+            <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="mlactivities.table.header.vSize"></span></th>
+            <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="mlactivities.table.header.statD20"></span></th>
+            <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="mlactivities.table.header.vSize"></span></th>
+            <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="mlactivities.table.header.statD40"></span></th>
+            <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="mlactivities.table.header.vSize"></span></th>
+            <th ng-click="predicate = 'data.message'; reverse=!reverse"><span translate="mlactivities.table.header.iteration"></span></th>
+        </tr>
+        </thead>
 
-        <div class="form-group">
+        <tr ng-repeat="perf in resume.perfList| filter:filter | orderBy:'-name':true" ng-hide="audit.filtered">
+           <td><small>{{perf.name}}</small></td>
+           <td><small>{{perf.modelType}}</small></td>
+           <td><small>{{perf.lastUpdate.substring(0,16)}}</small></td>
+           <td><small>{{perf.container.D1.error}} / {{perf.container.D1.yield.toFixed(3)}} </small></td>
+            <td>{{perf.container.D1.vectorSize}}</td>
+            <td><small>{{perf.container.D5.error}} / {{perf.container.D5.yield.toFixed(3)}}</small></td>
+            <td>{{perf.container.D5.vectorSize}}</td>
+            <td><small>{{perf.container.D20.error}} / {{perf.container.D20.yield.toFixed(3)}}</small></td>
+            <td>{{perf.container.D20.vectorSize}}</td>
+            <td><small>{{perf.container.D40.error}} / {{perf.container.D40.yield.toFixed(3)}}</small></td>
+            <td>{{perf.container.D40.vectorSize}}</td>
+           <td><small>{{perf.iteration}}</small></td>
+       </tr>
+   </table>
 
-            <label for="validator" class="col-sm-2 control-label">inputModel</label>
-            <div class="col-sm-10">
-                <select class="form-control" id="validator" ng-model="form.validator">
-                    <option>generateSimpleModel</option>
-                    <option>generateCompleteModel</option>
-                    <option>optimizeModel</option>
-                </select>
-            </div>
-        </div>
+   <!--<form class="form-horizontal" style="margin-top: 20px;" ng-submit="forecast()" ng-controller="MLActivitiesController">
+       <div class="form-group">
+           <label for="globalLoop" class="col-sm-2 control-label">Global Loop</label>
+           <div class="col-sm-10">
+               <input type="text" class="form-control" id="globalLoop" placeholder="1" ng-model="form.globalLoop">
+           </div>
+       </div>
 
-        <div class="form-group">
+       <div class="form-group">
+           <label for="inputLoop" class="col-sm-2 control-label">Save Loop</label>
+           <div class="col-sm-10">
+               <input type="text" class="form-control" id="inputLoop" placeholder="2" ng-model="form.inputLoop">
+           </div>
+       </div>
 
-            <label for="target" class="col-sm-2 control-label">type</label>
-            <div class="col-sm-10">
-                <select class="form-control" id="target" ng-model="form.target">
-                    <option>PX1</option>
-                    <option>Sector</option>
-                    <option>RandomValidator</option>
-                </select>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-sm-offset-2 col-sm-10">
-                <button type="submit" class="btn btn-default">Forecast</button>
-            </div>
-        </div>
-    </form>-->
+       <div class="form-group">
+
+           <label for="validator" class="col-sm-2 control-label">inputModel</label>
+           <div class="col-sm-10">
+               <select class="form-control" id="validator" ng-model="form.validator">
+                   <option>generateSimpleModel</option>
+                   <option>generateCompleteModel</option>
+                   <option>optimizeModel</option>
+               </select>
+           </div>
+       </div>
+
+       <div class="form-group">
+
+           <label for="target" class="col-sm-2 control-label">type</label>
+           <div class="col-sm-10">
+               <select class="form-control" id="target" ng-model="form.target">
+                   <option>PX1</option>
+                   <option>Sector</option>
+                   <option>RandomValidator</option>
+               </select>
+           </div>
+       </div>
+       <div class="form-group">
+           <div class="col-sm-offset-2 col-sm-10">
+               <button type="submit" class="btn btn-default">Forecast</button>
+           </div>
+       </div>
+   </form>-->
 
 
     <h2 translate="mlactivities.title">Extractions</h2>

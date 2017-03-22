@@ -101,6 +101,14 @@ public class Analyse {
     }
 
 
+    public void processAllRaw() {
+
+        for (StockRawMat g : CacheRawMaterial.getCache().values()) {
+            processAnalysisAll(g.getCode());
+        }
+    }
+
+
     public void processSectorAll() {
 
         for (StockSector g : CacheStockSector.getSectorCache().values()) {

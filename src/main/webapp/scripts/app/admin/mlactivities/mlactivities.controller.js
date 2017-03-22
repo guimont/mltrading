@@ -9,13 +9,18 @@ angular.module('mltradingApp')
                 $scope.data = data;
             });
 
+        };
+
+        $scope.onLoad();
+
+
+        $scope.resume = function () {
             MLActivitiesService.resume().then(function (data) {
                 $scope.resume = data;
             });
         };
 
-        $scope.onLoad();
-
+        $scope.resume();
 
         var formData = {
             globalLoop: "1",
@@ -28,7 +33,7 @@ angular.module('mltradingApp')
 
         $scope.forecast = function() {
             formData = $scope.form;
-            return $http.post('/api/optimizeML',formData).then(function (response) {
+            return $http.post('/api/ML/optimize',formData).then(function (response) {
                 return response.data;
             });
         }

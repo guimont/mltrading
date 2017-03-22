@@ -9,8 +9,18 @@
                 "enddate" : "End Date",
                 "status" : "Status op",
                 "progres": "up",
-                "loop": "iteration"
+                "loop": "iteration",
+                "name": "code",
+                "modelML": "modelML",
+                "lastdate": "last iteration",
+                "statD1": "D1 Error/Rate",
+                "statD5": "D5 Error/Rate",
+                "statD20": "D20 Error/Rate",
+                "statD40": "D40 Error/Rate",
+                "iteration" : "iteration",
+                "vSize" : "vector size"
             }
         }
     }
+
 }

@@ -59,10 +59,11 @@ public class HistoryLocalRawMaterials implements HistoryRawMaterialsParser {
                         raw.setCode(r.getCode());
                         raw.setCodif(r.getCode());
                         raw.setDayInvest(t.children().get(0).text());
-                        raw.setValue(new Double(t.children().get(1).text().replaceAll(" ", "").replace(",", "").replace("-", "0")));
-                        raw.setOpening(new Double(t.children().get(2).text().replaceAll(" ", "").replace(",", "").replace("-", "0")));
-                        raw.setHighest(new Double(t.children().get(3).text().replaceAll(" ", "").replace(",", "").replace("-", "0")));
-                        raw.setLowest(new Double(t.children().get(4).text().replaceAll(" ", "").replace(",", "").replace("-", "0")));
+                        raw.setValue(new Double(t.children().get(1).text().replaceAll(" ", "").replaceAll(".", "").replace(",", ".").replace("-", "0")));
+                        raw.setOpening(new Double(t.children().get(2).text().replaceAll(" ", "").replaceAll(".", "").replace(",", ".").replace("-", "0")));
+                        raw.setHighest(new Double(t.children().get(3).text().replaceAll(" ", "").replaceAll(".", "").replace(",", ".").replace("-", "0")));
+                        raw.setLowest(new Double(t.children().get(4).text().replaceAll(" ", "").replaceAll(".", "").replace(",", ".").replace("-", "0")));
+
 
                         HistoryParser.saveHistory(bp, raw);
 
@@ -99,10 +100,10 @@ public class HistoryLocalRawMaterials implements HistoryRawMaterialsParser {
                         raw.setCode(r.getCode());
                         raw.setCodif(r.getCode());
                         raw.setDayInvest(t.children().get(0).text());
-                        raw.setValue(new Double(t.children().get(1).text().replaceAll(" ", "").replace(",", "").replace("-", "0")));
-                        raw.setOpening(new Double(t.children().get(2).text().replaceAll(" ", "").replace(",", "").replace("-", "0")));
-                        raw.setHighest(new Double(t.children().get(3).text().replaceAll(" ", "").replace(",", "").replace("-", "0")));
-                        raw.setLowest(new Double(t.children().get(4).text().replaceAll(" ", "").replace(",", "").replace("-", "0")));
+                        raw.setValue(new Double(t.children().get(1).text().replaceAll(" ", "").replace(".", "").replace(",", ".").replace("-", "0")));
+                        raw.setOpening(new Double(t.children().get(2).text().replaceAll(" ", "").replace(".", "").replace(",", ".").replace("-", "0")));
+                        raw.setHighest(new Double(t.children().get(3).text().replaceAll(" ", "").replace(".", "").replace(",", ".").replace("-", "0")));
+                        raw.setLowest(new Double(t.children().get(4).text().replaceAll(" ", "").replace(".", "").replace(",", ".").replace("-", "0")));
 
                         HistoryParser.saveHistory(bp, raw);
                         if (++count >= range)

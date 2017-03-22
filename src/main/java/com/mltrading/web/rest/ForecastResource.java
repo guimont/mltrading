@@ -29,7 +29,7 @@ public class ForecastResource {
     @javax.inject.Inject
     private MlForecast forecast;
 
-    @RequestMapping(value = "/MLActivities/all",
+    @RequestMapping(value = "/ML/Activities/all",
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @RolesAllowed(AuthoritiesConstants.ADMIN)
@@ -39,7 +39,7 @@ public class ForecastResource {
     }
 
 
-    @RequestMapping(value = "/MLActivities/count",
+    @RequestMapping(value = "/ML/Activities/count",
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @RolesAllowed(AuthoritiesConstants.ANONYMOUS)
@@ -49,7 +49,7 @@ public class ForecastResource {
     }
 
 
-    @RequestMapping(value = "/optimizeML",
+    @RequestMapping(value = "/ML/optimize",
         method = RequestMethod.POST,
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String optimizeML(@Valid @RequestBody ForecastDTO fcDTO) {
@@ -63,12 +63,14 @@ public class ForecastResource {
     }
 
 
-    @RequestMapping(value = "/resume",
+    @RequestMapping(value = "/ML/resume",
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     public StockPerformanceList resumePerformance() {
 
-        return new StockPerformanceList().processingList();
+        StockPerformanceList l =new StockPerformanceList().processingList();
+
+        return l;
     }
 
 }

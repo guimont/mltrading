@@ -62,8 +62,15 @@ public class StockPerformance implements Serializable{
     }
 
 
+    public Map<PredictionPeriodicity, PerfModel> getContainer() {
+        return container;
+    }
 
-    private class PerfModel {
+    public void setContainer(Map<PredictionPeriodicity, PerfModel> container) {
+        this.container = container;
+    }
+
+    private class PerfModel implements Serializable{
         PredictionPeriodicity p;
         double error;
         double yield;
@@ -96,6 +103,14 @@ public class StockPerformance implements Serializable{
         public void setVectorSize(int vectorSize) {
             this.vectorSize = vectorSize;
         }
+
+        public PredictionPeriodicity getP() {
+            return p;
+        }
+
+        public void setP(PredictionPeriodicity p) {
+            this.p = p;
+        }
     }
 
 
@@ -116,7 +131,7 @@ public class StockPerformance implements Serializable{
 
                 String query = "SELECT (vectorSize) FROM " + code + "V" + PredictionPeriodicity.D1 + " ORDER BY DESC limit 1";
                 QueryResult result = InfluxDaoConnector.getPoints(query, MatrixValidator.dbNamePerf);
-                this.setLastUpdate ((String) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(0));
+                this.setLastUpdate((String) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(0));
 
                 /* considering iteration is same for all period*/
                 query = "SELECT count(vectorSize) FROM " + code + "V" + PredictionPeriodicity.D1;

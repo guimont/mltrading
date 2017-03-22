@@ -1,12 +1,12 @@
 package com.mltrading.ml;
 
-import java.util.Arrays;
-import java.util.List;
+import java.io.Serializable;
+
 
 /**
  * Created by gmo on 31/08/2016.
  */
-public enum PredictionPeriodicity {
+public enum PredictionPeriodicity implements Serializable{
 
 
     /** 1 day */
