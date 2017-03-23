@@ -12,7 +12,9 @@ import org.apache.spark.mllib.tree.model.RandomForestModel;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 /**
@@ -26,6 +28,7 @@ public class MLStocks  implements Serializable {
     private MLStatus status;
 
     JavaRDD<FeaturesStock> testData;
+
 
     public MLStocks(String codif) {
         this.codif = codif;
@@ -263,5 +266,13 @@ public class MLStocks  implements Serializable {
         for (Map.Entry<PredictionPeriodicity, MLStock> entry : container.entrySet()) {
             entry.getValue().getValidator().setCol(col);
         }
+    }
+
+    public Map<PredictionPeriodicity,MatrixValidator> getValidators() {
+        Map<PredictionPeriodicity,MatrixValidator> mapValidator = new HashMap<>();
+        for (Map.Entry<PredictionPeriodicity, MLStock> entry : container.entrySet()) {
+            mapValidator.put(entry.getKey(),entry.getValue().getValidator());
+        }
+        return mapValidator;
     }
 }

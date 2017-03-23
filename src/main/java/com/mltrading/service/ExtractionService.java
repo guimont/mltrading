@@ -105,7 +105,7 @@ public class ExtractionService {
         histParser.fetchSpecific(g);
         Analyse a = new Analyse();
         a.processAnalysisAll(g.getCode());
-        articles.fetchSpecific(g);
+        //articles.fetchSpecific(g);
         //article.fetchSpecific(g);
     }
 

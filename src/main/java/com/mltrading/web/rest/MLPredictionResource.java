@@ -2,6 +2,8 @@ package com.mltrading.web.rest;
 
 import com.mltrading.ml.*;
 
+import com.mltrading.models.stock.StockPrediction;
+import com.mltrading.models.stock.StockValidator;
 import com.mltrading.security.AuthoritiesConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.security.RolesAllowed;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by gmo on 01/02/2016.
@@ -24,12 +28,12 @@ public class MLPredictionResource {
 
     private static final Logger log = LoggerFactory.getLogger(MLPredictionResource.class);
 
-    @RequestMapping(value = "/ml/stat",
+    @RequestMapping(value = "/ml/getPerformance",
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @RolesAllowed(AuthoritiesConstants.ADMIN)
 
-    public MLStatus findAll(@RequestParam(value = "key") String key) {
+    public MLStatus getPerformance(@RequestParam(value = "key") String key) {
 
         MLStocks ms = CacheMLStock.getMLStockCache().get(key);
         if (ms != null) {
@@ -49,14 +53,30 @@ public class MLPredictionResource {
                 mlPerformances.convertUI();
             }
 
-
-
             return l;
         } else
             return null;
-
     }
 
+    @RequestMapping(value = "/ml/getValidator",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @RolesAllowed(AuthoritiesConstants.ADMIN)
+
+    public List<StockValidator> getValidator(@RequestParam(value = "key") String key) {
+
+        MLStocks ms = CacheMLStock.getMLStockCache().get(key);
+        if (ms != null) {
+            Map<PredictionPeriodicity, MatrixValidator> mvList = ms.getValidators();
+            List<StockValidator>  res = mvList.entrySet().stream().map(p -> new StockValidator().filled(key, p.getKey(),p.getValue())).collect(Collectors.toList());
+            return res;
+
+            /*return ms.getValidators().entrySet().stream()
+                .map(p -> new StockValidator().filled(key, p.getKey(), p.getValue()))
+                .collect(Collectors.toList());*/
+        } else
+            return null;
+    }
 
 
 }

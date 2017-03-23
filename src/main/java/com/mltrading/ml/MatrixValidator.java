@@ -18,10 +18,15 @@ import java.io.Serializable;
 public class MatrixValidator implements Serializable,Cloneable {
 
 
+
+
     public void setCol(int col) {
         this.col = col;
     }
 
+    public Integer[][] getMatrix() {
+        return matrix;
+    }
 
 
     /** Controls the perdiod */
@@ -57,10 +62,10 @@ public class MatrixValidator implements Serializable,Cloneable {
      * position for current stock
      */
     static public int HS_POS = 0;
-    static private int N_HS = 1;
+    static public int N_HS = 1;
 
-    static private int HS_COL = 0;
-    static private int HS_PERIOD_COL = 1;
+    static public int HS_COL = 0;
+    static public int HS_PERIOD_COL = 1;
     static private int HS_VOLUME_COL = 2;
     static private int N_HS_COL = 3;
 
@@ -145,6 +150,11 @@ public class MatrixValidator implements Serializable,Cloneable {
 
     /**
      * Generate a random matrix validator for features selection
+     * a sense to disable HS_POS ???? not sure
+     */
+    /**
+     *
+     * @return
      */
     public MatrixValidator generateRandomModel() {
         for (int i = HS_POS ; i < globalROW; i++) {

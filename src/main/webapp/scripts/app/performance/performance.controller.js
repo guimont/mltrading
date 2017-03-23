@@ -9,12 +9,21 @@ angular.module('mltradingApp')
 
 
         $scope.showPrediction = function(codif) {
-            PerformanceService.find(codif).then(function (data) {
-                $scope.preds = data;
-                load($scope.preds);
+            PerformanceService.getPerformance(codif).then(function (data) {
+                $scope.perf = data;
+                load($scope.perf);
             });
         };
 
         $scope.showPrediction(code);
+
+
+        $scope.showValidator = function(codif) {
+            PerformanceService.getValidator(codif).then(function (data) {
+                $scope.validator = data;
+            });
+        };
+
+        $scope.showValidator(code);
 
     });

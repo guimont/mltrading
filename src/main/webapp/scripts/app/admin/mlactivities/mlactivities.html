@@ -87,18 +87,18 @@
         </thead>
 
         <tr ng-repeat="perf in resume.perfList| filter:filter | orderBy:'-name':true" ng-hide="audit.filtered">
-           <td><small>{{perf.name}}</small></td>
+           <td style="color:#337ab7"><small>{{perf.name}}</small></td>
            <td><small>{{perf.modelType}}</small></td>
            <td><small>{{perf.lastUpdate.substring(0,16)}}</small></td>
            <td><small>{{perf.container.D1.error}} / {{perf.container.D1.yield.toFixed(3)}} </small></td>
-            <td>{{perf.container.D1.vectorSize}}</td>
+            <td style="color: lightslategrey;">{{perf.container.D1.vectorSize}}</td>
             <td><small>{{perf.container.D5.error}} / {{perf.container.D5.yield.toFixed(3)}}</small></td>
-            <td>{{perf.container.D5.vectorSize}}</td>
+            <td style="color: lightslategrey;">{{perf.container.D5.vectorSize}}</td>
             <td><small>{{perf.container.D20.error}} / {{perf.container.D20.yield.toFixed(3)}}</small></td>
-            <td>{{perf.container.D20.vectorSize}}</td>
+            <td style="color: lightslategrey;">{{perf.container.D20.vectorSize}}</td>
             <td><small>{{perf.container.D40.error}} / {{perf.container.D40.yield.toFixed(3)}}</small></td>
-            <td>{{perf.container.D40.vectorSize}}</td>
-           <td><small>{{perf.iteration}}</small></td>
+            <td style="color: lightslategrey;">{{perf.container.D40.vectorSize}}</td>
+           <td style="color: lightslategrey;"><small>{{perf.iteration}}</small></td>
        </tr>
    </table>
 
