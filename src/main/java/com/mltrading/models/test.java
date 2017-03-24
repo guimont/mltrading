@@ -43,7 +43,7 @@ public class test {
     }*/
 
 
-
+/*
 
     public static void main(String[] args) {
         MLProperties.load();
@@ -52,7 +52,7 @@ public class test {
         Analyse a = new Analyse();
         a.processAllRaw();
     }
-
+*/
 
 
 

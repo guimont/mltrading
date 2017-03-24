@@ -76,8 +76,8 @@ public class MatrixValidator implements Serializable,Cloneable {
         return col;
     }
 
-    private int globalROW = CacheStockSector.N_SECTOR+ CacheStockIndice.N_INDICE+ CacheRawMaterial.N_RAW+ N_HS;
-    private int globalCOL = N_HS_COL+StockAnalyse.N_AT;
+    public static int globalROW = CacheStockSector.N_SECTOR+ CacheStockIndice.N_INDICE+ CacheRawMaterial.N_RAW+ N_HS;
+    private static int globalCOL = N_HS_COL+StockAnalyse.N_AT;
 
     public Integer getMaxDepth() {
         return maxDepth;
