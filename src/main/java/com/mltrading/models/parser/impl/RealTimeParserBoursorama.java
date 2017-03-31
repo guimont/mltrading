@@ -20,8 +20,8 @@ import java.net.URL;
 @Singleton
 public class RealTimeParserBoursorama implements RealTimeParser {
 
-    static String cac40 = "http://www.boursorama.com/bourse/actions/cours_az.phtml?MARCHE=1rPCAC&validate=";
-
+    //static String cac40 = "http://www.boursorama.com/bourse/actions/cours_az.phtml?MARCHE=1rPCAC&validate=";
+    static String cac40 = "http://www.boursorama.com/bourse/actions/cours_az.phtml?MARCHE=1rPCAC&valid=";
     static String refCode = "tbody";
 
 

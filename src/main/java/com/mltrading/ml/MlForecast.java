@@ -97,7 +97,12 @@ public class MlForecast {
     public void optimize(int loop, int backloop, String validator, String target) {
 
         for (int i = 0; i < loop; i++) {
-            CacheMLStock.getMLStockCache().values().forEach(m -> m.resetScoring());
+            CacheMLStock.getMLStockCache().values()
+                .forEach(m ->
+                {
+                    if (m!=null)
+                        m.resetScoring();
+                });
             if (target.equals("PX1"))
                 optimize(CacheStockGeneral.getIsinCache().values().stream(), CacheStockGeneral.getIsinCache().values().size(), backloop, validator, Method.RandomForest);
             else
@@ -176,8 +181,6 @@ public class MlForecast {
 
             CacheMLActivities.addActivities(new MLActivities("optimize", codif, "start", loop, 0, false));
 
-
-            //mls.generateValidator("generate"); too big for test
             mls.generateValidator(validator);
 
 
@@ -200,25 +203,12 @@ public class MlForecast {
 
                 if (ref != null) {
 
-                    if (checkResult(mls, ref, PredictionPeriodicity.D1))
-                        CacheMLActivities.addActivities(new MLActivities("optimize", codif, "increase model: " + PredictionPeriodicity.D1, loop, 1, true));
-                    else
-                        CacheMLActivities.addActivities(new MLActivities("optimize", codif, "not increase model: " + PredictionPeriodicity.D1, loop, 0, true));
-
-                    if (checkResult(mls, ref, PredictionPeriodicity.D5))
-                        CacheMLActivities.addActivities(new MLActivities("optimize", codif, "increase model: " + PredictionPeriodicity.D5, loop, 1, true));
-                    else
-                        CacheMLActivities.addActivities(new MLActivities("optimize", codif, "not increase model: " + PredictionPeriodicity.D5, loop, 0, true));
-
-                    if (checkResult(mls, ref, PredictionPeriodicity.D20))
-                        CacheMLActivities.addActivities(new MLActivities("optimize", codif, "increase model: " + PredictionPeriodicity.D20, loop, 1, true));
-                    else
-                        CacheMLActivities.addActivities(new MLActivities("optimize", codif, "not increase model: " + PredictionPeriodicity.D20, loop, 0, true));
-
-                    if (checkResult(mls, ref, PredictionPeriodicity.D40))
-                        CacheMLActivities.addActivities(new MLActivities("optimize", codif, "increase model: " + PredictionPeriodicity.D40, loop, 1, true));
-                    else
-                        CacheMLActivities.addActivities(new MLActivities("optimize", codif, "not increase model: " + PredictionPeriodicity.D40, loop, 0, true));
+                    periodicity.forEach(p -> {
+                        if (checkResult(mls, ref, p))
+                            CacheMLActivities.addActivities(new MLActivities("optimize", codif, "increase model: " + p, loop, 1, true));
+                        else
+                            CacheMLActivities.addActivities(new MLActivities("optimize", codif, "not increase model: " + p, loop, 0, true));
+                    });
 
 
                 } else {
@@ -279,32 +269,6 @@ public class MlForecast {
     }
 
 
-    /**
-     * compare result and replace it if better
-     *
-     * @param mls
-     * @param ref
-     * @param period
-     * @return
-     */
-    private boolean checkResultReplace(MLStocks mls, MLStocks ref, PredictionPeriodicity period) {
-        if (compareResult(mls.getStatus(), ref.getStatus(), period)) {
-            ref.insert(period, mls);
-            ref.getStatus().setAvg(mls.getStatus().getAvgD1(), period);
-            ref.getStatus().setErrorRate(mls.getStatus().getErrorRate(period), period);
-
-            try {
-                ref.getStatus().replaceElementList(mls.getStatus().getPerfList(), period);
-            } catch (Exception e) {
-                log.error(e.toString());
-            } finally {
-                return true;
-            }
-
-        }
-
-        return false;
-    }
 
     /**
      * optimization for matrix validator
@@ -357,7 +321,6 @@ public class MlForecast {
 
         MLStocks ref = null;
 
-
         MLStocks validatorModel = new MLStocks(s.getCodif());
         validatorModel.generateValidator("generateSimpleModel");
 
@@ -369,36 +332,29 @@ public class MlForecast {
             RandomForestStock rfs = new RandomForestStock();
             mls = rfs.processRFRef(s.getCodif(), mls, true);
 
+            final MLStocks finalMls = mls;
+
             String saveCode = "V";
 
 
-            if (null != mls) {
-                mls.getStatus().calculeAvgPrd();
-                mls.getValidator(PredictionPeriodicity.D1).save(mls.getCodif() + saveCode + "D1", mls.getStatus().getErrorRateD1(), mls.getStatus().getAvgD1());
-                mls.getValidator(PredictionPeriodicity.D5).save(mls.getCodif() + saveCode + "D5", mls.getStatus().getErrorRateD5(), mls.getStatus().getAvgD5());
-                mls.getValidator(PredictionPeriodicity.D20).save(mls.getCodif() + saveCode + "D20", mls.getStatus().getErrorRateD20(), mls.getStatus().getAvgD20());
+            if (null != finalMls) {
+                finalMls.getStatus().calculeAvgPrd();
+
+                periodicity.forEach(p -> finalMls.getValidator(p).save(finalMls.getCodif() + saveCode +
+                    p, finalMls.getStatus().getErrorRate(p), finalMls.getStatus().getAvg(p)));
 
                 int col = mls.getValidator(PredictionPeriodicity.D1).getCol() -1;
 
                 if (ref != null) {
 
-
-
-                    if (compareResult(mls.getStatus(), ref.getStatus(), PredictionPeriodicity.D1))
-                        validatorModel.getValidator(PredictionPeriodicity.D1).validate(col);
-
-                    if (compareResult(mls.getStatus(), ref.getStatus(), PredictionPeriodicity.D5))
-                        validatorModel.getValidator(PredictionPeriodicity.D5).validate(col);
-
-                    if (compareResult(mls.getStatus(), ref.getStatus(), PredictionPeriodicity.D20))
-                        validatorModel.getValidator(PredictionPeriodicity.D20).validate(col);
-
-                    if (compareResult(mls.getStatus(), ref.getStatus(), PredictionPeriodicity.D40))
-                        validatorModel.getValidator(PredictionPeriodicity.D40).validate(col);
-
+                    final MLStocks finalRef = ref;
+                    periodicity.forEach(p -> {
+                        if (compareResult(finalMls.getStatus(), finalRef.getStatus(), p))
+                            validatorModel.getValidator(p).validate(col);
+                    });
 
                 } else {
-                    ref = mls.clone();
+                    ref = finalMls.clone();
                 }
 
                 mls = new MLStocks(s.getCodif());
@@ -406,11 +362,18 @@ public class MlForecast {
                 mls.updateColValidator(col+1);
 
 
-
             }
 
 
         }
+
+        /** keep best model*/
+        RandomForestStock rfs = new RandomForestStock();
+        MLStocks bestModel = rfs.processRFRef(s.getCodif(), validatorModel, true);
+        bestModel.getStatus().calculeAvgPrd();
+        CacheMLStock.getMLStockCache().put(bestModel.getCodif(), mls);
+
+
     }
 
 

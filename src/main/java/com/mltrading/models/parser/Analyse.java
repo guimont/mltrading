@@ -77,18 +77,27 @@ public class Analyse {
         }
 
         for (StockIndice g : CacheStockIndice.getIndiceCache().values()) {
+            if (dateList == null) {
+                dateList = StockHistory.getDateHistoryListOffsetLimit(g.getCodif(),50,period);
+            }
             for (String date:dateList) {
                 processAnalysisSpecific(g.getCode(), date);
             }
         }
 
         for (StockSector g : CacheStockSector.getSectorCache().values()) {
+            if (dateList == null) {
+                dateList = StockHistory.getDateHistoryListOffsetLimit(g.getCodif(),50,period);
+            }
             for (String date:dateList) {
                 processAnalysisSpecific(g.getCode(), date);
             }
         }
 
         for (StockRawMat g : CacheRawMaterial.getCache().values()) {
+            if (dateList == null) {
+                dateList = StockHistory.getDateHistoryListOffsetLimit(g.getCodif(),50,period);
+            }
             for (String date:dateList) {
                 processAnalysisSpecific(g.getCode(), date);
             }
@@ -99,6 +108,7 @@ public class Analyse {
             processAnalysisSpecific("VCAC", date);
         }
     }
+
 
 
     public void processAllRaw() {
@@ -264,6 +274,10 @@ public class Analyse {
     public String stddevRange(QueryResult res,String code, int index, int range) {
         List<Object> lStart = res.getResults().get(0).getSeries().get(0).getValues().get(index - range);
         List<Object> lEnd = res.getResults().get(0).getSeries().get(0).getValues().get(index);
+
+        if (code == "GOLD") {
+            int breakPoint = 1;
+        }
 
         String query = "SELECT stddev(value)*2 FROM "+code+" where time > '" + lStart.get(0) + "' and time < '"+ lEnd.get(0) + "'";
         QueryResult meanQ = InfluxDaoConnector.getPoints(query, StockHistory.dbName);

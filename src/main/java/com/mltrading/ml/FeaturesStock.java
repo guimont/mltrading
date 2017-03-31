@@ -307,7 +307,7 @@ public class FeaturesStock implements Serializable {
                 List<StockHistory> sh = StockHistory.getStockHistoryDateInvert(codif, date, validator.getPeriodStockHist());
                 fs.linearize(sh);
                 StockHistory current = StockHistory.getStockHistory(codif, date);
-                fs.linearize(current, validator);
+                //fs.linearize(current, validator); already done
                 fs.setCurrentValue(current.getValue());
 
             } catch (Exception e) {
@@ -352,7 +352,7 @@ public class FeaturesStock implements Serializable {
 
 
     /**
-     * Create a FeatureStock list for current day
+     * Create a FeatureStock list for prediction
      * use each day to refresh data with current model
      * @param codif
      * @param validator
@@ -375,7 +375,7 @@ public class FeaturesStock implements Serializable {
             List<StockHistory> sh = StockHistory.getStockHistoryDateInvert(codif, date, validator.getPeriodStockHist());
             fs.linearize(sh);
             StockHistory current = StockHistory.getStockHistory(codif, date);
-            fs.linearize(current, validator);
+            //fs.linearize(current, validator);
             fs.setCurrentValue(current.getValue());
 
         } catch (Exception e) {
@@ -426,10 +426,7 @@ public class FeaturesStock implements Serializable {
                 //}
             }
 
-        } catch (Exception e) {
-            log.error("Cannot get sector/analyse stock for: " + codif + " and date: " + date + " //exception:" + e);
-            throw  e ;
-        }
+
 
 
 
@@ -456,6 +453,11 @@ public class FeaturesStock implements Serializable {
                 fs.linearize(asi, validator, row);
             }
 
+        }
+
+        } catch (Exception e) {
+            log.error("Cannot get sector/indicd/raw/analyse stock for: " + codif + " and date: " + date + " //exception:" + e );
+            throw  e ;
         }
 
 

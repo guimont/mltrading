@@ -43,16 +43,22 @@ public class test {
     }*/
 
 
-/*
 
+/*
     public static void main(String[] args) {
         MLProperties.load();
-        HistoryRawMaterialsParser rawParser = new HistoryLocalRawMaterials();
-        rawParser.fetchCurrent(15);
+        /*HistoryRawMaterialsParser rawParser = new HistoryLocalRawMaterials();
+        rawParser.fetchCurrent(20);*
         Analyse a = new Analyse();
-        a.processAllRaw();
+        a.processDaily(5);
+
+        System.out.println("FIN");
+        System.out.println("FIN");
+        System.out.println("FIN");
+        System.out.println("FIN");
+        System.out.println("FIN");
     }
-*/
+
 
 
 

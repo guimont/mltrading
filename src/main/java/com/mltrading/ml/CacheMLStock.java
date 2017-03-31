@@ -69,8 +69,8 @@ public class CacheMLStock {
         // load model on worker
         SynchWorker.load();
 
-        load(new ArrayList(CacheStockGeneral.getIsinCache().values()));
         load(new ArrayList(CacheStockSector.getSectorCache().values()));
+        load(new ArrayList(CacheStockGeneral.getIsinCache().values()));
 
         CacheMLActivities.addActivities(g.setEndDate());
     }
