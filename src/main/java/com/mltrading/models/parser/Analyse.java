@@ -63,50 +63,66 @@ public class Analyse {
     }
 
 
+    static int MARGIN = 4;
+
     public void processDaily(int period) {
         List<String> dateList = null;
 
-        for (StockGeneral g: CacheStockGeneral.getIsinCache().values()) {
-            if (dateList == null) {
-                dateList = StockHistory.getDateHistoryListOffsetLimit(g.getCodif(),50,period);
-            }
+        log.info("Start analyse for period: " + period);
 
-            for (String date:dateList) {
-                processAnalysisSpecific(g.getCodif(), date);
+        for (StockGeneral g: CacheStockGeneral.getIsinCache().values()) {
+            dateList = StockHistory.getDateHistoryListOffsetLimit(g.getCodif(),50,period);
+            if (dateList != null) {
+                for (String date : dateList) {
+                    processAnalysisSpecific(g.getCodif(), date);
+                }
             }
         }
 
+        /**
+         * not all french indice so date could be different .. add an error margin
+         */
         for (StockIndice g : CacheStockIndice.getIndiceCache().values()) {
-            if (dateList == null) {
-                dateList = StockHistory.getDateHistoryListOffsetLimit(g.getCodif(),50,period);
-            }
-            for (String date:dateList) {
-                processAnalysisSpecific(g.getCode(), date);
+            dateList = StockHistory.getDateHistoryListOffsetLimit(g.getCodif(),50,period+MARGIN);
+            if (dateList != null) {
+                for (String date : dateList) {
+                    processAnalysisSpecific(g.getCode(), date);
+                }
             }
         }
 
         for (StockSector g : CacheStockSector.getSectorCache().values()) {
-            if (dateList == null) {
-                dateList = StockHistory.getDateHistoryListOffsetLimit(g.getCodif(),50,period);
-            }
-            for (String date:dateList) {
-                processAnalysisSpecific(g.getCode(), date);
+
+            dateList = StockHistory.getDateHistoryListOffsetLimit(g.getCodif(),50,period);
+            if (dateList != null) {
+                for (String date : dateList) {
+                    processAnalysisSpecific(g.getCode(), date);
+                }
             }
         }
 
+        /**
+         * not all french indice so date could be different .. add an error margin
+         */
         for (StockRawMat g : CacheRawMaterial.getCache().values()) {
-            if (dateList == null) {
-                dateList = StockHistory.getDateHistoryListOffsetLimit(g.getCodif(),50,period);
+
+            dateList = StockHistory.getDateHistoryListOffsetLimit(g.getCodif(),50,period+MARGIN);
+            if (dateList != null) {
+                for (String date : dateList) {
+                    processAnalysisSpecific(g.getCode(), date);
+                }
             }
+        }
+
+
+        dateList = StockHistory.getDateHistoryListOffsetLimit("VCAC",50,period);
+        if (dateList != null) {
             for (String date:dateList) {
-                processAnalysisSpecific(g.getCode(), date);
+                processAnalysisSpecific("VCAC", date);
             }
         }
 
-
-        for (String date:dateList) {
-            processAnalysisSpecific("VCAC", date);
-        }
+        log.info("End analyse for period: " + period);
     }
 
 

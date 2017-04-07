@@ -105,6 +105,7 @@ public class HistoryLocalRawMaterials implements HistoryRawMaterialsParser {
                         raw.setHighest(new Double(t.children().get(3).text().replaceAll(" ", "").replace(".", "").replace(",", ".").replace("-", "0")));
                         raw.setLowest(new Double(t.children().get(4).text().replaceAll(" ", "").replace(".", "").replace(",", ".").replace("-", "0")));
 
+                        System.out.println(raw.toString());
                         HistoryParser.saveHistory(bp, raw);
                         if (++count >= range)
                             break;

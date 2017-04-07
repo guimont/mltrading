@@ -29,6 +29,7 @@ public class MatrixValidator implements Serializable,Cloneable {
     }
 
 
+
     /** Controls the perdiod */
     public enum TypeHistory {
         /** stock history */
@@ -156,7 +157,7 @@ public class MatrixValidator implements Serializable,Cloneable {
      *
      * @return
      */
-    public MatrixValidator generateRandomModel() {
+    public MatrixValidator generateRandomModel(Integer notuse) {
         for (int i = HS_POS ; i < globalROW; i++) {
             matrix[i][HS_COL] = randomiBool();
             matrix[i][HS_PERIOD_COL] = randomPeriod(2, 100);
@@ -174,7 +175,7 @@ public class MatrixValidator implements Serializable,Cloneable {
     static private int TRUEBOOL = 1;
     static private int FALSEBOOL = 0;
     static private int DEFAULTPERIOD = 25;
-    public void generateSimpleModel() {
+    public void generateSimpleModel(Integer notuse) {
         //hs stock => enable
         //stock sector => enable
         //all indice => enable
@@ -195,7 +196,7 @@ public class MatrixValidator implements Serializable,Cloneable {
                 matrix[i][j] = TRUEBOOL;
         }
 
-        //stock indice => enable
+        //stock indice => disable
         for (int i = N_HS+CacheStockSector.N_SECTOR ; i < N_HS+CacheStockSector.N_SECTOR+CacheStockIndice.N_INDICE; i++) {
             matrix[i][HS_COL] = FALSEBOOL;
             matrix[i][HS_PERIOD_COL] = DEFAULTPERIOD;
@@ -204,10 +205,116 @@ public class MatrixValidator implements Serializable,Cloneable {
                 matrix[i][j] = TRUEBOOL;
         }
 
-        //stock raw => enable
+        //stock raw => disable
         for (int i = N_HS+CacheStockSector.N_SECTOR+CacheStockIndice.N_INDICE ; i < globalROW; i++) {
             matrix[i][HS_COL] = FALSEBOOL;
             matrix[i][HS_PERIOD_COL] = DEFAULTPERIOD;
+            matrix[i][HS_VOLUME_COL] = FALSEBOOL;
+            for (int j = N_HS_COL; j < globalCOL; j++)
+                matrix[i][j] = TRUEBOOL;
+        }
+    }
+
+    /**
+     * improve existing matrix
+     * @param sector
+     */
+    public void improveEconomicalModel(Integer sector) {
+        matrix[HS_POS][HS_COL] = TRUEBOOL;
+        matrix[HS_POS][HS_PERIOD_COL] = randomPeriod(2, 100);
+        matrix[HS_POS][HS_VOLUME_COL] = randomiBool();
+        for (int j = N_HS_COL; j < globalCOL; j++)
+            matrix[HS_POS][j] = randomiBool();
+
+        if (sector != CacheStockSector.NO_SECTOR) {
+            matrix[N_HS + sector][HS_COL] = TRUEBOOL;
+            matrix[N_HS + sector][HS_PERIOD_COL] = randomPeriod(2, 100);
+            matrix[N_HS + sector][HS_VOLUME_COL] = randomiBool();
+            for (int j = N_HS_COL; j < globalCOL; j++)
+                matrix[N_HS + sector][j] = randomiBool();
+        }
+
+
+        //stock indice => enable
+        for (int i = N_HS+CacheStockSector.N_SECTOR ; i < N_HS+CacheStockSector.N_SECTOR+CacheStockIndice.N_INDICE; i++) {
+            matrix[i][HS_COL] = TRUEBOOL;
+            matrix[i][HS_PERIOD_COL] = randomPeriod(2, 100);
+            matrix[i][HS_VOLUME_COL] = randomiBool();
+            for (int j = N_HS_COL; j < globalCOL; j++)
+                matrix[i][j] = randomiBool();
+        }
+    }
+
+    /**
+     * merge validator with best validator and a generate Eco
+     * @param validator
+     */
+    public void mergeEconomical(MatrixValidator validator) {
+        //stock sector => recopy
+        for (int i = N_HS ; i < N_HS+CacheStockSector.N_SECTOR; i++) {
+            matrix[i][HS_COL] = validator.matrix[i][HS_COL] ;
+            matrix[i][HS_PERIOD_COL] = validator.matrix[i][HS_PERIOD_COL] ;
+            matrix[i][HS_VOLUME_COL] = validator.matrix[i][HS_VOLUME_COL] ;
+            for (int j = N_HS_COL; j < globalCOL; j++)
+                matrix[i][j] = validator.matrix[i][j];
+        }
+
+
+        //stock raw => recopy
+        for (int i = N_HS+CacheStockSector.N_SECTOR+CacheStockIndice.N_INDICE ; i < globalROW; i++) {
+            matrix[i][HS_COL] = validator.matrix[i][HS_COL];
+            matrix[i][HS_VOLUME_COL] = validator.matrix[i][HS_VOLUME_COL];
+            for (int j = N_HS_COL; j < globalCOL; j++)
+                matrix[i][j] = validator.matrix[i][j];
+        }
+
+    }
+
+
+    public void generateEconomicalModel(Integer sector) {
+        //hs stock => enable
+        //stock sector => enable
+        //all indice => enable
+        //raw and other => disable
+
+        matrix[HS_POS][HS_COL] = TRUEBOOL;
+        matrix[HS_POS][HS_PERIOD_COL] = randomPeriod(2, 100);
+        matrix[HS_POS][HS_VOLUME_COL] = randomiBool();
+        for (int j = N_HS_COL; j < globalCOL; j++)
+            matrix[HS_POS][j] = randomiBool();
+
+
+        //stock sector => disable
+        for (int i = N_HS ; i < N_HS+CacheStockSector.N_SECTOR; i++) {
+            matrix[i][HS_COL] = FALSEBOOL;
+            matrix[i][HS_PERIOD_COL] = 0;
+            matrix[i][HS_VOLUME_COL] = FALSEBOOL;
+            for (int j = N_HS_COL; j < globalCOL; j++)
+                matrix[i][j] = FALSEBOOL;
+        }
+
+        if (sector != CacheStockSector.NO_SECTOR) {
+            matrix[N_HS + sector][HS_COL] = TRUEBOOL;
+            matrix[N_HS + sector][HS_PERIOD_COL] = randomPeriod(2, 100);
+            matrix[N_HS + sector][HS_VOLUME_COL] = randomiBool();
+            for (int j = N_HS_COL; j < globalCOL; j++)
+                matrix[N_HS + sector][j] = randomiBool();
+        }
+
+
+        //stock indice => enable
+        for (int i = N_HS+CacheStockSector.N_SECTOR ; i < N_HS+CacheStockSector.N_SECTOR+CacheStockIndice.N_INDICE; i++) {
+            matrix[i][HS_COL] = TRUEBOOL;
+            matrix[i][HS_PERIOD_COL] = randomPeriod(2, 100);
+            matrix[i][HS_VOLUME_COL] = randomiBool();
+            for (int j = N_HS_COL; j < globalCOL; j++)
+                matrix[i][j] = randomiBool();
+        }
+
+        //stock raw => enable
+        for (int i = N_HS+CacheStockSector.N_SECTOR+CacheStockIndice.N_INDICE ; i < globalROW; i++) {
+            matrix[i][HS_COL] = FALSEBOOL;
+            matrix[i][HS_PERIOD_COL] = 0;
             matrix[i][HS_VOLUME_COL] = FALSEBOOL;
             for (int j = N_HS_COL; j < globalCOL; j++)
                 matrix[i][j] = FALSEBOOL;
@@ -217,7 +324,7 @@ public class MatrixValidator implements Serializable,Cloneable {
     /**
      * Generate a random matrix validator for features selection
      */
-    public void generateCompleteModel() {
+    public void generateCompleteModel(Integer notuse) {
         //hs stock => enable
         //stock sector => enable
         //all indice => enable

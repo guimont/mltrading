@@ -197,4 +197,8 @@ public class MLStock  implements Serializable {
     public void loadModelDB() {
         distibute();
     }
+
+    public void mergetValidator(MatrixValidator validator) {
+        this.getValidator().mergeEconomical(validator);
+    }
 }

@@ -12,9 +12,8 @@ import org.apache.spark.mllib.tree.model.RandomForestModel;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+
 
 
 /**
@@ -94,11 +93,13 @@ public class MLStocks  implements Serializable {
         container.get(p).saveModel();
     }
 
-    public void generateValidator(String methodName) {
+    public void generateValidator(String methodName, int sector) {
 
         try {
+            Class[] cArg = new Class[1];
+            cArg[0] = Integer.class;
             MatrixValidator validator = new MatrixValidator();
-            validator.getClass().getMethod(methodName,null).invoke(validator, null);
+            validator.getClass().getMethod(methodName,cArg).invoke(validator, sector);
             for (Map.Entry<PredictionPeriodicity, MLStock> entry : container.entrySet()) {
                 entry.getValue().setValidator(validator.clone());
             }
@@ -274,5 +275,11 @@ public class MLStocks  implements Serializable {
             mapValidator.put(entry.getKey(),entry.getValue().getValidator());
         }
         return mapValidator;
+    }
+
+    public void mergeValidator(MLStocks ref) {
+        for (Map.Entry<PredictionPeriodicity, MLStock> entry : container.entrySet()) {
+            entry.getValue().mergetValidator(ref.getValidator(entry.getKey()));
+        }
     }
 }

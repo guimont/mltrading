@@ -288,7 +288,7 @@ public class CacheStockHistory  extends CacheStockTimeSeries<String, Integer,Sto
             List<StockHistory> list = getInCache(code);
             Integer index = getInCache(list,code, date);
 
-            if (list == null || index - offset < 0) return null;
+            if (list == null || index == null || index - offset < 0) return null;
             List<StockHistory> subList= new CopyOnWriteArrayList(list.subList(index - offset + exclusiveOffset, index + exclusiveOffset));
 
             Collections.sort(subList);

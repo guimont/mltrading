@@ -166,7 +166,6 @@ public class ExtractionResource {
     public String defaultML() {
 
 
-        forecast.optimizeModel();
         return "ok";
     }
 

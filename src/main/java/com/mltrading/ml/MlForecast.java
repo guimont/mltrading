@@ -96,6 +96,11 @@ public class MlForecast {
      */
     public void optimize(int loop, int backloop, String validator, String target) {
 
+        if (CacheMLActivities.setIsRunning() == false) {
+            log.error("optimizing still running, cannot launch new optimization");
+            return;
+        }
+
         for (int i = 0; i < loop; i++) {
             CacheMLStock.getMLStockCache().values()
                 .forEach(m ->
@@ -117,6 +122,7 @@ public class MlForecast {
             CacheMLActivities.addActivities(new MLActivities("saveValidator forecast model", "", "end", 0, 0, true));
         }
 
+        CacheMLActivities.endRunning();
         //evaluate();
 
     }
@@ -130,7 +136,7 @@ public class MlForecast {
      * @param validator
      * @param method
      */
-    public void optimize(Stream<? extends StockHistory> stream, int size, int backloop, String validator, Method method) {
+    private void optimize(Stream<? extends StockHistory> stream, int size, int backloop, String validator, Method method) {
 
         final CountDownLatch latches = new CountDownLatch(size);
         //final CountDownLatch latches = new CountDownLatch(1); //testmode ORA
@@ -141,7 +147,10 @@ public class MlForecast {
         //For test purpose only
         stream/*.filter(s -> s.getCodif().equals("ORA"))*/.forEach(s -> executorRef.submit(() -> {    //For test purpose only
             try {
-                optimize(s.getCodif(), backloop, method, validator);
+                if (validator.contains("optimizeModel"))
+                    optimizeModel(s.getCodif());
+                else
+                    optimize(s.getCodif(), backloop, method, validator);
             } finally {
                 {
                     latches.countDown();
@@ -163,7 +172,7 @@ public class MlForecast {
 
 
     /**
-     * processing machaine learning algorithm
+     * processing machine learning algorithm
      * @param codif name
      * @param loop sub iteration
      * @param method not use
@@ -180,8 +189,28 @@ public class MlForecast {
             final MLStocks mls = new MLStocks(codif);
 
             CacheMLActivities.addActivities(new MLActivities("optimize", codif, "start", loop, 0, false));
+            MLStocks ref = CacheMLStock.getMLStockCache().get(mls.getCodif());
 
-            mls.generateValidator(validator);
+            int rowSector = CacheStockSector.NO_SECTOR;
+            try {
+                StockGeneral sg = CacheStockGeneral.getCache().get(CacheStockGeneral.getCode(codif));
+                String sector = sg.getSector();
+                if (sector != null)
+                    rowSector = CacheStockSector.getSectorCache().get(sector).getRow();
+            } catch (Exception e) {
+                log.error("Cannot find sector for: "+ codif);
+            }
+
+
+            /**
+             * merge validator for optimizeEconomical
+             */
+            if (validator.contains("optimizeEconomicalModel")) {
+                mls.generateValidator("generateEconomicalModel",rowSector);
+                if (ref != null) mls.mergeValidator(ref);
+            } else {
+                mls.generateValidator(validator,rowSector);
+            }
 
 
             String saveCode;
@@ -197,8 +226,6 @@ public class MlForecast {
                 periodicity.forEach(p -> mls.getValidator(p).save(mls.getCodif() + saveCode +
                     p, mls.getStatus().getErrorRate(p), mls.getStatus().getAvg(p)));
 
-
-                MLStocks ref = CacheMLStock.getMLStockCache().get(mls.getCodif());
 
 
                 if (ref != null) {
@@ -270,50 +297,14 @@ public class MlForecast {
 
 
 
-    /**
-     * optimization for matrix validator
-     * use iteration on model not only one model
-     * proccessing very long
-     */
-    public void optimizeModel() {
-
-        //final CountDownLatch latches = new CountDownLatch(CacheStockGeneral.getIsinCache().values().size());
-        final CountDownLatch latches = new CountDownLatch(1);
-
-        CacheStockGeneral.getIsinCache().values().stream().filter(s -> s.getCodif().equals("ORA")).forEach(s -> executorRef.submit(() -> {    //For test purpose only
-            try {
-                optimizeModel(s);
-            } finally {
-                {
-                    latches.countDown();
-                }
-            }
-        }));
-
-        // Wait for completion
-        try {
-            latches.await();
-        } catch (InterruptedException e) {
-            log.error(e.getMessage());
-        }
-
-        updatePredictor();
-
-
-        CacheMLActivities.addActivities(new MLActivities("saveValidator forecast model", "", "start", 0, 0, false));
-        log.info("saveML");
-        CacheMLStock.save();
-        CacheMLActivities.addActivities(new MLActivities("saveValidator forecast model", "", "end", 0, 0, true));
-
-    }
-
 
     /**
      * optimize model with processing validator sample
      *
      * @param s
      */
-    public void optimizeModel(StockGeneral s) {
+    static int NOTUSE = 0;
+    private void optimizeModel(String codif) {
 
         /**
          * to have some results faster, 2 iterations loop
@@ -321,16 +312,16 @@ public class MlForecast {
 
         MLStocks ref = null;
 
-        MLStocks validatorModel = new MLStocks(s.getCodif());
-        validatorModel.generateValidator("generateSimpleModel");
+        MLStocks validatorModel = new MLStocks(codif);
+        validatorModel.generateValidator("generateSimpleModel",NOTUSE);
 
-        MLStocks mls = new MLStocks(s.getCodif());
-        mls.generateValidator("generateSimpleModel");
+        MLStocks mls = new MLStocks(codif);
+        mls.generateValidator("generateSimpleModel",NOTUSE);
 
         while (mls.randomizeModel()) {
 
             RandomForestStock rfs = new RandomForestStock();
-            mls = rfs.processRFRef(s.getCodif(), mls, true);
+            mls = rfs.processRFRef(codif, mls, true);
 
             final MLStocks finalMls = mls;
 
@@ -343,6 +334,7 @@ public class MlForecast {
                 periodicity.forEach(p -> finalMls.getValidator(p).save(finalMls.getCodif() + saveCode +
                     p, finalMls.getStatus().getErrorRate(p), finalMls.getStatus().getAvg(p)));
 
+                /* period have no importance, iteration are same for all period*/
                 int col = mls.getValidator(PredictionPeriodicity.D1).getCol() -1;
 
                 if (ref != null) {
@@ -357,8 +349,8 @@ public class MlForecast {
                     ref = finalMls.clone();
                 }
 
-                mls = new MLStocks(s.getCodif());
-                mls.generateValidator("generateSimpleModel");
+                mls = new MLStocks(codif);
+                mls.generateValidator("generateSimpleModel",NOTUSE);
                 mls.updateColValidator(col+1);
 
 
@@ -369,14 +361,24 @@ public class MlForecast {
 
         /** keep best model*/
         RandomForestStock rfs = new RandomForestStock();
-        MLStocks bestModel = rfs.processRFRef(s.getCodif(), validatorModel, true);
+        MLStocks bestModel = rfs.processRFRef(codif, validatorModel, true);
         bestModel.getStatus().calculeAvgPrd();
-        CacheMLStock.getMLStockCache().put(bestModel.getCodif(), mls);
+
+        final MLStocks mlsCache = CacheMLStock.getMLStockCache().get(codif);
+        periodicity.forEach(p -> {
+            if (compareResult(mlsCache.getStatus(), bestModel.getStatus(), p))
+                CacheMLStock.getMLStockCache().put(codif, bestModel);
+        });
+
+
 
 
     }
 
 
+    /**
+     *
+     */
     public static void updatePredictor() {
         CacheStockGeneral.getCache().values().forEach(com.mltrading.ml.MlForecast::updatePredictor);
 

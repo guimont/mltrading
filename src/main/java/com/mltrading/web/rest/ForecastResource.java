@@ -54,10 +54,7 @@ public class ForecastResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String optimizeML(@Valid @RequestBody ForecastDTO fcDTO) {
 
-        if (fcDTO.getValidator().contains("optimizeModel"))
-            forecast.optimizeModel();
-        else
-            forecast.optimize(fcDTO.getGlobalLoop(), fcDTO.getInputLoop(), fcDTO.getValidator(), fcDTO.getTarget());
+        forecast.optimize(fcDTO.getGlobalLoop(), fcDTO.getInputLoop(), fcDTO.getValidator(), fcDTO.getTarget());
 
         return "ok";
     }

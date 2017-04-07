@@ -59,11 +59,12 @@ public abstract class CacheStockTimeSeries<K,V,W extends StockBase> {
         if (indexMap == null) fillCache(code);
         V res =  this.indexCache.get(code).get(date);
         if (res == null) {
-            int curser = 0;
-            while (curser  < list.size()) {
-                if (list.get(curser).getDay().compareTo(date) < 0) curser ++;
+            int cursor = 0;
+            res = apply(list.size()-1); /*if date not find take last*/
+            while (cursor  < list.size()) {
+                if (list.get(cursor).getDay().compareTo(date) < 0) cursor ++;
                 else {
-                    res = apply(curser);
+                    res = apply(cursor);
                     break;
                 }
             }
@@ -73,10 +74,10 @@ public abstract class CacheStockTimeSeries<K,V,W extends StockBase> {
 
     /**
      * apply generic type
-     * @param curser
+     * @param cursor
      * @return
      */
-    protected abstract V apply(int curser);
+    protected abstract V apply(int cursor);
 
 
     /**

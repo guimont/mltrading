@@ -10,6 +10,7 @@ public class StockIndice extends StockHistory {
 
     public StockIndice(String code, String name,String place, int row) {
         this.setCode(code);
+        this.setCodif(code);
         this.setName(name);
         this.setPlace(place);
         this.setRow(row);

@@ -11,6 +11,9 @@ import java.util.Map;
  */
 public class CacheStockSector {
 
+
+    public static int NO_SECTOR = -1;
+
     public static int SECTOR_FRIN_POS  = 0;
     public static int SECTOR_FRBM_POS  = 1;
     public static int SECTOR_FROGP_POS  = 2;
