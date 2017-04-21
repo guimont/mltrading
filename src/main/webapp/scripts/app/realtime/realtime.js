@@ -26,6 +26,12 @@ angular.module('mltradingApp')
                         $translatePartialLoader.addPart('realtime');
                         return $translate.refresh();
                     }]
-                }
+                }/*,
+                onEnter: function(RealtimeService) {
+                    RealtimeService.subscribe();
+                },
+                onExit: function(RealtimeService) {
+                    RealtimeService.unsubscribe();
+                }*/
             });
     });

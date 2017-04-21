@@ -47,7 +47,7 @@ public class RealTimeSectorGoogle implements RealTimeParser {
 
 
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

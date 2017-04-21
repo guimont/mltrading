@@ -12,6 +12,14 @@ angular.module('mltradingApp')
             });
         };
 
+        setInterval(function() {
+            $scope.showSector;
+            $scope.showIndice();
+            $scope.onChangeDate();
+        }, 30000);
+
+
+
         $scope.showSector()
 
 

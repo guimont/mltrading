@@ -17,6 +17,7 @@ import com.mltrading.models.stock.*;
 import com.mltrading.models.util.ThreadFactory;
 import com.mltrading.repository.StockRepository;
 import com.mltrading.service.ExtractionService;
+import com.mltrading.web.websocket.RealTimeWS;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,6 +63,7 @@ public class ScheduleParserGeneral  {
     protected void runExtraction() {
         RealTimeParserBoursorama.refreshCache();
         RealTimeSectorGoogle.refreshCache();
+
     }
 
 
