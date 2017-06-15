@@ -2,8 +2,11 @@ package com.mltrading.dao.impl;
 
 import com.mltrading.config.MLProperties;
 import com.mltrading.dao.InfluxDao;
+import com.mltrading.dao.Requester;
+import com.mltrading.influxdb.dto.QueryRequest;
 import org.influxdb.InfluxDB;
 import org.influxdb.InfluxDBFactory;
+import org.influxdb.dto.QueryResult;
 
 
 /**
@@ -31,6 +34,12 @@ public class InfluxDaoImpl implements InfluxDao{
     @Override
     public void deleteDB(String name) {
         influxDB.deleteDatabase(name);
+    }
+
+    @Override
+    public void duplicateDB(String name, String copy) {
+        String query = "SELECT * INTO "+copy+"..:MEASUREMENT FROM /.*/";
+        QueryResult list = (QueryResult) Requester.sendRequest(new QueryRequest(query, name));
     }
 
     @Override

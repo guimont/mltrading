@@ -11,6 +11,7 @@ import org.apache.spark.mllib.regression.LabeledPoint;
 import org.apache.spark.mllib.tree.model.TreeEnsembleModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import scala.Serializable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -19,7 +20,7 @@ import java.util.List;
 /**
  * Created by gmo on 10/03/2017.
  */
-public abstract class MlModelGeneric<R extends TreeEnsembleModel> {
+public abstract class MlModelGeneric<R extends TreeEnsembleModel> implements Serializable {
 
 
     private static final Logger log = LoggerFactory.getLogger(MlModelGeneric.class);
@@ -87,17 +88,15 @@ public abstract class MlModelGeneric<R extends TreeEnsembleModel> {
 
 
         JavaRDD<FeaturesStock> predictionAndLabel = testData.map(
-            new Function<FeaturesStock, FeaturesStock>() {
-                public FeaturesStock call(FeaturesStock fs) {
+            (Function<FeaturesStock, FeaturesStock>) fs -> {
 
-                    double pred = model.predict(Vectors.dense(fs.vectorize()));
-                    FeaturesStock fsResult = new FeaturesStock(fs, pred, period);
+                double pred = model.predict(Vectors.dense(fs.vectorize()));
+                FeaturesStock fsResult = new FeaturesStock(fs, pred, period);
 
-                    fsResult.setPredictionValue(pred,period);
-                    fsResult.setDate(fs.getDate(period), period);
+                fsResult.setPredictionValue(pred,period);
+                fsResult.setDate(fs.getDate(period), period);
 
-                    return fsResult;
-                }
+                return fsResult;
             }
         );
 

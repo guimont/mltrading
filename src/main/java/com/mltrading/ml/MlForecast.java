@@ -1,7 +1,9 @@
 package com.mltrading.ml;
 
 import com.mltrading.config.MLProperties;
+import com.mltrading.ml.genetic.GeneticAlgorithm;
 import com.mltrading.ml.model.RandomForestStock;
+import com.mltrading.ml.util.Combination;
 import com.mltrading.ml.util.FixedThreadPoolExecutor;
 import com.mltrading.models.stock.*;
 
@@ -251,6 +253,20 @@ public class MlForecast {
 
     }
 
+    void optimizeGenetic() {
+        final GeneticAlgorithm<Combination> algo = new GeneticAlgorithm<Combination>(c -> c.evaluate(), () -> Combination.newInstance(),
+            (first, second) -> first.merge(second), c -> c.mutate());
+
+
+        algo.initialize(10);
+        algo.iterate(1, 5, 10, 10, 10);
+        //algo.printTo(System.err);
+        System.err.println(algo.best().toString());
+
+
+        algo.best().evaluate();
+    }
+
 
 
 
@@ -353,10 +369,7 @@ public class MlForecast {
                 mls.generateValidator("generateSimpleModel",NOTUSE);
                 mls.updateColValidator(col+1);
 
-
             }
-
-
         }
 
         /** keep best model*/

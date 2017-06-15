@@ -4,14 +4,12 @@ import java.util.*;
 
 
 import com.mltrading.ml.*;
-import com.mltrading.models.util.MLActivities;
 import org.apache.spark.mllib.linalg.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import scala.Serializable;
+
 import org.apache.spark.api.java.JavaRDD;
-import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.api.java.function.Function;
+
 import org.apache.spark.mllib.regression.LabeledPoint;
 import org.apache.spark.mllib.tree.RandomForest;
 import org.apache.spark.mllib.tree.model.RandomForestModel;
@@ -19,7 +17,7 @@ import org.apache.spark.mllib.tree.model.RandomForestModel;
 /**
  * Created by gmo on 14/11/2015.
  */
-public class RandomForestStock implements Serializable {
+public class RandomForestStock extends MlModelGeneric<RandomForestModel> {
 
     private static final Logger log = LoggerFactory.getLogger(RandomForestStock.class);
 
@@ -27,126 +25,28 @@ public class RandomForestStock implements Serializable {
 
 
 
-    public JavaRDD<LabeledPoint> createRDD(JavaSparkContext sc,  List<FeaturesStock> fsL, PredictionPeriodicity type) {
-
-        JavaRDD<FeaturesStock> data = sc.parallelize(fsL);
-
-        JavaRDD<LabeledPoint> parsedData = data.map(
-            new Function<FeaturesStock, LabeledPoint>() {
-                public LabeledPoint call(FeaturesStock fs) {
-                    return new LabeledPoint(fs.getResultValue(type), Vectors.dense(fs.vectorize()));
-                }
-            }
-
-        );
-
-
-
-        return parsedData;
+    @Override
+    protected void setModel(MLStocks mls, PredictionPeriodicity period, RandomForestModel model) {
+        mls.setModel(period, model);
     }
 
 
-
-
-
-
-    public MLStocks processRFRef(String codif, MLStocks mls, boolean merge) {
-
-        CacheMLActivities.addActivities(new MLActivities("FeaturesStock", codif, "start", 0, 0, false));
-        List<FeaturesStock> fsL = FeaturesStock.create(codif, mls.getValidator(PredictionPeriodicity.D1), CacheMLStock.RANGE_MAX);
-        CacheMLActivities.addActivities(new MLActivities("FeaturesStock", codif, "start", 0, 0, true));
-
-        periodicity.forEach(p -> subprocessRF( mls,  fsL, p, merge));
-
-        return mls;
-    }
-
-
-
-    public MLStocks subprocessRF(MLStocks mls,  List<FeaturesStock> fsL, PredictionPeriodicity period, boolean merge) {
-
-
-        if (null == fsL) return null;
-
-        int born = fsL.size() - CacheMLStock.RENDERING;
-
-        List<FeaturesStock> fsLTrain =fsL.subList(0,born);
-        List<FeaturesStock> fsLTest =fsL.subList(born, fsL.size());
-
-        JavaSparkContext sc = CacheMLStock.getJavaSparkContext();
-
-        // Load and parse the data file.
-        JavaRDD<LabeledPoint> trainingData = createRDD(sc, fsLTrain, period);
-
-        JavaRDD<FeaturesStock> testData = sc.parallelize(fsLTest);
-
-        // Split the data into training and test sets (30% held out for testing)
-
-        // Set parameters.
-        //  Empty categoricalFeaturesInfo indicates all features are continuous.
+    @Override
+    protected RandomForestModel trainModel(JavaRDD<LabeledPoint> trainingData, MatrixValidator validator) {
+        // Train a RandomForest model.
         Map<Integer, Integer> categoricalFeaturesInfo = new HashMap<Integer, Integer>();
 
         String impurity = "variance";
 
         String featureSubsetStrategy = "auto"; // Let the algorithm choose.
-
-
-        // Train a RandomForest model.
         final RandomForestModel model = RandomForest.trainRegressor(trainingData,
-            categoricalFeaturesInfo, mls.getValidator(period).getNumTrees(), featureSubsetStrategy, impurity,
-            mls.getValidator(period).getMaxDepth(), mls.getValidator(period).getMaxBins(),
-            mls.getValidator(period).getSeed());
+            categoricalFeaturesInfo, validator.getNumTrees(), featureSubsetStrategy, impurity,
+            validator.getMaxDepth(), validator.getMaxBins(),
+            validator.getSeed());
 
-
-        mls.setModel(period, model);
-
-
-        mls.getValidator(period).setVectorSize(fsL.get(0).currentVectorPos);
-
-
-        JavaRDD<FeaturesStock> predictionAndLabel = testData.map(
-            new Function<FeaturesStock, FeaturesStock>() {
-                public FeaturesStock call(FeaturesStock fs) {
-
-                    double pred = model.predict(Vectors.dense(fs.vectorize()));
-                    FeaturesStock fsResult = new FeaturesStock(fs, pred, period);
-
-                    fsResult.setPredictionValue(pred,period);
-                    fsResult.setDate(fs.getDate(period), period);
-
-                    return fsResult;
-                }
-            }
-        );
-
-
-
-        JavaRDD<MLPerformances> res =
-            predictionAndLabel.map(new Function <FeaturesStock, MLPerformances>() {
-                public MLPerformances call(FeaturesStock pl) {
-                    System.out.println("estimate: " + pl.getPredictionValue(period));
-                    System.out.println("result: " + pl.getResultValue(period));
-                    //Double diff = pl.getPredictionValue() - pl.getResultValue();
-                    MLPerformances perf = new MLPerformances(pl.getCurrentDate());
-                    perf.setMl(MLPerformance.calculYields(pl.getDate(period), pl.getPredictionValue(period), pl.getResultValue(period), pl.getCurrentValue()), period);
-
-                    return perf;
-
-                }
-            });
-
-
-        try {
-            /* merge for optimize model only else replace*/
-            if (!merge) mls.getStatus().setPerfList(res.collect(),period);
-            else mls.getStatus().mergeList(res.collect(),period);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return mls;
-
+        return model;
     }
+
 
 
 
@@ -173,38 +73,6 @@ public class RandomForestStock implements Serializable {
         List<FeaturesStock> fsLD20 = map.get(PredictionPeriodicity.D20);
         List<FeaturesStock> fsLD40 = map.get(PredictionPeriodicity.D40);
 
-/*
-            List<FeaturesStock> fsLD1 = FeaturesStock.create(codif, mls.getValidator(PredictionPeriodicity.D1), CacheMLStock.RENDERING);
-        if( fsLD1.get(0).currentVectorPos != mls.getValidator(PredictionPeriodicity.D1).getVectorSize())    {
-            log.error("size vector not corresponding");
-            log.error("validator: " + mls.getValidator(PredictionPeriodicity.D1).getVectorSize());
-            log.error("vector: " + fsLD1.get(0).currentVectorPos );
-        }
-        List<FeaturesStock> fsLD5 = FeaturesStock.create(codif, mls.getValidator(PredictionPeriodicity.D5), CacheMLStock.RENDERING);
-        if( fsLD5.get(0).currentVectorPos != mls.getValidator(PredictionPeriodicity.D5).getVectorSize())    {
-            log.error("size vector not corresponding");
-            log.error("validator: " + mls.getValidator(PredictionPeriodicity.D5).getVectorSize());
-            log.error("vector: " + fsLD5.get(0).currentVectorPos );
-        }
-        List<FeaturesStock> fsLD20 = FeaturesStock.create(codif, mls.getValidator(PredictionPeriodicity.D20), CacheMLStock.RENDERING);
-        if( fsLD20.get(0).currentVectorPos != mls.getValidator(PredictionPeriodicity.D20).getVectorSize())    {
-            log.error("size vector not corresponding");
-            log.error("validator: " + mls.getValidator(PredictionPeriodicity.D20).getVectorSize());
-            log.error("vector: " + fsLD20.get(0).currentVectorPos );
-        }
-
-        List<FeaturesStock> fsLD40 = FeaturesStock.create(codif, mls.getValidator(PredictionPeriodicity.D40), CacheMLStock.RENDERING);
-        if( fsLD40.get(0).currentVectorPos != mls.getValidator(PredictionPeriodicity.D40).getVectorSize())    {
-            log.error("size vector not corresponding");
-            log.error("validator: " + mls.getValidator(PredictionPeriodicity.D40).getVectorSize());
-            log.error("vector: " + fsLD40.get(0).currentVectorPos );
-        }*/
-
-
-        //if (null == fsLD1) return null;
-
-        //JavaSparkContext sc = CacheMLStock.getJavaSparkContext();
-        //JavaRDD<FeaturesStock> testData = sc.parallelize(fsL);
 
         // Split the data into training and test sets (30% held out for testing)
 

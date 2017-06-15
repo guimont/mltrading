@@ -18,6 +18,7 @@ public interface InfluxDao {
     public void createConnection(String hostDist);
     public void createDB(String name);
     public void deleteDB(String name);
+    public void duplicateDB(String name, String copy);
 
     public InfluxDB getDB();
 
