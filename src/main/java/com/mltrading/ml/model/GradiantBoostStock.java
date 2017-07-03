@@ -24,7 +24,7 @@ import java.util.Map;
 /**
  * Created by gmo on 14/11/2015.
  */
-public class GradiantBoostStock implements Serializable {
+public class GradiantBoostStock extends MlModelGeneric<GradientBoostedTreesModel> {
 
     private static final Logger log = LoggerFactory.getLogger(GradiantBoostStock.class);
 
@@ -47,117 +47,26 @@ public class GradiantBoostStock implements Serializable {
         return parsedData;
     }
 
-
-
-
-    public MLStocks processRFRef(String codif, MLStocks mls) {
-
-        CacheMLActivities.addActivities(new MLActivities("FeaturesStock", codif, "start", 0, 0, false));
-        List<FeaturesStock> fsL = FeaturesStock.create(codif, mls.getValidator(PredictionPeriodicity.D1), CacheMLStock.RANGE_MAX);
-        CacheMLActivities.addActivities(new MLActivities("FeaturesStock", codif, "start", 0, 0, true));
-
-        subprocessRF( mls,  fsL, PredictionPeriodicity.D1);
-        subprocessRF( mls,  fsL, PredictionPeriodicity.D5);
-        subprocessRF( mls,  fsL, PredictionPeriodicity.D20);
-        subprocessRF( mls,  fsL, PredictionPeriodicity.D40);
-
-
-        return mls;
+    @Override
+    protected void setModel(MLStocks mls, PredictionPeriodicity period, GradientBoostedTreesModel model) {
+        //mls.setModel(period, model);
     }
 
-
-
-    public MLStocks subprocessRF(MLStocks mls,  List<FeaturesStock> fsL, PredictionPeriodicity period) {
-
-
-        if (null == fsL) return null;
-
-        int born = fsL.size() - CacheMLStock.RENDERING;
-
-        List<FeaturesStock> fsLTrain =fsL.subList(0,born);
-        List<FeaturesStock> fsLTest =fsL.subList(born, fsL.size());
-
-        JavaSparkContext sc = CacheMLStock.getJavaSparkContext();
-
-        // Load and parse the data file.
-        JavaRDD<LabeledPoint> trainingData = createRDD(sc, fsLTrain, period);
-
-        JavaRDD<FeaturesStock> testData = sc.parallelize(fsLTest);
-
-        // Split the data into training and test sets (30% held out for testing)
-
-        // Set parameters.
-        //  Empty categoricalFeaturesInfo indicates all features are continuous.
-        Map<Integer, Integer> categoricalFeaturesInfo = new HashMap<Integer, Integer>();
-
-
-
-        // Train a GradientBoostedTrees model.
-// The defaultParams for Regression use SquaredError by default.
+    @Override
+    protected GradientBoostedTreesModel trainModel(JavaRDD<LabeledPoint> trainingData, MatrixValidator validator) {
         BoostingStrategy boostingStrategy = BoostingStrategy.defaultParams("Regression");
         boostingStrategy.setNumIterations(3); // Note: Use more iterations in practice.
         boostingStrategy.getTreeStrategy().setMaxDepth(5);
 // Empty categoricalFeaturesInfo indicates all features are continuous.
 
+        Map<Integer, Integer> categoricalFeaturesInfo = new HashMap<Integer, Integer>();
         boostingStrategy.treeStrategy().setCategoricalFeaturesInfo(categoricalFeaturesInfo);
 
         final GradientBoostedTreesModel model =
             GradientBoostedTrees.train(trainingData, boostingStrategy);
 
-
-
-
-
-
-        //mls.setModel(period, model);
-
-
-
-        mls.getValidator(period).setVectorSize(fsL.get(0).currentVectorPos);
-
-
-        JavaRDD<FeaturesStock> predictionAndLabel = testData.map(
-            new Function<FeaturesStock, FeaturesStock>() {
-                public FeaturesStock call(FeaturesStock fs) {
-
-                    double pred = model.predict(Vectors.dense(fs.vectorize()));
-                    FeaturesStock fsResult = new FeaturesStock(fs, pred, period);
-
-                    fsResult.setPredictionValue(pred,period);
-                    fsResult.setDate(fs.getDate(period), period);
-
-                    return fsResult;
-                }
-            }
-        );
-
-
-
-        JavaRDD<MLPerformances> res =
-            predictionAndLabel.map(new Function <FeaturesStock, MLPerformances>() {
-                public MLPerformances call(FeaturesStock pl) {
-                    System.out.println("estimate: " + pl.getPredictionValue(period));
-                    System.out.println("result: " + pl.getResultValue(period));
-                    //Double diff = pl.getPredictionValue() - pl.getResultValue();
-                    MLPerformances perf = new MLPerformances(pl.getCurrentDate());
-                    perf.setMl(MLPerformance.calculYields(pl.getDate(period), pl.getPredictionValue(period), pl.getResultValue(period), pl.getCurrentValue()), period);
-
-                    return perf;
-
-                }
-            });
-
-
-        try {
-            mls.getStatus().setPerfList(res.collect(),period);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return mls;
+        return model;
     }
-
-
 
 
 

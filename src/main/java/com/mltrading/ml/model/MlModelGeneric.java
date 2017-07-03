@@ -34,11 +34,7 @@ public abstract class MlModelGeneric<R extends TreeEnsembleModel> implements Ser
         JavaRDD<FeaturesStock> data = sc.parallelize(fsL);
 
         JavaRDD<LabeledPoint> parsedData = data.map(
-            new Function<FeaturesStock, LabeledPoint>() {
-                public LabeledPoint call(FeaturesStock fs) {
-                    return new LabeledPoint(fs.getResultValue(type), Vectors.dense(fs.vectorize()));
-                }
-            }
+            (Function<FeaturesStock, LabeledPoint>) fs -> new LabeledPoint(fs.getResultValue(type), Vectors.dense(fs.vectorize()))
 
         );
 
@@ -103,17 +99,15 @@ public abstract class MlModelGeneric<R extends TreeEnsembleModel> implements Ser
 
 
         JavaRDD<MLPerformances> res =
-            predictionAndLabel.map(new Function <FeaturesStock, MLPerformances>() {
-                public MLPerformances call(FeaturesStock pl) {
-                    System.out.println("estimate: " + pl.getPredictionValue(period));
-                    System.out.println("result: " + pl.getResultValue(period));
-                    //Double diff = pl.getPredictionValue() - pl.getResultValue();
-                    MLPerformances perf = new MLPerformances(pl.getCurrentDate());
-                    perf.setMl(MLPerformance.calculYields(pl.getDate(period), pl.getPredictionValue(period), pl.getResultValue(period), pl.getCurrentValue()), period);
+            predictionAndLabel.map((Function<FeaturesStock, MLPerformances>) pl -> {
+                System.out.println("estimate: " + pl.getPredictionValue(period));
+                System.out.println("result: " + pl.getResultValue(period));
+                //Double diff = pl.getPredictionValue() - pl.getResultValue();
+                MLPerformances perf = new MLPerformances(pl.getCurrentDate());
+                perf.setMl(MLPerformance.calculYields(pl.getDate(period), pl.getPredictionValue(period), pl.getResultValue(period), pl.getCurrentValue()), period);
 
-                    return perf;
+                return perf;
 
-                }
             });
 
 

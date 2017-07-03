@@ -83,9 +83,11 @@ public class GeneticAlgorithm<Genotype> {
     }
 
     private void dropUnselected(int selectionNumber) {
-        final List<Genotype> retained = new ArrayList<>(candidates.subList(0, selectionNumber));
-        candidates.clear();
-        candidates.addAll(retained);
+        if (candidates.size() > selectionNumber) {
+            final List<Genotype> retained = new ArrayList<>(candidates.subList(0, selectionNumber));
+            candidates.clear();
+            candidates.addAll(retained);
+        }
     }
 
     /**

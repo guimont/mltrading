@@ -11,6 +11,7 @@ import org.influxdb.dto.Point;
 import org.influxdb.dto.QueryResult;
 
 import java.io.Serializable;
+import java.util.Random;
 
 /**
  * Created by gmo on 21/07/2016.
@@ -18,6 +19,7 @@ import java.io.Serializable;
 public class MatrixValidator implements Serializable,Cloneable {
 
 
+    private static final Random random = new Random(0);
 
 
     public void setCol(int col) {
@@ -125,8 +127,11 @@ public class MatrixValidator implements Serializable,Cloneable {
      */
 
     public static int randomiBool() {
-        if (Math.random()>0.5) return 1;
-        return 0;
+        return random.nextBoolean() ? 1:0;
+    }
+
+    public static boolean randomBool() {
+        return random.nextBoolean();
     }
 
     public static int randomPeriod(int min, int max) {
@@ -167,6 +172,24 @@ public class MatrixValidator implements Serializable,Cloneable {
         }
         return this;
     }
+
+
+    /**
+     * merge two validator
+     * Used by genetic layer algorithm
+     * @param mv
+     */
+    public void merge(MatrixValidator mv) {
+        for (int i = HS_POS ; i < globalROW; i++) {
+            if (randomBool()) this.matrix[i][HS_COL] = mv.matrix[i][HS_COL];
+            if (randomBool())  this.matrix[i][HS_PERIOD_COL] = mv.matrix[i][HS_PERIOD_COL];
+            if (randomBool())  this.matrix[i][HS_VOLUME_COL] = mv.matrix[i][HS_VOLUME_COL];
+            for (int j = N_HS_COL; j < globalCOL; j++)
+                if (randomBool())  this.matrix[i][j] = mv.matrix[i][j];
+        }
+    }
+
+
 
 
     /**

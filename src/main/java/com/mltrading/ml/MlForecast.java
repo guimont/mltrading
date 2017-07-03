@@ -4,6 +4,7 @@ import com.mltrading.config.MLProperties;
 import com.mltrading.ml.genetic.GeneticAlgorithm;
 import com.mltrading.ml.model.RandomForestStock;
 import com.mltrading.ml.util.Combination;
+import com.mltrading.ml.util.Evaluate;
 import com.mltrading.ml.util.FixedThreadPoolExecutor;
 import com.mltrading.models.stock.*;
 
@@ -25,9 +26,9 @@ import java.util.stream.Stream;
  * Created by gmo on 08/01/2016.
  */
 @Service
-public class MlForecast {
+public class MlForecast extends Evaluate{
 
-    private static final List<PredictionPeriodicity> periodicity = Arrays.asList(PredictionPeriodicity.D1, PredictionPeriodicity.D5, PredictionPeriodicity.D20, PredictionPeriodicity.D40);
+    public static final List<PredictionPeriodicity> periodicity = Arrays.asList(PredictionPeriodicity.D1, PredictionPeriodicity.D5, PredictionPeriodicity.D20, PredictionPeriodicity.D40);
 
 
     private static final Logger log = LoggerFactory.getLogger(MlForecast.class);
@@ -140,17 +141,19 @@ public class MlForecast {
      */
     private void optimize(Stream<? extends StockHistory> stream, int size, int backloop, String validator, Method method) {
 
-        final CountDownLatch latches = new CountDownLatch(size);
-        //final CountDownLatch latches = new CountDownLatch(1); //testmode ORA
+        //final CountDownLatch latches = new CountDownLatch(size);
+        final CountDownLatch latches = new CountDownLatch(1); //testmode ORA
         CacheMLActivities.setCountGlobal(latches.getCount());
 
         CacheMLActivities.addActivities(new MLActivities("optimize forecast", "", "start", 0, 0, false));
 
         //For test purpose only
-        stream/*.filter(s -> s.getCodif().equals("ORA"))*/.forEach(s -> executorRef.submit(() -> {    //For test purpose only
+        stream.filter(s -> s.getCodif().equals("ORA")).forEach(s -> executorRef.submit(() -> {    //For test purpose only
             try {
                 if (validator.contains("optimizeModel"))
                     optimizeModel(s.getCodif());
+                else if (validator.contains("optimizeGenetic"))
+                    optimizeGenetic(s.getCodif(),backloop);
                 else
                     optimize(s.getCodif(), backloop, method, validator);
             } finally {
@@ -193,15 +196,7 @@ public class MlForecast {
             CacheMLActivities.addActivities(new MLActivities("optimize", codif, "start", loop, 0, false));
             MLStocks ref = CacheMLStock.getMLStockCache().get(mls.getCodif());
 
-            int rowSector = CacheStockSector.NO_SECTOR;
-            try {
-                StockGeneral sg = CacheStockGeneral.getCache().get(CacheStockGeneral.getCode(codif));
-                String sector = sg.getSector();
-                if (sector != null)
-                    rowSector = CacheStockSector.getSectorCache().get(sector).getRow();
-            } catch (Exception e) {
-                log.error("Cannot find sector for: "+ codif);
-            }
+            int rowSector = getRowSector(codif);
 
 
             /**
@@ -253,18 +248,27 @@ public class MlForecast {
 
     }
 
-    void optimizeGenetic() {
-        final GeneticAlgorithm<Combination> algo = new GeneticAlgorithm<Combination>(c -> c.evaluate(), () -> Combination.newInstance(),
-            (first, second) -> first.merge(second), c -> c.mutate());
 
+    /**
+     * Genetic optimization
+     * @param codif
+     * @param loop
+     */
+    void optimizeGenetic(String codif,int loop) {
 
-        algo.initialize(10);
-        algo.iterate(1, 5, 10, 10, 10);
-        //algo.printTo(System.err);
-        System.err.println(algo.best().toString());
+        periodicity.forEach(p -> {
+            log.info("start loop for period: " + p);
+            final GeneticAlgorithm<Combination> algo = new GeneticAlgorithm<Combination>(c -> c.evaluate(codif,p), () -> Combination.newInstance(),
+                (first, second) -> first.merge(second), c -> c.mutate());
+            algo.initialize(1);
 
-
-        algo.best().evaluate();
+            /*if model is empty*/
+            if (CacheMLStock.getMLStockCache().get(codif) != null)
+                algo.addReference(new Combination(CacheMLStock.getMLStockCache().get(codif).getValidator(p).clone()));
+            algo.iterate(loop, 0, 10, 0, 0);
+            //algo.printTo(System.err);
+            System.err.println(algo.best().toString());
+        });
     }
 
 
@@ -278,7 +282,7 @@ public class MlForecast {
      * @param period
      * @return
      */
-    private boolean compareResult(MLStatus mls, MLStatus ref, PredictionPeriodicity period) {
+    public static  boolean compareResult(MLStatus mls, MLStatus ref, PredictionPeriodicity period) {
         return mls.getErrorRate(period) <= ref.getErrorRate(period) ||
             (mls.getErrorRate(period) == ref.getErrorRate(period) &&
                 mls.getAvg(period) < ref.getAvg(period));
@@ -292,7 +296,7 @@ public class MlForecast {
      * @param period
      * @return
      */
-    private boolean checkResult(MLStocks mls, MLStocks ref, PredictionPeriodicity period) {
+    public static  boolean checkResult(MLStocks mls, MLStocks ref, PredictionPeriodicity period) {
         if (compareResult(mls.getStatus(), ref.getStatus(), period)) {
             ref.replace(period, mls);
             ref.getStatus().setAvg(mls.getStatus().getAvgD1(), period);

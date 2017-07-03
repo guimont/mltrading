@@ -114,6 +114,13 @@ public class MLStocks  implements Serializable {
 
     }
 
+    public void setValidators(MatrixValidator validator) {
+        for (Map.Entry<PredictionPeriodicity, MLStock> entry : container.entrySet()) {
+            entry.getValue().setValidator(validator);
+        }
+    }
+
+
 
     /**
      * set validator in container
