@@ -30,6 +30,14 @@ public class Combination extends Evaluate{
     }
 
 
+    public MatrixValidator getMv() {
+        return mv;
+    }
+
+    public void setMv(MatrixValidator mv) {
+        this.mv = mv;
+    }
+
     public Combination(MatrixValidator mv) {
         this.mv = mv;
     }
@@ -40,21 +48,18 @@ public class Combination extends Evaluate{
     }
 
     static int SCORENOTREACHABLE =  500;
-    public int evaluate(String codif, PredictionPeriodicity p) {
+    public double evaluate(String codif, PredictionPeriodicity p) {
 
         final MLStocks mls = new MLStocks(codif);
 
         CacheMLActivities.addActivities(new MLActivities("optimize", codif, "start", 0, 0, false));
-        MLStocks ref = CacheMLStock.getMLStockCache().get(mls.getCodif());
 
-
-       mls.setValidators(mv);
-
+        mls.setValidator(p,mv);
 
         String saveCode;
         {
             RandomForestStock rfs = new RandomForestStock();
-            rfs.processRFRef(codif, mls, false);
+            rfs.processRFRef(codif, mls, false,p);
             saveCode = "V";
         }
 
@@ -64,30 +69,19 @@ public class Combination extends Evaluate{
             mls.getValidator(p).save(mls.getCodif() + saveCode +
                 p, mls.getStatus().getErrorRate(p), mls.getStatus().getAvg(p));
 
-
-
-            if (ref != null) {
-
-
-                    if ( MlForecast.checkResult(mls, ref, p))
-                        CacheMLActivities.addActivities(new MLActivities("optimize", codif, "increase model: " + p, 0, 1, true));
-                    else
-                        CacheMLActivities.addActivities(new MLActivities("optimize", codif, "not increase model: " + p, 0, 0, true));
-
-
-
-            } else {
-                    /* empty ref so improve scoring yes*/
-                mls.setScoring(true);
-                CacheMLStock.getMLStockCache().put(mls.getCodif(), mls);
-                CacheMLActivities.addActivities(new MLActivities("optimize", codif, "empty model", 0, 0, true));
-            }
         } else {
             CacheMLActivities.addActivities(new MLActivities("optimize", codif, "failed", 0, 0, true));
         }
 
         //inverse score
-        return SCORENOTREACHABLE - mls.getStatus().getErrorRate(p);
+        return SCORENOTREACHABLE - convert(mls.getStatus().getErrorRate(p),mls.getStatus().getAvg(p));
+    }
+
+
+    private double convert(int error, double stdDev) {
+        int std = Math.abs((int) Math.rint(stdDev*1000));
+        String convert = error+"."+std;
+        return new Double(convert);
     }
 
 

@@ -111,7 +111,6 @@ public class MLStocks  implements Serializable {
             e.printStackTrace();
         }
 
-
     }
 
     public void setValidators(MatrixValidator validator) {

@@ -311,7 +311,7 @@ public class FeaturesStock implements Serializable {
                 fs.setCurrentValue(current.getValue());
 
             } catch (Exception e) {
-                log.error("Cannot get stock history for: " + codif + " and date: " + date +  " //exception:" + e);
+                log.error("Cannot get stock history for: " + codif + " and date: " + date + " range: " + validator.getPeriodStockHist() + " //exception:" + e);
                 throw  e ;
             }
 

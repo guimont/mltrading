@@ -54,6 +54,15 @@ public abstract class MlModelGeneric<R extends TreeEnsembleModel> implements Ser
         return mls;
     }
 
+    public MLStocks processRFRef(String codif, MLStocks mls, boolean merge, PredictionPeriodicity p) {
+
+        CacheMLActivities.addActivities(new MLActivities("FeaturesStock", codif, "start", 0, 0, false));
+        List<FeaturesStock> fsL = FeaturesStock.create(codif, mls.getValidator(p), CacheMLStock.RANGE_MAX);
+        CacheMLActivities.addActivities(new MLActivities("FeaturesStock", codif, "start", 0, 0, true));
+        subprocessRF( mls,  fsL, p, merge);
+        return mls;
+    }
+
 
     public MLStocks subprocessRF(MLStocks mls,  List<FeaturesStock> fsL, PredictionPeriodicity period, boolean merge) {
 

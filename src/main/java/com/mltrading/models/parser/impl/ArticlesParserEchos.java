@@ -23,7 +23,9 @@ import java.net.URL;
 @Singleton
 public class ArticlesParserEchos implements ArticlesParser {
     //http://investir.lesechos.fr/actions/actualites/action-accor,xpar,ac,fr0000120404,isin.html?page=5
-    static String base = "http://investir.lesechos.fr/actions/actualites/action-";
+    //https://investir.lesechos.fr/actions/actualites/action-sodexo,xpar,sw,fr0000121220,isin.html?page=1
+    //https://investir.lesechos.fr/actions/actualites/action-sodexo,xpar,sw,fr0000121220,isin.html?page=1
+    static String base = "https://investir.lesechos.fr/actions/actualites/action-";
     static String sep = ",";
     static String end = ",isin.html?page=";
 

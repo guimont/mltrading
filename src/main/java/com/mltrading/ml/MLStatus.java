@@ -222,8 +222,14 @@ public class MLStatus implements Serializable{
 
     public void replaceElementList(List<MLPerformances> rep, PredictionPeriodicity period) throws Exception {
 
-        for (int i = 0; i< this.getPerfList().size(); i++) {
-            this.getPerfList().get(i).setMl(rep.get(i).getMl(period), period);
+        try {
+            for (int i = 0; i < this.getPerfList().size(); i++) {
+                this.getPerfList().get(i).setMl(rep.get(i).getMl(period), period);
+            }
+        }
+        catch (Exception e) {
+            System.out.println("fuck off: " + period + " " +this.getPerfList());
+
         }
     }
 
@@ -299,9 +305,9 @@ public class MLStatus implements Serializable{
 
 
     public void setPerfList(List<MLPerformances> perfList,PredictionPeriodicity p) throws Exception {
-        if (p == PredictionPeriodicity.D1)
+        if (p == PredictionPeriodicity.D1 || this.perfList == null) {
             this.perfList = perfList;
-        else replaceElementList(perfList,p);
+        } else replaceElementList(perfList,p);
     }
 
 

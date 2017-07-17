@@ -13,6 +13,9 @@ import java.util.List;
  * Created by gmo on 14/03/2016.
  */
 public class StockDocument {
+    public static String dbName = "document";
+
+
     private String code;
     private String day;
     private String ref;

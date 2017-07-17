@@ -141,14 +141,14 @@ public class MlForecast extends Evaluate{
      */
     private void optimize(Stream<? extends StockHistory> stream, int size, int backloop, String validator, Method method) {
 
-        //final CountDownLatch latches = new CountDownLatch(size);
-        final CountDownLatch latches = new CountDownLatch(1); //testmode ORA
+        final CountDownLatch latches = new CountDownLatch(size);
+        //final CountDownLatch latches = new CountDownLatch(1); //testmode ORA
         CacheMLActivities.setCountGlobal(latches.getCount());
 
         CacheMLActivities.addActivities(new MLActivities("optimize forecast", "", "start", 0, 0, false));
 
         //For test purpose only
-        stream.filter(s -> s.getCodif().equals("ORA")).forEach(s -> executorRef.submit(() -> {    //For test purpose only
+        stream/*.filter(s -> s.getCodif().equals("ORA"))*/.forEach(s -> executorRef.submit(() -> {    //For test purpose only
             try {
                 if (validator.contains("optimizeModel"))
                     optimizeModel(s.getCodif());
@@ -256,19 +256,46 @@ public class MlForecast extends Evaluate{
      */
     void optimizeGenetic(String codif,int loop) {
 
-        periodicity.forEach(p -> {
+
+        for (PredictionPeriodicity p : periodicity) {
+        //periodicity.forEach(p -> {
             log.info("start loop for period: " + p);
             final GeneticAlgorithm<Combination> algo = new GeneticAlgorithm<Combination>(c -> c.evaluate(codif,p), () -> Combination.newInstance(),
                 (first, second) -> first.merge(second), c -> c.mutate());
-            algo.initialize(1);
+            algo.initialize(8);
 
             /*if model is empty*/
             if (CacheMLStock.getMLStockCache().get(codif) != null)
                 algo.addReference(new Combination(CacheMLStock.getMLStockCache().get(codif).getValidator(p).clone()));
-            algo.iterate(loop, 0, 10, 0, 0);
+            algo.iterate(loop, 2, 6, 4, 0);
             //algo.printTo(System.err);
+
+
+            /*Validate result */
+            final MLStocks mls = new MLStocks(codif);
+            MLStocks ref = CacheMLStock.getMLStockCache().get(mls.getCodif());
+            mls.setValidator(p,algo.best().getMv());
+
+
+            RandomForestStock rfs = new RandomForestStock();
+            rfs.processRFRef(codif, mls, false, p);
+            mls.getStatus().calculeAvgPrd();
+
+            if (ref != null) {
+
+                if ( MlForecast.checkResult(mls, ref, p))
+                    CacheMLActivities.addActivities(new MLActivities("optimize", codif, "increase model: " + p, 0, 1, true));
+                else
+                    CacheMLActivities.addActivities(new MLActivities("optimize", codif, "not increase model: " + p, 0, 0, true));
+            } else {
+                    /* empty ref so improve scoring yes*/
+                mls.setScoring(true);
+                CacheMLStock.getMLStockCache().put(mls.getCodif(), mls);
+                CacheMLActivities.addActivities(new MLActivities("optimize", codif, "empty model", 0, 0, true));
+            }
+
             System.err.println(algo.best().toString());
-        });
+        }
     }
 
 

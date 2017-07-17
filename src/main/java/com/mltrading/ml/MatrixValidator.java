@@ -489,19 +489,22 @@ public class MatrixValidator implements Serializable,Cloneable {
     }
 
 
-    public MatrixValidator clone() {
-        Object o = null;
-        try {
+    @Override
+    protected MatrixValidator clone() {
+        MatrixValidator clone= new MatrixValidator();
+        clone.vectorSize = vectorSize;
 
-            o = super.clone();
-        } catch(CloneNotSupportedException cnse) {
 
-            cnse.printStackTrace(System.err);
+        for (int i = HS_POS ; i < globalROW; i++) {
+            clone.matrix[i][HS_COL] = matrix[i][HS_COL];
+            clone.matrix[i][HS_PERIOD_COL] = matrix[i][HS_PERIOD_COL];
+            clone.matrix[i][HS_VOLUME_COL] = matrix[i][HS_VOLUME_COL];
+            for (int j = N_HS_COL; j < globalCOL; j++)
+                clone.matrix[i][j]  =  matrix[i][j];
         }
 
-        return (MatrixValidator) o;
+        return clone;
     }
-
 
     /**
      * get matrix stock period history

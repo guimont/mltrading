@@ -1,8 +1,14 @@
 package com.mltrading.models;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import com.mltrading.config.MLProperties;
 import com.mltrading.models.parser.*;
+import com.mltrading.models.parser.impl.ArticleParserEchos;
+import com.mltrading.models.parser.impl.ArticlesParserEchos;
 import com.mltrading.models.parser.impl.HistoryLocalRawMaterials;
+import com.mltrading.models.stock.StockGeneral;
+import com.mltrading.models.stock.cache.CacheStockGeneral;
 import com.mltrading.service.ExtractionService;
 
 import com.mltrading.service.UserService;
@@ -42,15 +48,15 @@ public class test {
         }
     }*/
 
-
-
 /*
+
+
     public static void main(String[] args) {
         MLProperties.load();
         /*HistoryRawMaterialsParser rawParser = new HistoryLocalRawMaterials();
         rawParser.fetchCurrent(20);*
         Analyse a = new Analyse();
-        a.processDaily(5);
+        a.processDaily(30);
 
         System.out.println("FIN");
         System.out.println("FIN");
@@ -59,7 +65,7 @@ public class test {
         System.out.println("FIN");
     }
 
-
+*/
 
 
 
@@ -112,22 +118,22 @@ public class test {
         a.processDaily(75);
     }*/
 
-    /*
-    public static void main(String[] args) {
+
+
+/*public static void main(String[] args) {
         Injector injector = Guice.createInjector(new ServiceParser());
         HistoryParser histParser = injector.getInstance(HistoryParser.class);
 
         StockGeneral g = CacheStockGeneral.getIsinCache().get("FR0000121220");
-        histParser.fetchSpecific(g);
-        Analyse a = new Analyse();
-        a.processAnalysisAll(g.getCode(), Analyse.columnStock);
+
+
         ArticlesParserEchos as = new ArticlesParserEchos();
         as.fetchSpecific(g);
         ArticleParserEchos ap = new ArticleParserEchos();
-        ap.fetchSpecific(g);
-    }*
+        ap.fetchSpecific(null,g);
+    }
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
 
         /*List<StockGeneral> sl = new ArrayList(CacheStockGeneral.getIsinCache().values());
         CacheMLStock.load(sl);
