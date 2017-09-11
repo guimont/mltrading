@@ -15,17 +15,15 @@ public interface ArticlesParser {
 
     void fetch();
 
-    public void fetchCurrent();
-
-    public void fetchSpecific(StockGeneral g);
+    void fetchCurrent();
 
 
-    public static void saveDocument(BatchPoints bp, StockDocument doc) {
+    default void saveDocument(BatchPoints bp, StockDocument doc) {
         Point pt = Point.measurement(doc.getCode()).time(doc.getTimeInsert().getMillis() + 3600000, TimeUnit.MILLISECONDS)
             .field("ref", doc.getRef())
+            .field("source", doc.getSource())
             .build();
         bp.point(pt);
     }
-
 
 }

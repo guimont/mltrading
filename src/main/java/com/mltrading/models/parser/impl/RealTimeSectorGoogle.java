@@ -14,13 +14,13 @@ import java.net.URL;
 /**
  * Created by gmo on 16/01/2017.
  */
-public class RealTimeSectorGoogle implements RealTimeParser {
+public class RealTimeSectorGoogle extends ParserCommon implements RealTimeParser {
 
     static String startUrl="https://www.google.com/finance?q=INDEXEURO%3A";
     static String refCode = "div.id-price-panel";
 
-    public static void refreshCache() {
-        CacheStockSector.getSectorCache().values().forEach(com.mltrading.models.parser.impl.RealTimeSectorGoogle::refreshCache);
+    public void refreshCache() {
+        CacheStockSector.getSectorCache().values().forEach(s -> refreshCache(s));
         //CacheStockSector.getSectorCache().values().forEach(com.mltrading.models.parser.impl.RealTimeSectorGoogle::print);
     }
 
@@ -29,10 +29,10 @@ public class RealTimeSectorGoogle implements RealTimeParser {
         System.out.println("code: " + ss.getCode() +" value: " + ss.getValue());
     }
 
-    private static int refreshCache(StockSector ss) {
+    private int refreshCache(StockSector ss) {
 
         try {
-            String text = ParserCommon.loadUrl(new URL(startUrl+ss.getCode()));
+            String text = loadUrl(new URL(startUrl+ss.getCode()));
 
             Document doc = Jsoup.parse(text);
 

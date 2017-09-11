@@ -4,12 +4,17 @@ abandonne -2
 enlevé -2
 enlèvement -2
 odieuse -3
+capacités 2
+capacité 2
 absent -1
 absents -1
 absorbé 1
 abus -3
 abusé -3
 abusive -3
+accepter 1
+accepté 1
+accepte 1
 accidentelle -2
 accidentellement -2
 accidents -2
@@ -22,17 +27,22 @@ accuser -2
 accusé -2
 accuse -2
 accusant -2
+réalisables 1
 douleurs -2
 acquitter 2
 acquitte 2
 acquitté 2
 acquittant 2
 acrimonieuse -3
+active 1
 adéquat 1
 admirer 3
 admirée 3
 admire 3
 admirant 3
+admettre -1
+admet -1
+admis -1
 adorable 3
 adorer 3
 adorée 3
@@ -191,6 +201,7 @@ trahit -3
 mieux 2
 biais -1
 biaisée -2
+grande 1
 amère -2
 amèrement -2
 bizarre -2
@@ -339,7 +350,7 @@ complaisants -2
 plaindre -2
 plaints -2
 plaint -2
-plainte -2
+complète 2
 concilier 2
 concilié 2
 concilie 2
@@ -441,8 +452,12 @@ dédié 2
 défait -2
 défaut -3
 défauts -3
+Défenseur 2
+défenseurs 2
+défense -2
 différer -1
 report -1
+défi -1
 déficit -2
 dégrader -2
 dégradé -2
@@ -459,7 +474,10 @@ délice 3
 ravis 3
 délectant 3
 délices 3
+demande -1
 exigé -1
+exigeant -1
+démonstration -1
 démoralisé -2
 nié -2
 denier -2
@@ -598,6 +616,7 @@ redoutant -2
 rêver 1
 rêves 1
 morne -2
+déposer -1
 noyer -2
 noyé -2
 noie -2
@@ -834,9 +853,11 @@ morosité -3
 glorieuse 2
 gloire 2
 aubaine 4
+bon 3
 bonté 3
 grâce 1
 gracieuse 3
+grand 1
 subvention 1
 accordé 1
 octroi 1
@@ -1022,6 +1043,7 @@ insensibilité -2
 insignifiante -2
 insipide -2
 inspiration 2
+Inspiré 2
 inspirer 2
 inspiré 2
 inspire 2
@@ -1036,6 +1058,7 @@ intense 1
 intérêt 1
 intéressés 2
 intéressante 2
+interrogé -2
 interrompre -2
 interrompu -2
 interrompant -2
@@ -1070,7 +1093,12 @@ emprisonné -2
 jaloux -2
 péril -2
 secousse -3
+jésus 1
+joyau 1
+bijoux 1
 facétieuse 2
+blague -1
+blagues -1
 joviale 2
 joie 3
 joyeuse 3
@@ -1096,6 +1124,7 @@ rire 1
 ri 1
 riant 1
 rit 1
+lancé 1
 paresseux -1
 fuite -1
 laisser -1
@@ -1392,6 +1421,7 @@ arrivistes -1
 perplexe -2
 tremblant -2
 discutable -2
+interrogé -1
 questionnement -1
 racisme -3
 raciste -3
@@ -1822,6 +1852,7 @@ inintelligente -2
 injuste -2
 inégalée 1
 démotivés -2
+professionnel -2
 insatisfaite -2
 déstabilisé -1
 rudimentaire -2
@@ -1997,10 +2028,4 @@ ambition 1
 nulle -2
 nul -2
 volatil -2
-rachat 1
-conclure 1
-trompeuses -2
-intolérable -3
-décalage -1
-fossé -2
-poursuites -2
+

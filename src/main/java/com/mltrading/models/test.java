@@ -6,6 +6,7 @@ import com.mltrading.config.MLProperties;
 import com.mltrading.models.parser.*;
 import com.mltrading.models.parser.impl.ArticleParserEchos;
 import com.mltrading.models.parser.impl.ArticlesParserEchos;
+import com.mltrading.models.parser.impl.DiaryParserBoursorama;
 import com.mltrading.models.parser.impl.HistoryLocalRawMaterials;
 import com.mltrading.models.stock.StockGeneral;
 import com.mltrading.models.stock.cache.CacheStockGeneral;
@@ -119,18 +120,39 @@ public class test {
     }*/
 
 
+    public static void main(String[] args) {
 
-/*public static void main(String[] args) {
+        MLProperties.load();
+
         Injector injector = Guice.createInjector(new ServiceParser());
-        HistoryParser histParser = injector.getInstance(HistoryParser.class);
+        DiaryParser diaryParser = injector.getInstance(DiaryParser.class);
 
-        StockGeneral g = CacheStockGeneral.getIsinCache().get("FR0000121220");
+        //diaryParser.fetchCurrent(100);
+    diaryParser
+        .fetch();
 
 
-        ArticlesParserEchos as = new ArticlesParserEchos();
-        as.fetchSpecific(g);
+    }
+
+        //rawParser.fetch();
+
+
+/*
+public static void main(String[] args) {
+        Injector injector = Guice.createInjector(new ServiceParser());
+        ArticlesParser articles =  injector.getInstance(ArticlesParser.class);
+        ArticleNotation notation = injector.getInstance(ArticleNotation.class);
+
+        MLProperties.load();
+
+
+
+        //articles.fetchSpecific(g);
+
+        //notation.fetch();
+
         ArticleParserEchos ap = new ArticleParserEchos();
-        ap.fetchSpecific(null,g);
+        ap.fetch(null);
     }
 
     /*public static void main(String[] args) {

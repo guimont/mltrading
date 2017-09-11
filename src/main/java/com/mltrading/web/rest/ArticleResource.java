@@ -42,4 +42,16 @@ public class ArticleResource {
         return "ok";
     }
 
+
+
+    @RequestMapping(value = "/extractionNotation",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    public String getExtractionNotation() {
+        service.extractNotationFull(articleRepository);
+        return "ok";
+    }
+
+
+
 }

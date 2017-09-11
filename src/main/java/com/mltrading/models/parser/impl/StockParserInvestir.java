@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * Created by gmo on 05/01/2016.
  */
-public class StockParserInvestir  implements StockParser{
+public class StockParserInvestir extends ParserCommon implements StockParser{
 
     static String base = "http://investir.lesechos.fr/cours/profil-societe-action-";
     static String sep = ",";
@@ -46,7 +46,7 @@ public class StockParserInvestir  implements StockParser{
                 String text;
 
                 System.out.println(url);
-                text = ParserCommon.loadUrl(new URL(url));
+                text = loadUrl(new URL(url));
 
                 if (g.getCode().toLowerCase().equals("fr0000124711")) {
                     String test ="";

@@ -2,6 +2,7 @@ package com.mltrading.models.util;
 
 import com.mltrading.dao.InfluxDaoConnector;
 
+import com.mltrading.models.parser.HistoryCommon;
 import com.mltrading.models.parser.HistoryParser;
 import com.mltrading.models.stock.StockHistory;
 import org.influxdb.dto.BatchPoints;
@@ -11,7 +12,7 @@ import java.io.*;
 /**
  * Created by gmo on 07/07/2016.
  */
-public class CsvFileReader {
+public class CsvFileReader implements HistoryCommon{
     //Delimiter used in CSV file
     private static final String COMMA_DELIMITER = ",";
     private static final String NEW_LINE_SEPARATOR = "\n";
@@ -66,7 +67,7 @@ public class CsvFileReader {
                     sh.setHighest(new Double(max));
                     sh.setOpening(new Double(open));
 
-                    HistoryParser.saveHistory(bp, sh);
+                    saveHistory(bp, sh);
 
                 }
 

@@ -81,6 +81,12 @@ angular.module('mltradingApp')
             });
         }
 
+        $scope.extractionNotation = function () {
+            return $http.get('/api/extractionNotation').then(function (response) {
+                return response.data;
+            });
+        }
+
 
 
         $scope.processML = function () {

@@ -1,8 +1,7 @@
 package com.mltrading.models.stock;
 
 
-import com.mltrading.dao.InfluxDaoConnectorNotation;
-
+import com.mltrading.dao.InfluxDaoConnector;
 import org.influxdb.dto.QueryResult;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -19,9 +18,12 @@ public class HistogramDocument {
 
     private static final Logger log = LoggerFactory.getLogger(HistogramDocument.class);
 
+    public static String dbName = "notation";
+
     DateTime timeInsert;
     private String code;
     private String day;
+    private String source;
     private int lvl_L4 = 0;
     private int lvl_L3 = 0;
     private int lvl_L2 = 0;
@@ -31,6 +33,12 @@ public class HistogramDocument {
     private int lvl_P2 = 0;
     private int lvl_P3 = 0;
     private int lvl_P4 = 0;
+
+    private double note;
+    private double pertinence;
+    private double tf;
+    private double tf_idf;
+
 
 
     public HistogramDocument( String code, String date) {
@@ -135,6 +143,46 @@ public class HistogramDocument {
         this.lvl_P4 = lvl_P4;
     }
 
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public double getNote() {
+        return note;
+    }
+
+    public void setNote(double note) {
+        this.note = note;
+    }
+
+    public double getPertinence() {
+        return pertinence;
+    }
+
+    public void setPertinence(double pertinence) {
+        this.pertinence = pertinence;
+    }
+
+    public double getTf() {
+        return tf;
+    }
+
+    public void setTf(double tf) {
+        this.tf = tf;
+    }
+
+    public double getTf_idf() {
+        return tf_idf;
+    }
+
+    public void setTf_idf(double tf_idf) {
+        this.tf_idf = tf_idf;
+    }
+
     private void setHisto(int note) {
         switch (note) {
             case -4:
@@ -179,8 +227,18 @@ public class HistogramDocument {
         System.out.println(test);
     }
 
+    /**
+     *
+     * @param doc
+     * @param dico
+     */
     public void analyseDocument(String doc, Map<String, Integer> dico) {
-        String[] l = doc.split(" ");
+        /*TODO: use regex*/
+        String[] l = doc
+            .replaceAll("\'"," ")
+            .replaceAll(","," ")
+
+            .split(" ");
 
         for (String w:l) {
             Integer note = dico.get(lem(w));
@@ -206,7 +264,7 @@ public class HistogramDocument {
         //offset is mult by 2 because it is no dense data
         //String query = "SELECT * FROM " + code + " where time <= '" + date + "' and time > '"+ date + "' - "+ Integer.toString(offset)  +"d";
         String query = "SELECT sum(sum) FROM " + code + "R where time <= '" + date + "' and time > '"+ date + "' - "+ Integer.toString(offset)  +"d group by time(1d)";
-        QueryResult list = InfluxDaoConnectorNotation.getPoints(query);
+        QueryResult list = InfluxDaoConnector.getPoints(query, dbName);
 
 
         if (list.getResults().get(0).getSeries() == null || list.getResults().get(0).getSeries().get(0) == null) {
@@ -238,7 +296,7 @@ public class HistogramDocument {
 
          //suppose base is filled
         String query = "SELECT * FROM "+ code +"R where time > '2015-06-01T00:00:00Z'";
-        QueryResult list = InfluxDaoConnectorNotation.getPoints(query);
+        QueryResult list = InfluxDaoConnector.getPoints(query,dbName);
 
         int size = list.getResults().get(0).getSeries().get(0).getValues().size();
 

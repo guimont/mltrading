@@ -15,7 +15,7 @@ import java.net.URL;
 /**
  * Created by gmo on 03/12/2015.
  */
-public class ConsensusParserInvestir implements ConsensusParser {
+public class ConsensusParserInvestir extends ParserCommon implements ConsensusParser {
 
     static String base = "http://investir.lesechos.fr/cours/consensus-analystes-action-";
     static String sep = ",";
@@ -30,7 +30,7 @@ public class ConsensusParserInvestir implements ConsensusParser {
     }
 
 
-    public static Consensus fetchStock(String code) {
+    public  Consensus fetchStock(String code) {
         StockGeneral g = CacheStockGeneral.getIsinCache().get(code);
 
         Consensus c = new Consensus();
@@ -39,7 +39,7 @@ public class ConsensusParserInvestir implements ConsensusParser {
 
                String text;
 
-                text = ParserCommon.loadUrl(new URL(url));
+                text = loadUrl(new URL(url));
 
                 if (text != null) {
                     Document doc = Jsoup.parse(text);
@@ -75,7 +75,7 @@ public class ConsensusParserInvestir implements ConsensusParser {
 
                 //inifinite loop
                 do {
-                    text = ParserCommon.loadUrl(new URL(url));
+                    text = loadUrl(new URL(url));
                     /*if (text == null) retry = true;
                     else retry = false;*/
                 } while (retry);

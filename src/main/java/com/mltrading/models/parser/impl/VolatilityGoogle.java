@@ -1,6 +1,7 @@
 package com.mltrading.models.parser.impl;
 
 import com.mltrading.dao.InfluxDaoConnector;
+import com.mltrading.models.parser.HistoryCommon;
 import com.mltrading.models.parser.HistoryParser;
 import com.mltrading.models.parser.ParserCommon;
 import com.mltrading.models.parser.VolatilityParser;
@@ -18,7 +19,7 @@ import java.net.URL;
 /**
  * Created by gmo on 03/12/2015.
  */
-public class VolatilityGoogle implements VolatilityParser {
+public class VolatilityGoogle extends ParserCommon implements VolatilityParser,HistoryCommon {
 
     //INDEXCBOE:VIX
     //INDEXEURO:VFTSE
@@ -54,7 +55,7 @@ public class VolatilityGoogle implements VolatilityParser {
             String text;
             String url = vol + 0;
 
-            text = ParserCommon.loadUrl(new URL(url));
+            text = loadUrl(new URL(url));
 
             Document doc = Jsoup.parse(text);
             BatchPoints bp = InfluxDaoConnector.getBatchPoints(StockHistory.dbName);
@@ -79,7 +80,7 @@ public class VolatilityGoogle implements VolatilityParser {
                             ind.setLowest(new Double(t.get(3).text().replaceAll(" ", "").replace(",", ".")));
                             ind.setValue(new Double(t.get(4).text().replaceAll(" ", "").replace(",", ".")));
                             ind.setVolume(new Double(0));
-                            HistoryParser.saveHistory(bp, ind);
+                            saveHistory(bp, ind);
                             System.out.println(ind.toString());
                             if (count++ >= range)
                                 break;
@@ -104,7 +105,7 @@ public class VolatilityGoogle implements VolatilityParser {
                 String text;
                 String url = vol + numPage;
 
-                text = ParserCommon.loadUrl(new URL(url));
+                text = loadUrl(new URL(url));
 
                 Document doc = Jsoup.parse(text);
                 BatchPoints bp = InfluxDaoConnector.getBatchPoints(StockHistory.dbName);
@@ -142,7 +143,7 @@ public class VolatilityGoogle implements VolatilityParser {
                                 }
                                 ind.setValue(new Double(t.get(4).text().replaceAll(" ", "").replace(",", ".")));
                                 ind.setVolume(new Double(0));
-                                HistoryParser.saveHistory(bp, ind);
+                                saveHistory(bp, ind);
                                 System.out.println(ind.toString());
                             }
                         }

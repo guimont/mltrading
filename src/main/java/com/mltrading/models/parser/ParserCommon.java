@@ -14,9 +14,7 @@ import java.nio.charset.Charset;
  */
 public class ParserCommon {
 
-
-
-    public static String loadUrl(URL url) {
+    public String loadUrl(URL url) {
         InputStream stream = null;
         try {
             try {
@@ -48,7 +46,7 @@ public class ParserCommon {
      * @return
      * @throws IOException
      */
-    public static String loadStream(InputStream stream) throws IOException {
+    public  String loadStream(InputStream stream) throws IOException {
         Reader reader = new InputStreamReader(stream, Charset.forName("UTF-8"));
         char[] buffer = new char[1024];
         int count;

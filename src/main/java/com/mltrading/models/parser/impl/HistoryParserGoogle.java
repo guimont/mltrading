@@ -3,6 +3,7 @@ package com.mltrading.models.parser.impl;
 import com.google.inject.Singleton;
 import com.mltrading.dao.InfluxDaoConnector;
 
+import com.mltrading.models.parser.HistoryCommon;
 import com.mltrading.models.parser.HistoryParser;
 import com.mltrading.models.parser.ParserCommon;
 import com.mltrading.models.stock.*;
@@ -21,7 +22,7 @@ import java.net.URL;
  */
 
 @Singleton
-public class HistoryParserGoogle implements HistoryParser {
+public class HistoryParserGoogle extends ParserCommon implements HistoryParser,HistoryCommon {
     @Override
     public void fetch() {
         loader();
@@ -49,241 +50,132 @@ public class HistoryParserGoogle implements HistoryParser {
 
 
     /**
-     * not very nice .. code duplicate and exit not nice
+     *
      * @param range
      */
     public  void loaderFrom(int range) {
 
-        int numPage;
-        boolean retry = false;
         for (StockGeneral g : CacheStockGeneral.getIsinCache().values()) {
-            Consensus cnote = ConsensusParserInvestir.fetchStock(g.getCode());
-
             String url = startUrl + getPlace(g.getPlace()) + midUrl + g.getRealCodif()  + endUrl + 0;
-
-            try {
-                String text;
-                int loopPage = 0;
-
-                //inifinite loop
-                do {
-                    text = ParserCommon.loadUrl(new URL(url));
-                    if (text == null) retry = true;
-                    else retry = false;
-                } while (retry);
-
-
-                Document doc = Jsoup.parse(text);
-                BatchPoints bp = InfluxDaoConnector.getBatchPoints(StockHistory.dbName);
-
-                Elements links = doc.select(refCode);
-                int count = 0;
-
-                for (Element link : links) {
-
-                    if (link.children().size() > 40) {
-                        Elements sublinks = link.children().select("tr");
-                        for (Element elt : sublinks) {
-                            Elements t = elt.select("td");
-                            if (t.size() > 3) {
-                                loopPage++;
-                                StockHistory hist = new StockHistory(g);
-                                hist.setDayGoogle(t.get(0).text());
-
-                                hist.setOpening(new Double(t.get(1).text().replaceAll(" ", "").replace(",", "").replace("-","0")));
-                                hist.setHighest(new Double(t.get(2).text().replaceAll(" ", "").replace(",", "").replace("-","0")));
-                                hist.setLowest(new Double(t.get(3).text().replaceAll(" ", "").replace(",", "").replace("-","0")));
-                                hist.setValue(new Double(t.get(4).text().replaceAll(" ", "").replace(",", "").replace("-","0")));
-                                hist.setVolume(new Double(t.get(5).text().replaceAll(" ", "").replace(",", "").replace("-", "0")));
-                                hist.setConsensusNote(cnote.getNotation(cnote.getIndice(loopPage + 0)).getAvg());
-
-                                HistoryParser.saveHistory(bp, hist);
-                                System.out.println(hist.toString());
-                                if (++count >= range)
-                                    break;
-                            }
-                        }
-                    }
-                }
-                InfluxDaoConnector.writePoints(bp);
-
-
-            } catch (IOException e) {
-                e.printStackTrace();
-                System.out.println("ERROR for : " + g.getName());
-            }
+            parser(url,g,range);
         }
 
     }
 
     private String getPlace(String place) {
         if (place.equalsIgnoreCase("xbru")) return "EBR";
-
         return "EPA";
     }
 
+    /**
+     * specific extract .. use in test
+     * @param g
+     */
     public  void loaderSpecific(StockGeneral g) {
 
         int numPage;
-        boolean retry;
 
-
-        Consensus cnote = ConsensusParserInvestir.fetchStock(g.getCode());
         for(numPage =0; numPage <= MAXPAGE ; numPage += PAGINATION) {
             String url = startUrl + getPlace(g.getPlace()) + midUrl + g.getRealCodif()  + endUrl + numPage;
-            try {
-                String text;
-                int loopPage = 0;
-
-                //inifinite loop
-                do {
-                    text = ParserCommon.loadUrl(new URL(url));
-                    if (text == null) retry = true;
-                    else retry = false;
-                } while (retry);
-
-
-                Document doc = Jsoup.parse(text);
-                BatchPoints bp = InfluxDaoConnector.getBatchPoints(StockHistory.dbName);
-
-                Elements links = doc.select(refCode);
-
-                for (Element link : links) {
-
-                    if (link.children().size() > 40) {
-                        Elements sublinks = link.children().select("tr");
-                        for (Element elt : sublinks) {
-                            Elements t = elt.select("td");
-                            if (t.size() > 3) {
-                                loopPage ++;
-                                StockHistory hist = new StockHistory(g);
-                                hist.setDayGoogle(t.get(0).text());
-                                try {
-                                    hist.setOpening(new Double(t.get(1).text().replaceAll(" ", "").replace(",", "")));
-                                } catch (Exception e) {
-                                    hist.setOpening(new Double(0));
-                                }
-                                try {
-                                    hist.setHighest(new Double(t.get(2).text().replaceAll(" ", "").replace(",", "")));
-                                } catch (Exception e) {
-                                    hist.setHighest(new Double(0));
-                                }
-                                try {
-                                    hist.setLowest(new Double(t.get(3).text().replaceAll(" ", "").replace(",", "")));
-                                } catch (Exception e) {
-                                    hist.setLowest(new Double(0));
-                                }
-                                //mandatory no catch
-                                hist.setValue(new Double(t.get(4).text().replaceAll(" ", "").replace(",", "")));
-                                try {
-                                    hist.setVolume(new Double(t.get(5).text().replaceAll(" ", "").replace(",", "")));
-                                } catch (Exception e) {
-                                    hist.setVolume(new Double(0));
-                                }
-                                hist.setConsensusNote(cnote.getNotation(cnote.getIndice(loopPage + numPage)).getAvg());
-                                HistoryParser.saveHistory(bp, hist);
-                                System.out.println(hist.toString());
-                            }
-                        }
-                    }
-                }
-                InfluxDaoConnector.writePoints(bp);
-
-
-            } catch (IOException e) {
-                e.printStackTrace();
-                System.out.println("ERROR for : " + g.getName());
-            }
+            parser(url, g, NO_RANGE);
         }
-
-
     }
 
 
-
-
+    /**
+     *
+     */
     public  void loader() {
 
         int numPage;
-        boolean retry = false;
+
         for (StockGeneral g: CacheStockGeneral.getIsinCache().values()) {
-            Consensus cnote = ConsensusParserInvestir.fetchStock(g.getCode());
             for(numPage =0; numPage <= MAXPAGE ; numPage += PAGINATION) {
+                /*tempo problem with google*/
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 String url = startUrl + getPlace(g.getPlace()) + midUrl + g.getRealCodif()  + endUrl + numPage;
-
-                try {
-                    String text;
-                    int loopPage = 0;
-
-                    //inifinite loop
-                    do {
-                        text = ParserCommon.loadUrl(new URL(url));
-                        if (text == null) retry = true;
-                        else retry = false;
-                    } while (retry);
+                parser(url, g, NO_RANGE);
+            }
+        }
+    }
 
 
-                    if (g.getRealCodif().equalsIgnoreCase("SGO"))
-                        System.out.println("break point");
+    private void parser(String url, StockGeneral g, int range) {
+        boolean retry = false;
+        try {
+            String text;
 
-                    Document doc = Jsoup.parse(text);
-                    BatchPoints bp = InfluxDaoConnector.getBatchPoints(StockHistory.dbName);
 
-                    Elements links = doc.select(refCode);
-                    for (Element link : links) {
+            //inifinite loop
+            do {
+                text = loadUrl(new URL(url));
+                if (text == null) retry = true;
+                else retry = false;
+            } while (retry);
 
-                        if (link.children().size() > 40) {
-                            Elements sublinks = link.children().select("tr");
-                            for (Element elt : sublinks) {
-                                Elements t = elt.select("td");
-                                if (t.size() > 3) {
-                                    loopPage ++;
-                                    StockHistory hist = new StockHistory(g);
-                                    hist.setDayGoogle(t.get(0).text());
-                                    try {
-                                        hist.setOpening(new Double(t.get(1).text().replaceAll(" ", "").replace(",", "")));
-                                    } catch (Exception e) {
-                                        hist.setOpening(new Double(0));
-                                    }
-                                    try {
-                                        hist.setHighest(new Double(t.get(2).text().replaceAll(" ", "").replace(",", "")));
-                                    } catch (Exception e) {
-                                        hist.setHighest(new Double(0));
-                                    }
-                                    try {
-                                        hist.setLowest(new Double(t.get(3).text().replaceAll(" ", "").replace(",", "")));
-                                    } catch (Exception e) {
-                                        hist.setLowest(new Double(0));
-                                    }
-                                    //mandatory no catch
-                                    hist.setValue(new Double(t.get(4).text().replaceAll(" ", "").replace(",", "")));
-                                    try {
-                                        hist.setVolume(new Double(t.get(5).text().replaceAll(" ", "").replace(",", "")));
-                                    } catch (Exception e) {
-                                        hist.setVolume(new Double(0));
-                                    }
-                                    hist.setConsensusNote(cnote.getNotation(cnote.getIndice(loopPage+numPage)).getAvg());
-                                    HistoryParser.saveHistory(bp, hist);
-                                    System.out.println(hist.toString());
-                                }
+
+            if (g.getRealCodif().equalsIgnoreCase("SGO"))
+                System.out.println("break point");
+
+            Document doc = Jsoup.parse(text);
+            BatchPoints bp = InfluxDaoConnector.getBatchPoints(StockHistory.dbName);
+
+            Elements links = doc.select(refCode);
+            int count = 0;
+            for (Element link : links) {
+
+                if (link.children().size() > 40) {
+                    Elements sublinks = link.children().select("tr");
+                    for (Element elt : sublinks) {
+                        Elements t = elt.select("td");
+                        if (t.size() > 3) {
+
+                            StockHistory hist = new StockHistory(g);
+                            hist.setDayGoogle(t.get(0).text());
+                            try {
+                                hist.setOpening(new Double(t.get(1).text().replaceAll(" ", "").replace(",", "")));
+                            } catch (Exception e) {
+                                hist.setOpening(new Double(0));
                             }
+                            try {
+                                hist.setHighest(new Double(t.get(2).text().replaceAll(" ", "").replace(",", "")));
+                            } catch (Exception e) {
+                                hist.setHighest(new Double(0));
+                            }
+                            try {
+                                hist.setLowest(new Double(t.get(3).text().replaceAll(" ", "").replace(",", "")));
+                            } catch (Exception e) {
+                                hist.setLowest(new Double(0));
+                            }
+                            //mandatory no catch
+                            hist.setValue(new Double(t.get(4).text().replaceAll(" ", "").replace(",", "")));
+                            try {
+                                hist.setVolume(new Double(t.get(5).text().replaceAll(" ", "").replace(",", "")));
+                            } catch (Exception e) {
+                                hist.setVolume(new Double(0));
+                            }
+                            //hist.setConsensusNote(cnote.getNotation(cnote.getIndice(loopPage+numPage)).getAvg());
+                            saveHistory(bp, hist);
+                            System.out.println(hist.toString());
+
+                            if (++count >= range)
+                                break;
                         }
                     }
-
-
-                    InfluxDaoConnector.writePoints(bp);
-
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    System.out.println("ERROR for : " + g.getName());
                 }
             }
+
+
+            InfluxDaoConnector.writePoints(bp);
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("ERROR for : " + g.getName());
         }
     }
 }

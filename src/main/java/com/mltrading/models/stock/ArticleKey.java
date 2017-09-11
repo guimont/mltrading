@@ -9,8 +9,8 @@ public class ArticleKey implements Serializable {
     String code;
     String date;
 
-    public ArticleKey(String codif, String date) {
-        this.code = codif;
+    public ArticleKey(String code, String date) {
+        this.code = code;
         this.date = date;
     }
 

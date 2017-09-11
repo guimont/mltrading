@@ -1,7 +1,7 @@
 package com.mltrading.models.parser.impl;
 
 import com.google.inject.Singleton;
-import com.mltrading.dao.InfluxDaoConnectorDocument;
+import com.mltrading.dao.InfluxDaoConnector;
 
 import com.mltrading.models.parser.ArticlesParser;
 import com.mltrading.models.parser.ParserCommon;
@@ -21,7 +21,7 @@ import java.net.URL;
  * Created by gmo on 09/03/2016.
  */
 @Singleton
-public class ArticlesParserEchos implements ArticlesParser {
+public class ArticlesParserEchos extends ParserCommon implements ArticlesParser {
     //http://investir.lesechos.fr/actions/actualites/action-accor,xpar,ac,fr0000120404,isin.html?page=5
     //https://investir.lesechos.fr/actions/actualites/action-sodexo,xpar,sw,fr0000121220,isin.html?page=1
     //https://investir.lesechos.fr/actions/actualites/action-sodexo,xpar,sw,fr0000121220,isin.html?page=1
@@ -30,6 +30,8 @@ public class ArticlesParserEchos implements ArticlesParser {
     static String end = ",isin.html?page=";
 
     static String refCode = "div.contenu-bloc-infos";
+
+    static String SOURCE = "LESECHOS";
 
     @Override
     public void fetch() {
@@ -40,18 +42,13 @@ public class ArticlesParserEchos implements ArticlesParser {
     public void fetchCurrent() {
 
         for (StockGeneral g: CacheStockGeneral.getIsinCache().values()) {
-            String dateRef = StockDocument.getLastDateHistory(g.getCodif());
+            String dateRef = StockDocument.getLastDateHistory(g.getCodif(), StockDocument.TYPE_ARTICLE);
             if (dateRef != null)
                 loaderFrom(g, dateRef);
         }
     }
 
-    @Override
-    public void fetchSpecific(StockGeneral g) {
-        loaderFrom(g, "2010-01-01");
-    }
-
-    static int MAXPAGE = 1;
+    private static int MAXPAGE = 40;
 
 
     private void loaderFrom(StockGeneral g, String dateRef) {
@@ -59,7 +56,7 @@ public class ArticlesParserEchos implements ArticlesParser {
         DateTime dref = new DateTime(dateRef);
 
             for (int page = 1; page <= MAXPAGE; page += 1) {
-                String url = base + CacheStockGeneral.getIsinCache().get(g.getCode()).getName().toLowerCase().replaceAll(" ", "-") + sep + g.getPlace().toLowerCase() + sep + g.getCodif().toLowerCase() + sep + g.getCode().toLowerCase() + end + page;
+                String url = base + CacheStockGeneral.getIsinCache().get(g.getCode()).getName().toLowerCase().replaceAll(" ", "-") + sep + g.getPlace().toLowerCase() + sep + g.getRealCodif().toLowerCase() + sep + g.getCode().toLowerCase() + end + page;
 
                 try {
                     try {
@@ -70,14 +67,14 @@ public class ArticlesParserEchos implements ArticlesParser {
                     String text;
 
                     System.out.println(url);
-                    text = ParserCommon.loadUrl(new URL(url));
+                    text = loadUrl(new URL(url));
 
                     Document doc = Jsoup.parse(text);
                     Elements links = doc.select(refCode);
 
                     Element list = links.get(0);
 
-                    BatchPoints bp = InfluxDaoConnectorDocument.getBatchPoints();
+                    BatchPoints bp = InfluxDaoConnector.getBatchPointsV1(StockDocument.dbName);
 
                     for (Element e : list.children()) {
                         StockDocument document = new StockDocument();
@@ -87,16 +84,19 @@ public class ArticlesParserEchos implements ArticlesParser {
                         String date = e.getAllElements().get(1).getAllElements().get(1).childNodes().get(2).toString();
                         document.setDayInvestir(date, hour);
                         if (dref.isAfter(document.getTimeInsert())) {
-                            InfluxDaoConnectorDocument.writePoints(bp);
+                            InfluxDaoConnector.writePoints(bp);
                             return;
                         }
 
+                        document.setSource(SOURCE);
+
                         String href = e.getAllElements().get(1).attributes().toString();
                         document.setRef(href);
-                        ArticlesParser.saveDocument(bp, document);
+                        if (href.contains("href=\"/abonnement/")) continue; //dont take this
+                        saveDocument(bp, document);
                     }
 
-                    InfluxDaoConnectorDocument.writePoints(bp);
+                    InfluxDaoConnector.writePoints(bp);
 
 
                 } catch (Exception e) {
@@ -122,18 +122,19 @@ public class ArticlesParserEchos implements ArticlesParser {
                     String text;
 
                     System.out.println(url);
-                    text = ParserCommon.loadUrl(new URL(url));
+                    text = loadUrl(new URL(url));
 
                     Document doc = Jsoup.parse(text);
                     Elements links = doc.select(refCode);
 
                     Element list = links.get(0);
 
-                    BatchPoints bp = InfluxDaoConnectorDocument.getBatchPoints();
+                    BatchPoints bp = InfluxDaoConnector.getBatchPointsV1(StockDocument.dbName);
 
                     for (Element e : list.children()) {
                         StockDocument document = new StockDocument();
                         document.setCode(g.getCodif() + "R");
+                        document.setSource(SOURCE);
                         String hour = Jsoup.parse(e.getAllElements().get(1).getAllElements().get(1).childNodes().get(0).toString()).text();
                         //hour = hour.substring(2, hour.length()).replaceAll("h", ":");
                         if (hour.isEmpty()) {
@@ -149,10 +150,10 @@ public class ArticlesParserEchos implements ArticlesParser {
                         }
                         String href = e.getAllElements().get(1).attributes().toString();
                         document.setRef(href);
-                        ArticlesParser.saveDocument(bp, document);
+                        saveDocument(bp, document);
                     }
 
-                    InfluxDaoConnectorDocument.writePoints(bp);
+                    InfluxDaoConnector.writePoints(bp);
 
 
                 } catch (Exception e) {

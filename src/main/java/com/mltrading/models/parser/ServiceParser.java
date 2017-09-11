@@ -11,7 +11,7 @@ public class ServiceParser extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(RealTimeParser.class).to(RealTimeParserYahoo.class);
+        bind(RealTimeParser.class).to(RealTimeParserBoursorama.class);
         bind(HistoryParser.class).to(HistoryParserGoogle.class);
         bind(HistoryRawMaterialsParser.class).to(HistoryLocalRawMaterials.class);
         bind(ConsensusParser.class).to(ConsensusParserInvestir.class);
@@ -21,6 +21,8 @@ public class ServiceParser extends AbstractModule {
         bind(StockParser.class).to(StockParserInvestir.class);
         bind(ArticleParser.class).to(ArticleParserEchos.class);
         bind(ArticlesParser.class).to(ArticlesParserEchos.class);
+        bind(ArticleNotation.class).to(ArticleParserNotation.class);
+        bind(DiaryParser.class).to(DiaryParserBoursorama.class);
     }
 
 

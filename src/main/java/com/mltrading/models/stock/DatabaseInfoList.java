@@ -24,6 +24,8 @@ static final int RANGE = 1500 ;
     private List<DatabaseInfo> sectorList = new ArrayList<>();
     private List<DatabaseInfo> rawList = new ArrayList<>();
 
+    private List<DatabaseInfo> diarryList = new ArrayList<>();
+
 
     public List<DatabaseInfo> getStockList() {
         return stockList;
@@ -41,6 +43,10 @@ static final int RANGE = 1500 ;
         return rawList;
     }
 
+    public List<DatabaseInfo> getDiarryList() {
+        return diarryList;
+    }
+
     public DatabaseInfoList processingList() {
 
         List<StockGeneral> sg = new ArrayList(CacheStockGeneral.getIsinCache().values());
@@ -50,6 +56,7 @@ static final int RANGE = 1500 ;
         List<? extends StockHistory> ss = new ArrayList(CacheStockSector.getSectorCache().values());
         List<? extends StockHistory> si = new ArrayList(CacheStockIndice.getIndiceCache().values());
         List<? extends StockHistory> sr = new ArrayList(CacheRawMaterial.getCache().values());
+        List<? extends StockDocument> sd = new ArrayList(CacheStockGeneral.getIsinCache().values());
 
         /* source are mixed with only one stream* display are not wished
         Stream<StockHistory> stream = Stream.concat(Stream.concat(ss.stream(), si.stream()),sr.stream());
@@ -61,6 +68,8 @@ static final int RANGE = 1500 ;
         si.stream().map(s -> sectorList.add(DatabaseInfo.populate(s.getCode(), StockHistory.getStockHistoryLastInvert(s.getCode(), RANGE)))).collect(Collectors.toList());
 
         sr.stream().map(s -> rawList.add(DatabaseInfo.populate(s.getCode(), StockHistory.getStockHistoryLastInvert(s.getCode(), RANGE)))).collect(Collectors.toList());
+
+        sd.stream().map(s -> diarryList.add(DatabaseInfo.populateDocument(s.getCode(), StockDocument.getStockHistoryLastInvert(s.getCode(), RANGE)))).collect(Collectors.toList());
 
 
         return this;

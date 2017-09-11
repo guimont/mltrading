@@ -9,7 +9,6 @@ public interface HistorySectorParser {
 
     void fetch();
 
-    public void fetchCurrent(int period);
-
+    void fetchCurrent(int period);
 
 }

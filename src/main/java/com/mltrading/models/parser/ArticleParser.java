@@ -11,12 +11,6 @@ import com.mltrading.repository.ArticleRepository;
 public interface ArticleParser {
 
     void fetch(ArticleRepository repository);
-
-    public void fetchCurrent(ArticleRepository repository);
-
-    public void fetchSpecific(ArticleRepository repository, StockGeneral g);
-
-
-
+    void fetchCurrent(ArticleRepository repository);
 
 }

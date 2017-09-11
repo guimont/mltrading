@@ -21,7 +21,7 @@ import java.util.List;
  * Created by gmo on 09/03/2016.
  */
 @Singleton
-public class ArticleParserEchos implements ArticleParser {
+public class ArticleParserEchos extends ParserCommon implements ArticleParser {
 
     private static final Logger log = LoggerFactory.getLogger(HistogramDocument.class);
     static String refCode = "div.contenu_article";
@@ -43,16 +43,11 @@ public class ArticleParserEchos implements ArticleParser {
 
     }
 
-    @Override
-    public void fetchSpecific(ArticleRepository repository, StockGeneral g) {
-        loaderFrom(g, "2010-01-01");
-    }
-
 
     private void loaderFrom(StockGeneral g, String dateRef) {
         DateTime dref = new DateTime(dateRef);
 
-        List<StockDocument> sds =  StockDocument.getStockDocumentInvert(g.getCodif());
+        List<StockDocument> sds =  StockDocument.getStockDocumentInvert(g.getCodif(), StockDocument.TYPE_ARTICLE);
 
         try {
             Thread.sleep(500);
@@ -79,7 +74,7 @@ public class ArticleParserEchos implements ArticleParser {
                     url = url.replace("href=", "http://investir.lesechos.fr").replaceAll("\"", "");
                 }
                 System.out.println(url);
-                text = ParserCommon.loadUrl(new URL(url));
+                text = loadUrl(new URL(url));
 
 
 
@@ -118,7 +113,9 @@ public class ArticleParserEchos implements ArticleParser {
     private void loader(ArticleRepository repository) {
         for (StockGeneral g : CacheStockGeneral.getIsinCache().values()) {
 
-            List<StockDocument> sds =  StockDocument.getStockDocument(g.getCodif());
+            List<StockDocument> sds =  StockDocument.getStockDocument(g.getCodif(), StockDocument.TYPE_ARTICLE);
+
+            if (sds == null) continue;
 
             try {
                 Thread.sleep(2000);
@@ -138,9 +135,9 @@ public class ArticleParserEchos implements ArticleParser {
                     }
 
                     if (!url.startsWith("http"))
-                        url = url.replace("href=\"","http://investir.lesechos.fr").replaceAll("\"","");
+                        url = url.replace("href=\"","https://investir.lesechos.fr").replaceAll("\"","");
                     System.out.println(url);
-                    text = ParserCommon.loadUrl(new URL(url));
+                    text = loadUrl(new URL(url));
 
 
 
@@ -155,7 +152,7 @@ public class ArticleParserEchos implements ArticleParser {
                      */
                     if (doc.select("div.bloc-tags").select("li").size() <5) {
 
-                        String title = doc.select("h1").attr("itemprop","Headline").get(1).text();
+                        String title = doc.select("h1").attr("itemprop","Headline").get(0).text();
                         a.setTitle(title);
 
                         Elements links = doc.select(refCode);

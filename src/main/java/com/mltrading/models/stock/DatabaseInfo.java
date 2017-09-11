@@ -68,6 +68,19 @@ public class DatabaseInfo implements Serializable{
     }
 
 
+    /**
+     *
+     * @param l stock last RANGE extraction
+     * @return
+     */
+    public static DatabaseInfo populateDocument(String code, List<? extends StockDocument> l) {
+
+        if (null == l)
+            return new DatabaseInfo(code,"Empty","Empty", 0);
+
+        return new DatabaseInfo(code,l.get(0).day,l.get(l.size()-1).day, l.size());
+    }
+
 
 
     @Override

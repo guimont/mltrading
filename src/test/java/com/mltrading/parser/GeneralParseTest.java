@@ -1,7 +1,5 @@
 package com.mltrading.parser;
 
-import com.mltrading.models.parser.ParserMain;
-
 /**
  * Created by gmo on 14/11/2015.
  */
@@ -18,7 +16,7 @@ public class GeneralParseTest {
         influxDB.createDatabase(dbName);
         influxDB.deleteDatabase(dbName);*/
 
-        ParserMain.loaderAll();
+
         //ParserHistory.loader();
         System.out.println("parsing ok");
 

@@ -1,24 +1,15 @@
 package com.mltrading.models.parser;
 
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.mltrading.ml.CacheMLStock;
-import com.mltrading.ml.MLPredictor;
 import com.mltrading.ml.MlForecast;
 import com.mltrading.models.parser.impl.RealTimeParserBoursorama;
-import com.mltrading.models.parser.impl.RealTimeParserYahoo;
 import com.mltrading.models.parser.impl.RealTimeSectorGoogle;
-import com.mltrading.models.stock.*;
-import com.mltrading.models.util.ThreadFactory;
-import com.mltrading.repository.StockRepository;
 import com.mltrading.service.ExtractionService;
-import com.mltrading.web.websocket.RealTimeWS;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +27,14 @@ public class ScheduleParserGeneral  {
     protected TimerTask timerTask;
     private static ExtractionService service = new ExtractionService();
 
+    private RealTimeParserBoursorama realTimeParserBoursorama;
+    private RealTimeSectorGoogle realTimeSectorGoogle;
+
+
+    public ScheduleParserGeneral() {
+        realTimeParserBoursorama = new RealTimeParserBoursorama();
+        realTimeSectorGoogle = new RealTimeSectorGoogle();
+    }
 
     protected class GlobalTimerTask extends TimerTask {
 
@@ -61,15 +60,15 @@ public class ScheduleParserGeneral  {
 
 
     protected void runExtraction() {
-        RealTimeParserBoursorama.refreshCache();
-        RealTimeSectorGoogle.refreshCache();
+        realTimeParserBoursorama.refreshCache();
+        realTimeSectorGoogle.refreshCache();
 
     }
 
 
     public void start() {
         //updateBase(); //not use here but in upddate scheduler*/
-        RealTimeParserBoursorama.loaderCache();
+        realTimeParserBoursorama.loaderCache();
         updatePredictor();
         this.extractionCycleInMs =  30000;
         this.timer = new Timer("ExtractionProcess", true);

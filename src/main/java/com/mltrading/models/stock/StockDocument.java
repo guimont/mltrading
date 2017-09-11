@@ -1,27 +1,40 @@
 package com.mltrading.models.stock;
 
 
-import com.mltrading.dao.InfluxDaoConnectorDocument;
-
+import com.mltrading.dao.InfluxDaoConnector;
+import com.mltrading.models.stock.cache.CacheStockDiary;
+import com.mltrading.models.stock.cache.CacheStockHistory;
 import org.influxdb.dto.QueryResult;
 import org.joda.time.DateTime;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by gmo on 14/03/2016.
  */
-public class StockDocument {
+public class StockDocument extends StockBase implements Serializable, Comparable<StockDocument> {
+    public static final String TYPE_ARTICLE = "R";
+    public static final String TYPE_DIARY = "N";
     public static String dbName = "document";
-
+    private static CacheStockDiary cache = CacheStockDiary.CacheStockHistoryHolder();
 
     private String code;
-    private String day;
+    public String day;
     private String ref;
+    private String source;
 
     DateTime timeInsert;
 
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
 
     public String getCode() {
         return code;
@@ -75,12 +88,15 @@ public class StockDocument {
         sd.setRef(meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(COLUMN_REF).toString());
     }
 
-    public static List<StockDocument> getStockDocument(final String code) {
+    public static List<StockDocument> getStockDocument(final String code, final String type) {
 
         List<StockDocument> docList = new ArrayList<>();
         //offset is mult by 2 because it is no dense data
-        String query = "SELECT * FROM " + code + "R";
-        QueryResult list = InfluxDaoConnectorDocument.getPoints(query);
+        String query = "SELECT * FROM " + code + type;
+        QueryResult list = InfluxDaoConnector.getPoints(query,dbName);
+
+        if (list.getResults().get(0).getSeries() == null || list.getResults().get(0).getSeries().get(0) == null)
+            return null;
 
         int size = list.getResults().get(0).getSeries().get(0).getValues().size();
 
@@ -95,12 +111,12 @@ public class StockDocument {
 
     }
 
-    public static List<StockDocument> getStockDocumentInvert(final String code) {
+    public static List<StockDocument> getStockDocumentInvert(final String code, final String type) {
 
         List<StockDocument> docList = new ArrayList<>();
         //offset is mult by 2 because it is no dense data
-        String query = "SELECT * FROM " + code + "R";
-        QueryResult list = InfluxDaoConnectorDocument.getPoints(query);
+        String query = "SELECT * FROM " + code + type;
+        QueryResult list = InfluxDaoConnector.getPoints(query,dbName);
 
         int size = list.getResults().get(0).getSeries().get(0).getValues().size();
 
@@ -124,7 +140,7 @@ public class StockDocument {
             //offset is mult by 2 because it is no dense data
             //String query = "SELECT * FROM " + code + " where time <= '" + date + "' and time > '"+ date + "' - "+ Integer.toString(offset)  +"d";
             String query = "SELECT count(ref) FROM " + code + "R where time <= '" + date + "' and time > '" + date + "' - " + Integer.toString(offset) + "d group by time(1d)";
-            QueryResult list = InfluxDaoConnectorDocument.getPoints(query);
+            QueryResult list = InfluxDaoConnector.getPoints(query,dbName);
 
 
             if (list.getResults().get(0).getSeries() == null || list.getResults().get(0).getSeries().get(0) == null) {
@@ -150,11 +166,11 @@ public class StockDocument {
 
     }
 
-    public static String getLastDateHistory(final String code) {
+    public static String getLastDateHistory(final String code, final String type) {
 
         //suppose base is filled
-        String query = "SELECT * FROM "+ code +"R where time > '2015-06-01T00:00:00Z'";
-        QueryResult list = InfluxDaoConnectorDocument.getPoints(query);
+        String query = "SELECT * FROM "+ code +type + " where time > '2015-06-01T00:00:00Z'";
+        QueryResult list = InfluxDaoConnector.getPoints(query,dbName);
 
         if (list.getResults().get(0).getSeries() == null) return null;
         int size = list.getResults().get(0).getSeries().get(0).getValues().size();
@@ -164,4 +180,24 @@ public class StockDocument {
     }
 
 
+    public static List<StockDocument> getStockHistoryLastInvert(String code, int max) {
+        return cache.getStockHistoryLastInvert(code,max);
+    }
+
+
+    @Override
+    public String toString() {
+        return "StockDocument{" +
+            "code='" + code + '\'' +
+            ", day='" + day + '\'' +
+            ", ref='" + ref + '\'' +
+            ", source='" + source + '\'' +
+            ", timeInsert=" + timeInsert +
+            '}';
+    }
+
+    @Override
+    public int compareTo(StockDocument o) {
+        return 0;
+    }
 }

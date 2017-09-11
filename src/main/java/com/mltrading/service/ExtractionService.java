@@ -31,6 +31,8 @@ public class ExtractionService {
     StockParser stock = injector.getInstance(StockParser.class);
     ArticlesParser articles =  injector.getInstance(ArticlesParser.class);
     ArticleParser article =  injector.getInstance(ArticleParser.class);
+    ArticleNotation notation =  injector.getInstance(ArticleNotation.class);
+    DiaryParser diaryParser =  injector.getInstance(DiaryParser.class);
 
 
     public void extractStock(StockRepository stockRepository) {
@@ -148,5 +150,9 @@ public class ExtractionService {
     public void processAT() {
         Analyse a = new Analyse();
         a.processAll();
+    }
+
+    public void extractNotationFull(ArticleRepository articleRepository) {
+        notation.fetch(articleRepository);
     }
 }

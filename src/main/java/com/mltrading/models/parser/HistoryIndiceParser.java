@@ -8,6 +8,7 @@ public interface HistoryIndiceParser {
 
     void fetch();
 
-    public void fetchCurrent(int period);
-
+    void fetchCurrent(int period);
 }
+
+

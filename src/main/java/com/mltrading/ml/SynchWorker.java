@@ -17,6 +17,8 @@ public class SynchWorker {
 
     private static List<String> uriList = new ArrayList<>();
 
+    private static ParserCommon parserCommon = new ParserCommon();
+
     public static void addUri(String uri) {
         uriList.add(uri);
     }
@@ -24,7 +26,7 @@ public class SynchWorker {
     public static void delete() {
         for (String uri : uriList) {
             try {
-                ParserCommon.loadUrl(new URL("http://"+uri+"/delete"));
+                parserCommon.loadUrl(new URL("http://"+uri+"/delete"));
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
@@ -34,7 +36,7 @@ public class SynchWorker {
     public static void save() {
         for (String uri : uriList) {
             try {
-                ParserCommon.loadUrl(new URL("http://"+uri+"/saveValidator"));
+                parserCommon.loadUrl(new URL("http://"+uri+"/saveValidator"));
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
@@ -44,7 +46,7 @@ public class SynchWorker {
     public static void load() {
         for (String uri : uriList) {
             try {
-                ParserCommon.loadUrl(new URL("http://"+uri+"/load"));
+                parserCommon.loadUrl(new URL("http://"+uri+"/load"));
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }

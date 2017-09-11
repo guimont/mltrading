@@ -18,28 +18,28 @@ import java.net.URL;
  */
 
 @Singleton
-public class RealTimeParserBoursorama implements RealTimeParser {
+public class RealTimeParserBoursorama extends ParserCommon implements RealTimeParser {
 
     //static String cac40 = "http://www.boursorama.com/bourse/actions/cours_az.phtml?MARCHE=1rPCAC&validate=";
     static String cac40 = "http://www.boursorama.com/bourse/actions/cours_az.phtml?MARCHE=1rPCAC&valid=";
     static String refCode = "tbody";
 
 
-    public static int refreshCache() {
+    public int refreshCache() {
         return refreshCache(cac40);
 
     }
 
-    public static int loaderCache() {
+    public int loaderCache() {
         return loaderStock(cac40);
 
     }
 
 
-    private static int refreshCache(String url) {
+    private int refreshCache(String url) {
 
         try {
-            String text = ParserCommon.loadUrl(new URL(url));
+            String text = loadUrl(new URL(url));
 
             Document doc = Jsoup.parse(text);
 
@@ -110,10 +110,10 @@ public class RealTimeParserBoursorama implements RealTimeParser {
      * @param url
      * @return
      */
-    private static int loaderStock(String url) {
+    private int loaderStock(String url) {
 
         try {
-            String text = ParserCommon.loadUrl(new URL(url));
+            String text = loadUrl(new URL(url));
 
             Document doc = Jsoup.parse(text);
 
