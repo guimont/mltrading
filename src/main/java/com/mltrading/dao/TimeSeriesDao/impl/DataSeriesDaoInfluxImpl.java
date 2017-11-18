@@ -1,6 +1,7 @@
 package com.mltrading.dao.TimeSeriesDao.impl;
 
 import com.mltrading.dao.Requester;
+import com.mltrading.dao.TimeSeriesDao.DaoChecker;
 import com.mltrading.dao.TimeSeriesDao.DataSeriesDao;
 import com.mltrading.influxdb.dto.QueryRequest;
 import com.mltrading.models.stock.StockDocument;
@@ -11,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DataSeriesDaoInfluxImpl implements DataSeriesDao {
+public class DataSeriesDaoInfluxImpl implements DataSeriesDao, DaoChecker {
 
 
     static public int DATE_COLUMN = 0;
@@ -35,10 +36,7 @@ public class DataSeriesDaoInfluxImpl implements DataSeriesDao {
         String query = "SELECT * FROM "+code +" where time > '2010-01-01T00:00:00Z' ORDER BY ASC";
         QueryResult list = (QueryResult) Requester.sendRequest(new QueryRequest(query, StockDocument.dbName));
 
-        if (list == null || list.getResults() == null
-            || list.getResults().get(0) == null
-            || list.getResults().get(0).getSeries() == null
-            || list.getResults().get(0).getSeries().get(0) == null)
+        if (!checker(list))
             return null;
 
 

@@ -423,6 +423,16 @@ public class MlForecast extends Evaluate{
     /**
      *
      */
+    public static void updatePerf() {
+        CacheStockGeneral.getCache().values().forEach(com.mltrading.ml.MlForecast::updatePredictor);
+
+        CacheStockSector.getSectorCache().values().forEach(com.mltrading.ml.MlForecast::updatePredictor);
+    }
+
+
+    /**
+     *
+     */
     public static void updatePredictor() {
         CacheStockGeneral.getCache().values().forEach(com.mltrading.ml.MlForecast::updatePredictor);
 
@@ -438,7 +448,7 @@ public class MlForecast extends Evaluate{
             sg.setPrediction(p);
             double yield20 = (p.getPredictionD20() - sg.getValue()) / sg.getValue();
             double yield5 = Math.abs((p.getPredictionD5() - sg.getValue()) / sg.getValue());
-            double consensus = StockHistory.getStockHistoryLast(sg.getCodif(), 1).get(0).getConsensusNote();
+            double consensus = 1;//StockHistory.getStockHistoryLast(sg.getCodif(), 1).get(0).getConsensusNote();
             sg.setPerformanceEstimate(p.getConfidenceD20() / 20 * yield20 * p.getConfidenceD5() / 10 * yield5
                 * consensus);
 

@@ -2,6 +2,7 @@ package com.mltrading.models.stock;
 
 
 import com.mltrading.dao.InfluxDaoConnector;
+import com.mltrading.dao.TimeSeriesDao.DaoChecker;
 import org.influxdb.dto.QueryResult;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -14,7 +15,7 @@ import java.util.Map;
 /**
  * Created by gmo on 14/03/2016.
  */
-public class HistogramDocument {
+public class HistogramDocument implements DaoChecker {
 
     private static final Logger log = LoggerFactory.getLogger(HistogramDocument.class);
 
@@ -40,8 +41,10 @@ public class HistogramDocument {
     private double tf_idf;
 
 
+    public HistogramDocument() {
+    }
 
-    public HistogramDocument( String code, String date) {
+    public HistogramDocument(String code, String date) {
         this.day = date;
         this.code = code;
         timeInsert = new DateTime(date);
@@ -291,12 +294,15 @@ public class HistogramDocument {
     }
 
 
-    public static String getLastDateHistory( String code) {
+    public String getLastDateHistory( String code) {
 
 
          //suppose base is filled
         String query = "SELECT * FROM "+ code +"R where time > '2015-06-01T00:00:00Z'";
         QueryResult list = InfluxDaoConnector.getPoints(query,dbName);
+
+        if (!checker(list))
+            return null;
 
         int size = list.getResults().get(0).getSeries().get(0).getValues().size();
 

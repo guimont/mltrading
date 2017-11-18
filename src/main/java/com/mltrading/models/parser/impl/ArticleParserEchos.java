@@ -26,6 +26,8 @@ public class ArticleParserEchos extends ParserCommon implements ArticleParser {
     private static final Logger log = LoggerFactory.getLogger(HistogramDocument.class);
     static String refCode = "div.contenu_article";
 
+    HistogramDocument hd = new HistogramDocument();
+
 
     @Override
     public void fetch(ArticleRepository repository) {
@@ -36,9 +38,12 @@ public class ArticleParserEchos extends ParserCommon implements ArticleParser {
     public void fetchCurrent(ArticleRepository repository) {
     //get article
         //si non present add
+
         for (StockGeneral g: CacheStockGeneral.getIsinCache().values()) {
-            String dateRef = HistogramDocument.getLastDateHistory(g.getCodif() + "R");
-            loaderFrom(g, dateRef);
+            HistogramDocument hd = new HistogramDocument();
+            String dateRef = hd.getLastDateHistory(g.getCodif() + "R");
+            if (dateRef != null)
+                loaderFrom(g, dateRef);
         }
 
     }

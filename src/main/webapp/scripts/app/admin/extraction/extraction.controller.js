@@ -3,6 +3,20 @@
 angular.module('mltradingApp')
     .controller('ExtractionController', function ($scope, $http) {
 
+        var extractData = {
+            period: "1",
+            target: "PX1"
+        };
+
+
+        $scope.extract = function() {
+            extractData = $scope.form;
+            return $http.post('/api/extract',extractData).then(function (response) {
+                return response.data;
+            });
+        }
+
+
         $scope.extraction = function () {
             return $http.get('/api/extractionAction').then(function (response) {
                 return response.data;

@@ -8,22 +8,37 @@ import com.mltrading.models.stock.Stock;
 import com.mltrading.repository.ArticleRepository;
 import com.mltrading.repository.StockRepository;
 import com.mltrading.service.ExtractionService;
+import com.mltrading.web.rest.dto.ExtractDTO;
+import com.mltrading.web.rest.dto.ForecastDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
  * Created by gmo on 07/01/2016.
  */
-
 @RestController
 @RequestMapping("/api")
 public class ExtractionResource {
 
     private static final Logger log = LoggerFactory.getLogger(ExtractionResource.class);
+
+    private static String ALL = "Full";
+    private static String SERIES = "Series";
+    private static String RAW = "Raw";
+    private static String AT = "At";
+    private static String SECTOR = "Sector";
+    private static String INDICE = "Indice";
+    private static String ARTICLE = "Article";
+    private static String VCAC = "Vcac";
+
+    private static int AUTO = 0;
+    private static int FULL = -1;
+
 
     @javax.inject.Inject
     private StockRepository stockRepository;
@@ -36,6 +51,64 @@ public class ExtractionResource {
 
 
     private static ExtractionService service = new ExtractionService();
+
+
+    @RequestMapping(value = "/extract",
+        method = RequestMethod.POST,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    public String optimizeML(@Valid @RequestBody ExtractDTO extDTO) {
+
+        if (extDTO.getTarget().equalsIgnoreCase(ALL)) {
+            if (extDTO.getPeriod() == AUTO) {
+                log.info("Processing perdiod to update");
+                int diff = service.getLastUpdateRef();
+                log.info("Perdiod to update is: " + diff);
+                if (diff > 0)
+                    service.extractionCurrent(articleRepository,diff);
+            }
+            else if (extDTO.getPeriod() == FULL) {
+                service.extractFull(articleRepository);
+            } else {
+                service.extractionCurrent(articleRepository,extDTO.getPeriod());
+            }
+        } else if (extDTO.getTarget().equalsIgnoreCase(SECTOR)) {
+            if (extDTO.getPeriod() == FULL)
+                service.extractSectorFull();
+            else
+                service.extractSectorPeriod(extDTO.getPeriod());
+        } else if (extDTO.getTarget().equalsIgnoreCase(INDICE)) {
+            if (extDTO.getPeriod() == FULL)
+                service.extractIndiceFull();
+            else
+                service.extractIndicePeriod(extDTO.getPeriod());
+        }
+        else if (extDTO.getTarget().equalsIgnoreCase(VCAC)) {
+           service.extractVcacFull();
+        }
+
+        else if (extDTO.getTarget().equalsIgnoreCase(RAW)) {
+            if (extDTO.getPeriod() == FULL)
+                service.extractRawFull("localhost:7090");
+            else
+                service.extractRawPeriod(extDTO.getPeriod());
+        }
+
+
+        else if (extDTO.getTarget().equalsIgnoreCase(AT)) {
+            if (extDTO.getPeriod() == FULL)
+                service.processAT();
+            else
+                service.processATPeriod(extDTO.getPeriod());
+        }
+
+
+
+
+
+            return "ok";
+    }
+
+
 
     @RequestMapping(value = "/extractionAction",
         method = RequestMethod.GET,
@@ -72,7 +145,7 @@ public class ExtractionResource {
         int diff = service.getLastUpdateRef();
         log.info("Perdiod to update is: " + diff);
         if (diff > 0)
-            service.extractionCurrent(diff);
+            service.extractionCurrent(articleRepository,diff);
         return "ok";
     }
 
@@ -80,7 +153,7 @@ public class ExtractionResource {
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String getExtractionSeriesWeekly() {
-        service.extractionCurrent(5);
+        service.extractionCurrent(articleRepository,5);
         return "ok";
     }
 

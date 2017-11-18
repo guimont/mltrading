@@ -1,6 +1,7 @@
 package com.mltrading.dao.TimeSeriesDao.impl;
 
 import com.mltrading.dao.Requester;
+import com.mltrading.dao.TimeSeriesDao.DaoChecker;
 import com.mltrading.dao.TimeSeriesDao.TimeSeriesDao;
 import com.mltrading.influxdb.dto.QueryRequest;
 
@@ -16,7 +17,7 @@ import java.util.Map;
 /**
  * Created by gmo on 08/03/2017.
  */
-public class TimeSeriesDaoInfluxImpl implements TimeSeriesDao{
+public class TimeSeriesDaoInfluxImpl implements TimeSeriesDao,DaoChecker {
 
     public static String dbName = "history";
 
@@ -84,10 +85,7 @@ public class TimeSeriesDaoInfluxImpl implements TimeSeriesDao{
         String query = "SELECT * FROM "+code +" where time > '2010-01-01T00:00:00Z' ORDER BY ASC";
         QueryResult list = (QueryResult) Requester.sendRequest(new QueryRequest(query, dbName));
 
-        if (list == null || list.getResults() == null
-            || list.getResults().get(0) == null
-            || list.getResults().get(0).getSeries() == null
-            || list.getResults().get(0).getSeries().get(0) == null)
+        if (checker(list) == false)
             return null;
 
 
@@ -161,7 +159,7 @@ public class TimeSeriesDaoInfluxImpl implements TimeSeriesDao{
         String query = "SELECT * FROM "+code+" where time >= '" + date + "' limit " + offset;
         QueryResult list = (QueryResult) Requester.sendRequest(new QueryRequest(query, dbName));
 
-        if (list == null || list.getResults() == null || list.getResults().get(0).getSeries().get(0) == null)
+        if (checker(list) == false)
             return null;
 
         if (list.getResults().get(0).getSeries().get(0).getValues().size() < offset)
@@ -245,10 +243,7 @@ public class TimeSeriesDaoInfluxImpl implements TimeSeriesDao{
         String query = "SELECT * FROM " + code + "T where time > '2010-01-01T00:00:00Z'";
         QueryResult list = (QueryResult) Requester.sendRequest(new QueryRequest(query, dbName));
 
-        if (list == null || list.getResults() == null
-            || list.getResults().get(0) == null
-            || list.getResults().get(0).getSeries() == null
-            || list.getResults().get(0).getSeries().get(0) == null)
+        if (checker(list) == false)
             return null;
 
 

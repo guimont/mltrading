@@ -90,13 +90,15 @@ public class CacheMLStock {
         }
 
 
+        boolean validate = true;
+
         for (StockHistory s : sl) {
             MLActivities a = new MLActivities("CacheMLStock", "", "load", 0, 0, false);
             try {
 
                 MLStocks mls = new MLStocks(s.getCodif());
                 mls.load();
-                mls.getStatus().loadPerf(s.getCodif());
+                validate = mls.getStatus().loadPerf(s.getCodif());
                 mlStockMap.put(s.getCodif(), mls);
                 CacheMLActivities.addActivities(a.setEndDate().setStatus("Success"));
 
@@ -104,6 +106,14 @@ public class CacheMLStock {
                 log.error(e.toString());
                 CacheMLActivities.addActivities(a.setEndDate().setStatus("Failed"));
             }
+        }
+
+        if (validate == false) {
+            log.error("load perf is not correctly filled. Need to regenerate data");
+            /*MlForecast ml = new MlForecast();
+            ml.processList();
+            //load status
+            CacheMLStock.savePerf();*/
         }
 
 
@@ -120,6 +130,9 @@ public class CacheMLStock {
 
 
     public static void save() {
+
+        if (mlStockMap.values().isEmpty()) return;
+
         deleteModel();
         SynchWorker.delete();
 

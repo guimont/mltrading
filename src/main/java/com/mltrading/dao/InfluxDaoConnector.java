@@ -12,6 +12,7 @@ import org.influxdb.dto.BatchPoints;
 import org.influxdb.dto.Query;
 import org.influxdb.dto.QueryResult;
 
+import java.net.SocketTimeoutException;
 import java.util.List;
 
 /**
@@ -48,7 +49,15 @@ public class InfluxDaoConnector {
     }
 
     public static void writePoints(final BatchPoints batchPoints) {
-        getInstance().dao.getDB().write(batchPoints);
+        int loop = 0;
+        try {
+            getInstance().dao.getDB().write(batchPoints);
+        } catch (Exception e) {
+            if (loop < 3) {
+                loop++;
+                writePoints(batchPoints);
+            }
+        }
     }
 
     public static QueryResult getPoints(final String queryString, String dbName) {

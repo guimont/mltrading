@@ -195,8 +195,10 @@ public class ArticleParserNotation implements ArticleNotation {
         //get article
         //si non present add
         for (StockGeneral g: CacheStockGeneral.getIsinCache().values()) {
-            String dateRef = HistogramDocument.getLastDateHistory(g.getCodif() + "R");
-            loaderFrom(repository, g, dateRef);
+            HistogramDocument hd = new HistogramDocument();
+            String dateRef = hd.getLastDateHistory(g.getCodif() + "R");
+            if (dateRef != null)
+                loaderFrom(repository, g, dateRef);
         }
     }
 

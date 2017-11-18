@@ -3,6 +3,7 @@ package com.mltrading.models.parser;
 
 import com.mltrading.ml.CacheMLStock;
 import com.mltrading.ml.MlForecast;
+import com.mltrading.repository.ArticleRepository;
 import com.mltrading.service.ExtractionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,9 @@ public class ScheduleUpdate {
     protected Timer timer;
     protected TimerTask timerTask;
     private static ExtractionService service = new ExtractionService();
+
+    @javax.inject.Inject
+    private ArticleRepository articleRepository;
 
 
     protected class GlobalTimerTask extends TimerTask {
@@ -89,7 +93,7 @@ public class ScheduleUpdate {
             log.info("Have to extract " +  diff + " days in influxdb base");
 
             if (diff > 0)
-                service.extractionCurrent(diff);
+                service.extractionCurrent(articleRepository,diff);
         } catch (Exception e) {
             log.error("cannot get history last date, base perhaps empty: " +e);
             return;

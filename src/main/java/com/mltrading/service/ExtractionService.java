@@ -3,12 +3,10 @@ package com.mltrading.service;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.mltrading.models.parser.*;
-import com.mltrading.models.stock.cache.CacheStockAnalyse;
-import com.mltrading.models.stock.cache.CacheStockGeneral;
+import com.mltrading.models.stock.cache.*;
 import com.mltrading.models.stock.StockGeneral;
 import com.mltrading.models.stock.StockHistory;
 import com.mltrading.models.stock.StockRawMat;
-import com.mltrading.models.stock.cache.CacheStockHistory;
 import com.mltrading.models.util.CsvFileReader;
 import com.mltrading.repository.ArticleRepository;
 import com.mltrading.repository.StockRepository;
@@ -49,6 +47,7 @@ public class ExtractionService {
         indiceParser.fetch();
         sectorParser.fetch();
         vola.fetch();
+        diaryParser.fetch();
 
         CsvFileReader csvFR = new CsvFileReader();
         csvFR.readData();
@@ -61,20 +60,22 @@ public class ExtractionService {
 
     public void extractSectorFull() {
         sectorParser.fetch();
-        /*Analyse a = new Analyse();
-        a.processSectorAll();*/
+    }
+
+    public void extractSectorPeriod(int period) {
+        sectorParser.fetchCurrent(period);
     }
 
     public void extractIndiceFull() {
         indiceParser.fetch();
-        /*Analyse a = new Analyse();
-        a.processIndiceAll();*/
+    }
+
+    public void extractIndicePeriod(int period) {
+        indiceParser.fetchCurrent(period);
     }
 
     public void extractVcacFull() {
         vola.fetch();
-        /*Analyse a = new Analyse();
-        a.processVcacAll();*/
     }
 
     public void extractArticlesFull() {
@@ -86,19 +87,21 @@ public class ExtractionService {
     }
 
 
-    public void extractionCurrent(int period) {
+    public void extractionCurrent(ArticleRepository articleRepository,int period) {
         histParser.fetchCurrent(period);
         indiceParser.fetchCurrent(period);
         sectorParser.fetchCurrent(period);
         vola.fetchCurrent(period);
         rawParser.fetchCurrent(period);
-        //articles.fetchCurrent();
-        //article.fetchCurrent();
+        diaryParser.fetchCurrent(period);
+        articles.fetchCurrent();
+        article.fetchCurrent(articleRepository);
         Analyse a = new Analyse();
         a.processDaily(period);
 
         CacheStockHistory.CacheStockHistoryHolder().clearCache();
         CacheStockAnalyse.CacheStockAnalyseHolder().clearCache();
+        CacheStockDiary.CacheStockHistoryHolder().clearCache();
     }
     //
 
@@ -152,7 +155,17 @@ public class ExtractionService {
         a.processAll();
     }
 
+    public void processATPeriod(int period) {
+        Analyse a = new Analyse();
+        a.processDaily(period);
+    }
+
+
     public void extractNotationFull(ArticleRepository articleRepository) {
         notation.fetch(articleRepository);
+    }
+
+    public void extractRawPeriod(int period) {
+        rawParser.fetchCurrent(period);
     }
 }

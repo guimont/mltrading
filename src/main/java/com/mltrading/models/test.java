@@ -10,6 +10,7 @@ import com.mltrading.models.parser.impl.DiaryParserBoursorama;
 import com.mltrading.models.parser.impl.HistoryLocalRawMaterials;
 import com.mltrading.models.stock.StockGeneral;
 import com.mltrading.models.stock.cache.CacheStockGeneral;
+import com.mltrading.models.util.CsvFileReader;
 import com.mltrading.service.ExtractionService;
 
 import com.mltrading.service.UserService;
@@ -48,6 +49,8 @@ public class test {
 
         }
     }*/
+
+
 
 /*
 
@@ -119,7 +122,7 @@ public class test {
         a.processDaily(75);
     }*/
 
-
+/*
     public static void main(String[] args) {
 
         MLProperties.load();

@@ -21,7 +21,6 @@ public class StockDocument extends StockBase implements Serializable, Comparable
     private static CacheStockDiary cache = CacheStockDiary.CacheStockHistoryHolder();
 
     private String code;
-    public String day;
     private String ref;
     private String source;
 
