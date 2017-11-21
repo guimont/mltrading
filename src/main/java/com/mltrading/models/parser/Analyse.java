@@ -71,7 +71,7 @@ public class Analyse {
         log.info("Start analyse for period: " + period);
 
         for (StockGeneral g: CacheStockGeneral.getIsinCache().values()) {
-            dateList = StockHistory.getDateHistoryListOffsetLimit(g.getCodif(),50,period);
+            dateList = StockHistory.getDateHistoryListOffsetLimit(g.getCodif(),period);
             if (dateList != null) {
                 for (String date : dateList) {
                     processAnalysisSpecific(g.getCodif(), date);
@@ -83,7 +83,7 @@ public class Analyse {
          * not all french indice so date could be different .. add an error margin
          */
         for (StockIndice g : CacheStockIndice.getIndiceCache().values()) {
-            dateList = StockHistory.getDateHistoryListOffsetLimit(g.getCodif(),50,period+MARGIN);
+            dateList = StockHistory.getDateHistoryListOffsetLimit(g.getCodif(),period+MARGIN);
             if (dateList != null) {
                 for (String date : dateList) {
                     processAnalysisSpecific(g.getCode(), date);
@@ -93,7 +93,7 @@ public class Analyse {
 
         for (StockSector g : CacheStockSector.getSectorCache().values()) {
 
-            dateList = StockHistory.getDateHistoryListOffsetLimit(g.getCodif(),50,period);
+            dateList = StockHistory.getDateHistoryListOffsetLimit(g.getCodif(), period);
             if (dateList != null) {
                 for (String date : dateList) {
                     processAnalysisSpecific(g.getCode(), date);
@@ -106,7 +106,7 @@ public class Analyse {
          */
         for (StockRawMat g : CacheRawMaterial.getCache().values()) {
 
-            dateList = StockHistory.getDateHistoryListOffsetLimit(g.getCodif(),50,period+MARGIN);
+            dateList = StockHistory.getDateHistoryListOffsetLimit(g.getCodif(),period+MARGIN);
             if (dateList != null) {
                 for (String date : dateList) {
                     processAnalysisSpecific(g.getCode(), date);
@@ -115,7 +115,7 @@ public class Analyse {
         }
 
 
-        dateList = StockHistory.getDateHistoryListOffsetLimit("VCAC",50,period);
+        dateList = StockHistory.getDateHistoryListOffsetLimit("VCAC",period);
         if (dateList != null) {
             for (String date:dateList) {
                 processAnalysisSpecific("VCAC", date);

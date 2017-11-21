@@ -16,39 +16,15 @@ import java.util.List;
 /**
  * Created by gmo on 24/11/2015.
  */
-public class FeaturesStock implements Serializable {
+public class FeaturesStock extends Feature implements Serializable {
 
     private static final Logger log = LoggerFactory.getLogger(FeaturesStock.class);
 
-    private String currentDate;
-    private String dateD1;
-    private String dateD5;
-    private String dateD20;
-    private String dateD40;
-
-    private double resultValueD1 = 0;
-    private double resultValueD5 = 0;
-    private double resultValueD20 = 0;
-    private double resultValueD40 = 0;
-    private double predictionValueD1 = 0;
-    private double predictionValueD5 = 0;
-    private double predictionValueD20 = 0;
-    private double predictionValueD40 = 0;
-    private double currentValue;
-
-    private Double vector[];
-
-    public int currentVectorPos = 0;
 
 
 
-    public void setCurrentDate(String currentDate) {
-        this.currentDate = currentDate;
-    }
 
-    public String getCurrentDate() {
-        return currentDate;
-    }
+
 
 
 
@@ -70,124 +46,7 @@ public class FeaturesStock implements Serializable {
     }
 
 
-    public String getDate(PredictionPeriodicity t) {
-        switch (t) {
-            case D1 :
-                return dateD1;
-            case D5:
-                return dateD5;
-            case D20:
-                return dateD20;
-            case D40:
-                return dateD40;
-        }
-        //default
-        return "";
-    }
 
-    public void setDate(String date, PredictionPeriodicity t) {
-        switch (t) {
-            case D1 :
-                dateD1 = date;
-                break;
-            case D5:
-                dateD5 = date;
-                break;
-            case D20:
-                dateD20 = date;
-                break;
-            case D40:
-                dateD40 = date;
-                break;
-        }
-    }
-
-
-    public Double getResultValue(PredictionPeriodicity t) {
-        switch (t) {
-            case D1 :
-                return resultValueD1;
-            case D5:
-                return resultValueD5;
-            case D20:
-                return resultValueD20;
-            case D40:
-                return resultValueD40;
-        }
-
-        //default
-        return new Double(0);
-    }
-
-    public void setResultValue(double resultValue, PredictionPeriodicity t) {
-        switch (t) {
-            case D1 :
-                resultValueD1 = resultValue;
-                break;
-            case D5:
-                resultValueD5 = resultValue;
-                break;
-            case D20:
-                resultValueD20 = resultValue;
-                break;
-            case D40:
-                resultValueD40 = resultValue;
-                break;
-        }
-    }
-
-    public void setPredictionValue(double predictionValue, PredictionPeriodicity t) {
-        switch (t) {
-            case D1 :
-                predictionValueD1 = predictionValue;
-                break;
-            case D5:
-                predictionValueD5 = predictionValue;
-                break;
-            case D20:
-                predictionValueD20 = predictionValue;
-                break;
-            case D40:
-                predictionValueD40 = predictionValue;
-                break;
-        }
-    }
-
-
-    public double getPredictionValue( PredictionPeriodicity t) {
-        switch (t) {
-            case D1 :
-                return predictionValueD1;
-            case D5:
-                return predictionValueD5;
-            case D20:
-                return predictionValueD20;
-            case D40:
-                return predictionValueD40;
-        }
-
-        //default
-        return 0;
-    }
-
-
-
-    public Double[] getVector() {
-        return vector;
-    }
-
-
-
-    public double getCurrentValue() {
-        return currentValue;
-    }
-
-
-
-
-    public void setCurrentValue(double currentValue) {
-        this.currentValue = currentValue;
-    }
 
     public static FeaturesStock transform(double value, PredictionPeriodicity t) {
         FeaturesStock fs = new FeaturesStock();
@@ -197,20 +56,7 @@ public class FeaturesStock implements Serializable {
         return fs;
     }
 
-    public double[] vectorize() {
 
-        double[] result = new double[currentVectorPos];
-
-        for(int i = 0; i < currentVectorPos; ++i) {
-            try {
-                result[i] = vector[i].doubleValue();
-            } catch (NullPointerException npe) {
-                result[i] = 0;
-            }
-        }
-
-        return result;
-    }
 
     @Override
     protected Object clone() throws CloneNotSupportedException {
@@ -234,10 +80,7 @@ public class FeaturesStock implements Serializable {
 
     }
 
-    public void linearize(List<? extends StockHistory> shL) {
-        for (StockHistory sh:shL)
-            this.vector[currentVectorPos++] = sh.getValue();
-    }
+
 
 
 
@@ -245,8 +88,6 @@ public class FeaturesStock implements Serializable {
         for (Double d:dl)
             this.vector[currentVectorPos++] = d;
     }
-
-    static int OFFSET_BASE = 50;
 
 
     /**
@@ -267,7 +108,7 @@ public class FeaturesStock implements Serializable {
 
         List<String> rangeDate;
         try {
-            rangeDate = StockHistory.getDateHistoryListOffsetLimit(codif, OFFSET_BASE, range);
+            rangeDate = StockHistory.getDateHistoryListOffsetLimit(codif, range);
             if (rangeDate.size() < range * 0.7) { //why this code ????
                 log.error("Cannot get date list for: " + codif + " not enough element");
                 return null;
@@ -282,6 +123,10 @@ public class FeaturesStock implements Serializable {
             FeaturesStock fs = new FeaturesStock();
             fs.setCurrentDate(date);
 
+
+            if (setResult(fs,periodicity,codif,date) == false) continue;
+
+            /* remove after check
             try {
                 periodicity.forEach(p -> {
 
@@ -298,7 +143,7 @@ public class FeaturesStock implements Serializable {
             } catch (Exception e) {
                 log.error("Cannot get date for: " + codif + " and date: " + date + " //exception:" + e);
                 continue;
-            }
+            }*/
 
             /**
              * stock
@@ -417,42 +262,23 @@ public class FeaturesStock implements Serializable {
             for (StockSector g : CacheStockSector.getSectorCache().values()) {
                 int row = validator.getIndice(g.getRow(), MatrixValidator.TypeHistory.SEC);
                 //if (row != rowS) { //if same row, sector of this stock already done
-                if (validator.getPeriodEnable(row)) {
-                    List<StockHistory> si = StockHistory.getStockHistoryDateInvert(g.getCode(), date, validator.getPeriodHist(row));
-                    fs.linearize(si);
-                    StockAnalyse asi = StockAnalyse.getAnalyse(g.getCode(), si.get(0).getDay());
-                    fs.linearize(asi, validator, row);
-                }
-                //}
+                filledFeaturesStock(fs,validator,row,date,g.getCodif());
             }
-
-
-
 
 
 
         /** ALL indice*/
         for (StockIndice g : CacheStockIndice.getIndiceCache().values()) {
             int row = validator.getIndice(g.getRow(), MatrixValidator.TypeHistory.IND);
-            if (validator.getPeriodEnable(row)) {
-                List<StockHistory> si = StockHistory.getStockHistoryDateInvert(g.getCode(), date, validator.getPeriodHist(row));
-                fs.linearize(si);
-                StockAnalyse asi = StockAnalyse.getAnalyse(g.getCode(), si.get(0).getDay());
-                fs.linearize(asi, validator, row);
-            }
+            filledFeaturesStock(fs,validator,row,date,g.getCodif());
+
 
         }
 
         /** ALL raw*/
         for (StockRawMat g : CacheRawMaterial.getCache().values()) {
             int row = validator.getIndice(g.getRow(), MatrixValidator.TypeHistory.RAW);
-            if (validator.getPeriodEnable(row)) {
-                List<StockHistory> si = StockHistory.getStockHistoryDateInvert(g.getCode(), date, validator.getPeriodHist(row));
-                fs.linearize(si);
-                StockAnalyse asi = StockAnalyse.getAnalyse(g.getCode(), si.get(0).getDay());
-                fs.linearize(asi, validator, row);
-            }
-
+            filledFeaturesStock(fs,validator,row,date,g.getCodif());
         }
 
         } catch (Exception e) {
@@ -461,6 +287,15 @@ public class FeaturesStock implements Serializable {
         }
 
 
+    }
+
+    private static void filledFeaturesStock(FeaturesStock fs, MatrixValidator validator, int row, String date, String code) {
+        if (validator.getPeriodEnable(row)) {
+            List<StockHistory> si = StockHistory.getStockHistoryDateInvert(code, date, validator.getPeriodHist(row));
+            fs.linearize(si);
+            StockAnalyse asi = StockAnalyse.getAnalyse(code, si.get(0).getDay());
+            fs.linearize(asi, validator, row);
+        }
     }
 
 

@@ -2,6 +2,7 @@ package com.mltrading.web.rest;
 
 
 import com.mltrading.ml.CacheMLStock;
+import com.mltrading.ml.MLStockRanking;
 import com.mltrading.ml.MlForecast;
 import com.mltrading.models.stock.CheckConsistency;
 import com.mltrading.models.stock.Stock;
@@ -48,6 +49,10 @@ public class ExtractionResource {
 
     @javax.inject.Inject
     private  MlForecast forecast;
+
+
+    @javax.inject.Inject
+    private MLStockRanking ranking;
 
 
     private static ExtractionService service = new ExtractionService();
@@ -226,7 +231,7 @@ public class ExtractionResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String processML() {
 
-        forecast.processList();
+        ranking.optimize();
 
         return "ok";
     }

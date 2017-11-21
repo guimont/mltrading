@@ -394,7 +394,7 @@ public class StockHistory extends StockBase implements Serializable , Comparable
 
 
 
-    public static List<String> getDateHistoryListOffsetLimit(final String code, int offset, int max) {
+    public static List<String> getDateHistoryListOffsetLimit(final String code, int max) {
         return cache.getDateHistoryListOffsetLimit(code, max);
         /*List<String> dateList = new ArrayList<>();
         //bug .. dont get all data .. so make filter to have date only since 2013

@@ -57,6 +57,14 @@ public class StockPrediction implements Serializable{
         PredictionD20 = predictionD20;
     }
 
+    public double getPredictionD40() {
+        return PredictionD40;
+    }
+
+    public void setPredictionD40(double predictionD40) {
+        PredictionD40 = predictionD40;
+    }
+
     public double getConfidenceD1() {
         return confidenceD1;
     }
@@ -81,8 +89,8 @@ public class StockPrediction implements Serializable{
         this.confidenceD20 = confidenceD20;
     }
 
-    public void setPredictionD40(double predictionD40) {
-        PredictionD40 = predictionD40;
+    public double getConfidenceD40() {
+        return confidenceD40;
     }
 
     public void setConfidenceD40(double confidenceD40) {
@@ -102,5 +110,24 @@ public class StockPrediction implements Serializable{
         if (period == PredictionPeriodicity.D5) setConfidenceD5(i);
         if (period == PredictionPeriodicity.D20) setConfidenceD20(i);
         if (period == PredictionPeriodicity.D40) setConfidenceD40(i);
+    }
+
+    public double getPrediction(PredictionPeriodicity period) {
+        if (period == PredictionPeriodicity.D1) return getPredictionD1();
+        if (period == PredictionPeriodicity.D5) return getPredictionD5();
+        if (period == PredictionPeriodicity.D20) return getPredictionD20();
+        if (period == PredictionPeriodicity.D40) return getPredictionD40();
+
+        return 0;
+    }
+
+
+    public double getConfidence(PredictionPeriodicity period) {
+        if (period == PredictionPeriodicity.D1) return getConfidenceD1();
+        if (period == PredictionPeriodicity.D5) return getConfidenceD5();
+        if (period == PredictionPeriodicity.D20) return getConfidenceD20();
+        if (period == PredictionPeriodicity.D40) return getConfidenceD40();
+
+        return 0;
     }
 }

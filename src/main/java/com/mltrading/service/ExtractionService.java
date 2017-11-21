@@ -114,10 +114,10 @@ public class ExtractionService {
         //article.fetchSpecific(g);
     }
 
-    static int DAYS_BY_MONTH = 31;
-    static int DAYS_BY_YEAR = 365;
+    public static int DAYS_BY_MONTH = 31;
+    public static int DAYS_BY_YEAR = 365;
 
-    private int check_diff( DateTime timeInsert , DateTime timeNow ) {
+    public static int check_diff( DateTime timeInsert , DateTime timeNow ) {
         int shift = (timeNow.getYear() - timeInsert.getYear()) * DAYS_BY_YEAR;
         return (timeNow.getDayOfMonth()+timeNow.getMonthOfYear()*DAYS_BY_MONTH + shift) - (timeInsert.getDayOfMonth()+timeInsert.getMonthOfYear()*DAYS_BY_MONTH);
     }

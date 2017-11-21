@@ -3,7 +3,6 @@ package com.mltrading.models.stock;
 
 import com.mltrading.dao.InfluxDaoConnector;
 import com.mltrading.models.stock.cache.CacheStockDiary;
-import com.mltrading.models.stock.cache.CacheStockHistory;
 import org.influxdb.dto.QueryResult;
 import org.joda.time.DateTime;
 
@@ -198,5 +197,9 @@ public class StockDocument extends StockBase implements Serializable, Comparable
     @Override
     public int compareTo(StockDocument o) {
         return 0;
+    }
+
+    public static StockDocument getNextStockDocument(String codif, String date) {
+        return null;
     }
 }

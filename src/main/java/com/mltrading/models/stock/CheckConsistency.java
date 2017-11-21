@@ -39,7 +39,7 @@ public class CheckConsistency {
             log.info("create FeaturesStock for: " + stock.getCodif());
 
             try {
-                List<String> rangeDateStock = StockHistory.getDateHistoryListOffsetLimit(stock.getCodif(), OFFSET_BASE, RANGE_MAX);
+                List<String> rangeDateStock = StockHistory.getDateHistoryListOffsetLimit(stock.getCodif(), RANGE_MAX);
                 if (rangeDate == null || rangeDateStock.size() > rangeDate.size())
                     rangeDate = rangeDateStock;
 
