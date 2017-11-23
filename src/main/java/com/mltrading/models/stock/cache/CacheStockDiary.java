@@ -21,7 +21,7 @@ public class CacheStockDiary extends CacheStockTimeSeries<String, Integer,StockD
 
     @Override
     protected List<StockDocument> fillCache(String code) {
-        return dataSeries.extract(code+StockDocument.TYPE_DIARY,this.indexCache, this.historyCache);
+        return dataSeries.extract(code,this.indexCache, this.historyCache);
     }
 
     private CacheStockDiary() {
@@ -63,6 +63,31 @@ public class CacheStockDiary extends CacheStockTimeSeries<String, Integer,StockD
         else
             throw  new NotImplementedException();
 
+    }
+
+
+    public StockDocument getStockDocumentDayAfter(final String code, String date) {
+        return getStockDocumentDayAfter(code,date,true);
+    }
+
+    /**
+     * return element a day after
+     * @param code
+     * @param date
+     * @param inMemory
+     * @return
+     */
+    public StockDocument getStockDocumentDayAfter(final String code, String date, boolean inMemory) {
+        if (inMemory == true) {
+
+            List<StockDocument> list = getInCache(code);
+            Integer index = getInCache(list, code, date);
+
+            /* order is most recent to oldest*/
+            return findElement(list, index+1);
+        }
+        else
+            throw  new NotImplementedException();
     }
 
 

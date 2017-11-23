@@ -66,6 +66,11 @@ public class StockDocument extends StockBase implements Serializable, Comparable
         this.timeInsert = timeInsert;
     }
 
+    /**
+     * set day in DateTime
+     * @param day format "YY-MM-DD"
+     * @param hour
+     */
     public void setDayInvestir(String day, String hour) {
 
         this.day = day;
@@ -73,6 +78,19 @@ public class StockDocument extends StockBase implements Serializable, Comparable
         String MM = day.substring(3,5);
         String YY = day.substring(6,8);
         timeInsert = new DateTime( "20" + YY + "-" + MM + "-" + DD+"T" +hour );
+    }
+
+    /**
+     * set day in DateTime
+     * @param day format "YYYY-MM-DD"
+     */
+    public void setDayInvest(String day) {
+
+        this.day = day;
+        String DD = day.substring(0, 2);
+        String MM = day.substring(3,5);
+        String YY = day.substring(6,10);
+        timeInsert = new DateTime( YY + "-" + MM + "-" + DD);
     }
 
     static public int DATE_COLUMN = 0;
@@ -200,6 +218,6 @@ public class StockDocument extends StockBase implements Serializable, Comparable
     }
 
     public static StockDocument getNextStockDocument(String codif, String date) {
-        return null;
+        return cache.getStockDocumentDayAfter(codif,date);
     }
 }

@@ -1,7 +1,6 @@
-package com.mltrading.ml.model;
+package com.mltrading.ml.ranking;
 
 import com.mltrading.ml.MLStocks;
-import com.mltrading.ml.MLRank;
 import com.mltrading.ml.PredictionPeriodicity;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.mllib.regression.LabeledPoint;
@@ -27,8 +26,8 @@ public class RandomForestRanking extends MLModelRanking<RandomForestModel>{
 
         String featureSubsetStrategy = "auto"; // Let the algorithm choose.
         final RandomForestModel model = RandomForest.trainRegressor(trainingData,
-            categoricalFeaturesInfo,500, featureSubsetStrategy, impurity,
-            5, 32, 32345);
+            categoricalFeaturesInfo,50, featureSubsetStrategy, impurity,
+            5, 16, 100);
 
         return model;
     }

@@ -86,6 +86,14 @@ public class ExtractionService {
         article.fetch(articleRepository);
     }
 
+    public void extractDiaryFull() {
+        diaryParser.fetch();
+    }
+
+    public void extractDiaryPeriod(int period) {
+        diaryParser.fetchCurrent(period);
+    }
+
 
     public void extractionCurrent(ArticleRepository articleRepository,int period) {
         histParser.fetchCurrent(period);
@@ -96,6 +104,7 @@ public class ExtractionService {
         diaryParser.fetchCurrent(period);
         articles.fetchCurrent();
         article.fetchCurrent(articleRepository);
+        diaryParser.fetchCurrent(period);
         Analyse a = new Analyse();
         a.processDaily(period);
 
@@ -168,4 +177,6 @@ public class ExtractionService {
     public void extractRawPeriod(int period) {
         rawParser.fetchCurrent(period);
     }
+
+
 }

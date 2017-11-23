@@ -14,6 +14,7 @@ public interface DiaryParser {
     default void saveDiary(BatchPoints bp, StockDocument doc) {
         Point pt = Point.measurement(doc.getCode()+StockDocument.TYPE_DIARY).time(doc.getTimeInsert().getMillis() + 3600000, TimeUnit.MILLISECONDS)
             .field("ref", doc.getRef())
+            .addField("info",doc.getRef())
             .build();
         bp.point(pt);
     }

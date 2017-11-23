@@ -2,7 +2,7 @@ package com.mltrading.web.rest;
 
 
 import com.mltrading.ml.CacheMLStock;
-import com.mltrading.ml.MLStockRanking;
+import com.mltrading.ml.ranking.MLStockRanking;
 import com.mltrading.ml.MlForecast;
 import com.mltrading.models.stock.CheckConsistency;
 import com.mltrading.models.stock.Stock;
@@ -10,7 +10,6 @@ import com.mltrading.repository.ArticleRepository;
 import com.mltrading.repository.StockRepository;
 import com.mltrading.service.ExtractionService;
 import com.mltrading.web.rest.dto.ExtractDTO;
-import com.mltrading.web.rest.dto.ForecastDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -27,7 +26,7 @@ import java.util.List;
 public class ExtractionResource {
 
     private static final Logger log = LoggerFactory.getLogger(ExtractionResource.class);
-
+    private static final String DIARY = "Diary";
     private static String ALL = "Full";
     private static String SERIES = "Series";
     private static String RAW = "Raw";
@@ -105,6 +104,15 @@ public class ExtractionResource {
             else
                 service.processATPeriod(extDTO.getPeriod());
         }
+
+        else if (extDTO.getTarget().equalsIgnoreCase(DIARY)) {
+            if (extDTO.getPeriod() == FULL)
+                service.extractDiaryFull();
+            else
+                service.extractDiaryPeriod(extDTO.getPeriod());
+        }
+
+
 
 
 

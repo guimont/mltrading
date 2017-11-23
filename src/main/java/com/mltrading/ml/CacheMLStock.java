@@ -3,6 +3,7 @@ package com.mltrading.ml;
 
 import com.mltrading.config.MLProperties;
 import com.mltrading.dao.InfluxDaoConnector;
+import com.mltrading.ml.ranking.MLRank;
 import com.mltrading.models.stock.cache.CacheStockGeneral;
 import com.mltrading.models.stock.cache.CacheStockSector;
 import com.mltrading.models.stock.StockGeneral;
@@ -35,13 +36,12 @@ public class CacheMLStock {
     private static final Logger log = LoggerFactory.getLogger(CacheMLStock.class);
 
     private static final Map<String, MLStocks> mlStockMap;
-    private static final Map<String, MLRank> mlRankMap;
+    private static  MLRank mlRank = null;
 
     static {
         System.setProperty("hadoop.home.dir", MLProperties.getProperty("spark.hadoop.path"));
         System.setProperty("spark.sql.warehouse.dir", MLProperties.getProperty("spark.warehouse"));
         mlStockMap = new HashMap<>();
-        mlRankMap = new HashMap<>();
     }
 
     //static SparkConf sparkConf = new SparkConf().setAppName("JavaRandomForest").setMaster("local[*]");
@@ -54,6 +54,7 @@ public class CacheMLStock {
 
         .setMaster(url).setJars(new String[]{MLProperties.getProperty("spark.jars")});
     static JavaSparkContext sc = new JavaSparkContext(sparkConf);
+    private static MLRank mlRankCache;
 
 
     /**
@@ -89,7 +90,6 @@ public class CacheMLStock {
         for (StockHistory s : sl) {
             MLStocks mls = new MLStocks(s.getCodif());
             mls.distibute();
-            MLRank mlr = new MLRank(s.getCodif());
         }
 
 
@@ -127,8 +127,8 @@ public class CacheMLStock {
         return mlStockMap;
     }
 
-    public static Map<String, MLRank> getMlRankCache() {
-        return mlRankMap;
+    public static MLRank getMlRankCache() {
+        return mlRank;
     }
 
     public static JavaSparkContext getJavaSparkContext() {
@@ -219,4 +219,7 @@ public class CacheMLStock {
     }
 
 
+    public static void setMlRankCache(MLRank mlRankCache) {
+        CacheMLStock.mlRankCache = mlRankCache;
+    }
 }

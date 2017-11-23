@@ -47,7 +47,7 @@ public class CacheStockGeneral {
         aMap.put("FR0010307819", new StockGeneral("FR0010307819","Legrand","LR","xpar","PA", "FRIN" ,  "FREEE"));
         aMap.put("FR0000121014", new StockGeneral("FR0000121014","Lvmh","MC","xpar","PA", "FRCG" , "FRPG"));
         aMap.put("FR0000121261", new StockGeneral("FR0000121261","Michelin","ML","xpar","PA", "FRCG" ,  "FRAP"));
-        aMap.put("FI0009000681", new StockGeneral("FI0009000681","Nokia","NOKIA","xpar","PA", "FRTEC" ,  "FRTHF"));
+        //aMap.put("FI0009000681", new StockGeneral("FI0009000681","Nokia","NOKIA","xpar","PA", "FRTEC" ,  "FRTHF"));
         aMap.put("FR0000133308", new StockGeneral("FR0000133308","Orange","ORA","xpar","PA", "FRTEL" ,  "FRTEL"));
         aMap.put("FR0000120693", new StockGeneral("FR0000120693","Pernod Ricard","RI","xpar","PA", "FRCG" ,  "FRBEV"));
         aMap.put("FR0000121501", new StockGeneral("FR0000121501","Peugeot","UG","xpar","PA", "FRCG" ,  "FRAP"));

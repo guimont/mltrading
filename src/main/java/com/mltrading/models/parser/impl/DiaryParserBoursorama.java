@@ -103,7 +103,7 @@ public class DiaryParserBoursorama extends ParserCommon implements DiaryParser {
 
                 StockDocument d = new StockDocument();
                 d.setCode(g.getRealCodif());
-                d.setDayInvestir(t.get(1).text(),"");
+                d.setDayInvest(t.get(1).text());
                 d.setRef(t.get(0).text());
 
                 if (dateTime!= null  && dateTime.isBefore(d.getTimeInsert())) return;

@@ -1,29 +1,22 @@
-package com.mltrading.ml;
+package com.mltrading.ml.ranking;
 
+import com.mltrading.ml.MLStatus;
 import org.apache.spark.mllib.tree.model.RandomForestModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MLRank {
 
-    private String codif;
     private RandomForestModel model;
     private boolean modelImprove;
     private static final Logger log = LoggerFactory.getLogger(MLRank.class);
 
     private MLStatus status;
 
-    public MLRank(String codif) {
-        this.codif = codif;
+    public MLRank() {
+
     }
 
-    public String getCodif() {
-        return codif;
-    }
-
-    public void setCodif(String codif) {
-        this.codif = codif;
-    }
 
     public RandomForestModel getModel() {
         return model;

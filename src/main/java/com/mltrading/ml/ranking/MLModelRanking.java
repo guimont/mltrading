@@ -1,6 +1,10 @@
-package com.mltrading.ml.model;
+package com.mltrading.ml.ranking;
 
 import com.mltrading.ml.*;
+import com.mltrading.ml.ranking.FeatureRank;
+import com.mltrading.ml.ranking.MLRank;
+import com.mltrading.ml.ranking.MLStockRanking;
+import com.mltrading.models.stock.StockGeneral;
 import com.mltrading.models.util.MLActivities;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -10,13 +14,18 @@ import org.apache.spark.mllib.regression.LabeledPoint;
 import org.apache.spark.mllib.tree.model.TreeEnsembleModel;
 import scala.Serializable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class MLModelRanking<R extends TreeEnsembleModel> implements Serializable {
 
-    public JavaRDD<LabeledPoint> createRDD(JavaSparkContext sc,  List<FeatureRank> fsL, PredictionPeriodicity periodicity) {
+    public JavaRDD<LabeledPoint> createRDD(JavaSparkContext sc, List<FeatureRank> fsL, PredictionPeriodicity periodicity) {
 
         JavaRDD<FeatureRank> data = sc.parallelize(fsL);
+
+        List<LabeledPoint> test = new ArrayList<>();
+
+        fsL.forEach(fs -> test.add(new LabeledPoint(fs.getResultValue(periodicity), Vectors.dense(fs.vectorize()))));
 
         JavaRDD<LabeledPoint> parsedData = data.map(
             (Function<FeatureRank, LabeledPoint>) fs -> new LabeledPoint(fs.getResultValue(periodicity), Vectors.dense(fs.vectorize()))
@@ -26,11 +35,11 @@ public abstract class MLModelRanking<R extends TreeEnsembleModel> implements Ser
     }
 
 
-    public MLRank processRanking(String code ,String codif, MLRank mlr) {
+    public MLRank processRanking(List<StockGeneral> l, MLRank mlr) {
 
-        CacheMLActivities.addActivities(new MLActivities("FeaturesStock", codif, "start", 0, 0, false));
-        List<FeatureRank> fsL = FeatureRank.create(code,codif, MLStockRanking.RANGE_MAX);
-        CacheMLActivities.addActivities(new MLActivities("FeaturesStock", codif, "start", 0, 0, true));
+
+        List<FeatureRank> fsL = FeatureRank.create(l, MLStockRanking.RANGE_MAX);
+
 
         if (null == fsL) return null;
 
