@@ -14,7 +14,7 @@ public class MLRank {
     private MLStatus status;
 
     public MLRank() {
-
+        status = new MLStatus();
     }
 
 
@@ -42,4 +42,5 @@ public class MLRank {
     public void setStatus(MLStatus status) {
         this.status = status;
     }
+
 }

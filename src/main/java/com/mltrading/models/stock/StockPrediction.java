@@ -21,6 +21,9 @@ public class StockPrediction implements Serializable{
     private double confidenceD20 = 0;
     private double confidenceD40 = 0;
 
+
+    private double YieldD20 = 0;
+
     public StockPrediction(String codif) {
         this.codif = codif;
     }
@@ -129,5 +132,14 @@ public class StockPrediction implements Serializable{
         if (period == PredictionPeriodicity.D40) return getConfidenceD40();
 
         return 0;
+    }
+
+
+    public double getYieldD20() {
+        return YieldD20;
+    }
+
+    public void setYieldD20(double yieldD20) {
+        YieldD20 = yieldD20;
     }
 }

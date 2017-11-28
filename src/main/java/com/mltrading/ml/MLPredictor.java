@@ -1,6 +1,7 @@
 package com.mltrading.ml;
 
 
+import com.mltrading.ml.ranking.FeaturesRank;
 import com.mltrading.models.stock.StockHistory;
 import com.mltrading.models.stock.StockPrediction;
 import org.apache.spark.mllib.linalg.Vectors;
@@ -41,6 +42,9 @@ public class MLPredictor  implements Serializable {
                     }
                     sp.setPrediction(s.getModel(p).predict(Vectors.dense(fs.vectorize())), p);
                     sp.setConfidence(100 - (s.getStatus().getErrorRate(p) * 100 / s.getStatus().getCount(p)), p);
+
+                    FeaturesRank fr = FeaturesRank.createRT(codif, date);
+                    sp.setYieldD20(CacheMLStock.getMlRankCache().getModel().predict(Vectors.dense(fr.vectorize())));
                 });
 
 

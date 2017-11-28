@@ -48,6 +48,7 @@ public class RealTimeSectorGoogle extends ParserCommon implements RealTimeParser
 
 
         } catch (Exception e) {
+            System.out.println("code: " + ss.getCode());
             e.printStackTrace();
         }
 

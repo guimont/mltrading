@@ -120,8 +120,25 @@ public class MLPerformance implements Serializable{
         double realyield_1D = calculYield(realvalue, currentValue);
 
         return new MLPerformance(date,prediction, realvalue, currentValue, yield_1D, realyield_1D, sign);
-
     }
+
+
+    /**
+     * use for
+     * @param date
+     * @param prediction
+     * @return
+     */
+    public static MLPerformance calculOnlyYields(String date, double prediction,double yield) {
+        //sign : value - currentValue
+        boolean sign =(int) Math.signum(prediction) == (int) Math.signum(yield);
+
+
+        return new MLPerformance(date,prediction, yield, yield, prediction, yield, sign);
+    }
+
+
+
 
     public void savePerformance(BatchPoints bp, String code) {
         Point pt = Point.measurement(code)

@@ -3,10 +3,11 @@ package com.mltrading.ml;
 import com.mltrading.models.stock.StockHistory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import scala.Serializable;
 
 import java.util.List;
 
-public abstract class Feature {
+public abstract class Feature implements Serializable {
 
     protected String currentDate;
     protected String dateD1;

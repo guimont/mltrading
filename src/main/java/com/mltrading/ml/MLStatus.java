@@ -10,6 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Result of model prediction
+ * avg is average of all prediction difference
+ * error rate is the number of wrong sign prediction
+ * count is the number of sample
  * Created by gmo on 16/02/2016.
  */
 public class MLStatus implements Serializable,DaoChecker{

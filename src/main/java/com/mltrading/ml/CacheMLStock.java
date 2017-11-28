@@ -53,6 +53,7 @@ public class CacheMLStock {
         .set("spark.executor.memory",MLProperties.getProperty("spark.executor.memory",SPARK_DEFAULT_MEMORY))
 
         .setMaster(url).setJars(new String[]{MLProperties.getProperty("spark.jars")});
+
     static JavaSparkContext sc = new JavaSparkContext(sparkConf);
     private static MLRank mlRankCache;
 

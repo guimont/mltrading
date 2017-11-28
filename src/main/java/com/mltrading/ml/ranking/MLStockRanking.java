@@ -20,8 +20,9 @@ import java.util.List;
 public class MLStockRanking {
 
 
-    public static final int RANGE_MAX = 300;
+    public static final int RANGE_MAX = 200;
     public static final int RENDERING = 100;
+    public static final int NOT_DEFINE = 20;
 
     public void optimize() {
 

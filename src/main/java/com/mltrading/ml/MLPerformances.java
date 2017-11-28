@@ -15,6 +15,9 @@ public class MLPerformances  implements Serializable, Comparable<MLPerformances>
 
     private String date;
 
+    /*use for ranking*/
+    private String codif;
+
     private Map<PredictionPeriodicity,MLPerformance> container;
 
     private MLPerformance mlD1,mlD5,mlD20,mlD40;
@@ -69,6 +72,14 @@ public class MLPerformances  implements Serializable, Comparable<MLPerformances>
 
     public void setPerf(PredictionPeriodicity period, MLPerformance perf) {
         container.put(period,perf);
+    }
+
+    public String getCodif() {
+        return codif;
+    }
+
+    public void setCodif(String codif) {
+        this.codif = codif;
     }
 
     public MLPerformances() {
