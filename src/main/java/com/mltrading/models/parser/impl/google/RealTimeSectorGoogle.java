@@ -1,4 +1,4 @@
-package com.mltrading.models.parser.impl;
+package com.mltrading.models.parser.impl.google;
 
 import com.mltrading.models.parser.ParserCommon;
 import com.mltrading.models.parser.RealTimeParser;
@@ -16,12 +16,12 @@ import java.net.URL;
  */
 public class RealTimeSectorGoogle extends ParserCommon implements RealTimeParser {
 
-    static String startUrl="https://www.google.com/finance?q=INDEXEURO%3A";
+    static String startUrl="https://finance.google.com/finance?q=INDEXEURO%3A";
     static String refCode = "div.id-price-panel";
 
     public void refreshCache() {
         CacheStockSector.getSectorCache().values().forEach(s -> refreshCache(s));
-        //CacheStockSector.getSectorCache().values().forEach(com.mltrading.models.parser.impl.RealTimeSectorGoogle::print);
+        //CacheStockSector.getSectorCache().values().forEach(com.mltrading.models.parser.impl.google.RealTimeSectorGoogle::print);
     }
 
 

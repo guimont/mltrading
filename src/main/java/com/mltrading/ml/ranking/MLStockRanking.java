@@ -37,12 +37,15 @@ public class MLStockRanking {
 
             if (ref != null) {
                 if (compareResult(mlr.getStatus(), ref.getStatus(), PredictionPeriodicity.D20)) {
-                    CacheMLStock.setMlRankCache(mlr);
+                    CacheMLStock.setMlRank(mlr);
                 }
             }
             else {
-                CacheMLStock.setMlRankCache(mlr);
+                CacheMLStock.setMlRank(mlr);
             }
+
+            mlr.saveModel();
+            mlr.saveModelDB();
 
     }
 

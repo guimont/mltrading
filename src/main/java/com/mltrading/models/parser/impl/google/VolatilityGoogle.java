@@ -1,4 +1,4 @@
-package com.mltrading.models.parser.impl;
+package com.mltrading.models.parser.impl.google;
 
 import com.mltrading.dao.InfluxDaoConnector;
 import com.mltrading.models.parser.HistoryCommon;

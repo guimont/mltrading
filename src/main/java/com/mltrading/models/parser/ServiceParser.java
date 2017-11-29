@@ -2,6 +2,10 @@ package com.mltrading.models.parser;
 
 import com.google.inject.AbstractModule;
 import com.mltrading.models.parser.impl.*;
+import com.mltrading.models.parser.impl.google.HistoryIndiceParserGoogle;
+import com.mltrading.models.parser.impl.google.HistoryParserGoogle;
+import com.mltrading.models.parser.impl.google.HistorySectorParserGoogle;
+import com.mltrading.models.parser.impl.google.VolatilityGoogle;
 
 /**
  * Created by gmo on 20/11/2015.

@@ -1,4 +1,4 @@
-package com.mltrading.models.parser.impl;
+package com.mltrading.models.parser.impl.google;
 
 import com.google.inject.Singleton;
 import com.mltrading.dao.InfluxDaoConnector;
@@ -41,7 +41,7 @@ public class HistoryParserGoogle extends ParserCommon implements HistoryParser,H
 
 
 // http://www.google.com/finance/historical?q=EPA%3AAC&startdate=Jan%2029%2C%202011&num=50&start=0
-    static String startUrl="http://www.google.com/finance/historical?q=";
+    static String startUrl="http://finance.google.com/finance/historical?q=";
     static String midUrl="%3A";
     static String endUrl ="&startdate=Jan+1%2C+2010&num=200&start=";
     static String refCode = "tbody";

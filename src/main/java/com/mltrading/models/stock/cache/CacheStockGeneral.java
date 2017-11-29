@@ -73,6 +73,43 @@ public class CacheStockGeneral {
     }
 
 
+    static {
+        Map<String, StockGeneral> aMap = new HashMap<>();
+        aMap.put("FR0000120404", new StockGeneral("FR0000120404", "Accor","AC","xpar","PA","FRCS", "FRCS"));
+        //https://investir.lesechos.fr/cours/action-aeroports-de-paris,xpar,adp,fr0010340141,isin.html
+        //https://investir.lesechos.fr/cours/profil-societe-action-aeroports-de-paris,xpar,adp,fr0010340141,isin.html
+        aMap.put("FR0010340141", new StockGeneral("FR0010340141", "AEROPORTS DE PARIS","ADP","xpar","PA","FRIN", "FRIN"));
+        //https://investir.lesechos.fr/cours/profil-societe-action-air-france-klm,xpar,af,fr0000031122,isin.html
+        aMap.put("FR0000031122", new StockGeneral("FR0000031122", "AIR FRANCE-KLM","AF","xpar","PA","FRCS", "FRTL"));
+        aMap.put("FR0000120073", new StockGeneral("FR0000120073","Air Liquide","AI","xpar","PA", "FRBM",  "FRBM"));
+        aMap.put("NL0000235190", new StockGeneral("NL0000235190", "Airbus","AIR","xpar","PA", "FRIN" , "FRIN"));
+        //https://investir.lesechos.fr/cours/profil-societe-action-ald,xpar,ald,fr0013258662,isin.html
+        aMap.put("FR0013258662", new StockGeneral("FR0013258662", "ALD","ALD","xpar","PA", "FRIN" , "FRIN"));
+        aMap.put("FR0010220475", new StockGeneral("FR0010220475","Alstom","ALO","xpar","PA", "FRIN" ,  "FRIE"));
+        //https://investir.lesechos.fr/cours/profil-societe-action-altarea,xpar,alta,fr0000033219,isin.html
+        aMap.put("FR0000033219", new StockGeneral("FR0000033219","ALTAREA","ALTA","xpar","PA", "FRFIN" ,  "FRFIN"));
+        //https://investir.lesechos.fr/cours/profil-societe-action-alten,xpar,ate,fr0000071946,isin.html
+        aMap.put("FR0000071946", new StockGeneral("FR0000071946","ALTEN","ATE","xpar","PA", "FRTEC" ,  "FRTEC"));
+        //https://investir.lesechos.fr/cours/profil-societe-action-altran-technologies,xpar,alt,fr0000034639,isin.html
+        aMap.put("FR0000034639", new StockGeneral("FR0000034639","ALTRAN","ALT","xpar","PA", "FRTEC" ,  "FRTEC"));
+        //https://investir.lesechos.fr/cours/profil-societe-action-amundi,xpar,amun,fr0004125920,isin.html
+        aMap.put("FR0004125920", new StockGeneral("FR0004125920","AMUNDI","AMUN","xpar","PA", "FRFIN" ,  "FRFIN"));
+        //https://investir.lesechos.fr/cours/profil-societe-action-arkema,xpar,ake,fr0010313833,isin.html
+        aMap.put("FR0010313833", new StockGeneral("FR0010313833","ARKEMA","AKE","xpar","PA", "FRBM" ,  "FRBM"));
+        aMap.put("FR0000051732", new StockGeneral("FR0000051732","Atos","ATO","xpar","PA", "FRTEC" ,  "FRSCS"));
+        aMap.put("FR0000120628", new StockGeneral("FR0000120628","Axa","CS","xpar","PA",  "FRFIN" , "FRFIN"));
+        //https://investir.lesechos.fr/cours/profil-societe-action-beneteau,xpar,ben,fr0000035164,isin.html
+        aMap.put("FR0000035164", new StockGeneral("FR0000035164","BENETEAU","BEN","xpar","PA",  "FRCG" , "FRCG"));
+        //https://investir.lesechos.fr/cours/profil-societe-action-bic,xpar,bb,fr0000120966,isin.html
+        aMap.put("FR0000120966", new StockGeneral("FR0000120966","BIC","BB","xpar","PA",  "FRCG" , "FRCG"));
+        //https://investir.lesechos.fr/cours/action-biomerieux,xpar,bim,fr0013280286,isin.html => 4
+        aMap.put("FR0013280286", new StockGeneral("FR0013280286","BIOMERIEUX","BIM","xpar","PA",  "FRHC" , "FRHC"));
+
+
+
+
+    }
+
 
     private Map<String,StockGeneral> CSCache = new TreeMap<>();
 

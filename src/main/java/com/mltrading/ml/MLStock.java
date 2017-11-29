@@ -4,6 +4,7 @@ package com.mltrading.ml;
 
 import com.mltrading.config.MLProperties;
 import com.mltrading.dao.Requester;
+import com.mltrading.dao.mongoFile.MongoUtil;
 import com.mltrading.dao.mongoFile.QueryMongoRequest;
 import com.mongodb.DBCursor;
 
@@ -78,17 +79,13 @@ public class MLStock  implements Serializable {
 
 
     /**
-     * load model form mongoDB on file system
+     * remove model form mongoDB on file system
      */
     public void removeModelDB() {
         try {
             GridFS gfsModel = (GridFS) Requester.sendRequest(new QueryMongoRequest("model/Model" + period.toString() + codif));
 
-            DBCursor cursor = gfsModel.getFileList();
-            while (cursor.hasNext()) {
-                GridFSDBFile f = gfsModel.findOne(cursor.next());
-                gfsModel.remove(f.getFilename());
-            }
+            MongoUtil.removeDB(gfsModel);
         } catch (Exception e) {
             log.error("remove: " + codif + e);
         }
@@ -106,15 +103,7 @@ public class MLStock  implements Serializable {
                 GridFS gfsModel = (GridFS) Requester.sendRequest(new QueryMongoRequest("model/Model" + period.toString() + codif));
 
                 File dir = new File(path + "model/Model" + period.toString() + codif);
-                Collection<File> files = FileUtils.listFiles(dir, null, true);
-                for (File f : files) {
-                    GridFSInputFile gfsFile = gfsModel.createFile(f);
-                    if (f.getPath().contains("_temporary"))
-                        gfsFile.setFilename(f.getPath().split("_temporary")[0] + f.getName());
-                    else
-                        gfsFile.setFilename(f.getPath());
-                    gfsFile.save();
-                }
+                MongoUtil.saveDirectory(gfsModel, dir);
             } catch (Exception e) {
                 log.error("saveModel: " + codif + e);
             }
@@ -159,23 +148,14 @@ public class MLStock  implements Serializable {
 
 
     /**
-     * load model form mongoDB on file system
+     * distibute physically model form mongoDB on file system
      */
     public void distibute() {
         try {
             GridFS gfsModel = (GridFS) Requester.sendRequest(new QueryMongoRequest("model/Model" + period.toString() + codif));
-
-            DBCursor cursor = gfsModel.getFileList();
-            while (cursor.hasNext()) {
-                File dir = new File(path+"model/Model" + period.toString() + codif+"/data");
-                if (!dir.exists())
-                    FileUtils.forceMkdir(dir);
-                File dirmeta = new File(path+"model/Model" + period.toString() + codif+"/metadata");
-                if (!dirmeta.exists())
-                    FileUtils.forceMkdir(dirmeta);
-                GridFSDBFile f = gfsModel.findOne(cursor.next());
-                f.writeTo(f.getFilename());
-            }
+            File dir = new File(path+"model/Model" + period.toString() + codif+"/data");
+            File dirmeta = new File(path+"model/Model" + period.toString() + codif+"/metadata");
+            MongoUtil.distribute(gfsModel, dir, dirmeta);
         } catch (Exception e) {
             log.error("saveModel: " + codif + e);
         }

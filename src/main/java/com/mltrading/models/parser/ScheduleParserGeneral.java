@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import com.mltrading.ml.CacheMLStock;
 import com.mltrading.ml.MlForecast;
 import com.mltrading.models.parser.impl.RealTimeParserBoursorama;
-import com.mltrading.models.parser.impl.RealTimeSectorGoogle;
+import com.mltrading.models.parser.impl.google.RealTimeSectorGoogle;
 import com.mltrading.repository.ArticleRepository;
 import com.mltrading.service.ExtractionService;
 import org.slf4j.Logger;

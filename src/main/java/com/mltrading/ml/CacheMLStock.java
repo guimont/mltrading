@@ -55,7 +55,7 @@ public class CacheMLStock {
         .setMaster(url).setJars(new String[]{MLProperties.getProperty("spark.jars")});
 
     static JavaSparkContext sc = new JavaSparkContext(sparkConf);
-    private static MLRank mlRankCache;
+
 
 
     /**
@@ -72,6 +72,10 @@ public class CacheMLStock {
         SynchWorker.delete();
         // load model on worker
         SynchWorker.load();
+
+
+        mlRank = new MLRank();
+        mlRank.loadModel();
 
         load(new ArrayList(CacheStockSector.getSectorCache().values()));
         load(new ArrayList(CacheStockGeneral.getIsinCache().values()));
@@ -130,6 +134,10 @@ public class CacheMLStock {
 
     public static MLRank getMlRankCache() {
         return mlRank;
+    }
+
+    public static void setMlRank(MLRank mlRank) {
+        CacheMLStock.mlRank = mlRank;
     }
 
     public static JavaSparkContext getJavaSparkContext() {
@@ -220,7 +228,4 @@ public class CacheMLStock {
     }
 
 
-    public static void setMlRankCache(MLRank mlRankCache) {
-        CacheMLStock.mlRankCache = mlRankCache;
-    }
 }

@@ -4,10 +4,7 @@ import com.mltrading.ml.CacheMLStock;
 import com.mltrading.ml.Feature;
 import com.mltrading.ml.MLStocks;
 import com.mltrading.ml.PredictionPeriodicity;
-import com.mltrading.models.stock.StockAnalyse;
-import com.mltrading.models.stock.StockDocument;
-import com.mltrading.models.stock.StockGeneral;
-import com.mltrading.models.stock.StockHistory;
+import com.mltrading.models.stock.*;
 import com.mltrading.models.stock.cache.CacheStockGeneral;
 import org.joda.time.DateTime;
 
@@ -89,7 +86,7 @@ public class FeaturesRank extends Feature implements Serializable{
             int index = 0;
 
             for (String date : rangeDate) {
-                FeaturesRank fr = filledFeaturesRank(sg,date);
+                FeaturesRank fr = filledFeaturesRank(sg, date, null);
                 if (fr == null) continue;
 
                 frL.add(fr);
@@ -138,19 +135,24 @@ public class FeaturesRank extends Feature implements Serializable{
      * Create a FeatureStock list for prediction
      * use each day to refresh data with current model
      * @param date
+     * @param sp
      * @return
      */
-    public static FeaturesRank createRT(String codif, String date) {
+    public static FeaturesRank createRT(String codif, String date, StockPrediction sp) {
         StockGeneral sg = CacheStockGeneral.getCache().get(CacheStockGeneral.getCode(codif));
-        return filledFeaturesRank(sg, date);
+        return filledFeaturesRank(sg, date, sp);
 
     }
 
 
-    private static FeaturesRank filledFeaturesRank(StockGeneral sg, String date) {
+    private static FeaturesRank filledFeaturesRank(StockGeneral sg, String date, StockPrediction sp) {
 
         String sector = sg.getSector();
 
+        if (sp == null)
+            sp = sg.getPrediction();
+
+        final StockPrediction stockPrediction = sp;
 
         MLStocks ref = CacheMLStock.getMLStockCache().get(sg.getCodif());
 
@@ -166,7 +168,7 @@ public class FeaturesRank extends Feature implements Serializable{
             fr.linearize(error);
 
             double yieldPrediction = 0;
-            if (sg.getPrediction().getPrediction(p) != 0) yieldPrediction =(sg.getPrediction().getPrediction(p) - sg.getValue()) / sg.getValue() * 100;
+            if (stockPrediction.getPrediction(p) != 0) yieldPrediction =(stockPrediction.getPrediction(p) - sg.getValue()) / sg.getValue() * 100;
             fr.linearize(yieldPrediction);
 
         });

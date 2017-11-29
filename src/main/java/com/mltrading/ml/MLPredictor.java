@@ -43,9 +43,13 @@ public class MLPredictor  implements Serializable {
                     sp.setPrediction(s.getModel(p).predict(Vectors.dense(fs.vectorize())), p);
                     sp.setConfidence(100 - (s.getStatus().getErrorRate(p) * 100 / s.getStatus().getCount(p)), p);
 
-                    FeaturesRank fr = FeaturesRank.createRT(codif, date);
-                    sp.setYieldD20(CacheMLStock.getMlRankCache().getModel().predict(Vectors.dense(fr.vectorize())));
+
                 });
+
+                if (CacheMLStock.getMlRankCache().getModel() != null) {
+                    FeaturesRank fr = FeaturesRank.createRT(codif, date, sp);
+                    sp.setYieldD20(CacheMLStock.getMlRankCache().getModel().predict(Vectors.dense(fr.vectorize())));
+                }
 
 
                 return sp;
