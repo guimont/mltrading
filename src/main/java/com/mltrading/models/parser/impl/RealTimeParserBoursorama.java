@@ -71,7 +71,7 @@ public class RealTimeParserBoursorama extends ParserCommon implements RealTimePa
                 if (code != null) {
                     StockGeneral g = CacheStockGeneral.getCache().get(code);
 
-                    g.setValue(new Double(link.child(3).text().replaceAll(" \\(c\\)", "")));
+                    g.setValue(new Double(link.child(3).text().replaceAll(" \\(c\\)", "").replaceAll(" \\(s\\)", "")));
                     g.setVariation(new Double(link.child(4).text().replaceAll("%", "")));
                     g.setOpening(new Double(link.child(5).text().replace("ND","0")));
                     g.setVolume(new Double(link.child(9).text().replaceAll(" ", "")));
@@ -140,7 +140,7 @@ public class RealTimeParserBoursorama extends ParserCommon implements RealTimePa
                     g.setCodif(splitRes[0].substring(1));
                 }
                 g.setName(link.child(1).text());
-                g.setValue(new Double(link.child(3).text().replaceAll(" \\(c\\)","")));
+                g.setValue(new Double(link.child(3).text().replaceAll(" \\(c\\)","").replaceAll(" \\(s\\)","")));
                 g.setVariation(new Double(link.child(4).text().replaceAll("%", "")));
                 g.setOpening(new Double(link.child(5).text().replace("ND","0")));
                 g.setVolume(new Double(link.child(9).text().replaceAll(" ", "")));

@@ -2,6 +2,8 @@ package com.mltrading.ml;
 
 import com.mltrading.config.MLProperties;
 import com.mltrading.ml.genetic.GeneticAlgorithm;
+import com.mltrading.ml.model.GradiantBoostStock;
+import com.mltrading.ml.model.ModelType;
 import com.mltrading.ml.model.RandomForestStock;
 import com.mltrading.ml.util.Combination;
 import com.mltrading.ml.util.Evaluate;
@@ -35,7 +37,7 @@ public class MlForecast extends Evaluate{
     private ExecutorService executorRef;
     private static int DEFAULT_NB_THREADS = 2;
 
-    public void processList() {
+    public void processList(ModelType type) {
 
         List<StockGeneral> l = new ArrayList(CacheStockGeneral.getIsinCache().values());
 
@@ -44,7 +46,7 @@ public class MlForecast extends Evaluate{
             MLStocks mls = CacheMLStock.getMLStockCache().get(s.getCodif());
             if (mls != null) {
                 mls = rfs.processRFResult(s.getCodif(), mls);
-                mls.getStatus().calculeAvgPrd();
+                mls.getStatus(type).calculeAvgPrd();
             }
         }
 
@@ -56,7 +58,7 @@ public class MlForecast extends Evaluate{
             MLStocks mls = CacheMLStock.getMLStockCache().get(s.getCodif());
             if (mls != null) {
                 mls = rfs.processRFResult(s.getCodif(), mls);
-                mls.getStatus().calculeAvgPrd();
+                mls.getStatus(type).calculeAvgPrd();
             }
         }
 
@@ -66,7 +68,7 @@ public class MlForecast extends Evaluate{
         log.info("result mlf size: " + CacheMLStock.getMLStockCache().size());
 
         for (MLStocks mls : CacheMLStock.getMLStockCache().values()) {
-            log.info("perf list result size: " + mls.getStatus().getPerfList().size());
+            log.info("perf list result size: " + mls.getStatus(type).getPerfList().size());
         }
 
     }
@@ -79,10 +81,6 @@ public class MlForecast extends Evaluate{
             "ExtractionRefThreadPool");
     }
 
-    public static enum Method {
-        RandomForest,
-        LinearRegression
-    }
 
     public static enum Type {
         Feature,
@@ -97,7 +95,7 @@ public class MlForecast extends Evaluate{
      * @param validator: validator model
      * @param target: PX1 or sector only
      */
-    public void optimize(int loop, int backloop, String validator, String target) {
+    public void optimize(int loop, int backloop, String validator, String target, ModelType type) {
 
         if (CacheMLActivities.setIsRunning() == false) {
             log.error("optimizing still running, cannot launch new optimization");
@@ -112,16 +110,16 @@ public class MlForecast extends Evaluate{
                         m.resetScoring();
                 });
             if (target.equals("PX1"))
-                optimize(CacheStockGeneral.getIsinCache().values().stream(), CacheStockGeneral.getIsinCache().values().size(), backloop, validator, Method.RandomForest);
+                optimize(CacheStockGeneral.getIsinCache().values().stream(), CacheStockGeneral.getIsinCache().values().size(), backloop, validator, type);
             else
-                optimize(CacheStockSector.getSectorCache().values().stream(), CacheStockSector.getSectorCache().values().size(), backloop, validator, Method.RandomForest);
+                optimize(CacheStockSector.getSectorCache().values().stream(), CacheStockSector.getSectorCache().values().size(), backloop, validator, type);
 
-            updatePredictor();
+            updatePredictor(type);
 
 
             CacheMLActivities.addActivities(new MLActivities("saveValidator forecast model", "", "start", 0, 0, false));
             log.info("saveML");
-            CacheMLStock.save();
+            CacheMLStock.save(type);
             CacheMLActivities.addActivities(new MLActivities("saveValidator forecast model", "", "end", 0, 0, true));
         }
 
@@ -137,25 +135,24 @@ public class MlForecast extends Evaluate{
      * @param size
      * @param backloop
      * @param validator
-     * @param method
      */
-    private void optimize(Stream<? extends StockHistory> stream, int size, int backloop, String validator, Method method) {
+    private void optimize(Stream<? extends StockHistory> stream, int size, int backloop, String validator,  ModelType type) {
 
-        final CountDownLatch latches = new CountDownLatch(size);
-        //final CountDownLatch latches = new CountDownLatch(1); //testmode ORA
+        //final CountDownLatch latches = new CountDownLatch(size);
+        final CountDownLatch latches = new CountDownLatch(1); //testmode ORA
         CacheMLActivities.setCountGlobal(latches.getCount());
 
         CacheMLActivities.addActivities(new MLActivities("optimize forecast", "", "start", 0, 0, false));
 
         //For test purpose only
-        stream/*.filter(s -> s.getCodif().equals("ORA"))*/.forEach(s -> executorRef.submit(() -> {    //For test purpose only
+        stream.filter(s -> s.getCodif().equals("ORA")).forEach(s -> executorRef.submit(() -> {    //For test purpose only
             try {
                 if (validator.contains("optimizeModel"))
-                    optimizeModel(s.getCodif());
+                    optimizeModel(s.getCodif(),type);
                 else if (validator.contains("optimizeGenetic"))
-                    optimizeGenetic(s.getCodif(),backloop);
+                    optimizeGenetic(s.getCodif(),backloop, type);
                 else
-                    optimize(s.getCodif(), backloop, method, validator);
+                    optimize(s.getCodif(), backloop, type, validator);
             } finally {
                 {
                     latches.countDown();
@@ -180,10 +177,10 @@ public class MlForecast extends Evaluate{
      * processing machine learning algorithm
      * @param codif name
      * @param loop sub iteration
-     * @param method not use
+     * @param type not use
      * @param validator  validator model
      */
-    private void optimize(String codif, int loop, Method method, String validator) {
+    private void optimize(String codif, int loop,  ModelType type, String validator) {
 
         /**
          * to have some results faster, 2 iterations loop
@@ -203,43 +200,60 @@ public class MlForecast extends Evaluate{
              * merge validator for optimizeEconomical
              */
             if (validator.contains("optimizeEconomicalModel")) {
-                mls.generateValidator("generateEconomicalModel",rowSector);
-                if (ref != null) mls.mergeValidator(ref);
+                mls.generateValidator("generateEconomicalModel",rowSector, type);
+                if (ref != null) mls.mergeValidator(ref, type);
             } else {
-                mls.generateValidator(validator,rowSector);
+                mls.generateValidator(validator,rowSector, type);
             }
 
 
             String saveCode;
             {
-                RandomForestStock rfs = new RandomForestStock();
-                rfs.processRFRef(codif, mls, false);
+                if (type == ModelType.RANDOMFOREST) {
+                    RandomForestStock rfs = new RandomForestStock();
+                    rfs.processRFRef(codif, mls, false);
+                }
+                else {
+                    GradiantBoostStock rfs = new GradiantBoostStock();
+                    rfs.processRFRef(codif, mls, false);
+                }
+
                 saveCode = "V";
             }
 
             if (null != mls) {
-                mls.getStatus().calculeAvgPrd();
+                mls.getStatus(type).calculeAvgPrd();
 
-                periodicity.forEach(p -> mls.getValidator(p).save(mls.getCodif() + saveCode +
-                    p, mls.getStatus().getErrorRate(p), mls.getStatus().getAvg(p)));
+                periodicity.forEach(p -> mls.getModel(p).getValidator(type).save(mls.getCodif() + saveCode +
+                    p, mls.getStatus(type).getErrorRate(p), mls.getStatus(type).getAvg(p)));
 
 
 
-                if (ref != null) {
+                if (ref != null
+                    && ref.getStatus(type).getPerfList() != null
+                    && !ref.getStatus(type).getPerfList().isEmpty()) {
 
                     periodicity.forEach(p -> {
-                        if (checkResult(mls, ref, p))
+                        if (checkResult(mls, ref, p, type))
                             CacheMLActivities.addActivities(new MLActivities("optimize", codif, "increase model: " + p, loop, 1, true));
                         else
                             CacheMLActivities.addActivities(new MLActivities("optimize", codif, "not increase model: " + p, loop, 0, true));
                     });
 
 
-                } else {
+                } else if (ref == null) {
                     /* empty ref so improve scoring yes*/
                     mls.setScoring(true);
                     CacheMLStock.getMLStockCache().put(mls.getCodif(), mls);
                     CacheMLActivities.addActivities(new MLActivities("optimize", codif, "empty model", loop, 0, true));
+                }
+                else if (ref != null) {
+                    ref.setScoring(true);
+                    //replace MlSTocks => period => model
+                    ref.setModels(type,mls);
+                    //replace MLStatus => model => period
+                    ref.setStatus(mls.getStatus(type),type);
+
                 }
             } else {
                 CacheMLActivities.addActivities(new MLActivities("optimize", codif, "failed", loop, 0, true));
@@ -254,19 +268,19 @@ public class MlForecast extends Evaluate{
      * @param codif
      * @param loop
      */
-    void optimizeGenetic(String codif,int loop) {
+    void optimizeGenetic(String codif,int loop, ModelType type) {
 
 
         for (PredictionPeriodicity p : periodicity) {
         //periodicity.forEach(p -> {
             log.info("start loop for period: " + p);
-            final GeneticAlgorithm<Combination> algo = new GeneticAlgorithm<Combination>(c -> c.evaluate(codif,p), () -> Combination.newInstance(),
+            final GeneticAlgorithm<Combination> algo = new GeneticAlgorithm<Combination>(c -> c.evaluate(codif,p,type), () -> Combination.newInstance(),
                 (first, second) -> first.merge(second), c -> c.mutate());
             algo.initialize(8);
 
             /*if model is empty*/
             if (CacheMLStock.getMLStockCache().get(codif) != null)
-                algo.addReference(new Combination(CacheMLStock.getMLStockCache().get(codif).getValidator(p).clone()));
+                algo.addReference(new Combination(CacheMLStock.getMLStockCache().get(codif).getModel(p).getValidator(type).clone()));
             algo.iterate(loop, 2, 6, 4, 0);
             //algo.printTo(System.err);
 
@@ -274,16 +288,16 @@ public class MlForecast extends Evaluate{
             /*Validate result */
             final MLStocks mls = new MLStocks(codif);
             MLStocks ref = CacheMLStock.getMLStockCache().get(mls.getCodif());
-            mls.setValidator(p,algo.best().getMv());
+            mls.getModel(p).setValidator(type,algo.best().getMv());
 
 
             RandomForestStock rfs = new RandomForestStock();
             rfs.processRFRef(codif, mls, false, p);
-            mls.getStatus().calculeAvgPrd();
+            mls.getStatus(type).calculeAvgPrd();
 
             if (ref != null) {
 
-                if ( MlForecast.checkResult(mls, ref, p))
+                if ( MlForecast.checkResult(mls, ref, p, type))
                     CacheMLActivities.addActivities(new MLActivities("optimize", codif, "increase model: " + p, 0, 1, true));
                 else
                     CacheMLActivities.addActivities(new MLActivities("optimize", codif, "not increase model: " + p, 0, 0, true));
@@ -323,14 +337,14 @@ public class MlForecast extends Evaluate{
      * @param period
      * @return
      */
-    public static  boolean checkResult(MLStocks mls, MLStocks ref, PredictionPeriodicity period) {
-        if (compareResult(mls.getStatus(), ref.getStatus(), period)) {
-            ref.replace(period, mls);
-            ref.getStatus().setAvg(mls.getStatus().getAvgD1(), period);
-            ref.getStatus().setErrorRate(mls.getStatus().getErrorRate(period), period);
+    public static  boolean checkResult(MLStocks mls, MLStocks ref, PredictionPeriodicity period, ModelType type) {
+        if (compareResult(mls.getStatus(type), ref.getStatus(type), period)) {
+            ref.replace(period, mls, type );
+            ref.getStatus(type).setAvg(mls.getStatus(type).getAvgD1(), period);
+            ref.getStatus(type).setErrorRate(mls.getStatus(type).getErrorRate(period), period);
             ref.getSock(period).setModelImprove(true);
             try {
-                ref.getStatus().replaceElementList(mls.getStatus().getPerfList(), period);
+                ref.getStatus(type).replaceElementList(mls.getStatus(type).getPerfList(), period);
             } catch (Exception e) {
                 log.error(e.toString());
             } finally {
@@ -351,7 +365,7 @@ public class MlForecast extends Evaluate{
      * @param s
      */
     static int NOTUSE = 0;
-    private void optimizeModel(String codif) {
+    private void optimizeModel(String codif, ModelType type) {
 
         /**
          * to have some results faster, 2 iterations loop
@@ -360,12 +374,12 @@ public class MlForecast extends Evaluate{
         MLStocks ref = null;
 
         MLStocks validatorModel = new MLStocks(codif);
-        validatorModel.generateValidator("generateSimpleModel",NOTUSE);
+        validatorModel.generateValidator("generateSimpleModel",NOTUSE, type);
 
         MLStocks mls = new MLStocks(codif);
-        mls.generateValidator("generateSimpleModel",NOTUSE);
+        mls.generateValidator("generateSimpleModel",NOTUSE, type);
 
-        while (mls.randomizeModel()) {
+        while (mls.randomizeModel(type)) {
 
             RandomForestStock rfs = new RandomForestStock();
             mls = rfs.processRFRef(codif, mls, true);
@@ -376,20 +390,20 @@ public class MlForecast extends Evaluate{
 
 
             if (null != finalMls) {
-                finalMls.getStatus().calculeAvgPrd();
+                finalMls.getStatus(type).calculeAvgPrd();
 
-                periodicity.forEach(p -> finalMls.getValidator(p).save(finalMls.getCodif() + saveCode +
-                    p, finalMls.getStatus().getErrorRate(p), finalMls.getStatus().getAvg(p)));
+                periodicity.forEach(p -> finalMls.getModel(p).getValidator(type).save(finalMls.getCodif() + saveCode +
+                    p, finalMls.getStatus(type).getErrorRate(p), finalMls.getStatus(type).getAvg(p)));
 
                 /* period have no importance, iteration are same for all period*/
-                int col = mls.getValidator(PredictionPeriodicity.D1).getCol() -1;
+                int col = mls.getModel(PredictionPeriodicity.D1).getValidator(type).getCol() -1;
 
                 if (ref != null) {
 
                     final MLStocks finalRef = ref;
                     periodicity.forEach(p -> {
-                        if (compareResult(finalMls.getStatus(), finalRef.getStatus(), p))
-                            validatorModel.getValidator(p).validate(col);
+                        if (compareResult(finalMls.getStatus(type), finalRef.getStatus(type), p))
+                            validatorModel.getModel(p).getValidator(type).validate(col);
                     });
 
                 } else {
@@ -397,8 +411,8 @@ public class MlForecast extends Evaluate{
                 }
 
                 mls = new MLStocks(codif);
-                mls.generateValidator("generateSimpleModel",NOTUSE);
-                mls.updateColValidator(col+1);
+                mls.generateValidator("generateSimpleModel",NOTUSE, type);
+                mls.updateColValidator(col+1, type);
 
             }
         }
@@ -406,11 +420,11 @@ public class MlForecast extends Evaluate{
         /** keep best model*/
         RandomForestStock rfs = new RandomForestStock();
         MLStocks bestModel = rfs.processRFRef(codif, validatorModel, true);
-        bestModel.getStatus().calculeAvgPrd();
+        bestModel.getStatus(type).calculeAvgPrd();
 
         final MLStocks mlsCache = CacheMLStock.getMLStockCache().get(codif);
         periodicity.forEach(p -> {
-            if (compareResult(mlsCache.getStatus(), bestModel.getStatus(), p))
+            if (compareResult(mlsCache.getStatus(type), bestModel.getStatus(type), p))
                 CacheMLStock.getMLStockCache().put(codif, bestModel);
         });
 
@@ -423,18 +437,18 @@ public class MlForecast extends Evaluate{
     /**
      *
      */
-    public static void updatePredictor() {
-        CacheStockGeneral.getCache().values().forEach(com.mltrading.ml.MlForecast::updatePredictor);
+    public static void updatePredictor(ModelType type) {
+        CacheStockGeneral.getCache().values().forEach(s -> updatePredictor(s, type));
 
-        CacheStockSector.getSectorCache().values().forEach(com.mltrading.ml.MlForecast::updatePredictor);
+        CacheStockSector.getSectorCache().values().forEach(s -> updatePredictor(s, type));
     }
 
-    private static void updatePredictor(StockHistory sg) {
+    private static void updatePredictor(StockHistory sg, ModelType type) {
         MLPredictor predictor = new MLPredictor();
 
         CacheMLStock.getMlRankCache();
 
-        StockPrediction p = predictor.prediction(sg.getCodif());
+        StockPrediction p = predictor.prediction(sg.getCodif(), type);
 
         if (p != null) {
             sg.setPrediction(p);

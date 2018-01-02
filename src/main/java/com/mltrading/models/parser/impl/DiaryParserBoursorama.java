@@ -106,7 +106,7 @@ public class DiaryParserBoursorama extends ParserCommon implements DiaryParser {
                 d.setDayInvest(t.get(1).text());
                 d.setRef(t.get(0).text());
 
-                if (dateTime!= null  && dateTime.isBefore(d.getTimeInsert())) return;
+                //if (dateTime!= null  && dateTime.isBefore(d.getTimeInsert())) return;
 
                 saveDiary(bp, d);
                 System.out.println(d.toString());

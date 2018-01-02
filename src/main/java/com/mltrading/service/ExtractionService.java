@@ -179,4 +179,18 @@ public class ExtractionService {
     }
 
 
+    public void extractVcacPeriod(int period) {
+
+        vola.fetchCurrent(period);
+    }
+
+
+    public void extractArticlesPeriod() {
+        articles.fetchCurrent();
+    }
+
+    public void extractArticlePeriod(ArticleRepository articleRepository) {
+        article.fetchCurrent(articleRepository);
+    }
+
 }

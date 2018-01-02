@@ -8,8 +8,9 @@ import org.apache.spark.mllib.linalg.Vector;
 import org.apache.spark.mllib.regression.LabeledPoint;
 import org.apache.spark.mllib.tree.RandomForest;
 import org.apache.spark.mllib.tree.model.RandomForestModel;
+import scala.Serializable;
 
-public class RandomForestRanking extends MLModelRanking<RandomForestModel>{
+public class RandomForestRanking extends MLModelRanking<RandomForestModel> implements Serializable {
 
 
     @Override

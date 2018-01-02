@@ -74,6 +74,9 @@ function load (data) {
     });
 
 
+
+
+
     var layerChart = new Kinetic.Layer();
     var layerChartError = new Kinetic.Layer();
 
@@ -85,6 +88,9 @@ function load (data) {
 
     var layerChartD40 = new Kinetic.Layer();
     var layerChartErrorD40 = new Kinetic.Layer();
+
+
+
 
     perf = data;
 
@@ -115,6 +121,109 @@ function load (data) {
 
 };
 
+
+
+/**
+ * init stage kinetic canvas
+ * init route for get parameter data
+ * init websocket for new notification
+ */
+function loadGBT (data) {
+
+
+
+
+    var stagePredictionD1GBT = new Kinetic.Stage({
+        container: "kinetic1DGBT",
+        width: 1220,
+        height: 200
+    });
+
+    var stagePredictionD1ErrorGBT = new Kinetic.Stage({
+        container: "kinetic1DErrorGBT",
+        width: 1220,
+        height: 200
+    });
+
+    var stagePredictionD5GBT = new Kinetic.Stage({
+        container: "kinetic5DGBT",
+        width: 1220,
+        height: 200
+    });
+
+    var stagePredictionD5ErrorGBT = new Kinetic.Stage({
+        container: "kinetic5DErrorGBT",
+        width: 1220,
+        height: 200
+    });
+
+    var stagePredictionD20GBT = new Kinetic.Stage({
+        container: "kinetic20DGBT",
+        width: 1220,
+        height: 200
+    });
+
+    var stagePredictionD20ErrorGBT = new Kinetic.Stage({
+        container: "kinetic20DErrorGBT",
+        width: 1220,
+        height: 200
+    });
+
+    var stagePredictionD40GBT = new Kinetic.Stage({
+        container: "kinetic40DGBT",
+        width: 1220,
+        height: 200
+    });
+
+    var stagePredictionD40ErrorGBT = new Kinetic.Stage({
+        container: "kinetic40DErrorGBT",
+        width: 1220,
+        height: 200
+    });
+
+
+    var layerChartGBT = new Kinetic.Layer();
+    var layerChartErrorGBT = new Kinetic.Layer();
+
+    var layerChartD5GBT = new Kinetic.Layer();
+    var layerChartErrorD5GBT = new Kinetic.Layer();
+
+    var layerChartD20GBT = new Kinetic.Layer();
+    var layerChartErrorD20GBT = new Kinetic.Layer();
+
+    var layerChartD40GBT = new Kinetic.Layer();
+    var layerChartErrorD40GBT = new Kinetic.Layer();
+
+
+    perf = data;
+
+    chartRun({x:20,y:75}, layerChartGBT, 'mlD1', 'yield', 'realyield', 'grey' , true, 1);
+    chartRun({x:20,y:75}, layerChartGBT, 'mlD1', 'realyield', 'yield', '#96B399', false,0.5);
+    chartRun({x:20,y:75}, layerChartErrorGBT, 'mlD1', 'error', 'error', 'orange', false, 0.6);
+
+    chartRun({x:20,y:75}, layerChartD5GBT, 'mlD5', 'yield', 'realyield', 'grey' , true, 1);
+    chartRun({x:20,y:75}, layerChartD5GBT, 'mlD5', 'realyield', 'yield', '#96B399', false,0.5);
+    chartRun({x:20,y:75}, layerChartErrorD5GBT, 'mlD5', 'error', 'error', 'orange', false, 0.6);
+
+    chartRun({x:20,y:75}, layerChartD20GBT, 'mlD20', 'yield', 'realyield', 'grey' , true, 1);
+    chartRun({x:20,y:75}, layerChartD20GBT, 'mlD20', 'realyield', 'yield', '#96B399', false,0.5);
+    chartRun({x:20,y:75}, layerChartErrorD20GBT, 'mlD20', 'error', 'error', 'orange', false, 0.6);
+
+    chartRun({x:20,y:75}, layerChartD40GBT, 'mlD40', 'yield', 'realyield', 'grey' , true, 1);
+    chartRun({x:20,y:75}, layerChartD40GBT, 'mlD40', 'realyield', 'yield', '#96B399', false,0.5);
+    chartRun({x:20,y:75}, layerChartErrorD40GBT, 'mlD40', 'error', 'error', 'orange', false, 0.6);
+
+
+    stagePredictionD1GBT.add(layerChartGBT);
+    stagePredictionD1ErrorGBT.add(layerChartErrorGBT);
+    stagePredictionD5GBT.add(layerChartD5GBT);
+    stagePredictionD5ErrorGBT.add(layerChartErrorD5GBT);
+    stagePredictionD20GBT.add(layerChartD20GBT);
+    stagePredictionD20ErrorGBT.add(layerChartErrorD20GBT);
+    stagePredictionD40GBT.add(layerChartD40GBT);
+    stagePredictionD40ErrorGBT.add(layerChartErrorD40GBT);
+
+};
 
 
 var SIZEX=380;

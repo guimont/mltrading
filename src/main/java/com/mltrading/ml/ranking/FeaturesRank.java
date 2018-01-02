@@ -4,6 +4,7 @@ import com.mltrading.ml.CacheMLStock;
 import com.mltrading.ml.Feature;
 import com.mltrading.ml.MLStocks;
 import com.mltrading.ml.PredictionPeriodicity;
+import com.mltrading.ml.model.ModelType;
 import com.mltrading.models.stock.*;
 import com.mltrading.models.stock.cache.CacheStockGeneral;
 import org.joda.time.DateTime;
@@ -162,9 +163,9 @@ public class FeaturesRank extends Feature implements Serializable{
         if (setResultYield(fr, periodicity, sg.getCodif(), date) == false) return null;
 
         periodicity.forEach(p -> {
-            double res = ref.getStatus().getAvg(p);
+            double res = ref.getStatus(ModelType.RANDOMFOREST).getAvg(p);
             fr.linearize(res);
-            double error = ref.getStatus().getErrorRate(p);
+            double error = ref.getStatus(ModelType.RANDOMFOREST).getErrorRate(p);
             fr.linearize(error);
 
             double yieldPrediction = 0;

@@ -91,6 +91,11 @@ public class HistorySectorParserGoogle extends ParserCommon implements HistorySe
         Document doc = Jsoup.parse(text);
         BatchPoints bp = InfluxDaoConnector.getBatchPoints(StockHistory.dbName);
 
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         Elements links = doc.select(refCode);
         int count = 0;

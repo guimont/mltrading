@@ -53,39 +53,43 @@ public abstract class MLModelRanking<R extends TreeEnsembleModel> implements Ser
 
         setModel(mlr,model);
 
-        JavaRDD<FeaturesRank> predictionAndLabel = testData.map(
-            (Function<FeaturesRank, FeaturesRank>) fs -> {
+        try {
+            JavaRDD<FeaturesRank> predictionAndLabel = testData.map(
+                (Function<FeaturesRank, FeaturesRank>) fs -> {
 
-                double pred = model.predict(Vectors.dense(fs.vectorize()));
-                FeaturesRank fsResult = new FeaturesRank(fs, pred, PredictionPeriodicity.D20);
+                    double pred = model.predict(Vectors.dense(fs.vectorize()));
+                    FeaturesRank fsResult = new FeaturesRank(fs, pred, PredictionPeriodicity.D20);
 
                 /*already done in constructor*/
-                //fsResult.setPredictionValue(pred, PredictionPeriodicity.D20);
-                //fsResult.setDate(fs.getDate(PredictionPeriodicity.D20), PredictionPeriodicity.D20);
+                    //fsResult.setPredictionValue(pred, PredictionPeriodicity.D20);
+                    //fsResult.setDate(fs.getDate(PredictionPeriodicity.D20), PredictionPeriodicity.D20);
 
-                return fsResult;
-            }
-        );
+                    return fsResult;
+                }
+            );
 
-        JavaRDD<MLPerformances> res =
-            predictionAndLabel.map((Function<FeaturesRank, MLPerformances>) pl -> {
-                System.out.println("estimate: " + pl.getPredictionValue(PredictionPeriodicity.D20));
-                System.out.println("result: " + pl.getResultValue(PredictionPeriodicity.D20));
-                //Double diff = pl.getPredictionValue() - pl.getResultValue();
-                MLPerformances perf = new MLPerformances(pl.getCurrentDate());
-                perf.setCodif(pl.getCodif());
-                perf.setMl(MLPerformance.calculOnlyYields(pl.getDate(PredictionPeriodicity.D20), pl.getPredictionValue(PredictionPeriodicity.D20), pl.getResultValue(PredictionPeriodicity.D20)), PredictionPeriodicity.D20);
+            JavaRDD<MLPerformances> res =
+                predictionAndLabel.map((Function<FeaturesRank, MLPerformances>) pl -> {
+                    System.out.println("estimate: " + pl.getPredictionValue(PredictionPeriodicity.D20));
+                    System.out.println("result: " + pl.getResultValue(PredictionPeriodicity.D20));
+                    //Double diff = pl.getPredictionValue() - pl.getResultValue();
+                    MLPerformances perf = new MLPerformances(pl.getCurrentDate());
+                    perf.setCodif(pl.getCodif());
+                    perf.setMl(MLPerformance.calculOnlyYields(pl.getDate(PredictionPeriodicity.D20), pl.getPredictionValue(PredictionPeriodicity.D20), pl.getResultValue(PredictionPeriodicity.D20)), PredictionPeriodicity.D20);
 
-                return perf;
+                    return perf;
 
-            });
+                });
 
-
-        try {
             mlr.getStatus().setPerfList(res.collect(), PredictionPeriodicity.D20);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+
+
+
 
         return mlr;
     }

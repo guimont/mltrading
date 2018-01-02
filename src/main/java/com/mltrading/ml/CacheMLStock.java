@@ -3,6 +3,7 @@ package com.mltrading.ml;
 
 import com.mltrading.config.MLProperties;
 import com.mltrading.dao.InfluxDaoConnector;
+import com.mltrading.ml.model.ModelType;
 import com.mltrading.ml.ranking.MLRank;
 import com.mltrading.models.stock.cache.CacheStockGeneral;
 import com.mltrading.models.stock.cache.CacheStockSector;
@@ -17,16 +18,15 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by gmo on 15/12/2015.
  */
 public class CacheMLStock {
     //
+
+    public static final List<ModelType> modelTypes = Arrays.asList(ModelType.RANDOMFOREST, ModelType.GRADIANTBOOSTTREE);
 
     public static String SPARK_DEFAULT_MEMORY = "4g";
 
@@ -94,7 +94,9 @@ public class CacheMLStock {
         //load model local
         for (StockHistory s : sl) {
             MLStocks mls = new MLStocks(s.getCodif());
-            mls.distibute();
+            modelTypes.forEach(t -> {
+                mls.distibute(t);
+            });
         }
 
 
@@ -105,8 +107,13 @@ public class CacheMLStock {
             try {
 
                 MLStocks mls = new MLStocks(s.getCodif());
-                mls.load();
-                validate = mls.getStatus().loadPerf(s.getCodif());
+
+                validate = mls.getStatus(ModelType.RANDOMFOREST).loadPerf(s.getCodif(), ModelType.RANDOMFOREST);
+                if (validate) mls.load(ModelType.RANDOMFOREST);
+
+                validate = mls.getStatus(ModelType.GRADIANTBOOSTTREE).loadPerf(s.getCodif(),ModelType.GRADIANTBOOSTTREE);
+                if (validate) mls.load(ModelType.GRADIANTBOOSTTREE);
+
                 mlStockMap.put(s.getCodif(), mls);
                 CacheMLActivities.addActivities(a.setEndDate().setStatus("Success"));
 
@@ -145,7 +152,7 @@ public class CacheMLStock {
     }
 
 
-    public static void save() {
+    public static void save(ModelType type) {
 
         if (mlStockMap.values().isEmpty()) return;
 
@@ -155,13 +162,17 @@ public class CacheMLStock {
         for (MLStocks mls : mlStockMap.values()) {
             PeriodicityList.periodicity.forEach(p -> {
                 if (mls.getSock(p).isModelImprove() == true) {
-                    mls.saveModel(p);
-                    mls.saveDB(p);
+                    mls.saveModel(p, type);
+                    mls.saveDB(p, type);
                 }
             });
+
+
+            modelTypes.forEach(t -> {
             /* saveValidator Validator each time because old validator is deleted*/
-            mls.getStatus().savePerf(mls.getCodif());
-            mls.saveValidator();
+                mls.getStatus(t).savePerf(mls.getCodif(), t);
+                mls.saveValidator(t);
+            });
 
         }
 
@@ -171,9 +182,9 @@ public class CacheMLStock {
     /**
      * update perf list with last value
      */
-    public static void savePerf() {
+    public static void savePerf(ModelType type) {
         for (MLStocks mls : mlStockMap.values()) {
-            mls.getStatus().saveLastPerf(mls.getCodif());
+            mls.getStatus(type).saveLastPerf(mls.getCodif(),type);
         }
     }
 
@@ -210,11 +221,11 @@ public class CacheMLStock {
      */
 
 
-    public static void saveDB() {
+    public static void saveDB(ModelType type) {
         List<StockGeneral> sl = new ArrayList(CacheStockGeneral.getIsinCache().values());
         for (StockGeneral s : sl) {
             MLStocks mls = new MLStocks(s.getCodif());
-            mls.saveDB();
+            mls.saveDB(type);
         }
     }
 
@@ -223,7 +234,10 @@ public class CacheMLStock {
         List<StockGeneral> sl = new ArrayList(CacheStockGeneral.getIsinCache().values());
         for (StockGeneral s : sl) {
             MLStocks mls = new MLStocks(s.getCodif());
-            mls.loadDB();
+            modelTypes.forEach(t -> {
+                mls.loadDB(t);
+            });
+
         }
     }
 

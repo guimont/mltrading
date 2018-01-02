@@ -1,6 +1,7 @@
 package com.mltrading.models.stock;
 
 import com.mltrading.ml.*;
+import com.mltrading.ml.model.ModelType;
 import com.mltrading.models.stock.cache.CacheStockGeneral;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,6 +81,8 @@ public class StockDetail implements Serializable{
         List<StockHistory> h = StockHistory.getStockHistoryLast(codif, PERIOD);
         MLStocks mls = CacheMLStock.getMLStockCache().get(codif);
 
+        ModelType type = ModelType.RANDOMFOREST;
+
         for (StockHistory he:h) {
             DetailData d = new DetailData();
             d.setDate(he.getDay().substring(5,10));
@@ -88,27 +91,27 @@ public class StockDetail implements Serializable{
             else d.setOpening(he.getValue());
 
 
-            MLPerformance perf = findPred(mls.getStatus().getPerfList(), he.getDay(), PredictionPeriodicity.D5);
+            MLPerformance perf = findPred(mls.getStatus(type).getPerfList(), he.getDay(), PredictionPeriodicity.D5);
             if (perf != null) {
                 d.setPredD1(perf.getPrediction());
             }
 
 
 
-            MLPerformance perf5 = findPred(mls.getStatus().getPerfList(), he.getDay(), PredictionPeriodicity.D5);
+            MLPerformance perf5 = findPred(mls.getStatus(type).getPerfList(), he.getDay(), PredictionPeriodicity.D5);
             if (perf5 != null) {
                 d.setPredD5(perf5.getPrediction());
                 d.setSignD5(perf5.isSign());
             }
 
 
-            MLPerformance perf20 = findPred(mls.getStatus().getPerfList(), he.getDay(), PredictionPeriodicity.D20);
+            MLPerformance perf20 = findPred(mls.getStatus(type).getPerfList(), he.getDay(), PredictionPeriodicity.D20);
             if (perf20 != null) {
                 d.setPredD20(perf20.getPrediction());
                 d.setSignD20(perf20.isSign());
             }
 
-            MLPerformance perf40 = findPred(mls.getStatus().getPerfList(), he.getDay(), PredictionPeriodicity.D40);
+            MLPerformance perf40 = findPred(mls.getStatus(type).getPerfList(), he.getDay(), PredictionPeriodicity.D40);
             if (perf40 != null) {
                 d.setPredD40(perf40.getPrediction());
                 d.setSignD40(perf40.isSign());
@@ -117,7 +120,7 @@ public class StockDetail implements Serializable{
 
         }
 
-        int size = mls.getStatus().getPerfList().size();
+        int size = mls.getStatus(type).getPerfList().size();
         for (int i=1; i<40; i++) {
             DetailData d = new DetailData();
             d.setDate("J+"+i);
@@ -125,9 +128,9 @@ public class StockDetail implements Serializable{
                 if (mls.getStatus().getPerfList().get(size - 5 + i).getMlD5() != null)
                     d.setPredD5(mls.getStatus().getPerfList().get(size - 5 + i).getMlD5().getPrediction());
             */
-            if ( i - 5 < 0) d.setPredD5(mls.getStatus().getPerfList().get(size - 5 + i).getMl(PredictionPeriodicity.D5).getPrediction());
-            if ( i - 20 < 0) d.setPredD20(mls.getStatus().getPerfList().get(size - 20 + i).getMl(PredictionPeriodicity.D20).getPrediction());
-            d.setPredD40(mls.getStatus().getPerfList().get(size-40+i).getMl(PredictionPeriodicity.D40).getPrediction());
+            if ( i - 5 < 0) d.setPredD5(mls.getStatus(type).getPerfList().get(size - 5 + i).getMl(PredictionPeriodicity.D5).getPrediction());
+            if ( i - 20 < 0) d.setPredD20(mls.getStatus(type).getPerfList().get(size - 20 + i).getMl(PredictionPeriodicity.D20).getPrediction());
+            d.setPredD40(mls.getStatus(type).getPerfList().get(size-40+i).getMl(PredictionPeriodicity.D40).getPrediction());
             data.add(d);
         }
 

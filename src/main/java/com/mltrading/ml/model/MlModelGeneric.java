@@ -9,7 +9,6 @@ import org.apache.spark.mllib.linalg.Vector;
 import org.apache.spark.mllib.linalg.Vectors;
 import org.apache.spark.mllib.regression.LabeledPoint;
 
-import org.apache.spark.mllib.tree.model.TreeEnsembleModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.Serializable;
@@ -20,7 +19,7 @@ import java.util.*;
 /**
  * Created by gmo on 10/03/2017.
  */
-public abstract class MlModelGeneric<R extends TreeEnsembleModel> implements Serializable {
+public abstract class MlModelGeneric<Model> implements Serializable {
 
 
     private static final Logger log = LoggerFactory.getLogger(MlModelGeneric.class);
@@ -44,7 +43,7 @@ public abstract class MlModelGeneric<R extends TreeEnsembleModel> implements Ser
     public MLStocks processRFRef(String codif, MLStocks mls, boolean merge) {
 
         CacheMLActivities.addActivities(new MLActivities("FeaturesStock", codif, "start", 0, 0, false));
-        List<FeaturesStock> fsL = FeaturesStock.create(codif, mls.getValidator(PredictionPeriodicity.D1), CacheMLStock.RANGE_MAX);
+        List<FeaturesStock> fsL = FeaturesStock.create(codif, getValidator(mls, PredictionPeriodicity.D1), CacheMLStock.RANGE_MAX);
         CacheMLActivities.addActivities(new MLActivities("FeaturesStock", codif, "start", 0, 0, true));
 
         periodicity.forEach(p -> subprocessRF(mls, fsL, p, merge));
@@ -55,7 +54,7 @@ public abstract class MlModelGeneric<R extends TreeEnsembleModel> implements Ser
     public MLStocks processRFRef(String codif, MLStocks mls, boolean merge, PredictionPeriodicity p) {
 
         CacheMLActivities.addActivities(new MLActivities("FeaturesStock", codif, "start", 0, 0, false));
-        List<FeaturesStock> fsL = FeaturesStock.create(codif, mls.getValidator(p), CacheMLStock.RANGE_MAX);
+        List<FeaturesStock> fsL = FeaturesStock.create(codif, getValidator(mls,p), CacheMLStock.RANGE_MAX);
         CacheMLActivities.addActivities(new MLActivities("FeaturesStock", codif, "start", 0, 0, true));
         subprocessRF(mls, fsL, p, merge);
         return mls;
@@ -81,18 +80,19 @@ public abstract class MlModelGeneric<R extends TreeEnsembleModel> implements Ser
 
 
         // Train a RandomForest model.
-        final R model = trainModel(trainingData, mls.getValidator(period));
+        Model model = trainModel(trainingData, getValidator(mls, period));
+
 
 
         setModel(mls, period, model);
 
-        mls.getValidator(period).setVectorSize(fsL.get(0).currentVectorPos);
-
+        getValidator(mls,period).setVectorSize(fsL.get(0).currentVectorPos);
+        try {
 
         JavaRDD<FeaturesStock> predictionAndLabel = testData.map(
             (Function<FeaturesStock, FeaturesStock>) fs -> {
 
-                double pred = model.predict(Vectors.dense(fs.vectorize()));
+                double pred = predict(Vectors.dense(fs.vectorize()), model);
                 FeaturesStock fsResult = new FeaturesStock(fs, pred, period);
 
                 fsResult.setPredictionValue(pred, period);
@@ -116,10 +116,10 @@ public abstract class MlModelGeneric<R extends TreeEnsembleModel> implements Ser
             });
 
 
-        try {
+
             /* merge for optimize model only else replace*/
-            if (!merge) mls.getStatus().setPerfList(res.collect(), period);
-            else mls.getStatus().mergeList(res.collect(), period);
+            if (!merge) getStatus(mls).setPerfList(res.collect(), period);
+            else getStatus(mls).mergeList(res.collect(), period);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -128,11 +128,17 @@ public abstract class MlModelGeneric<R extends TreeEnsembleModel> implements Ser
 
     }
 
-    protected abstract void setModel(MLStocks mls, PredictionPeriodicity period, R model);
+    protected abstract void setModel(MLStocks mls, PredictionPeriodicity period, Model model);
 
-    protected abstract R trainModel(JavaRDD<LabeledPoint> trainingData, MatrixValidator validator);
+    protected abstract Model trainModel(JavaRDD<LabeledPoint> trainingData, MatrixValidator validator);
 
     protected abstract double predict(MLStocks mls, PredictionPeriodicity period, Vector vector);
+
+    protected abstract double predict(Vector vector, Model model);
+
+    protected abstract MatrixValidator getValidator(MLStocks mls, PredictionPeriodicity period);
+
+    protected abstract MLStatus getStatus(MLStocks mls);
 
 
     public MLStocks processRFResult(String codif, MLStocks mls) {
@@ -140,10 +146,10 @@ public abstract class MlModelGeneric<R extends TreeEnsembleModel> implements Ser
         Map<PredictionPeriodicity, List<FeaturesStock>> map = new HashMap<>();
 
         periodicity.forEach(p -> {
-            List<FeaturesStock> fsL = FeaturesStock.create(codif, mls.getValidator(p), CacheMLStock.RENDERING);
-            if (fsL.get(0).currentVectorPos != mls.getValidator(p).getVectorSize()) {
+            List<FeaturesStock> fsL = FeaturesStock.create(codif, getValidator(mls,p), CacheMLStock.RENDERING);
+            if (fsL.get(0).currentVectorPos != getValidator(mls,p).getVectorSize()) {
                 log.error("size vector not corresponding");
-                log.error("validator: " + mls.getValidator(PredictionPeriodicity.D1).getVectorSize());
+                log.error("validator: " + getValidator(mls,PredictionPeriodicity.D1).getVectorSize());
                 log.error("vector: " + fsL.get(0).currentVectorPos);
             }
             map.put(p, fsL);
@@ -175,18 +181,18 @@ public abstract class MlModelGeneric<R extends TreeEnsembleModel> implements Ser
             FeaturesStock fsResult = new FeaturesStock(fsLD1.get(i), pred, PredictionPeriodicity.D1);
 
             FeaturesStock fsD5 = fsLD5.get(i);
-            pred = mls.getModel(PredictionPeriodicity.D5).predict(Vectors.dense(fsD5.vectorize()));
+            pred = mls.getModel(PredictionPeriodicity.D5,ModelType.RANDOMFOREST).predict(Vectors.dense(fsD5.vectorize()));
             fsResult.setPredictionValue(pred, PredictionPeriodicity.D5);
             fsResult.setDate(fsD5.getDate(PredictionPeriodicity.D5), PredictionPeriodicity.D5);
 
 
             FeaturesStock fsD20 = fsLD20.get(i);
-            pred = mls.getModel(PredictionPeriodicity.D20).predict(Vectors.dense(fsD20.vectorize()));
+            pred = mls.getModel(PredictionPeriodicity.D20,ModelType.RANDOMFOREST).predict(Vectors.dense(fsD20.vectorize()));
             fsResult.setPredictionValue(pred, PredictionPeriodicity.D20);
             fsResult.setDate(fsD20.getDate(PredictionPeriodicity.D20), PredictionPeriodicity.D20);
 
             FeaturesStock fsD40 = fsLD40.get(i);
-            pred = mls.getModel(PredictionPeriodicity.D40).predict(Vectors.dense(fsD40.vectorize()));
+            pred = mls.getModel(PredictionPeriodicity.D40,ModelType.RANDOMFOREST).predict(Vectors.dense(fsD40.vectorize()));
             fsResult.setPredictionValue(pred, PredictionPeriodicity.D40);
             fsResult.setDate(fsD40.getDate(PredictionPeriodicity.D40), PredictionPeriodicity.D40);
 
@@ -225,7 +231,7 @@ public abstract class MlModelGeneric<R extends TreeEnsembleModel> implements Ser
         }
 
 
-        mls.getStatus().setPerfList(resList);
+        getStatus(mls).setPerfList(resList);
 
         return mls;
 

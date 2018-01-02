@@ -1,12 +1,11 @@
 package com.mltrading.ml.model;
 
 import com.mltrading.ml.*;
-import com.mltrading.models.util.MLActivities;
+
 import org.apache.spark.api.java.JavaRDD;
-import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.api.java.function.Function;
+
 import org.apache.spark.mllib.linalg.Vector;
-import org.apache.spark.mllib.linalg.Vectors;
+
 import org.apache.spark.mllib.regression.LabeledPoint;
 import org.apache.spark.mllib.tree.GradientBoostedTrees;
 
@@ -17,44 +16,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.Serializable;
 
-import java.util.ArrayList;
+
 import java.util.HashMap;
-import java.util.List;
+
 import java.util.Map;
 
 /**
  * Created by gmo on 14/11/2015.
  */
-public class GradiantBoostStock extends MlModelGeneric<GradientBoostedTreesModel> {
+public class GradiantBoostStock extends MlModelGeneric<MLGradiantBoostStockModel> implements Serializable {
 
     private static final Logger log = LoggerFactory.getLogger(GradiantBoostStock.class);
 
 
-    public JavaRDD<LabeledPoint> createRDD(JavaSparkContext sc,  List<FeaturesStock> fsL, PredictionPeriodicity type) {
-
-        JavaRDD<FeaturesStock> data = sc.parallelize(fsL);
-
-        JavaRDD<LabeledPoint> parsedData = data.map(
-            new Function<FeaturesStock, LabeledPoint>() {
-                public LabeledPoint call(FeaturesStock fs) {
-                    return new LabeledPoint(fs.getResultValue(type), Vectors.dense(fs.vectorize()));
-                }
-            }
-
-        );
-
-
-
-        return parsedData;
+    @Override
+    protected void setModel(MLStocks mls, PredictionPeriodicity period, MLGradiantBoostStockModel model) {
+        mls.setModel(period, model, ModelType.GRADIANTBOOSTTREE);
     }
 
     @Override
-    protected void setModel(MLStocks mls, PredictionPeriodicity period, GradientBoostedTreesModel model) {
-        //mls.setModel(period, model);
-    }
-
-    @Override
-    protected GradientBoostedTreesModel trainModel(JavaRDD<LabeledPoint> trainingData, MatrixValidator validator) {
+    protected MLGradiantBoostStockModel trainModel(JavaRDD<LabeledPoint> trainingData, MatrixValidator validator) {
         BoostingStrategy boostingStrategy = BoostingStrategy.defaultParams("Regression");
         boostingStrategy.setNumIterations(3); // Note: Use more iterations in practice.
         boostingStrategy.getTreeStrategy().setMaxDepth(5);
@@ -66,25 +47,33 @@ public class GradiantBoostStock extends MlModelGeneric<GradientBoostedTreesModel
         final GradientBoostedTreesModel model =
             GradientBoostedTrees.train(trainingData, boostingStrategy);
 
-        return model;
+        MLGradiantBoostStockModel mlGradiantBoostStockModel = new MLGradiantBoostStockModel(model);
+        mlGradiantBoostStockModel.setValidator(validator);
+
+        return mlGradiantBoostStockModel;
     }
 
     @Override
     //TODO
     protected double predict(MLStocks mls, PredictionPeriodicity period, Vector vector) {
-        return 0;
+        return mls.getModel(period,ModelType.GRADIANTBOOSTTREE).predict(vector);
+    }
+
+    @Override
+    protected double predict(Vector vector, MLGradiantBoostStockModel model) {
+        return model.predict(vector);
     }
 
 
-    /**
-     * TODO
-     * @param codif
-     * @param mls
-     * @return
-     */
-    public MLStocks processRFResult(String codif, MLStocks mls) {
 
-        return mls;
-
+    @Override
+    protected MatrixValidator getValidator(MLStocks mls, PredictionPeriodicity period) {
+        return mls.getModel(period,ModelType.GRADIANTBOOSTTREE).getValidator();
     }
+
+    @Override
+    protected MLStatus getStatus(MLStocks mls) {
+        return mls.getStatus(ModelType.GRADIANTBOOSTTREE);
+    }
+
 }

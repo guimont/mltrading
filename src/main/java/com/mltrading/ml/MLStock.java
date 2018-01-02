@@ -6,6 +6,8 @@ import com.mltrading.config.MLProperties;
 import com.mltrading.dao.Requester;
 import com.mltrading.dao.mongoFile.MongoUtil;
 import com.mltrading.dao.mongoFile.QueryMongoRequest;
+import com.mltrading.ml.model.Model;
+import com.mltrading.ml.model.ModelType;
 import com.mongodb.DBCursor;
 
 import com.mongodb.gridfs.GridFS;
@@ -16,6 +18,7 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.mllib.tree.model.RandomForestModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.File;
 import java.io.Serializable;
@@ -29,15 +32,16 @@ import java.util.Collection;
 public class MLStock  implements Serializable {
     private String codif;
     private PredictionPeriodicity period;
-    private RandomForestModel model;
-    private MatrixValidator validator;
+    private MLModel model;
+
     private boolean modelImprove;
     private static final Logger log = LoggerFactory.getLogger(MLStock.class);
 
     public MLStock(String codif, PredictionPeriodicity period) {
         this.period = period;
         this.codif = codif;
-        validator = new MatrixValidator();
+
+        model = new MLModel();
     }
 
     /**
@@ -53,13 +57,7 @@ public class MLStock  implements Serializable {
         this.modelImprove = modelImprove;
     }
 
-    public MatrixValidator getValidator() {
-        return validator;
-    }
 
-    public void setValidator(MatrixValidator validator) {
-        this.validator = validator;
-    }
 
     public String getCodif() {
         return codif;
@@ -69,21 +67,26 @@ public class MLStock  implements Serializable {
         this.codif = codif;
     }
 
-    public RandomForestModel getModel() {
+    public Model getModel(ModelType type) {
+        return this.model.getModel(type);
+    }
+
+
+    public MLModel getModel() {
         return this.model;
     }
 
-    public void setModel(RandomForestModel model) {
-        this.model = model;
+    public void setModel(Model model, ModelType type) {
+        this.model.setModel(model, type);
     }
 
 
     /**
      * remove model form mongoDB on file system
      */
-    public void removeModelDB() {
+    public void removeModelDB(ModelType type) {
         try {
-            GridFS gfsModel = (GridFS) Requester.sendRequest(new QueryMongoRequest("model/Model" + period.toString() + codif));
+            GridFS gfsModel = (GridFS) Requester.sendRequest(new QueryMongoRequest("model/Model" + ModelType.code(type) + period.toString() + codif));
 
             MongoUtil.removeDB(gfsModel);
         } catch (Exception e) {
@@ -95,14 +98,14 @@ public class MLStock  implements Serializable {
     /**
      * save mllib model on mongoDB
      */
-    public void saveModelDB() {
+    public void saveModelDB(ModelType type) {
         if (isModelImprove()) {
-            removeModelDB();
+            removeModelDB(type);
 
             try {
-                GridFS gfsModel = (GridFS) Requester.sendRequest(new QueryMongoRequest("model/Model" + period.toString() + codif));
+                GridFS gfsModel = (GridFS) Requester.sendRequest(new QueryMongoRequest("model/Model" + ModelType.code(type)+ period.toString() + codif));
 
-                File dir = new File(path + "model/Model" + period.toString() + codif);
+                File dir = new File(path + "model/Model" + ModelType.code(type)+ period.toString() + codif);
                 MongoUtil.saveDirectory(gfsModel, dir);
             } catch (Exception e) {
                 log.error("saveModel: " + codif + e);
@@ -117,44 +120,45 @@ public class MLStock  implements Serializable {
     /**
      * load spark ml model form filesystem
      */
-    public void loadModel() {
-        this.model = RandomForestModel.load(CacheMLStock.getJavaSparkContext().sc(), path + "model/Model" + period.toString() + codif);
+    public void loadModel(ModelType type) {
+        this.model.load(path, period, codif, type);
     }
 
 
     /**
      * loader
      */
-    public void load() {
-        loadModel();
-        validator.loadValidator(codif+"V"+period.toString());
+    public void load(ModelType type) {
+        loadModel(type);
     }
 
 
     /**
      * save model, spark model on file system
      */
-    public void saveModel() {
-        this.model.save(CacheMLStock.getJavaSparkContext().sc(), path + "model/Model" + period.toString() + codif);
+    public void saveModel(ModelType type) {
+        //this.model.save(CacheMLStock.getJavaSparkContext().sc(), path + "model/Model" + period.toString() + codif);
+        this.model.save(type ,path, period, codif);
     }
 
     /**
      * save validator in influxdb modelNote database
      * fomat is 'codif''V''period'. Example ORAVD5
+     * @param type
      */
-    public void saveValidator() {
-        validator.saveModel(codif + "V" + period.toString());
+    public void saveValidator(ModelType type) {
+        this.model.saveModel(type, period, codif);
     }
 
 
     /**
      * distibute physically model form mongoDB on file system
      */
-    public void distibute() {
+    public void distibute(ModelType type) {
         try {
-            GridFS gfsModel = (GridFS) Requester.sendRequest(new QueryMongoRequest("model/Model" + period.toString() + codif));
-            File dir = new File(path+"model/Model" + period.toString() + codif+"/data");
-            File dirmeta = new File(path+"model/Model" + period.toString() + codif+"/metadata");
+            GridFS gfsModel = (GridFS) Requester.sendRequest(new QueryMongoRequest("model/Model" + ModelType.code(type) + period.toString() + codif));
+            File dir = new File(path+"model/Model" + ModelType.code(type) + period.toString() + codif+"/data");
+            File dirmeta = new File(path+"model/Model" + ModelType.code(type) + period.toString() + codif+"/metadata");
             MongoUtil.distribute(gfsModel, dir, dirmeta);
         } catch (Exception e) {
             log.error("saveModel: " + codif + e);
@@ -174,11 +178,11 @@ public class MLStock  implements Serializable {
         }
     }
 
-    public void loadModelDB() {
-        distibute();
+    public void loadModelDB(ModelType type) {
+        distibute(type);
     }
 
     public void mergetValidator(MatrixValidator validator) {
-        this.getValidator().mergeEconomical(validator);
+       throw new NotImplementedException();
     }
 }

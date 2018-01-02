@@ -9,13 +9,22 @@ angular.module('mltradingApp')
 
 
         $scope.showPrediction = function(codif) {
-            PerformanceService.getPerformance(codif).then(function (data) {
-                $scope.perfs = data;
+            PerformanceService.getPerformance(codif, "RANDOMFOREST").then(function (data) {
+                $scope.perfs =  data
                 load($scope.perfs);
             });
         };
 
-        $scope.showPrediction(code);
+        $scope.showPredictionGBT = function(codif) {
+            PerformanceService.getPerformance(codif,"GRADIANTBOOSTTREE").then(function (data) {
+                $scope.perfsGBT =  data
+                loadGBT($scope.perfsGBT);
+            });
+        };
+
+
+        $scope.showPrediction( code);
+        $scope.showPredictionGBT( code);
 
 
         $scope.showValidator = function(codif) {

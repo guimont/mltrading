@@ -1,10 +1,8 @@
 package com.mltrading.ml.util;
 
 import com.mltrading.ml.*;
+import com.mltrading.ml.model.ModelType;
 import com.mltrading.ml.model.RandomForestStock;
-import com.mltrading.models.stock.StockGeneral;
-import com.mltrading.models.stock.cache.CacheStockGeneral;
-import com.mltrading.models.stock.cache.CacheStockSector;
 import com.mltrading.models.util.MLActivities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,13 +46,13 @@ public class Combination extends Evaluate{
     }
 
     static int SCORENOTREACHABLE =  500;
-    public double evaluate(String codif, PredictionPeriodicity p) {
+    public double evaluate(String codif, PredictionPeriodicity p, ModelType type) {
 
         final MLStocks mls = new MLStocks(codif);
 
         CacheMLActivities.addActivities(new MLActivities("optimize", codif, "start", 0, 0, false));
 
-        mls.setValidator(p,mv);
+        mls.getModel(p).setValidator(type,mv);
 
         String saveCode;
         {
@@ -64,17 +62,17 @@ public class Combination extends Evaluate{
         }
 
         if (null != mls) {
-            mls.getStatus().calculeAvgPrd();
+            mls.getStatus(type).calculeAvgPrd();
 
-            mls.getValidator(p).save(mls.getCodif() + saveCode +
-                p, mls.getStatus().getErrorRate(p), mls.getStatus().getAvg(p));
+            mls.getModel(p).getValidator(type).save(mls.getCodif() + saveCode +
+                p, mls.getStatus(type).getErrorRate(p), mls.getStatus(type).getAvg(p));
 
         } else {
             CacheMLActivities.addActivities(new MLActivities("optimize", codif, "failed", 0, 0, true));
         }
 
         //inverse score
-        return SCORENOTREACHABLE - convert(mls.getStatus().getErrorRate(p),mls.getStatus().getAvg(p));
+        return SCORENOTREACHABLE - convert(mls.getStatus(type).getErrorRate(p),mls.getStatus(type).getAvg(p));
     }
 
 

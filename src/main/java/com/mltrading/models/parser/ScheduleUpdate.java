@@ -3,6 +3,7 @@ package com.mltrading.models.parser;
 
 import com.mltrading.ml.CacheMLStock;
 import com.mltrading.ml.MlForecast;
+import com.mltrading.ml.model.ModelType;
 import com.mltrading.repository.ArticleRepository;
 import com.mltrading.service.ExtractionService;
 import org.slf4j.Logger;
@@ -49,11 +50,11 @@ public class ScheduleUpdate {
 
         //CacheMLStock.load(); not need !!
         MlForecast ml = new MlForecast();
-        ml.processList();
+        ml.processList(ModelType.RANDOMFOREST);
         //load status
-        CacheMLStock.savePerf();
+        CacheMLStock.savePerf(ModelType.RANDOMFOREST);
 
-        MlForecast.updatePredictor();
+        MlForecast.updatePredictor(ModelType.RANDOMFOREST);
     }
 
 

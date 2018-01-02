@@ -12,20 +12,22 @@ import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.mllib.regression.LabeledPoint;
 import org.apache.spark.mllib.tree.RandomForest;
 import org.apache.spark.mllib.tree.model.RandomForestModel;
+import scala.Serializable;
 
 /**
  * Created by gmo on 14/11/2015.
  */
-public class RandomForestStock extends MlModelGeneric<RandomForestModel> {
+public class RandomForestStock extends MlModelGeneric<MLRandomForestModel> implements Serializable {
 
     @Override
-    protected void setModel(MLStocks mls, PredictionPeriodicity period, RandomForestModel model) {
-        mls.setModel(period, model);
+    protected void setModel(MLStocks mls, PredictionPeriodicity period, MLRandomForestModel model) {
+        mls.setModel(period, model, ModelType.RANDOMFOREST);
     }
 
 
+
     @Override
-    protected RandomForestModel trainModel(JavaRDD<LabeledPoint> trainingData, MatrixValidator validator) {
+    protected MLRandomForestModel trainModel(JavaRDD<LabeledPoint> trainingData, MatrixValidator validator) {
         // Train a RandomForest model.
         Map<Integer, Integer> categoricalFeaturesInfo = new HashMap<Integer, Integer>();
 
@@ -37,17 +39,33 @@ public class RandomForestStock extends MlModelGeneric<RandomForestModel> {
             validator.getMaxDepth(), validator.getMaxBins(),
             validator.getSeed());
 
-        return model;
+        MLRandomForestModel mlRandomForestModel = new MLRandomForestModel(model);
+        mlRandomForestModel.setValidator(validator);
+
+        return mlRandomForestModel;
     }
 
 
     @Override
     protected double predict(MLStocks mls, PredictionPeriodicity period, Vector vector) {
-        return mls.getModel(period).predict(vector);
+        return mls.getModel(period,ModelType.RANDOMFOREST).predict(vector);
     }
 
+    @Override
+    protected double predict(Vector vector,  MLRandomForestModel model) {
+        return model.predict(vector);
+    }
 
+    @Override
+    protected MatrixValidator getValidator(MLStocks mls, PredictionPeriodicity period) {
+        return mls.getModel(period,ModelType.RANDOMFOREST).getValidator();
+    }
 
+    @Override
+    protected MLStatus getStatus(MLStocks mls) {
+
+        return mls.getStatus(ModelType.RANDOMFOREST);
+    }
 
 
 }

@@ -2,6 +2,7 @@ package com.mltrading.models.stock;
 
 import com.mltrading.dao.InfluxDaoConnector;
 import com.mltrading.ml.*;
+import com.mltrading.ml.model.ModelType;
 import org.influxdb.dto.QueryResult;
 
 import java.io.Serializable;
@@ -138,9 +139,9 @@ public class StockPerformance implements Serializable{
                 result = InfluxDaoConnector.getPoints(query, MatrixValidator.dbNamePerf);
                 this.setIteration (new Double((Double)result.getResults().get(0).getSeries().get(0).getValues().get(0).get(1)).intValue());
                 PeriodicityList.periodicity.forEach(p -> {
-                    MLStatus l = s.getStatus();
+                    MLStatus l = s.getStatus(ModelType.RANDOMFOREST);
                     PerfModel pm = container.get(p);
-                    MatrixValidator mv = s.getValidator(p);
+                    MatrixValidator mv = s.getModel(p).getValidator(ModelType.RANDOMFOREST);
                     pm.setVectorSize(mv.getVectorSize());
                     pm.setError(l.getErrorRate(p));
                     pm.setYield(l.getAvg(p));

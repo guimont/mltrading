@@ -90,17 +90,23 @@ public class HistoryLocalRawMaterials extends ParserCommon implements HistoryRaw
         int count = 0;
         for (Element t : links) {
             if (t.child(0).hasAttr("data-real-value")) {
-                StockHistory raw = new StockHistory();
-                raw.setCode(r.getCode());
-                raw.setCodif(r.getCode());
-                raw.setDayInvest(t.children().get(0).text());
-                raw.setValue(new Double(t.children().get(1).text().replaceAll(" ", "").replace(".", "").replace(",", ".").replace("-", "0")));
-                raw.setOpening(new Double(t.children().get(2).text().replaceAll(" ", "").replace(".", "").replace(",", ".").replace("-", "0")));
-                raw.setHighest(new Double(t.children().get(3).text().replaceAll(" ", "").replace(".", "").replace(",", ".").replace("-", "0")));
-                raw.setLowest(new Double(t.children().get(4).text().replaceAll(" ", "").replace(".", "").replace(",", ".").replace("-", "0")));
+                try {
+                    StockHistory raw = new StockHistory();
+                    raw.setCode(r.getCode());
+                    raw.setCodif(r.getCode());
+                    raw.setDayInvest(t.children().get(0).text());
+                    raw.setValue(new Double(t.children().get(1).text().replaceAll(" ", "").replace(".", "").replace(",", ".").replace("-", "0")));
+                    raw.setOpening(new Double(t.children().get(2).text().replaceAll(" ", "").replace(".", "").replace(",", ".").replace("-", "0")));
+                    raw.setHighest(new Double(t.children().get(3).text().replaceAll(" ", "").replace(".", "").replace(",", ".").replace("-", "0")));
+                    raw.setLowest(new Double(t.children().get(4).text().replaceAll(" ", "").replace(".", "").replace(",", ".").replace("-", "0")));
+                    System.out.println(raw.toString());
+                    saveHistory(bp, raw);
+                }
+                catch (Exception e) {
+                    System.out.println("url: " + url +" Failed");
+                    continue;
+                }
 
-                System.out.println(raw.toString());
-                saveHistory(bp, raw);
                 if (++count >= range)
                     break;
             }

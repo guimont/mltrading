@@ -93,7 +93,7 @@ public class HistoryParserGoogle extends ParserCommon implements HistoryParser,H
             for(numPage =0; numPage <= MAXPAGE ; numPage += PAGINATION) {
                 /*tempo problem with google*/
                 try {
-                    Thread.sleep(2000);
+                    Thread.sleep(5000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -109,6 +109,11 @@ public class HistoryParserGoogle extends ParserCommon implements HistoryParser,H
         try {
             String text;
 
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
             //inifinite loop
             do {

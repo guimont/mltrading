@@ -2,6 +2,7 @@ package com.mltrading.web.rest;
 
 import com.mltrading.ml.CacheMLActivities;
 import com.mltrading.ml.MlForecast;
+import com.mltrading.ml.model.ModelType;
 import com.mltrading.models.stock.StockPerformance;
 import com.mltrading.models.stock.StockPerformanceList;
 import com.mltrading.models.util.MLActivities;
@@ -54,7 +55,7 @@ public class ForecastResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String optimizeML(@Valid @RequestBody ForecastDTO fcDTO) {
 
-        forecast.optimize(fcDTO.getGlobalLoop(), fcDTO.getInputLoop(), fcDTO.getValidator(), fcDTO.getTarget());
+        forecast.optimize(fcDTO.getGlobalLoop(), fcDTO.getInputLoop(), fcDTO.getValidator(), fcDTO.getTarget(), ModelType.get(fcDTO.getModelType()));
 
         return "ok";
     }

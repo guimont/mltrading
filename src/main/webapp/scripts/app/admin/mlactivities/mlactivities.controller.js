@@ -26,6 +26,7 @@ angular.module('mltradingApp')
             globalLoop: "1",
             inputLoop: "1",
             validator: "generateSimpleModel",
+            modelType: "RANOMFOREST",
             target: "PX1"
         };
 

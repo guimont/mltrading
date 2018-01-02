@@ -2,6 +2,7 @@ package com.mltrading.web.rest;
 
 
 import com.mltrading.ml.CacheMLStock;
+import com.mltrading.ml.model.ModelType;
 import com.mltrading.ml.ranking.MLStockRanking;
 import com.mltrading.ml.MlForecast;
 import com.mltrading.models.stock.CheckConsistency;
@@ -87,7 +88,10 @@ public class ExtractionResource {
                 service.extractIndicePeriod(extDTO.getPeriod());
         }
         else if (extDTO.getTarget().equalsIgnoreCase(VCAC)) {
-           service.extractVcacFull();
+            if (extDTO.getPeriod() == FULL)
+                service.extractVcacFull();
+            else
+                service.extractVcacPeriod(extDTO.getPeriod());
         }
 
         else if (extDTO.getTarget().equalsIgnoreCase(RAW)) {
@@ -111,6 +115,19 @@ public class ExtractionResource {
             else
                 service.extractDiaryPeriod(extDTO.getPeriod());
         }
+
+        else if (extDTO.getTarget().equalsIgnoreCase(ARTICLE)) {
+            if (extDTO.getPeriod() == FULL) {
+                service.extractArticlesFull();
+                service.extractArticleFull(articleRepository);
+            } else {
+                service.extractArticlesPeriod();
+                service.extractArticlePeriod(articleRepository);
+            }
+
+        }
+
+
 
 
 
@@ -272,8 +289,7 @@ public class ExtractionResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String saveML() {
 
-        List<Stock> sl = stockRepository.findAll();
-        CacheMLStock.save();
+
 
         return "ok";
     }
@@ -287,7 +303,7 @@ public class ExtractionResource {
 
         CacheMLStock.load();
         MlForecast ml = new MlForecast();
-        ml.processList();
+        ml.processList(ModelType.RANDOMFOREST);
 
         return "ok";
     }
@@ -298,7 +314,7 @@ public class ExtractionResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String evaluate() {
 
-        MlForecast.updatePredictor();
+        MlForecast.updatePredictor(ModelType.RANDOMFOREST);
 
 
         return "ok";

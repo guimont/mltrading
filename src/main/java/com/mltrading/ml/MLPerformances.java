@@ -1,6 +1,7 @@
 package com.mltrading.ml;
 
 import com.mltrading.dao.InfluxDaoConnector;
+import com.mltrading.ml.model.ModelType;
 import org.influxdb.dto.BatchPoints;
 
 
@@ -102,16 +103,16 @@ public class MLPerformances  implements Serializable, Comparable<MLPerformances>
     }
 
 
-    void save(String code) {
+    void save(String code,  ModelType type) {
         BatchPoints bp = InfluxDaoConnector.getBatchPointsV1(MatrixValidator.dbNameModel);
         for (Map.Entry<PredictionPeriodicity, MLPerformance> entry : container.entrySet()) {
-            entry.getValue().savePerformance(bp,code+"P"+entry.getKey());
+            entry.getValue().savePerformance(bp,code+ModelType.code(type) +"P"+entry.getKey());
         }
     }
 
-    void save(String code, PredictionPeriodicity p) {
+    void save(String code, PredictionPeriodicity p, ModelType type) {
         BatchPoints bp = InfluxDaoConnector.getBatchPointsV1(MatrixValidator.dbNameModel);
-        container.get(p).savePerformance(bp,code+"P"+p.toString());
+        container.get(p).savePerformance(bp,code+ModelType.code(type) +"P"+p.toString());
     }
 
 

@@ -2,6 +2,7 @@ package com.mltrading.ml;
 
 import com.mltrading.dao.InfluxDaoConnector;
 import com.mltrading.dao.TimeSeriesDao.DaoChecker;
+import com.mltrading.ml.model.ModelType;
 import org.influxdb.dto.QueryResult;
 
 
@@ -38,9 +39,9 @@ public class MLStatus implements Serializable,DaoChecker{
      * save perf for all period
      * @param code
      */
-    public void savePerf(String code) {
+    public void savePerf(String code, ModelType type) {
         for (MLPerformances perfs : perfList) {
-            perfs.save(code);
+            perfs.save(code, type);
         }
     }
 
@@ -49,16 +50,16 @@ public class MLStatus implements Serializable,DaoChecker{
      * @param code
      * @param p
      */
-    public void savePerf(String code, PredictionPeriodicity p) {
+    public void savePerf(String code, PredictionPeriodicity p, ModelType type) {
         for (MLPerformances perfs : perfList) {
-            perfs.save(code,p);
+            perfs.save(code,p, type);
         }
 
     }
 
 
-    public void saveLastPerf(String code) {
-        perfList.get(perfList.size()-1).save(code);
+    public void saveLastPerf(String code, ModelType type) {
+        perfList.get(perfList.size()-1).save(code,type);
     }
 
     /**
@@ -241,20 +242,21 @@ public class MLStatus implements Serializable,DaoChecker{
     /**
      * return last max StockHistory
      * @param code
+     * @param type
      * @return O or max last StockHistory
      */
-    public boolean loadPerf(final String code) {
+    public boolean loadPerf(final String code, ModelType type) {
         final int max = CacheMLStock.RENDERING;
         perfList = new ArrayList();
 
         //offset is mult by 2 because it is no dense data
-        String query = "SELECT * FROM "+code +"PD1 where time > '2015-06-01T00:00:00Z'";
+        String query = "SELECT * FROM "+code + ModelType.code(type) +"PD1 where time > '2015-06-01T00:00:00Z'";
         QueryResult listP1 = InfluxDaoConnector.getPoints(query, MatrixValidator.dbNameModel);
-        query = "SELECT * FROM "+code +"PD5 where time > '2015-06-01T00:00:00Z'";
+        query = "SELECT * FROM "+code+ ModelType.code(type) +"PD5 where time > '2015-06-01T00:00:00Z'";
         QueryResult listP5 = InfluxDaoConnector.getPoints(query, MatrixValidator.dbNameModel);
-        query = "SELECT * FROM "+code +"PD20 where time > '2015-06-01T00:00:00Z'";
+        query = "SELECT * FROM "+code+ ModelType.code(type) +"PD20 where time > '2015-06-01T00:00:00Z'";
         QueryResult listP20 = InfluxDaoConnector.getPoints(query, MatrixValidator.dbNameModel);
-        query = "SELECT * FROM "+code +"PD40 where time > '2015-06-01T00:00:00Z'";
+        query = "SELECT * FROM "+code + ModelType.code(type) +"PD40 where time > '2015-06-01T00:00:00Z'";
         QueryResult listP40 = InfluxDaoConnector.getPoints(query, MatrixValidator.dbNameModel);
 
         if (checker(listP1) == false) return false;

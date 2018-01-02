@@ -7,6 +7,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.mltrading.ml.CacheMLStock;
 import com.mltrading.ml.MlForecast;
+import com.mltrading.ml.model.ModelType;
 import com.mltrading.models.parser.impl.RealTimeParserBoursorama;
 import com.mltrading.models.parser.impl.google.RealTimeSectorGoogle;
 import com.mltrading.repository.ArticleRepository;
@@ -58,7 +59,7 @@ public class ScheduleParserGeneral  {
 
         CacheMLStock.load();
 
-        MlForecast.updatePredictor();
+        MlForecast.updatePredictor(ModelType.RANDOMFOREST);
     }
 
 

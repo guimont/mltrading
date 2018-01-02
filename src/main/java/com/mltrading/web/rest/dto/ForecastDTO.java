@@ -6,16 +6,18 @@ package com.mltrading.web.rest.dto;
 public class ForecastDTO {
 
     private String validator;
+    private String modelType;
     private String target;
     private int globalLoop;
     private int inputLoop;
 
 
-    public ForecastDTO(String validator, String target, int globalLoop, int inputLoop) {
+    public ForecastDTO(String validator, String modelType, String target, int globalLoop, int inputLoop) {
         this.validator = validator;
         this.target = target;
         this.globalLoop = globalLoop;
         this.inputLoop = inputLoop;
+        this.modelType = modelType;
     }
 
     public ForecastDTO() {
@@ -51,5 +53,13 @@ public class ForecastDTO {
 
     public void setInputLoop(int inputLoop) {
         this.inputLoop = inputLoop;
+    }
+
+    public String getModelType() {
+        return modelType;
+    }
+
+    public void setModelType(String modelType) {
+        this.modelType = modelType;
     }
 }

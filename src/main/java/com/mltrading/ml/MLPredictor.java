@@ -1,6 +1,7 @@
 package com.mltrading.ml;
 
 
+import com.mltrading.ml.model.ModelType;
 import com.mltrading.ml.ranking.FeaturesRank;
 import com.mltrading.models.stock.StockHistory;
 import com.mltrading.models.stock.StockPrediction;
@@ -17,7 +18,7 @@ import java.io.Serializable;
 public class MLPredictor  implements Serializable {
 
 
-    private static final Logger log = LoggerFactory.getLogger(MlForecast.class);
+    private static final Logger log = LoggerFactory.getLogger(MLPredictor.class);
 
 
     /**
@@ -25,7 +26,7 @@ public class MLPredictor  implements Serializable {
      * @param codif
      * @return
      */
-    public StockPrediction prediction(String codif) {
+    public StockPrediction prediction(String codif, ModelType type) {
 
 
         MLStocks s = CacheMLStock.getMLStockCache().get(codif);
@@ -35,15 +36,9 @@ public class MLPredictor  implements Serializable {
                 String date = StockHistory.getLastDateHistory(codif);
 
                 PeriodicityList.periodicity.forEach(p -> {
-                    FeaturesStock fs = FeaturesStock.createRT(codif, s.getValidator(p), date);
-                    if (fs.currentVectorPos != s.getValidator(p).getVectorSize()) {
-                        log.error("model broken!!!!!: " + fs.currentVectorPos +" not equal " +s.getValidator(p).getVectorSize());
-                        System.exit(100);
-                    }
-                    sp.setPrediction(s.getModel(p).predict(Vectors.dense(fs.vectorize())), p);
-                    sp.setConfidence(100 - (s.getStatus().getErrorRate(p) * 100 / s.getStatus().getCount(p)), p);
 
-
+                    sp.setPrediction(s.getModel(p).aggregate( s, date),p);
+                    sp.setConfidence(100 - (s.getStatus(type).getErrorRate(p) * 100 / s.getStatus(type).getCount(p)), p);
                 });
 
                 if (CacheMLStock.getMlRankCache().getModel() != null) {

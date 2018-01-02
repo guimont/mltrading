@@ -6,6 +6,7 @@ import com.mltrading.models.parser.HistoryParser;
 import com.mltrading.models.parser.ParserCommon;
 import com.mltrading.models.parser.VolatilityParser;
 
+import com.mltrading.models.stock.StockGeneral;
 import com.mltrading.models.stock.StockHistory;
 import org.influxdb.dto.BatchPoints;
 import org.jsoup.Jsoup;
@@ -26,7 +27,7 @@ public class VolatilityGoogle extends ParserCommon implements VolatilityParser,H
     //VXN nasdaq
     //INDEXCBOE:VXFXI china
 
-    static String vol = "http://www.google.com/finance/historical?cid=6404916&startdate=Jan+1%2C+2010&num=200&start=";
+    static String vol = "http://finance.google.com/finance/historical?q=INDEXEURO%3AVCAC&startdate=Jan+1%2C+2010&num=200&start=";
     static int PAGINATION = 200;
     static String refCode = "tbody";
     static int MAXPAGE = 1720;
@@ -46,12 +47,14 @@ public class VolatilityGoogle extends ParserCommon implements VolatilityParser,H
 
 
     /**
-     * not very nice .. code duplicate and exit not nice
+     *
      * @param range
      */
     public void loaderFrom(int range) {
 
-        try {
+        parser(range);
+
+        /*try {
             String text;
             String url = vol + 0;
 
@@ -94,12 +97,18 @@ public class VolatilityGoogle extends ParserCommon implements VolatilityParser,H
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("ERROR for : " + code);
-        }
+        }*/
     }
 
 
     public void loader() {
 
+        parser(NO_RANGE);
+    }
+
+    private void parser(int range) {
+
+        int count = 0;
         for (int numPage = 0; numPage <= MAXPAGE; numPage += PAGINATION) {
             try {
                 String text;
@@ -145,6 +154,8 @@ public class VolatilityGoogle extends ParserCommon implements VolatilityParser,H
                                 ind.setVolume(new Double(0));
                                 saveHistory(bp, ind);
                                 System.out.println(ind.toString());
+                                if (count++ >= range)
+                                    break;
                             }
                         }
                     }

@@ -5,9 +5,11 @@ package com.mltrading.ml;
  */
 
 
+import com.mltrading.ml.model.Model;
+import com.mltrading.ml.model.ModelType;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.mllib.tree.model.RandomForestModel;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
@@ -24,7 +26,7 @@ public class MLStocks  implements Serializable {
     private String codif;
     private Map<PredictionPeriodicity,MLStock> container;
 
-    private MLStatus status;
+    private HashMap<ModelType,MLStatus> statusMap = new HashMap<>();
 
     JavaRDD<FeaturesStock> testData;
 
@@ -37,7 +39,10 @@ public class MLStocks  implements Serializable {
         container.put(PredictionPeriodicity.D20, new MLStock(codif, PredictionPeriodicity.D20));
         container.put(PredictionPeriodicity.D40, new MLStock(codif, PredictionPeriodicity.D40));
 
-        status = new MLStatus();
+        MLStatus statusRF = new MLStatus();
+        statusMap.put(ModelType.RANDOMFOREST, statusRF);
+        MLStatus statusGBT = new MLStatus();
+        statusMap.put(ModelType.GRADIANTBOOSTTREE, statusGBT);
     }
 
     public MLStock getSock(PredictionPeriodicity period) {
@@ -45,12 +50,12 @@ public class MLStocks  implements Serializable {
     }
 
 
-    public MLStatus getStatus() {
-        return status;
+    public MLStatus getStatus(ModelType type) {
+        return statusMap.get(type);
     }
 
-    public void setStatus(MLStatus status) {
-        this.status = status;
+    public void setStatus(MLStatus status, ModelType type) {
+        this.statusMap.put(type,status);
     }
 
     public String getCodif() {
@@ -67,33 +72,29 @@ public class MLStocks  implements Serializable {
     }
 
 
-    public void load() {
+    public void load(ModelType type) {
         for (Map.Entry<PredictionPeriodicity, MLStock> entry : container.entrySet()) {
-            entry.getValue().load();
+            entry.getValue().load(type);
         }
     }
 
-    public void loadValidator() {
-        for (Map.Entry<PredictionPeriodicity, MLStock> entry : container.entrySet()) {
-            entry.getValue().getValidator().loadValidator(codif+"V"+entry.getKey().toString());
-        }
-    }
 
-    public void saveValidator() {
+    public void saveValidator(ModelType type) {
         for (Map.Entry<PredictionPeriodicity, MLStock> entry : container.entrySet()) {
-            entry.getValue().saveValidator();
+            entry.getValue().saveValidator(type);
         }
     }
 
     /**
      * saveValidator for specific perdiod
      * @param p
+     * @param type
      */
-    public void saveModel(PredictionPeriodicity p) {
-        container.get(p).saveModel();
+    public void saveModel(PredictionPeriodicity p, ModelType type) {
+        container.get(p).saveModel(type);
     }
 
-    public void generateValidator(String methodName, int sector) {
+    public void generateValidator(String methodName, int sector, ModelType type) {
 
         try {
             Class[] cArg = new Class[1];
@@ -101,7 +102,7 @@ public class MLStocks  implements Serializable {
             MatrixValidator validator = new MatrixValidator();
             validator.getClass().getMethod(methodName,cArg).invoke(validator, sector);
             for (Map.Entry<PredictionPeriodicity, MLStock> entry : container.entrySet()) {
-                entry.getValue().setValidator(validator.clone());
+                entry.getValue().getModel(type).setValidator(validator.clone());
             }
         } catch (IllegalAccessException e) {
             e.printStackTrace();
@@ -113,9 +114,9 @@ public class MLStocks  implements Serializable {
 
     }
 
-    public void setValidators(MatrixValidator validator) {
+    public void setValidators(MatrixValidator validator,  ModelType type) {
         for (Map.Entry<PredictionPeriodicity, MLStock> entry : container.entrySet()) {
-            entry.getValue().setValidator(validator);
+            entry.getValue().getModel(type).setValidator(validator);
         }
     }
 
@@ -126,21 +127,21 @@ public class MLStocks  implements Serializable {
      * @param p
      * @param validator
      */
-    public void setValidator(PredictionPeriodicity p, MatrixValidator validator) {
-        container.get(p).setValidator(validator);
+    public void setValidator(PredictionPeriodicity p, MatrixValidator validator,  ModelType type) {
+        container.get(p).getModel(type).setValidator(validator);
     }
 
 
-    public MatrixValidator getValidator(PredictionPeriodicity p) {
-        return container.get(p).getValidator();
+    public MatrixValidator getValidator(PredictionPeriodicity p,  ModelType type) {
+        return container.get(p).getModel(type).getValidator();
     }
 
 
-    public boolean randomizeModel() {
+    public boolean randomizeModel( ModelType type) {
         boolean checkContinue =true;
 
         for (Map.Entry<PredictionPeriodicity, MLStock> entry : container.entrySet()) {
-            checkContinue &= entry.getValue().getValidator().optimizeModel(entry.getValue().getValidator());
+            checkContinue &= entry.getValue().getModel(type).getValidator().optimizeModel(entry.getValue().getModel(type).getValidator());
         }
 
         return checkContinue;
@@ -153,24 +154,29 @@ public class MLStocks  implements Serializable {
      * @param p
      * @param model
      */
-    public void setModel(PredictionPeriodicity p, RandomForestModel model) {
-        container.get(p).setModel(model);
+    public void setModel(PredictionPeriodicity p, Model model, ModelType type) {
+        container.get(p).setModel(model, type);
     }
 
 
-    public RandomForestModel getModel(PredictionPeriodicity p) {
+    public Model getModel(PredictionPeriodicity p, ModelType type) {
+        return container.get(p).getModel(type);
+    }
+
+    public MLModel getModel(PredictionPeriodicity p) {
         return container.get(p).getModel();
     }
 
 
+
     /**
      * recopy mlStock from MLStocks ref for period
      * @param p
      * @param ref
      */
-    public void replace(PredictionPeriodicity p,MLStocks ref) {
-        this.setModel(p,ref.getModel(p));
-        this.setValidator(p, ref.getValidator(p));
+    public void replace(PredictionPeriodicity p,MLStocks ref, ModelType type) {
+        this.setModel(p,ref.getModel(p, type), type);
+        this.getModel(p).setValidator(type, ref.getModel(p).getValidator(type));
     }
 
 
@@ -179,9 +185,9 @@ public class MLStocks  implements Serializable {
      * @param p
      * @param ref
      */
-    public void insert(PredictionPeriodicity p,MLStocks ref) {
-        this.setModel(p,ref.getModel(p));
-        this.getValidator(p).replace(ref.getValidator(p));
+    public void insert(PredictionPeriodicity p,MLStocks ref,ModelType type) {
+        this.setModel(p,ref.getModel(p, type), type);
+        this.getModel(p).getValidator(type).replace(ref.getModel(p).getValidator(type));
     }
 
 
@@ -195,13 +201,13 @@ public class MLStocks  implements Serializable {
      * @return
      */
     @Deprecated
-    public MLStocks replaceValidator(MLStocks ref) {
-        int position = this.getValidator(PredictionPeriodicity.D1).getCol();
+    public MLStocks replaceValidator(MLStocks ref, ModelType type) {
+        int position = this.getModel(PredictionPeriodicity.D1).getValidator(type).getCol();
         MLStocks copy = new MLStocks(this.getCodif());
 
         for (Map.Entry<PredictionPeriodicity, MLStock> entry : container.entrySet()) {
-            copy.setValidator(entry.getKey(),ref.getValidator(entry.getKey()).clone());
-            copy.getValidator(entry.getKey()).setCol(position);
+            copy.getModel(entry.getKey()).setValidator(type,ref.getModel(entry.getKey()).getValidator(type).clone());
+            copy.getModel(entry.getKey()).getValidator(type).setCol(position);
         }
 
         return copy;
@@ -227,7 +233,7 @@ public class MLStocks  implements Serializable {
     @Override
     public MLStocks clone() {
 
-        MLStocks copy = new MLStocks(this.getCodif());
+        /*MLStocks copy = new MLStocks(this.getCodif());
 
         for (Map.Entry<PredictionPeriodicity, MLStock> entry : container.entrySet()) {
             copy.setValidator(entry.getKey(), this.getValidator(entry.getKey()).clone());
@@ -235,14 +241,15 @@ public class MLStocks  implements Serializable {
 
         copy.setStatus(this.getStatus().clone());
 
-        return copy;
+        return copy;*/
+        throw  new NotImplementedException();
     }
 
 
 
-    public void distibute() {
+    public void distibute(ModelType type) {
         for (Map.Entry<PredictionPeriodicity, MLStock> entry : container.entrySet()) {
-            entry.getValue().distibute();
+            entry.getValue().distibute(type);
         }
     }
 
@@ -252,40 +259,46 @@ public class MLStocks  implements Serializable {
         }
     }
 
-    public void saveDB() {
+    public void saveDB(ModelType type) {
         for (Map.Entry<PredictionPeriodicity, MLStock> entry : container.entrySet()) {
-            entry.getValue().saveModelDB();
+            entry.getValue().saveModelDB(type);
         }
     }
 
 
-    public void saveDB(PredictionPeriodicity p) {
-        container.get(p).saveModelDB();
+    public void saveDB(PredictionPeriodicity p, ModelType type) {
+        container.get(p).saveModelDB(type);
     }
 
-    public void loadDB() {
+    public void loadDB(ModelType type) {
         for (Map.Entry<PredictionPeriodicity, MLStock> entry : container.entrySet()) {
-            entry.getValue().loadModelDB();
+            entry.getValue().loadModelDB(type);
         }
     }
 
-    public void updateColValidator(int col) {
+    public void updateColValidator(int col, ModelType type) {
         for (Map.Entry<PredictionPeriodicity, MLStock> entry : container.entrySet()) {
-            entry.getValue().getValidator().setCol(col);
+            entry.getValue().getModel().getValidator(type).setCol(col);
         }
     }
 
-    public Map<PredictionPeriodicity,MatrixValidator> getValidators() {
+    public Map<PredictionPeriodicity,MatrixValidator> getValidators(ModelType type) {
         Map<PredictionPeriodicity,MatrixValidator> mapValidator = new HashMap<>();
         for (Map.Entry<PredictionPeriodicity, MLStock> entry : container.entrySet()) {
-            mapValidator.put(entry.getKey(),entry.getValue().getValidator());
+            mapValidator.put(entry.getKey(),entry.getValue().getModel(type).getValidator());
         }
         return mapValidator;
     }
 
-    public void mergeValidator(MLStocks ref) {
+    public void mergeValidator(MLStocks ref,ModelType type) {
         for (Map.Entry<PredictionPeriodicity, MLStock> entry : container.entrySet()) {
-            entry.getValue().mergetValidator(ref.getValidator(entry.getKey()));
+            entry.getValue().mergetValidator(ref.getModel(entry.getKey()).getValidator(type));
+        }
+    }
+
+    public void setModels(ModelType type, MLStocks mls) {
+        for (Map.Entry<PredictionPeriodicity, MLStock> entry : container.entrySet()) {
+            entry.getValue().setModel(mls.getModel(entry.getKey(),type),type);
         }
     }
 }

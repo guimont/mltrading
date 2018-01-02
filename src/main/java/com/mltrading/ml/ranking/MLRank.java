@@ -11,11 +11,12 @@ import com.mongodb.gridfs.GridFS;
 import org.apache.spark.mllib.tree.model.RandomForestModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import scala.Serializable;
 
 import java.io.File;
 
 
-public class MLRank {
+public class MLRank implements Serializable {
 
     private RandomForestModel model;
     private boolean modelImprove;

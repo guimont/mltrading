@@ -2,6 +2,7 @@ package com.mltrading.web.rest;
 
 import com.mltrading.ml.*;
 
+import com.mltrading.ml.model.ModelType;
 import com.mltrading.models.stock.StockPrediction;
 import com.mltrading.models.stock.StockValidator;
 import com.mltrading.security.AuthoritiesConstants;
@@ -33,11 +34,11 @@ public class MLPredictionResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     @RolesAllowed(AuthoritiesConstants.ADMIN)
 
-    public MLStatus getPerformance(@RequestParam(value = "key") String key) {
+    public MLStatus getPerformance(@RequestParam(value = "key") String key, @RequestParam(value = "model") String model) {
 
         MLStocks ms = CacheMLStock.getMLStockCache().get(key);
         if (ms != null) {
-            MLStatus l = ms.getStatus().clone();
+            MLStatus l = ms.getStatus(ModelType.get(model)).clone();
             List pList = l.getPerfList();
             try {
                 Collections.sort(pList);
@@ -67,13 +68,13 @@ public class MLPredictionResource {
 
         MLStocks ms = CacheMLStock.getMLStockCache().get(key);
         if (ms != null) {
-            Map<PredictionPeriodicity, MatrixValidator> mvList = ms.getValidators();
-            List<StockValidator>  res = mvList.entrySet().stream().map(p -> new StockValidator().filled(key, p.getKey(),p.getValue())).collect(Collectors.toList());
-            return res;
+           // Map<PredictionPeriodicity, MatrixValidator> mvList = ms.getModel().getValidators();
+            //List<StockValidator>  res = mvList.entrySet().stream().map(p -> new StockValidator().filled(key, p.getKey(),p.getValue())).collect(Collectors.toList());
+            //return res;
 
-            /*return ms.getValidators().entrySet().stream()
+            return ms.getValidators(ModelType.RANDOMFOREST).entrySet().stream()
                 .map(p -> new StockValidator().filled(key, p.getKey(), p.getValue()))
-                .collect(Collectors.toList());*/
+                .collect(Collectors.toList());
         } else
             return null;
     }

@@ -3,8 +3,8 @@
 angular.module('mltradingApp')
     .factory('PerformanceService', function ($http) {
         return {
-            getPerformance: function (code) {
-                return $http.get('api/ml/getPerformance?key='+code).then(function (response) {
+            getPerformance: function (code,model) {
+                return $http.get('api/ml/getPerformance?key='+code+'&model='+model).then(function (response) {
                     return response.data;
                 });
             },
