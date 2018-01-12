@@ -100,8 +100,6 @@ public class FeaturesStock extends Feature implements Serializable {
      */
     public  static List<FeaturesStock> create(String codif, MatrixValidator validator, int range) {
 
-        List<PredictionPeriodicity> periodicity = Arrays.asList(PredictionPeriodicity.D1, PredictionPeriodicity.D5, PredictionPeriodicity.D20, PredictionPeriodicity.D40);
-
         log.info("create FeaturesStock for: " + codif);
 
         List<FeaturesStock> fsL = new ArrayList<>();
@@ -124,7 +122,7 @@ public class FeaturesStock extends Feature implements Serializable {
             fs.setCurrentDate(date);
 
 
-            if (setResult(fs,periodicity,codif,date) == false) continue;
+            if (setResult(fs,PeriodicityList.periodicity,codif,date) == false) continue;
 
             /* remove after check
             try {

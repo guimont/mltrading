@@ -1,8 +1,9 @@
 'use strict';
 
 angular.module('mltradingApp')
-    .controller('RealtimeController', function ($scope, $http, RealtimeService) {
+    .controller('RealtimeController', function ($scope,$state, $http, RealtimeService) {
 
+        $scope.updatingRT = true;
 
         $scope.showSector = function() {
             RealtimeService.findSector().then(function (data) {
@@ -16,7 +17,7 @@ angular.module('mltradingApp')
             $scope.showSector();
             $scope.showIndice();
             $scope.onChangeDate();
-        }, 120000);
+        }, 20000);
 
 
 
@@ -32,48 +33,25 @@ angular.module('mltradingApp')
 
         $scope.showIndice()
 
-        var findMax = function (data) {
-            var max = 0;
-            var index = 0;
-            for (var i=0;i<data.length-1;i++) {
-                if (data[i].performanceEstimate) {
-                    var v = data[i].performanceEstimate;
-                    if (v > max) {
-                        max = v;
-                        index = i;
-                    }
-                }
-            }
-            return data[index];
-        }
 
-
-        var findMin = function (data) {
-            var min = 0;
-            var index = 0;
-            for (var i=0;i<data.length-1;i++) {
-                if (data[i].performanceEstimate) {
-                    var v = data[i].performanceEstimate;
-                    if (v < min) {
-                        min = v;
-                        index = i;
-                    }
-                }
-            }
-            return data[index];
-        }
 
         $scope.onChangeDate = function () {
-            var dateFormat = 'yyyy-MM-dd';
-
 
             RealtimeService.findAll().then(function (data) {
                 $scope.rts = data;
-                $scope.top = findMax(data);
-                $scope.flop = findMin(data);
+                //$state.reload();
             });
+
+
         };
 
+        $scope.onSelected = function () {
+            RealtimeService.findSelected().then(function (data) {
+                $scope.selected = data;
+            });
+        }
+
+        $scope.onSelected();
 
         $scope.getIcon = function(val) {
 

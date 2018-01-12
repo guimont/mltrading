@@ -27,15 +27,14 @@ public class StockDetail implements Serializable{
     private List<DetailData> data;
 
     private static int PERIOD = 40;
+    private String sectorCode;
 
 
     public static StockDetail populate(Stock s, StockHistory sh) {
         StockDetail detail = new StockDetail();
 
         log.info("cache size:" + CacheMLStock.getMLStockCache().size());
-        MLStocks mls = CacheMLStock.getMLStockCache().get(sh.getCodif());
-        if (mls == null )
-            log.info("mls null error");
+
         detail.setCode(sh.getCodif());
         detail.setStock(s);
         detail.setPrediction(sh.getPrediction());
@@ -50,6 +49,22 @@ public class StockDetail implements Serializable{
             detail.sector = StockHistory.getStockHistoryLast(sh.getCodif(), PERIOD); //itself
         detail.indice = StockHistory.getStockHistoryLast("PX1", PERIOD); // code cac => use transform to match indice
 
+
+        return detail;
+    }
+
+    public static StockDetail populateLight(StockGeneral sh) {
+        StockDetail detail = new StockDetail();
+
+        log.info("cache size:" + CacheMLStock.getMLStockCache().size());
+
+        detail.setCode(sh.getCodif());
+        detail.setPrediction(sh.getPrediction());
+        detail.setName(sh.getName());
+        detail.setSectorCode(sh.getSector());
+        //detail.setSector();
+        detail.setData(populateData(sh.getCodif()));
+        detail.setValue(sh.getOpening());
 
         return detail;
     }
@@ -206,5 +221,13 @@ public class StockDetail implements Serializable{
 
     public void setValue(Double value) {
         this.value = value;
+    }
+
+    public void setSectorCode(String sectorCode) {
+        this.sectorCode = sectorCode;
+    }
+
+    public String getSectorCode() {
+        return sectorCode;
     }
 }

@@ -1,5 +1,6 @@
 package com.mltrading.web.rest;
 
+import akka.japi.Pair;
 import com.mltrading.models.stock.*;
 import com.mltrading.models.stock.cache.CacheStockGeneral;
 import com.mltrading.models.stock.cache.CacheStockSector;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.security.RolesAllowed;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -28,7 +30,7 @@ public class RealTimeResource {
     @RequestMapping(value = "/rt/all",
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
-    @RolesAllowed(AuthoritiesConstants.ADMIN)
+    @RolesAllowed(AuthoritiesConstants.USER)
     public List<StockGeneral> findAll() {
 
         List<StockGeneral> l = new ArrayList<>(CacheStockGeneral.getCache().values());
@@ -38,7 +40,7 @@ public class RealTimeResource {
     @RequestMapping(value = "/rt/sector",
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
-    @RolesAllowed(AuthoritiesConstants.ADMIN)
+    @RolesAllowed(AuthoritiesConstants.USER)
     public List<StockSector> findAllSector() {
 
         List<StockSector> l = new ArrayList<>(CacheStockSector.getSectorCache().values());
@@ -48,10 +50,40 @@ public class RealTimeResource {
     @RequestMapping(value = "/rt/px1",
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
-    @RolesAllowed(AuthoritiesConstants.ADMIN)
+    @RolesAllowed(AuthoritiesConstants.USER)
     public List<StockHistory> findPx1() {
 
         return StockHistory.getStockHistoryLast("PX1", 60);
+
+    }
+
+    @RequestMapping(value = "/rt/selected",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @RolesAllowed(AuthoritiesConstants.USER)
+    public List<StockDetail> findSelected() {
+
+        List<StockDetail> output = new ArrayList<>();
+
+        List<StockGeneral> l = new ArrayList<>(CacheStockGeneral.getCache().values());
+
+        List<Pair<Double, String>> predState = new ArrayList();
+        //
+        l.forEach(s -> {
+            if (s.getPrediction() != null)
+                predState.add(new Pair<>((Math.abs(s.getPrediction().getYieldD20()*s.getPrediction().getConfidenceD20())), s.getRealCodif()));
+        });
+
+        predState.sort(Comparator.comparingDouble(Pair::first));
+
+        int size = predState.size();
+        for (int i = 1; i< 5; i++) {
+            StockGeneral sg = CacheStockGeneral.getCache().get(CacheStockGeneral.getCode(predState.get(size - i).second()));
+            StockDetail detail = StockDetail.populateLight(sg);
+            output.add(detail);
+        }
+
+        return output;
 
     }
 
@@ -60,12 +92,12 @@ public class RealTimeResource {
     @RequestMapping(value = "/rt/detail",
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
-    @RolesAllowed(AuthoritiesConstants.ADMIN)
+    @RolesAllowed(AuthoritiesConstants.USER)
     public StockDetail getDetail(@RequestParam(value = "key") String key) {
 
         Stock s = stockRepository.findOne(key);
 
-        StockHistory sh = null;
+        StockHistory sh;
         if (CacheStockGeneral.getIsinCache().get(key) != null ) sh = CacheStockGeneral.getIsinCache().get(key);
         else sh = CacheStockSector.getSectorCache().get(key);
 

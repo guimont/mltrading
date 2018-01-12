@@ -56,12 +56,12 @@ public class FeaturesRank extends Feature implements Serializable{
     }
 
     /**
-     *
-     * @return
+     * create feature vector for ranking model training
+     * @param l => list of stock
+     * @param rangeMin value usable
+     * @param rangeMax
+     * @return FeaturesRank list
      */
-
-
-
     public  static List<FeaturesRank> create(List<StockGeneral> l, int rangeMin, int rangeMax) {
         List<FeaturesRank> frL = new ArrayList<>();
 
@@ -83,12 +83,15 @@ public class FeaturesRank extends Feature implements Serializable{
 
             MLStocks ref = CacheMLStock.getMLStockCache().get(codif);
 
-            if (ref == null) continue;
+            if ((ref == null) || ref.isEmtpyModel())
+                continue;
+
             int index = 0;
 
             for (String date : rangeDate) {
                 FeaturesRank fr = filledFeaturesRank(sg, date, null);
-                if (fr == null) continue;
+                if (fr == null)
+                    continue;
 
                 frL.add(fr);
                 if (index > rangeMin)

@@ -20,7 +20,6 @@ public class StockResult {
         res.data = new ArrayList<>(CacheStockGeneral.getCache().values());
 
 
-
         for (StockGeneral d: res.data) {
 
             double note = d.getPrediction().getConfidenceD20()*d.getPrediction().getConfidenceD5();

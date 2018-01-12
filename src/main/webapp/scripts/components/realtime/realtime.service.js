@@ -23,6 +23,13 @@ angular.module('mltradingApp')
 
             },
 
+            findSelected: function () {
+                return $http.get('api/rt/selected').then(function (response) {
+                    return response.data;
+                });
+
+            },
+
             findSector: function () {
                 return $http.get('api/rt/sector').then(function (response) {
                     return response.data;

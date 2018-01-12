@@ -24,7 +24,7 @@ public abstract class MlModelGeneric<Model> implements Serializable {
 
     private static final Logger log = LoggerFactory.getLogger(MlModelGeneric.class);
 
-    private static final List<PredictionPeriodicity> periodicity = Arrays.asList(PredictionPeriodicity.D1, PredictionPeriodicity.D5, PredictionPeriodicity.D20, PredictionPeriodicity.D40);
+
 
 
     public JavaRDD<LabeledPoint> createRDD(JavaSparkContext sc, List<FeaturesStock> fsL, PredictionPeriodicity type) {
@@ -46,7 +46,7 @@ public abstract class MlModelGeneric<Model> implements Serializable {
         List<FeaturesStock> fsL = FeaturesStock.create(codif, getValidator(mls, PredictionPeriodicity.D1), CacheMLStock.RANGE_MAX);
         CacheMLActivities.addActivities(new MLActivities("FeaturesStock", codif, "start", 0, 0, true));
 
-        periodicity.forEach(p -> subprocessRF(mls, fsL, p, merge));
+        PeriodicityList.periodicity.forEach(p -> subprocessRF(mls, fsL, p, merge));
 
         return mls;
     }
@@ -145,7 +145,7 @@ public abstract class MlModelGeneric<Model> implements Serializable {
 
         Map<PredictionPeriodicity, List<FeaturesStock>> map = new HashMap<>();
 
-        periodicity.forEach(p -> {
+        PeriodicityList.periodicity.forEach(p -> {
             List<FeaturesStock> fsL = FeaturesStock.create(codif, getValidator(mls,p), CacheMLStock.RENDERING);
             if (fsL.get(0).currentVectorPos != getValidator(mls,p).getVectorSize()) {
                 log.error("size vector not corresponding");

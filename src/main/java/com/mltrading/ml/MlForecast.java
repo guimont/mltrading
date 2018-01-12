@@ -44,7 +44,7 @@ public class MlForecast extends Evaluate{
         for (StockGeneral s : l) {
             RandomForestStock rfs = new RandomForestStock();
             MLStocks mls = CacheMLStock.getMLStockCache().get(s.getCodif());
-            if (mls != null) {
+            if (mls != null && mls.isEmtpyModel() == false) {
                 mls = rfs.processRFResult(s.getCodif(), mls);
                 mls.getStatus(type).calculeAvgPrd();
             }
@@ -56,7 +56,7 @@ public class MlForecast extends Evaluate{
         for (StockSector s : ls) {
             RandomForestStock rfs = new RandomForestStock();
             MLStocks mls = CacheMLStock.getMLStockCache().get(s.getCodif());
-            if (mls != null) {
+            if (mls != null && mls.isEmtpyModel() == false) {
                 mls = rfs.processRFResult(s.getCodif(), mls);
                 mls.getStatus(type).calculeAvgPrd();
             }
@@ -138,14 +138,14 @@ public class MlForecast extends Evaluate{
      */
     private void optimize(Stream<? extends StockHistory> stream, int size, int backloop, String validator,  ModelType type) {
 
-        //final CountDownLatch latches = new CountDownLatch(size);
-        final CountDownLatch latches = new CountDownLatch(1); //testmode ORA
+        final CountDownLatch latches = new CountDownLatch(size);
+        //final CountDownLatch latches = new CountDownLatch(1); //testmode ORA
         CacheMLActivities.setCountGlobal(latches.getCount());
 
         CacheMLActivities.addActivities(new MLActivities("optimize forecast", "", "start", 0, 0, false));
 
         //For test purpose only
-        stream.filter(s -> s.getCodif().equals("ORA")).forEach(s -> executorRef.submit(() -> {    //For test purpose only
+        stream./*filter(s -> s.getCodif().equals("ORA")).*/forEach(s -> executorRef.submit(() -> {    //For test purpose only
             try {
                 if (validator.contains("optimizeModel"))
                     optimizeModel(s.getCodif(),type);
@@ -207,24 +207,21 @@ public class MlForecast extends Evaluate{
             }
 
 
-            String saveCode;
-            {
-                if (type == ModelType.RANDOMFOREST) {
-                    RandomForestStock rfs = new RandomForestStock();
-                    rfs.processRFRef(codif, mls, false);
-                }
-                else {
-                    GradiantBoostStock rfs = new GradiantBoostStock();
-                    rfs.processRFRef(codif, mls, false);
-                }
 
-                saveCode = "V";
+            if (type == ModelType.RANDOMFOREST) {
+                RandomForestStock rfs = new RandomForestStock();
+                rfs.processRFRef(codif, mls, false);
             }
+            else {
+                GradiantBoostStock rfs = new GradiantBoostStock();
+                rfs.processRFRef(codif, mls, false);
+            }
+
 
             if (null != mls) {
                 mls.getStatus(type).calculeAvgPrd();
 
-                periodicity.forEach(p -> mls.getModel(p).getValidator(type).save(mls.getCodif() + saveCode +
+                periodicity.forEach(p -> mls.getModel(p).getValidator(type).save(mls.getCodif() + ModelType.code(type) +
                     p, mls.getStatus(type).getErrorRate(p), mls.getStatus(type).getAvg(p)));
 
 
@@ -291,26 +288,45 @@ public class MlForecast extends Evaluate{
             mls.getModel(p).setValidator(type,algo.best().getMv());
 
 
-            RandomForestStock rfs = new RandomForestStock();
-            rfs.processRFRef(codif, mls, false, p);
+            if (type == ModelType.RANDOMFOREST) {
+                RandomForestStock rfs = new RandomForestStock();
+                rfs.processRFRef(codif, mls, false, p);
+            }
+            else {
+                GradiantBoostStock rfs = new GradiantBoostStock();
+                rfs.processRFRef(codif, mls, false, p);
+            }
+
             mls.getStatus(type).calculeAvgPrd();
 
-            if (ref != null) {
+            if (ref != null
+                && ref.getStatus(type).getPerfList() != null
+                && !ref.getStatus(type).getPerfList().isEmpty()) {
 
                 if ( MlForecast.checkResult(mls, ref, p, type))
                     CacheMLActivities.addActivities(new MLActivities("optimize", codif, "increase model: " + p, 0, 1, true));
                 else
                     CacheMLActivities.addActivities(new MLActivities("optimize", codif, "not increase model: " + p, 0, 0, true));
-            } else {
+            }  else if (ref == null) {
                     /* empty ref so improve scoring yes*/
                 mls.setScoring(true);
                 CacheMLStock.getMLStockCache().put(mls.getCodif(), mls);
                 CacheMLActivities.addActivities(new MLActivities("optimize", codif, "empty model", 0, 0, true));
+            } else if (ref != null) {
+                ref.setScoring(true);
+                //replace MlSTocks => period => model
+                ref.setModels(type,mls);
+                //replace MLStatus => model => period
+                ref.setStatus(mls.getStatus(type),type);
+
             }
+
 
             System.err.println(algo.best().toString());
         }
     }
+
+
 
 
 
@@ -438,17 +454,17 @@ public class MlForecast extends Evaluate{
      *
      */
     public static void updatePredictor(ModelType type) {
-        CacheStockGeneral.getCache().values().forEach(s -> updatePredictor(s, type));
+        CacheStockGeneral.getCache().values().forEach(s -> updatePredictor(s, type, true));
 
-        CacheStockSector.getSectorCache().values().forEach(s -> updatePredictor(s, type));
+        CacheStockSector.getSectorCache().values().forEach(s -> updatePredictor(s, type, false));
     }
 
-    private static void updatePredictor(StockHistory sg, ModelType type) {
+    private static void updatePredictor(StockHistory sg, ModelType type, boolean bRanking) {
         MLPredictor predictor = new MLPredictor();
 
         CacheMLStock.getMlRankCache();
 
-        StockPrediction p = predictor.prediction(sg.getCodif(), type);
+        StockPrediction p = predictor.prediction(sg.getCodif(), type, bRanking);
 
         if (p != null) {
             sg.setPrediction(p);

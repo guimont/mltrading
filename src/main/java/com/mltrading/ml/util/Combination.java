@@ -1,6 +1,7 @@
 package com.mltrading.ml.util;
 
 import com.mltrading.ml.*;
+import com.mltrading.ml.model.GradiantBoostStock;
 import com.mltrading.ml.model.ModelType;
 import com.mltrading.ml.model.RandomForestStock;
 import com.mltrading.models.util.MLActivities;
@@ -54,17 +55,22 @@ public class Combination extends Evaluate{
 
         mls.getModel(p).setValidator(type,mv);
 
-        String saveCode;
-        {
+
+
+        if (type == ModelType.RANDOMFOREST) {
             RandomForestStock rfs = new RandomForestStock();
-            rfs.processRFRef(codif, mls, false,p);
-            saveCode = "V";
+            rfs.processRFRef(codif, mls, false, p);
         }
+        else {
+            GradiantBoostStock rfs = new GradiantBoostStock();
+            rfs.processRFRef(codif, mls, false, p);
+        }
+
 
         if (null != mls) {
             mls.getStatus(type).calculeAvgPrd();
 
-            mls.getModel(p).getValidator(type).save(mls.getCodif() + saveCode +
+            mls.getModel(p).getValidator(type).save(mls.getCodif() + ModelType.code(type) +
                 p, mls.getStatus(type).getErrorRate(p), mls.getStatus(type).getAvg(p));
 
         } else {
