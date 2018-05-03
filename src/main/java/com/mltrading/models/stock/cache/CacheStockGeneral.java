@@ -60,6 +60,7 @@ public class CacheStockGeneral {
         aMap.put("FR0000130809", new StockGeneral("FR0000130809","Societe Generale","GLE","xpar","PA", "FRFIN" ,  "FRFIN"));
         aMap.put("BE0003470755", new StockGeneral("BE0003470755","Solvay","SOLB","xbru","BR", "FRBM" ,  "FRBM"));
         aMap.put("FR0000121220", new StockGeneral("FR0000121220","Sodexo","SW","xpar","PA", "FRCS" ,  "FRCS"));
+        aMap.put("NL0000226223", new StockGeneral("NL0000226223","STEF","STM","xpar","PA", "FRTEC" ,  "FRTEC"));
         aMap.put("gb00bdsfg982", new StockGeneral("gb00bdsfg982","technipfmc","FTI","xpar","PA", "FROG" ,  "FROG"));
         aMap.put("FR0000120271", new StockGeneral("FR0000120271","Total","FP","xpar","PA", "FROG" ,  "FROG"));
         aMap.put("FR0000124711", new StockGeneral("FR0000124711","Unibail-Rodamco","UL","xams","PA", "FRFIN" ,  "FRRE"));

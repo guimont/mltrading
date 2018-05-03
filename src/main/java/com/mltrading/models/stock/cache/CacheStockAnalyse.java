@@ -1,6 +1,8 @@
 package com.mltrading.models.stock.cache;
 
 import com.mltrading.models.stock.StockAnalyse;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 import java.util.List;
 
 
@@ -44,6 +46,34 @@ public class CacheStockAnalyse extends CacheStockTimeSeries<String, Integer,Stoc
 
     }
 
+
+    /**
+     * Use getStockHistory in memory
+     * @param code
+     * @param date
+     * @return
+     */
+    public boolean isInStockAanlyse(final String code, String date) {
+        return isInStockAanlyse(code,date,true);
+    }
+
+
+    /**
+     * return true if date is in cache
+     * @param code
+     * @param date
+     * @param inMemory
+     * @return
+     */
+    public boolean isInStockAanlyse(final String code, String date, boolean inMemory) {
+
+        if (inMemory == true) {
+            Integer index = getExactlyInCache(code, date);
+            return index!=null ? true : false;
+        }
+        else
+            throw  new NotImplementedException();
+    }
 
 
 

@@ -55,6 +55,7 @@ public abstract class CacheStockTimeSeries<K,V,W extends StockBase> {
      * @return
      */
     protected  V getInCache(List<W> list , K code, String date) {
+        if (date.length() > 10) date = date.substring(0,10);
         Map<K, V> indexMap = this.indexCache.get(code);
         if (indexMap == null) fillCache(code);
         V res =  this.indexCache.get(code).get(date);
@@ -71,6 +72,23 @@ public abstract class CacheStockTimeSeries<K,V,W extends StockBase> {
         }
         return res;
     }
+
+    /**
+     * return index and filled cache if empty
+     * @param code
+     * @return
+     */
+    protected  V getExactlyInCache( K code, String date) {
+        if (date.length() > 10) date = date.substring(0,10);
+        if (this.indexCache.get(code) == null) fillCache(code);
+        if  (this.indexCache.get(code) == null)
+            return null;
+        else {
+            V res = this.indexCache.get(code).get(date);
+            return res;
+        }
+    }
+
 
     /**
      * apply generic type

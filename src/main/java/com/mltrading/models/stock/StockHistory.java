@@ -240,17 +240,27 @@ public class StockHistory extends StockBase implements Serializable , Comparable
     }
 
 
+    /**
+     * import date
+     * 2010-01-04T09:00:00Z
+     * @param day
+     */
+    public void setDayImport(String day) {
+        this.day = day;
+        timeInsert = new DateTime( day.substring(0,10));
+    }
+
 
     /**
      * investir (echos) web site
      * @param day
      */
     public void setDayInvestir(String day) {
-        this.day = day;
         String DD = day.substring(0, 2);
         String MM = day.substring(3,5);
         String YY = day.substring(6,8);
-        timeInsert = new DateTime( "20" + YY + "-" + MM + "-" + DD);
+        this.day = "20" + YY + "-" + MM + "-" + DD;
+        timeInsert = new DateTime(  this.day);
     }
 
     /**
@@ -258,12 +268,11 @@ public class StockHistory extends StockBase implements Serializable , Comparable
      * @param day
      */
     public void setDayInvest(String day) {
-
-        this.day = day;
         String DD = day.substring(0, 2);
         String MM = day.substring(3,5);
         String YY = day.substring(6,10);
-        timeInsert = new DateTime( YY + "-" + MM + "-" + DD);
+        this.day = YY + "-" + MM + "-" + DD;
+        timeInsert = new DateTime( this.day);
     }
 
 
@@ -277,7 +286,7 @@ public class StockHistory extends StockBase implements Serializable , Comparable
         String MM = convertYahooMont(convert[2]);
         String YY = convert[3];
         this.day = YY + "-" + MM + "-" + DD;
-        timeInsert = new DateTime( YY + "-" + MM + "-" + DD);
+        timeInsert = new DateTime( this.day);
     }
 
     /**
@@ -289,7 +298,7 @@ public class StockHistory extends StockBase implements Serializable , Comparable
         String DD = day.substring(4,6).replace(",", "");
         String YY = day.substring(day.length()-4);
         this.day = YY + "-" + MM + "-" + DD;
-        timeInsert = new DateTime( YY + "-" + MM + "-" + DD);
+        timeInsert = new DateTime( this.day );
     }
 
     private String convertYahooMont(String yahooMonth) {
@@ -391,6 +400,10 @@ public class StockHistory extends StockBase implements Serializable , Comparable
         return sh;*/
     }
 
+    public static List<StockHistory> getAllHistory(final String code) {
+        return cache.getAllStockHistory(code);
+
+    }
 
 
 

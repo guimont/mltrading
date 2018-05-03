@@ -30,6 +30,35 @@ public class CacheStockHistory  extends CacheStockTimeSeries<String, Integer,Sto
     }
 
 
+    /**
+     * Use getStockHistory in memory
+     * @param code
+     * @param date
+     * @return
+     */
+    public boolean isInStockHistory(final String code, String date) {
+        return isInStockHistory(code,date,true);
+    }
+
+
+    /**
+     * return true if date is in cache
+     * @param code
+     * @param date
+     * @param inMemory
+     * @return
+     */
+    public boolean isInStockHistory(final String code, String date, boolean inMemory) {
+
+        if (inMemory == true) {
+            Integer index = getExactlyInCache(code, date);
+            return index!=null ? true : false;
+        }
+        else
+            throw  new NotImplementedException();
+    }
+
+
 
     /**
      * Use getStockHistory in memory
@@ -212,6 +241,15 @@ public class CacheStockHistory  extends CacheStockTimeSeries<String, Integer,Sto
     public List<StockHistory> getStockHistoryLast(final String code, int count) {return getStockHistoryLast(code,count,true);}
 
 
+
+    /**
+     *  get count last element
+     * @param code
+     * @return
+     */
+    public List<StockHistory> getAllStockHistory(final String code) {return getAllStockHistory(code,true);}
+
+
     /**
      * get count last element
      * @param code
@@ -258,6 +296,23 @@ public class CacheStockHistory  extends CacheStockTimeSeries<String, Integer,Sto
             throw  new NotImplementedException();
 
     }
+
+
+    /**
+     * get count last element
+     * @param code
+     * @param inMemory
+     * @return
+     */
+    public List<StockHistory> getAllStockHistory(final String code,  boolean inMemory) {
+        if (inMemory == true) {
+            List<StockHistory> list = getInCache(code);
+            return(list);
+        }
+        else
+            throw  new NotImplementedException();
+    }
+
 
 
     /**

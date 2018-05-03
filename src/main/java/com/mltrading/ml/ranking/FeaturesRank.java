@@ -1,9 +1,6 @@
 package com.mltrading.ml.ranking;
 
-import com.mltrading.ml.CacheMLStock;
-import com.mltrading.ml.Feature;
-import com.mltrading.ml.MLStocks;
-import com.mltrading.ml.PredictionPeriodicity;
+import com.mltrading.ml.*;
 import com.mltrading.ml.model.ModelType;
 import com.mltrading.models.stock.*;
 import com.mltrading.models.stock.cache.CacheStockGeneral;
@@ -115,6 +112,10 @@ public class FeaturesRank extends Feature implements Serializable{
         this.vector[currentVectorPos++] = value;
     }
 
+    public void linearize(boolean value) {
+        this.vector[currentVectorPos++] = value ==true ? 1.0 : 0;
+    }
+
 
 
     public void linearize(StockHistory sh) {
@@ -153,9 +154,6 @@ public class FeaturesRank extends Feature implements Serializable{
 
         String sector = sg.getSector();
 
-        if (sp == null)
-            sp = sg.getPrediction();
-
         final StockPrediction stockPrediction = sp;
 
         MLStocks ref = CacheMLStock.getMLStockCache().get(sg.getCodif());
@@ -165,15 +163,28 @@ public class FeaturesRank extends Feature implements Serializable{
 
         if (setResultYield(fr, periodicity, sg.getCodif(), date) == false) return null;
 
+
+        //TODO use GBT
         periodicity.forEach(p -> {
+
             double res = ref.getStatus(ModelType.RANDOMFOREST).getAvg(p);
             fr.linearize(res);
             double error = ref.getStatus(ModelType.RANDOMFOREST).getErrorRate(p);
             fr.linearize(error);
 
-            double yieldPrediction = 0;
-            if (stockPrediction.getPrediction(p) != 0) yieldPrediction =(stockPrediction.getPrediction(p) - sg.getValue()) / sg.getValue() * 100;
-            fr.linearize(yieldPrediction);
+            /**
+             * for training stockPrediction is null
+             */
+            if (stockPrediction == null) {
+                MLPerformances perf = ref.getStatus(ModelType.RANDOMFOREST).getPerfList(date);
+                double yieldPrediction = perf.getMl(p).getYield()*100;
+                fr.linearize(yieldPrediction);
+            }
+            else {
+                double yieldPrediction = 0;
+                if (stockPrediction.getPrediction(p) != 0) yieldPrediction =(stockPrediction.getPrediction(p) - sg.getValue()) / sg.getValue() * 100;
+                fr.linearize(yieldPrediction);
+            }
 
         });
 
@@ -192,9 +203,10 @@ public class FeaturesRank extends Feature implements Serializable{
         asi = StockAnalyse.getAnalyse(sector, date);
         fr.linearize(asi);
         new DateTime(date);
-        StockDocument sd = StockDocument.getNextStockDocument(sg.getRealCodif() + StockDocument.TYPE_DIARY, date);
+        //TODO broken
+        /*StockDocument sd = StockDocument.getNextStockDocument(sg.getRealCodif() + StockDocument.TYPE_DIARY, date);
         int diff = check_diff(new DateTime(date), new DateTime(sd.getDate()));
-        fr.linearize(diff);
+        fr.linearize(diff);*/
 
         return fr;
     }

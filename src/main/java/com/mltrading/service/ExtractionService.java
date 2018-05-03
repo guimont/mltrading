@@ -10,6 +10,7 @@ import com.mltrading.models.stock.StockRawMat;
 import com.mltrading.models.util.CsvFileReader;
 import com.mltrading.repository.ArticleRepository;
 import com.mltrading.repository.StockRepository;
+import com.mltrading.web.rest.ExtractionResource;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 
@@ -49,8 +50,7 @@ public class ExtractionService {
         vola.fetch();
         diaryParser.fetch();
 
-        CsvFileReader csvFR = new CsvFileReader();
-        csvFR.readData();
+        new CsvFileReader();
     }
 
     public void extractRawFull(String host) {
@@ -63,6 +63,8 @@ public class ExtractionService {
     }
 
     public void extractSectorPeriod(int period) {
+        if (period == ExtractionResource.AUTO)
+            period = getLastUpdateRefSector();
         sectorParser.fetchCurrent(period);
     }
 
@@ -71,6 +73,8 @@ public class ExtractionService {
     }
 
     public void extractIndicePeriod(int period) {
+        if (period == ExtractionResource.AUTO)
+            period = getLastUpdateRefIndice();
         indiceParser.fetchCurrent(period);
     }
 
@@ -131,6 +135,40 @@ public class ExtractionService {
         return (timeNow.getDayOfMonth()+timeNow.getMonthOfYear()*DAYS_BY_MONTH + shift) - (timeInsert.getDayOfMonth()+timeInsert.getMonthOfYear()*DAYS_BY_MONTH);
     }
 
+    public int getLastUpdateRefSeries() {
+        String l = StockHistory.getLastDateHistory("ORA");
+        DateTime timeInsert = new DateTime(l);
+        DateTime timeNow = new DateTime(System.currentTimeMillis());
+
+        return check_diff(timeInsert,timeNow);
+    }
+
+
+    public int getLastUpdateRefSector() {
+        String l = StockHistory.getLastDateHistory("FRIN");
+        DateTime timeInsert = new DateTime(l);
+        DateTime timeNow = new DateTime(System.currentTimeMillis());
+
+        return check_diff(timeInsert,timeNow);
+    }
+
+    public int getLastUpdateRefIndice() {
+        String l = StockHistory.getLastDateHistory("PX1");
+        DateTime timeInsert = new DateTime(l);
+        DateTime timeNow = new DateTime(System.currentTimeMillis());
+
+        return check_diff(timeInsert,timeNow);
+    }
+
+    public int getLastUpdateRefRaw() {
+        String l = StockHistory.getLastDateHistory("PETB");
+        DateTime timeInsert = new DateTime(l);
+        DateTime timeNow = new DateTime(System.currentTimeMillis());
+
+        return check_diff(timeInsert,timeNow);
+    }
+
+
     public int getLastUpdateRef() {
         String l = StockHistory.getLastDateHistory("ORA");
         DateTime timeInsert = new DateTime(l);
@@ -175,6 +213,8 @@ public class ExtractionService {
     }
 
     public void extractRawPeriod(int period) {
+        if (period == ExtractionResource.AUTO)
+            period = getLastUpdateRefRaw();
         rawParser.fetchCurrent(period);
     }
 
@@ -193,4 +233,13 @@ public class ExtractionService {
         article.fetchCurrent(articleRepository);
     }
 
+    public void extractSeriesFull() {
+        histParser.fetch();
+    }
+
+    public void extractSeriesPeriod(int period) {
+        if (period == ExtractionResource.AUTO)
+            period = getLastUpdateRefSeries();
+        histParser.fetchCurrent(period);
+    }
 }

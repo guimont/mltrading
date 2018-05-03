@@ -1,5 +1,6 @@
 package com.mltrading.dao.TimeSeriesDao.impl;
 
+import com.mltrading.dao.InfluxDaoConnector;
 import com.mltrading.dao.Requester;
 import com.mltrading.dao.TimeSeriesDao.DaoChecker;
 import com.mltrading.dao.TimeSeriesDao.TimeSeriesDao;
@@ -8,6 +9,8 @@ import com.mltrading.influxdb.dto.QueryRequest;
 import com.mltrading.models.stock.StockAnalyse;
 import com.mltrading.models.stock.StockHistory;
 import org.influxdb.dto.QueryResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,6 +23,9 @@ import java.util.Map;
 public class TimeSeriesDaoInfluxImpl implements TimeSeriesDao,DaoChecker {
 
     public static String dbName = "history";
+
+    private static final Logger log = LoggerFactory.getLogger(TimeSeriesDaoInfluxImpl.class);
+
 
 
     static public int DATE_COLUMN = 0;
@@ -98,7 +104,7 @@ public class TimeSeriesDaoInfluxImpl implements TimeSeriesDao,DaoChecker {
             sh.setCode(code);
             populate(sh, data);
             stockList.add(sh);
-            indexMap.put(sh.getDay(),stockList.indexOf(sh));
+            indexMap.put(sh.getDay().substring(0,10),stockList.indexOf(sh));
         }
 
 
@@ -243,6 +249,8 @@ public class TimeSeriesDaoInfluxImpl implements TimeSeriesDao,DaoChecker {
         String query = "SELECT * FROM " + code + "T where time > '2010-01-01T00:00:00Z'";
         QueryResult list = (QueryResult) Requester.sendRequest(new QueryRequest(query, dbName));
 
+        log.info("extract AT for code: " + code);
+
         if (checker(list) == false)
             return null;
 
@@ -251,7 +259,16 @@ public class TimeSeriesDaoInfluxImpl implements TimeSeriesDao,DaoChecker {
 
         Map<String, Integer> indexMap = new HashMap<>();
 
+        int index = 0;
+
         for (List data :list.getResults().get(0).getSeries().get(0).getValues()) {
+            index ++;
+
+            /*if (code.equals("GOLD")) {
+                log.info("index is: " + index);
+                if (index == 216)
+                    log.info("crash");
+            }*/
             StockAnalyse a = new StockAnalyse();
             a.setDay((String)data.get(DATE_COLUMN));
             a.setMma20(new Double(data.get(MMA20_COLUMN).toString()));
@@ -261,8 +278,14 @@ public class TimeSeriesDaoInfluxImpl implements TimeSeriesDao,DaoChecker {
             a.setMomentum(new Double(data.get(MOMENTUM_COLUMN).toString()));
             a.setStdDev(new Double(data.get(STDDEV_COLUMN).toString()));
             a.setMacd(a.getMme26() - a.getMme12());
+            a.setGarch20(new Double(data.get(GARCH20_COLUMN).toString()));
+            a.setGarch_vol_20(new Double(data.get(GARCHVOL20_COLUMN).toString()));
+            a.setGarch50(new Double(data.get(GARCH50_COLUMN).toString()));
+            a.setGarch_vol_50(new Double(data.get(GARCHVOL50_COLUMN).toString()));
+            a.setGarch100(new Double(data.get(GARCH100_COLUMN).toString()));
+            a.setGarch_vol_100(new Double(data.get(GARCHVOL100_COLUMN).toString()));
             stockList.add(a);
-            indexMap.put(a.getDay(),stockList.indexOf(a));
+            indexMap.put(a.getDay().substring(0,10),stockList.indexOf(a));
         }
 
 
@@ -276,12 +299,18 @@ public class TimeSeriesDaoInfluxImpl implements TimeSeriesDao,DaoChecker {
 
 
 
-    static private int MMA20_COLUMN = 1;
-    static private int MMA50_COLUMN = 2;
-    static private int MME12_COLUMN = 3;
-    static private int MME26_COLUMN = 4;
-    static private int MOMENTUM_COLUMN = 5;
-    static private int STDDEV_COLUMN = 6;
+    static private int MMA20_COLUMN = 7;
+    static private int MMA50_COLUMN = 8;
+    static private int MME12_COLUMN = 9;
+    static private int MME26_COLUMN = 10;
+    static private int MOMENTUM_COLUMN = 11;
+    static private int STDDEV_COLUMN = 12;
+    static private int GARCH20_COLUMN = 2;
+    static private int GARCHVOL20_COLUMN = 5;
+    static private int GARCH50_COLUMN = 3;
+    static private int GARCHVOL50_COLUMN = 6;
+    static private int GARCH100_COLUMN = 1;
+    static private int GARCHVOL100_COLUMN = 4;
 
     public StockAnalyse getAnalyse(String code, String date) {
         StockAnalyse a = new StockAnalyse();
@@ -296,6 +325,12 @@ public class TimeSeriesDaoInfluxImpl implements TimeSeriesDao,DaoChecker {
         a.setMomentum(new Double(list.getResults().get(0).getSeries().get(0).getValues().get(0).get(MOMENTUM_COLUMN).toString()));
         a.setStdDev(new Double(list.getResults().get(0).getSeries().get(0).getValues().get(0).get(STDDEV_COLUMN).toString()));
         a.setMacd(a.getMme26()-a.getMme12());
+        a.setGarch20(new Double(list.getResults().get(0).getSeries().get(0).getValues().get(0).get(GARCH20_COLUMN).toString()));
+        a.setGarch_vol_20(new Double(list.getResults().get(0).getSeries().get(0).getValues().get(0).get(GARCHVOL20_COLUMN).toString()));
+        a.setGarch50(new Double(list.getResults().get(0).getSeries().get(0).getValues().get(0).get(GARCH50_COLUMN).toString()));
+        a.setGarch_vol_50(new Double(list.getResults().get(0).getSeries().get(0).getValues().get(0).get(GARCHVOL50_COLUMN).toString()));
+        a.setGarch100(new Double(list.getResults().get(0).getSeries().get(0).getValues().get(0).get(GARCH100_COLUMN).toString()));
+        a.setGarch_vol_100(new Double(list.getResults().get(0).getSeries().get(0).getValues().get(0).get(GARCHVOL100_COLUMN).toString()));
 
         return a;
     }

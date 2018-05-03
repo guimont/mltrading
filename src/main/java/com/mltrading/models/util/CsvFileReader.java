@@ -2,12 +2,14 @@ package com.mltrading.models.util;
 
 import com.mltrading.dao.InfluxDaoConnector;
 
+import com.mltrading.ml.MatrixValidator;
 import com.mltrading.models.parser.HistoryCommon;
 import com.mltrading.models.parser.HistoryParser;
 import com.mltrading.models.stock.StockHistory;
 import org.influxdb.dto.BatchPoints;
 
 import java.io.*;
+import java.util.HashMap;
 
 /**
  * Created by gmo on 07/07/2016.
@@ -28,21 +30,61 @@ public class CsvFileReader implements HistoryCommon{
     private static final int MIN_IDX = 4;
     private static final int MAX_IDX = 3;
     private static final int OPEN_IDX = 5;
+    private static final int VOLUME_IDX = 6;
 
-    private static final int VOLUME_IDX = 0;
 
-
-    private FileWriter fileWriter = null;
     BufferedReader fileReader = null;
 
+    public CsvFileReader(String fileName) {
+        System.out.println("############################################################");
+        System.out.println("Import start !!!");
+        System.out.println("############################################################");
+       readData(fileName);
+    }
+
+    public CsvFileReader() {
+        readData("ConsistencyImport.csv");
+    }
 
 
-    public void readData() {
+    public CsvFileReader(String fileName,  HashMap<String, MatrixValidator> mapMV ) {
+        readData(fileName, mapMV );
+    }
+
+    private void readData(String fileName,  HashMap<String, MatrixValidator> mapMV ) {
         try {
 
-            BatchPoints bp = InfluxDaoConnector.getBatchPoints(StockHistory.dbName);
+            fileReader = new BufferedReader(new FileReader(fileName));
+            fileReader.readLine();
+            String line = "";
+            while ((line = fileReader.readLine()) != null) {
+                MatrixValidator mv = new MatrixValidator();
+                String[] tokens = line.split(COMMA_DELIMITER);
+                mapMV.put(tokens[0],mv.importMatrixValidator(tokens));
+            }
+        }catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                fileReader.close();
+            } catch (IOException e) {
+                System.out.println("Error while closing fileReader !!!");
+                e.printStackTrace();
+            }
 
-            fileReader = new BufferedReader(new FileReader("ConsistencyImport.csv"));
+        }
+
+    }
+
+
+    private void readData(String fileName) {
+        try {
+
+            BatchPoints bp = InfluxDaoConnector.getBatchPointsV1(StockHistory.dbName);
+
+            fileReader = new BufferedReader(new FileReader(fileName));
             fileReader.readLine();
             String line = "";
 
@@ -57,24 +99,27 @@ public class CsvFileReader implements HistoryCommon{
                     String min = tokens[MIN_IDX];
                     String max = tokens[MAX_IDX];
                     String open = tokens[OPEN_IDX];
+                    String volume = tokens[VOLUME_IDX];
 
                     StockHistory sh = new StockHistory();
                     sh.setCode(code);
                     sh.setCodif(code);
-                    sh.setDayInvest(date);
+                    sh.setDayImport(date);
                     sh.setValue(new Double(value));
                     sh.setLowest(new Double(min));
                     sh.setHighest(new Double(max));
                     sh.setOpening(new Double(open));
+                    sh.setVolume(new Double(volume));
 
                     saveHistory(bp, sh);
+
 
                 }
 
             }
-
-
             InfluxDaoConnector.writePoints(bp);
+
+
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -82,6 +127,9 @@ public class CsvFileReader implements HistoryCommon{
             e.printStackTrace();
         } finally {
             try {
+                System.out.println("############################################################");
+                System.out.println("Import is end  !!!");
+                System.out.println("############################################################");
                 fileReader.close();
             } catch (IOException e) {
                 System.out.println("Error while closing fileReader !!!");

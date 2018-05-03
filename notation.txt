@@ -1,4 +1,4 @@
-﻿abandonner -2
+abandonner -2
 abandonné -2
 abandonne -2
 enlevé -2
@@ -2004,3 +2004,4 @@ intolérable -3
 décalage -1
 fossé -2
 poursuites -2
+dénonçant -1

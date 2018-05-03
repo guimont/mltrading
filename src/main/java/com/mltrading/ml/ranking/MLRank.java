@@ -1,19 +1,24 @@
 package com.mltrading.ml.ranking;
 
 import com.mltrading.config.MLProperties;
+import com.mltrading.dao.InfluxDaoConnector;
 import com.mltrading.dao.Requester;
 import com.mltrading.dao.mongoFile.MongoUtil;
 import com.mltrading.dao.mongoFile.QueryMongoRequest;
 import com.mltrading.ml.CacheMLStock;
 import com.mltrading.ml.MLStatus;
+import com.mltrading.ml.MLStock;
+import com.mltrading.ml.MatrixValidator;
 import com.mongodb.gridfs.GridFS;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.spark.mllib.tree.model.RandomForestModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.Serializable;
 
 import java.io.File;
+import java.io.IOException;
 
 
 public class MLRank implements Serializable {
@@ -110,6 +115,15 @@ public class MLRank implements Serializable {
 
     }
 
+    public static void deleteModel() {
+        String path = MLStock.path;
+
+        try {
+            FileUtils.deleteDirectory(new File(path + "model"));
+        } catch (IOException e) {
+            log.error("Cannot remove folder model: " + e);
+        }
+    }
 
     /**
      * remove model form mongoDB on file system

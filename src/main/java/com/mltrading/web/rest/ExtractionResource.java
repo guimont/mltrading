@@ -9,6 +9,7 @@ import com.mltrading.models.stock.CheckConsistency;
 import com.mltrading.models.stock.Stock;
 import com.mltrading.repository.ArticleRepository;
 import com.mltrading.repository.StockRepository;
+import com.mltrading.service.ExportService;
 import com.mltrading.service.ExtractionService;
 import com.mltrading.web.rest.dto.ExtractDTO;
 import org.slf4j.Logger;
@@ -37,8 +38,10 @@ public class ExtractionResource {
     private static String ARTICLE = "Article";
     private static String VCAC = "Vcac";
 
-    private static int AUTO = 0;
-    private static int FULL = -1;
+    public static int AUTO = 0;
+    public static int FULL = -1;
+    public static int EXPORT = -2;
+    public static int IMPORT = -3;
 
 
     @javax.inject.Inject
@@ -56,12 +59,12 @@ public class ExtractionResource {
 
 
     private static ExtractionService service = new ExtractionService();
-
+    private static ExportService export = new ExportService();
 
     @RequestMapping(value = "/extract",
         method = RequestMethod.POST,
         produces = MediaType.APPLICATION_JSON_VALUE)
-    public String optimizeML(@Valid @RequestBody ExtractDTO extDTO) {
+    public String extract(@Valid @RequestBody ExtractDTO extDTO) {
 
         if (extDTO.getTarget().equalsIgnoreCase(ALL)) {
             if (extDTO.getPeriod() == AUTO) {
@@ -76,20 +79,42 @@ public class ExtractionResource {
             } else {
                 service.extractionCurrent(articleRepository,extDTO.getPeriod());
             }
-        } else if (extDTO.getTarget().equalsIgnoreCase(SECTOR)) {
+        } else if (extDTO.getTarget().equalsIgnoreCase(SERIES)) {
+            if (extDTO.getPeriod() == FULL)
+                service.extractSeriesFull();
+            else if (extDTO.getPeriod() == EXPORT)
+                export.exportStock();
+            else if (extDTO.getPeriod() == IMPORT)
+                export.importStock();
+            else
+                service.extractSeriesPeriod(extDTO.getPeriod());
+        }
+        else if (extDTO.getTarget().equalsIgnoreCase(SECTOR)) {
             if (extDTO.getPeriod() == FULL)
                 service.extractSectorFull();
+            else if (extDTO.getPeriod() == EXPORT)
+                export.exportSector();
+            else if (extDTO.getPeriod() == IMPORT)
+                export.importSector();
             else
                 service.extractSectorPeriod(extDTO.getPeriod());
         } else if (extDTO.getTarget().equalsIgnoreCase(INDICE)) {
             if (extDTO.getPeriod() == FULL)
                 service.extractIndiceFull();
+            else if (extDTO.getPeriod() == EXPORT)
+                export.exportIndice();
+            else if (extDTO.getPeriod() == IMPORT)
+                export.importIndice();
             else
                 service.extractIndicePeriod(extDTO.getPeriod());
         }
         else if (extDTO.getTarget().equalsIgnoreCase(VCAC)) {
             if (extDTO.getPeriod() == FULL)
                 service.extractVcacFull();
+            else if (extDTO.getPeriod() == EXPORT)
+                export.exportVcac();
+            else if (extDTO.getPeriod() == IMPORT)
+                export.importVcac();
             else
                 service.extractVcacPeriod(extDTO.getPeriod());
         }
@@ -97,6 +122,10 @@ public class ExtractionResource {
         else if (extDTO.getTarget().equalsIgnoreCase(RAW)) {
             if (extDTO.getPeriod() == FULL)
                 service.extractRawFull("localhost:7090");
+            else if (extDTO.getPeriod() == EXPORT)
+                export.exportRaw();
+            else if (extDTO.getPeriod() == IMPORT)
+                export.importRaw();
             else
                 service.extractRawPeriod(extDTO.getPeriod());
         }

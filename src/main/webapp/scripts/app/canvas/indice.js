@@ -13,13 +13,13 @@ function loadIndice(dataV, id, label,bdate) {
         datasets: [
             {
                 label: label,
-                fill: false,
-                backgroundColor: "rgba(75,192,192,0.4)",
+                fill: origin,
+                backgroundColor: "rgba(75,192,192,0.2)",
                 borderColor: "rgba(75,192,192,1)",
-                borderCapStyle: 'butt',
+
                 borderDash: [],
                 borderDashOffset: 0.0,
-                borderJoinStyle: 'miter',
+
                 pointBorderColor: "rgba(75,192,192,1)",
                 pointBackgroundColor: "#fff",
                 pointBorderWidth: 1,
@@ -27,10 +27,11 @@ function loadIndice(dataV, id, label,bdate) {
                 pointHoverBackgroundColor: "rgba(75,192,192,1)",
                 pointHoverBorderColor: "rgba(220,220,220,1)",
                 pointHoverBorderWidth: 2,
-                pointRadius: 1,
+                pointRadius: 2,
                 pointHitRadius: 10,
                 data: [],
-                spanGaps: false
+                spanGaps: false,
+
             }
         ]
     };

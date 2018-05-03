@@ -235,6 +235,14 @@
             <version>2.7</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/net.finmath/finmath-lib -->
+        <dependency>
+            <groupId>net.finmath</groupId>
+            <artifactId>finmath-lib</artifactId>
+            <version>3.1.11</version>
+        </dependency>
+
+
         <!-- The HikariCP Java Agent is disabled by default, as it is experimental
         <dependency>
             <groupId>com.zaxxer</groupId>

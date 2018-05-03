@@ -19,8 +19,8 @@ public class Stock  implements Serializable {
 
     private String marche;
     private String indice;
-    private String codeif;
     @Id
+    private String codeif;
     private String code;
 
     private String bloomberg;

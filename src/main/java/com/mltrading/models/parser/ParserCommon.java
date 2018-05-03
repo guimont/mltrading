@@ -1,6 +1,8 @@
 package com.mltrading.models.parser;
 
-import javax.net.ssl.HttpsURLConnection;
+import org.joda.time.DateTime;
+
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -8,6 +10,8 @@ import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
+
+import static com.mltrading.service.ExtractionService.check_diff;
 
 /**
  * Created by gmo on 17/06/2015.
@@ -54,5 +58,15 @@ public class ParserCommon {
         while ((count = reader.read(buffer)) != -1)
             str.append(buffer, 0, count);
         return str.toString();
+    }
+
+
+    public boolean checkCurentDay(String date) {
+
+        DateTime timeInsert = new DateTime(date);
+        DateTime timeNow = new DateTime(System.currentTimeMillis());
+
+        return check_diff(timeInsert,timeNow)== 0 ? true : false;
+
     }
 }

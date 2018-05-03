@@ -40,6 +40,19 @@ public abstract class MlModelGeneric<Model> implements Serializable {
         return parsedData;
     }
 
+    public MLStocks processSpecifcRFRef(String codif, MLStocks mls) {
+
+        PeriodicityList.periodicity.forEach(p ->  {
+            CacheMLActivities.addActivities(new MLActivities("FeaturesStock", codif, "start", 0, 0, false));
+            List<FeaturesStock> fsL = FeaturesStock.create(codif, getValidator(mls, p), CacheMLStock.RANGE_MAX);
+            CacheMLActivities.addActivities(new MLActivities("FeaturesStock", codif, "start", 0, 0, true));
+            subprocessRF(mls, fsL, p, false);
+        });
+
+        return mls;
+    }
+
+
     public MLStocks processRFRef(String codif, MLStocks mls, boolean merge) {
 
         CacheMLActivities.addActivities(new MLActivities("FeaturesStock", codif, "start", 0, 0, false));

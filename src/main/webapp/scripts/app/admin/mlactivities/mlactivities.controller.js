@@ -39,6 +39,17 @@ angular.module('mltradingApp')
             });
         }
 
+        $scope.export = function() {
+            return $http.get('/api/ML/export').then(function (response) {
+                return response.data;
+            });
+        }
+
+        $scope.import = function() {
+            return $http.get('/api/ML/import').then(function (response) {
+                return response.data;
+            });
+        }
 
 
 

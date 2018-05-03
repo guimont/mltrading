@@ -11,8 +11,10 @@ import com.mltrading.models.stock.StockHistory;
 import org.influxdb.dto.BatchPoints;
 import org.influxdb.dto.Query;
 import org.influxdb.dto.QueryResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.net.SocketTimeoutException;
+
 import java.util.List;
 
 /**
@@ -21,6 +23,7 @@ import java.util.List;
 public class InfluxDaoConnector {
 
     private InfluxDao dao;
+    private static final Logger log = LoggerFactory.getLogger(InfluxDaoConnector.class);
 
 
     public InfluxDaoConnector() {
@@ -28,6 +31,7 @@ public class InfluxDaoConnector {
         dao.createConnection();
 
         List<String> repo = dao.getDB().describeDatabases();
+
 
         if (!repo.contains(StockHistory.dbName)) dao.createDB(StockHistory.dbName);
         if (!repo.contains(MatrixValidator.dbNamePerf)) dao.createDB(MatrixValidator.dbNamePerf);
@@ -56,13 +60,26 @@ public class InfluxDaoConnector {
             if (loop < 3) {
                 loop++;
                 writePoints(batchPoints);
+            }else {
+                log.error("InfluxDaoConnector writePoints error:" + e);
             }
         }
     }
 
     public static QueryResult getPoints(final String queryString, String dbName) {
-        Query query = new Query(queryString, dbName);
-        QueryResult result = getInstance().dao.getDB().query(query);
+        int loop = 0;
+        QueryResult result = null;
+        try {
+            Query query = new Query(queryString, dbName);
+            result = getInstance().dao.getDB().query(query);
+        } catch (Exception e) {
+            if (loop < 3) {
+                loop++;
+                getPoints(queryString,dbName);
+            } else {
+                log.error("InfluxDaoConnector getPoints error:" + e);
+            }
+        }
         return result;
 
     }
@@ -89,10 +106,7 @@ public class InfluxDaoConnector {
 
 
     public static BatchPoints getBatchPoints(String dbName) {
-        return BatchPoints
-                .database(dbName)
-                .retentionPolicy("default")
-                .build();
+        return getBatchPointsV1(dbName);
     }
 
     public void close() {

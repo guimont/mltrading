@@ -175,9 +175,11 @@ public abstract class Feature implements Serializable {
         return currentDate;
     }
 
-    public void linearize(List<? extends StockHistory> shL) {
-        for (StockHistory sh:shL)
+    public void linearize(List<? extends StockHistory> shL, boolean bVolume) {
+        for (StockHistory sh:shL) {
             this.vector[currentVectorPos++] = sh.getValue();
+            if (bVolume)  this.vector[currentVectorPos++] = sh.getVolume();
+        }
     }
 
 

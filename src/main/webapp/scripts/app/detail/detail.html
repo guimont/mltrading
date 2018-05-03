@@ -1,6 +1,6 @@
 <div class="container">
     <h3>{{detail.name}} / {{detail.code}} </h3>
-    <!--<div class="col-md-5">
+<!--    <div class="col-md-5">
         <div class="panel-heading">
             <i class="fa fa-bell fa-fw"></i> Notification
         </div>
@@ -84,86 +84,159 @@
 
     </div>-->
 
-    <div class="mypanel panel panel-primary" style="border-color:lightslategray">
-    <div class="panel-heading" style="background-color: lightslategray">
-        <i class="fa fa-bar-chart-o fa-fw" style="color:white">Stock prediction</i>
-        <span class="label label-default" style="margin-left: 5px;background-color: lightslategray">60 days </span><span class="label label-danger" >4.2%</span></span>
-        <span class="label label-default" style="margin-left: 5px;background-color: lightslategray">5 days </span><span class="label label-success" >5%</span></span>
-        <span class="label label-default" style="margin-left: 5px;background-color: lightslategray"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> 5 days </span><span class="label label-success" >52%</span></span>
-        <span class="label label-default" style="margin-left: 5px;background-color: lightslategray"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> 20 days </span>
-            <span class="label label-success" >{{(detail.prediction.PredictionD20 /detail.value).toFixed(2)}}</span>
-        </span>
-    </div>
-    <div class="panel-body">
-        <span id="result"></span>
-    </div>
-    </div>
+    <!--<div class="col-md-12">-->
+    <div class="col-lg-12 col-md-12">
+        <div class="col-lg-10 col-md-10">
+        <!--<div class="col-md-4">
+        </div>-->
 
-
-
-   <!-- <div style="margin-bottom: 20px;margin-top: 20px;margin-left: 0px">
-        <span class="label label-default" style="background-color: lightslategray">Variation</span>
-        <span style="margin-left: 5px;"><span class="label label-default" style="margin-left: 5px;background-color: lightslategray">60 days </span><span class="label label-danger" style="margin-left: 5px;">4.2%</span></span>
-        <span style="margin-left: 5px;"><span class="label label-default" style="margin-left: 5px;background-color: lightslategray">5 days </span><span class="label label-success" style="margin-left: 5px;">5%</span></span>
-        <span style="margin-left: 5px;"><span class="label label-default" style="margin-left: 5px;background-color: lightslategray"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> 5 days </span><span class="label label-success" style="margin-left: 5px;">52%</span></span>
-        <span style="margin-left: 5px;"><span class="label label-default" style="margin-left: 5px;background-color: lightslategray"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> 20 days </span>
-            <span class="label label-success" style="margin-left: 5px;">{{(detail.prediction.PredictionD20 /detail.value).toFixed(2)}}</span>
-        </span>
-    </div>-->
-
-
-    <div class="mypanel panel panel-primary" style="border-color:lightslategray">
-        <div class="panel-heading" style="background-color: lightslategray">
-            <i class="fa fa-bar-chart-o fa-fw" style="color:white"></i> Stock Indice {{detail.indice[0].code}}
-        </div>
-        <div class="panel-body">
-            <!--div class="col-lg-6 col-md-6">
-                <div class="panel">
-                    <canvas id="indicePanel" width="400" height="150"></canvas>
-                </div>
-            </div-->
-            <div class="panel">
-                <canvas id="indicePanel" width="1000" height="250"></canvas>
-            </div>
-        </div>
-    </div>
-
-    <div class="mypanel panel panel-primary" style="border-color:lightslategray">
-        <div class="panel-heading" style="background-color: lightslategray">
-            <i class="fa fa-bar-chart-o fa-fw" style="color:white"></i>  Sector {{detail.sector[0].code}}
-        </div>
-        <div class="panel-body">
-            <!--div class="col-lg-6 col-md-6">
-                <div class="panel">
-                    <canvas id="indicePanel" width="400" height="150"></canvas>
-                </div>
-            </div-->
-
-            <div class="panel">
-                <canvas id="sectorPanel" width="1000" height="250"></canvas>
+        <div class="mypanel panel panel-primary" style="border-color:lightslategray">
+            <div class="panel-heading" style="background-color: lightslategray">
+                <span class="label label-default" style="margin-left: 5px;background-color: lightslategray">60/d</span><span class="label label-danger" >4.2%</span></span>
+                <span class="label label-default" style="margin-left: 5px;background-color: lightslategray">5/d</span><span class="label label-success" >5%</span></span>
+                <span class="label label-default" style="margin-left: 5px;background-color: lightslategray"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> 20 days </span>
+                <span class="label label-success" >{{(detail.prediction.PredictionD20 /detail.value).toFixed(2)}}</span>
+                </span>
             </div>
 
+            <div class="panel-body">
+                <div class="col-lg-3 col-md-3">
+                    <div class="panel-body">
+                        <div class="list list-group">
+                            <a class="list list-group-item">
+                                marche
+                                <span class="pull-right text-muted small">
+                        <em>{{detail.stock.marche}}</em>
+                    </span>
+                            </a>
+
+                            <a class="list list-group-item">
+                                codif
+                                <span class="pull-right text-muted small">
+                        <em>{{detail.code}}</em>
+                    </span>
+                            </a>
+
+                            <a class="list list-group-item">
+                               indice
+                                <span class="pull-right text-muted small">
+                        <em>{{detail.stock.indice}}</em>
+                    </span>
+                            </a>
+
+
+                            <a class="list list-group-item">
+                                eligib
+                                <span class="pull-right text-muted small">
+                        <em>{{detail.stock.eligib}}</em>
+                    </span>
+                            </a>
+
+                            <a class="list list-group-item">
+                               Title numbers
+                                <span class="pull-right text-muted small">
+                        <em>{{detail.stock.titleNb}}</em>
+                    </span>
+                            </a>
+
+                            <a class="list list-group-item">
+                                Capitalization
+                                <span class="pull-right text-muted small">
+                        <em>{{detail.stock.capitalization}}</em>
+                    </span>
+                            </a>
+
+                            <a class="list list-group-item">
+                                Own Founds
+                                <span class="pull-right text-muted small">
+                                    <em>{{detail.stock.ownFounds}}</em>
+                                </span>
+                            </a>
+
+
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-9 col-md-9">
+                    <span id="result"></span>
+                </div>
+            </div>
+        </div>
+
+                <!--</div>-->
+
+
+
+                <!-- <div style="margin-bottom: 20px;margin-top: 20px;margin-left: 0px">
+                     <span class="label label-default" style="background-color: lightslategray">Variation</span>
+                     <span style="margin-left: 5px;"><span class="label label-default" style="margin-left: 5px;background-color: lightslategray">60 days </span><span class="label label-danger" style="margin-left: 5px;">4.2%</span></span>
+                     <span style="margin-left: 5px;"><span class="label label-default" style="margin-left: 5px;background-color: lightslategray">5 days </span><span class="label label-success" style="margin-left: 5px;">5%</span></span>
+                     <span style="margin-left: 5px;"><span class="label label-default" style="margin-left: 5px;background-color: lightslategray"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> 5 days </span><span class="label label-success" style="margin-left: 5px;">52%</span></span>
+                     <span style="margin-left: 5px;"><span class="label label-default" style="margin-left: 5px;background-color: lightslategray"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> 20 days </span>
+                         <span class="label label-success" style="margin-left: 5px;">{{(detail.prediction.PredictionD20 /detail.value).toFixed(2)}}</span>
+                     </span>
+                 </div>-->
+
+
+                <div class="mypanel panel panel-primary" style="border-color:lightslategray">
+                    <div class="panel-heading" style="background-color: lightslategray">
+                        <i class="fa fa-bar-chart-o fa-fw" style="color:white"></i> Stock Indice {{detail.indice[0].code}}
+                    </div>
+                    <div class="panel-body">
+                        <!--div class="col-lg-6 col-md-6">
+                            <div class="panel">
+                                <canvas id="indicePanel" width="400" height="150"></canvas>
+                            </div>
+                        </div-->
+                        <div class="panel">
+                            <canvas id="indicePanelDetail" width="1000" height="250"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mypanel panel panel-primary" style="border-color:lightslategray">
+                    <div class="panel-heading" style="background-color: lightslategray">
+                        <i class="fa fa-bar-chart-o fa-fw" style="color:white"></i>  Sector {{detail.sector[0].code}}
+                    </div>
+                    <div class="panel-body">
+                        <!--div class="col-lg-6 col-md-6">
+                            <div class="panel">
+                                <canvas id="indicePanel" width="400" height="150"></canvas>
+                            </div>
+                        </div-->
+
+                        <div class="panel">
+                            <canvas id="sectorPanelDetail" width="1000" height="250"></canvas>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="mypanel panel panel-primary" style="border-color:lightslategray">
+                    <div class="panel-heading" style="background-color: lightslategray">
+                        <i class="fa fa-bar-chart-o fa-fw" style="color:white"></i> Stock news
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-condensed table-striped table-bordered table-responsive">
+                            <thead>
+                            <tr>
+                                <th ng-click="predicate = 'timestamp'; reverse=!reverse"><span translate="realtime.table.header.principal">Date</span></th>
+                                <th ng-click="predicate = 'principal'; reverse=!reverse"><span translate="realtime.table.header.code">Link</span></th>
+                            </tr>
+                            </thead>
+                        </table>
+
+                    </div>
+                </div>
+
+
+
+
+            </div>
+        <div class="col-lg-2 col-md-2">
+            <div style="background-color: #0a6aa1"></div>
         </div>
     </div>
-
-    <div class="mypanel panel panel-primary" style="border-color:lightslategray">
-        <div class="panel-heading" style="background-color: lightslategray">
-            <i class="fa fa-bar-chart-o fa-fw" style="color:white"></i> Stock news
-        </div>
-        <div class="panel-body">
-            <table class="table table-condensed table-striped table-bordered table-responsive">
-                <thead>
-                <tr>
-                    <th ng-click="predicate = 'timestamp'; reverse=!reverse"><span translate="realtime.table.header.principal">Date</span></th>
-                    <th ng-click="predicate = 'principal'; reverse=!reverse"><span translate="realtime.table.header.code">Link</span></th>
-                </tr>
-                </thead>
-            </table>
-
-        </div>
-    </div>
-
-
-
 
 </div>

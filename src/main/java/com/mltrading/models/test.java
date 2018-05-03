@@ -1,23 +1,17 @@
 package com.mltrading.models;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import com.mltrading.config.MLProperties;
-import com.mltrading.models.parser.*;
-import com.mltrading.models.parser.impl.ArticleParserEchos;
-import com.mltrading.models.parser.impl.ArticlesParserEchos;
-import com.mltrading.models.parser.impl.DiaryParserBoursorama;
-import com.mltrading.models.parser.impl.HistoryLocalRawMaterials;
-import com.mltrading.models.stock.StockGeneral;
-import com.mltrading.models.stock.cache.CacheStockGeneral;
+import com.mltrading.models.parser.impl.boursorama.RealTimeSectorBoursorama;
+import com.mltrading.models.parser.impl.investing.HistoryIndiceParserInvesting;
+import com.mltrading.models.parser.impl.investing.HistoryVolatilityParserInvesting;
+import com.mltrading.models.parser.impl.investir.HistoryParserInvestir;
+import com.mltrading.models.parser.impl.yahoo.HistoryIndiceParserYahoo;
 import com.mltrading.models.util.CsvFileReader;
 import com.mltrading.service.ExtractionService;
 
 import com.mltrading.service.UserService;
 
 import javax.inject.Inject;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 /**
  * Created by gmo on 18/06/2015.
@@ -50,6 +44,29 @@ public class test {
         }
     }*/
 
+/*
+    public static void main(String[] args) {
+        MLProperties.load();
+        //HistorySectorParserInvestir rawParser = new HistorySectorParserInvestir();
+        //rawParser.fetchCurrent(20);
+
+        //HistoryIndiceParser indiceParser = new HistoryIndiceParserInvestir();
+        //indiceParser.fetchCurrent(20);
+
+        //HistoryIndiceParserInvesting indiceParser = new HistoryIndiceParserInvesting();
+        //indiceParser.fetchCurrent(20);
+
+        //HistoryParserInvestir history = new HistoryParserInvestir();
+        //history.fetchCurrent(20);
+
+        //HistoryVolatilityParserInvesting vac = new HistoryVolatilityParserInvesting();
+        //vac.fetchCurrent(20);
+        //new CsvFileReader();
+
+        RealTimeSectorBoursorama rtSector = new RealTimeSectorBoursorama();
+        rtSector.refreshCache();
+
+       }
 
 
 /*

@@ -44,6 +44,7 @@ public class MLStockRanking {
                 CacheMLStock.setMlRank(mlr);
             }
 
+            mlr.deleteModel();
             mlr.saveModel();
             mlr.saveModelDB();
 

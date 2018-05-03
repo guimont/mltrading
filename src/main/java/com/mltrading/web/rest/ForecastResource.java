@@ -60,6 +60,20 @@ public class ForecastResource {
         return "ok";
     }
 
+    @RequestMapping(value = "/ML/export",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    public void exportMatrixValidator() {
+        forecast.exportModel();
+    }
+
+    @RequestMapping(value = "/ML/import",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    public void importMatrixValidator() {
+        forecast.importModel();
+    }
+
 
     @RequestMapping(value = "/ML/resume",
         method = RequestMethod.GET,

@@ -21,6 +21,7 @@ public class StockDetail implements Serializable{
     private Stock stock;
     private Double value;
 
+
     private List<StockHistory> sector;
     private List<StockHistory> indice;
     private StockPrediction prediction;
@@ -230,4 +231,6 @@ public class StockDetail implements Serializable{
     public String getSectorCode() {
         return sectorCode;
     }
+
+
 }

@@ -159,6 +159,7 @@ public class CacheMLStock {
         deleteModel();
         SynchWorker.delete();
 
+
         for (MLStocks mls : mlStockMap.values()) {
             PeriodicityList.periodicity.forEach(p -> {
                 if (mls.getSock(p).isModelImprove() == true) {
@@ -167,12 +168,20 @@ public class CacheMLStock {
                 }
             });
 
-
-            modelTypes.forEach(t -> {
+            try {
+                modelTypes.forEach(t -> {
             /* saveValidator Validator each time because old validator is deleted*/
-                mls.getStatus(t).savePerf(mls.getCodif(), t);
-                mls.saveValidator(t);
-            });
+                    if (mls.getStatus(t).getPerfList() != null) {
+                        mls.getStatus(t).savePerf(mls.getCodif(), t);
+                        mls.saveValidator(t);
+                    }
+                });
+            }
+            catch (Exception e) {
+                log.error("Import failed: " + e);
+            }
+
+
 
         }
 

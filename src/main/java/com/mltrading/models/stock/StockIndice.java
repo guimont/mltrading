@@ -8,11 +8,14 @@ import com.mltrading.models.stock.cache.CacheStockIndice;
  */
 public class StockIndice extends StockHistory {
 
-    public StockIndice(String code, String name,String place, int row) {
+    private String urlInvestir;
+
+    public StockIndice(String code, String name,String place,  String url,int row) {
         this.setCode(code);
         this.setCodif(code);
         this.setName(name);
         this.setPlace(place);
+        this.setUrlInvestir(url);
         this.setRow(row);
     }
 
@@ -41,4 +44,12 @@ public class StockIndice extends StockHistory {
         return null;
     }
 
+
+    public String getUrlInvestir() {
+        return urlInvestir;
+    }
+
+    public void setUrlInvestir(String urlInvestir) {
+        this.urlInvestir = urlInvestir;
+    }
 }

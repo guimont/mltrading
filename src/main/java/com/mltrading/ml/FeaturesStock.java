@@ -77,7 +77,12 @@ public class FeaturesStock extends Feature implements Serializable {
         if (validator.getATMACD(indice)) this.vector[currentVectorPos++] = sa.getMacd();
         if (validator.getATMOMENTUM(indice)) this.vector[currentVectorPos++] = sa.getMomentum();
         if (validator.getATSTDDEV(indice)) this.vector[currentVectorPos++] = sa.getStdDev();
-
+        if (validator.getATGARCH20(indice)) this.vector[currentVectorPos++] = sa.getGarch20();
+        if (validator.getATGARCHVOL20(indice)) this.vector[currentVectorPos++] = sa.getGarch_vol_20();
+        if (validator.getATGARCH50(indice)) this.vector[currentVectorPos++] = sa.getGarch50();
+        if (validator.getATGARCHVOL50(indice)) this.vector[currentVectorPos++] = sa.getGarch_vol_50();
+        if (validator.getATGARCH100(indice)) this.vector[currentVectorPos++] = sa.getGarch100();
+        if (validator.getATGARCHVOL100(indice)) this.vector[currentVectorPos++] = sa.getGarch_vol_100();
     }
 
 
@@ -148,7 +153,7 @@ public class FeaturesStock extends Feature implements Serializable {
              */
             try {
                 List<StockHistory> sh = StockHistory.getStockHistoryDateInvert(codif, date, validator.getPeriodStockHist());
-                fs.linearize(sh);
+                fs.linearize(sh, validator.getPeriodVolume());
                 StockHistory current = StockHistory.getStockHistory(codif, date);
                 //fs.linearize(current, validator); already done
                 fs.setCurrentValue(current.getValue());
@@ -216,7 +221,7 @@ public class FeaturesStock extends Feature implements Serializable {
          */
         try {
             List<StockHistory> sh = StockHistory.getStockHistoryDateInvert(codif, date, validator.getPeriodStockHist());
-            fs.linearize(sh);
+            fs.linearize(sh,validator.getPeriodVolume());
             StockHistory current = StockHistory.getStockHistory(codif, date);
             //fs.linearize(current, validator);
             fs.setCurrentValue(current.getValue());
@@ -290,7 +295,7 @@ public class FeaturesStock extends Feature implements Serializable {
     private static void filledFeaturesStock(FeaturesStock fs, MatrixValidator validator, int row, String date, String code) {
         if (validator.getPeriodEnable(row)) {
             List<StockHistory> si = StockHistory.getStockHistoryDateInvert(code, date, validator.getPeriodHist(row));
-            fs.linearize(si);
+            fs.linearize(si, validator.getPeriodVolume());
             StockAnalyse asi = StockAnalyse.getAnalyse(code, si.get(0).getDay());
             fs.linearize(asi, validator, row);
         }

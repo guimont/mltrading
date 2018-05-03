@@ -14,10 +14,8 @@ angular.module('mltradingApp')
         };
 
         setInterval(function() {
-            $scope.showSector();
-            $scope.showIndice();
-            $scope.onChangeDate();
-        }, 20000);
+            //$state.reload();
+        }, 60000);
 
 
 
@@ -48,6 +46,7 @@ angular.module('mltradingApp')
         $scope.onSelected = function () {
             RealtimeService.findSelected().then(function (data) {
                 $scope.selected = data;
+                graph($scope.selected)
             });
         }
 

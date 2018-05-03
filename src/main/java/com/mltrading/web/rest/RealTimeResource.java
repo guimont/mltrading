@@ -77,10 +77,12 @@ public class RealTimeResource {
         predState.sort(Comparator.comparingDouble(Pair::first));
 
         int size = predState.size();
-        for (int i = 1; i< 5; i++) {
-            StockGeneral sg = CacheStockGeneral.getCache().get(CacheStockGeneral.getCode(predState.get(size - i).second()));
-            StockDetail detail = StockDetail.populateLight(sg);
-            output.add(detail);
+        if (size > 5) {
+            for (int i = 1; i< 5; i++) {
+                StockGeneral sg = CacheStockGeneral.getCache().get(CacheStockGeneral.getCode(predState.get(size - i).second()));
+                StockDetail detail = StockDetail.populateLight(sg);
+                output.add(detail);
+            }
         }
 
         return output;
@@ -97,8 +99,10 @@ public class RealTimeResource {
 
         Stock s = stockRepository.findOne(key);
 
+
+
         StockHistory sh;
-        if (CacheStockGeneral.getIsinCache().get(key) != null ) sh = CacheStockGeneral.getIsinCache().get(key);
+        if (CacheStockGeneral.getIsinCache().get( CacheStockGeneral.getCode(key)) != null ) sh = CacheStockGeneral.getIsinCache().get( CacheStockGeneral.getCode(key));
         else sh = CacheStockSector.getSectorCache().get(key);
 
         StockDetail detail = StockDetail.populate(s,sh);

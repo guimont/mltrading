@@ -5,6 +5,8 @@ package com.mltrading.ml;
  */
 
 
+import com.mltrading.ml.model.MLGradiantBoostStockModel;
+import com.mltrading.ml.model.MLRandomForestModel;
 import com.mltrading.ml.model.Model;
 import com.mltrading.ml.model.ModelType;
 import org.apache.spark.api.java.JavaRDD;
@@ -128,6 +130,19 @@ public class MLStocks  implements Serializable {
         }
     }
 
+
+    /**
+     * This function is use by importModel
+     * Create model and empty validator
+     * @param p
+     * @param validator
+     * @param type
+     */
+    public void createValidator(PredictionPeriodicity p, MatrixValidator validator,  ModelType type) {
+        if (type == ModelType.RANDOMFOREST ) container.get(p).setModel(new MLRandomForestModel(),ModelType.RANDOMFOREST);
+        if (type == ModelType.GRADIANTBOOSTTREE )container.get(p).setModel(new MLGradiantBoostStockModel(),ModelType.GRADIANTBOOSTTREE);
+        container.get(p).getModel(type).setValidator(validator);
+    }
 
 
     /**

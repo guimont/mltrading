@@ -28,16 +28,16 @@ public class CacheStockSector {
 
     public static int N_SECTOR  = 10;
 
-    public static String urlFRIN = "http://investir.lesechos.fr/cours/historique-indice-cac-industries,xpar,frin,qs0011017652,isin.html";
-    public static String urlFRBM = "http://investir.lesechos.fr/cours/historique-indice-cac-materiaux-de-base,xpar,frbm,qs0011017637,isin.html";
-    public static String urlFROGP = "http://investir.lesechos.fr/cours/historique-indice-cac-producteurs-de-petrole-et-gaz,xpar,frogp,qs0011017843,isin.html";
-    public static String urlFRCG = "http://investir.lesechos.fr/cours/historique-indice-cac-biens-de-consommation,xpar,frcg,qs0011017686,isin.html";
-    public static String urlFRHC = "http://investir.lesechos.fr/cours/historique-indice-cac-sante,xpar,frhc,qs0011017702,isin.html";
-    public static String urlFRCS= "http://investir.lesechos.fr/cours/historique-indice-cac-services-aux-consommateurs,xpar,frcs,qs0011017736,isin.html";
-    public static String urlFRTEL = "http://investir.lesechos.fr/cours/historique-indice-cac-telecommunications,xpar,frtel,qs0011017769,isin.html";
-    public static String urlFRUT = "http://investir.lesechos.fr/cours/historique-indice-cac-services-aux-collectivites,xpar,frut,qs0011017785,isin.html";
-    public static String urlFRFIN = "http://investir.lesechos.fr/cours/historique-indice-cac-societes-financieres,xpar,frfin,qs0011017801,isin.html";
-    public static String urlFRTEC = "http://investir.lesechos.fr/cours/historique-indice-cac-technologie,xpar,frtec,qs0011017827,isin.html";
+    public static String urlFRIN = "https://investir.lesechos.fr/cours/historique-indice-cac-industries,xpar,frin,qs0011017652,isin.html";
+    public static String urlFRBM = "https://investir.lesechos.fr/cours/historique-indice-cac-materiaux-de-base,xpar,frbm,qs0011017637,isin.html";
+    public static String urlFROGP = "https://investir.lesechos.fr/cours/historique-indice-cac-petrole-et-gaz,xpar,frog,qs0011017603,isin.html";
+    public static String urlFRCG = "https://investir.lesechos.fr/cours/historique-indice-cac-biens-de-consommation,xpar,frcg,qs0011017686,isin.html";
+    public static String urlFRHC = "https://investir.lesechos.fr/cours/historique-indice-cac-sante,xpar,frhc,qs0011017702,isin.html";
+    public static String urlFRCS= "https://investir.lesechos.fr/cours/historique-indice-cac-services-aux-consommateurs,xpar,frcs,qs0011017736,isin.html";
+    public static String urlFRTEL = "https://investir.lesechos.fr/cours/historique-indice-cac-telecommunications,xpar,frtel,qs0011017769,isin.html";
+    public static String urlFRUT = "https://investir.lesechos.fr/cours/historique-indice-cac-services-aux-collectivites,xpar,frut,qs0011017785,isin.html";
+    public static String urlFRFIN = "https://investir.lesechos.fr/cours/historique-indice-cac-societes-financieres,xpar,frfin,qs0011017801,isin.html";
+    public static String urlFRTEC = "https://investir.lesechos.fr/cours/historique-indice-cac-technologie,xpar,frtec,qs0011017827,isin.html";
 
     private static final Map<String, StockSector> SectorMap;
     static {
@@ -93,8 +93,7 @@ public class CacheStockSector {
     }
 
 
-    public static Map<String,StockSector> getSectorCache() {
-        return SectorMap;
+    public static Map<String,StockSector> getSectorCache() { return SectorMap;
     }
 
 }

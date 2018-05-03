@@ -23,7 +23,10 @@ import java.util.List;
  */
 public class StockParserInvestir extends ParserCommon implements StockParser{
 
-    static String base = "http://investir.lesechos.fr/cours/profil-societe-action-";
+    //http://investir.lesechos.fr/cours/profil-societe-action-orange,xpar,ora,fr0000133308,isin.html
+    //https://investir.lesechos.fr/cours/profil-societe-action-orange,xpar,ora,fr0000133308,isin.html
+    //https://investir.lesechos.fr/cours/profil-societe-action-peugeot,xpar,ug,fr0000121501,isin.html
+    static String base = "https://investir.lesechos.fr/cours/profil-societe-action-";
     static String sep = ",";
     static String end = ",isin.html";
 
@@ -39,7 +42,7 @@ public class StockParserInvestir extends ParserCommon implements StockParser{
     private void loader(StockRepository repository) {
         for (StockGeneral g: CacheStockGeneral.getIsinCache().values()) {
 
-            String url = base + CacheStockGeneral.getIsinCache().get(g.getCode()).getName().toLowerCase().replaceAll(" ","-") + sep + g.getPlace().toLowerCase() + sep  + g.getCodif().toLowerCase() + sep + g.getCode().toLowerCase() +end;
+            String url = base + CacheStockGeneral.getIsinCache().get(g.getCode()).getName().toLowerCase().replaceAll(" ","-") + sep + g.getPlace().toLowerCase() + sep  + g.getRealCodif().toLowerCase() + sep + g.getCode().toLowerCase() +end;
 
 
             try {

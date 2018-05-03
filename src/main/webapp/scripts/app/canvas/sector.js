@@ -22,9 +22,9 @@ function loadSector(dataV) {
         data.labels[i] = dataV[i].code
         data.datasets[0].data[i] = dataV[i].variation
         if (dataV[i].variation < 0)
-            data.datasets[0].backgroundColor[i] = "#ED5565"
+            data.datasets[0].backgroundColor[i] = "rgba(237, 85, 101, 0.6)"
         else
-            data.datasets[0].backgroundColor[i] = "#48CFAD"
+            data.datasets[0].backgroundColor[i] = "rgba(72, 207, 173, 0.6)"
     }
 
     var ctx = document.getElementById("sectorPanel");

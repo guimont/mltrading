@@ -226,6 +226,16 @@ public class MLStatus implements Serializable,DaoChecker{
         return perfList;
     }
 
+
+    public MLPerformances getPerfList(String date) {
+        for (MLPerformances p : perfList) {
+            if (p.getDate().equalsIgnoreCase(date))
+                return p;
+        }
+
+        return null;
+    }
+
     public void replaceElementList(List<MLPerformances> rep, PredictionPeriodicity period) throws Exception {
 
         try {

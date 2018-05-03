@@ -4,6 +4,7 @@ import com.mltrading.ml.model.MLGradiantBoostStockModel;
 import com.mltrading.ml.model.MLRandomForestModel;
 import com.mltrading.ml.model.Model;
 import com.mltrading.ml.model.ModelType;
+import com.mltrading.models.util.CsvFileWriter;
 import org.apache.spark.mllib.linalg.Vector;
 import org.apache.spark.mllib.linalg.Vectors;
 import org.slf4j.Logger;
@@ -63,12 +64,29 @@ public class MLModel {
             log.error("model broken!!!!!: " + fs.currentVectorPos +" not equal " +getValidator(ModelType.RANDOMFOREST).getVectorSize());
             System.exit(100);
         }
-        return modelSet.get(ModelType.RANDOMFOREST).predict(Vectors.dense(fs.vectorize()));
+
+        double predict = modelSet.get(ModelType.RANDOMFOREST).predict(Vectors.dense(fs.vectorize()));
+        return predict;
+
+        /*FeaturesStock fsGBT = FeaturesStock.createRT(s.getCodif(), getValidator(ModelType.GRADIANTBOOSTTREE), date);
+        if (fsGBT.currentVectorPos != getValidator(ModelType.GRADIANTBOOSTTREE).getVectorSize()) {
+            log.error("model broken!!!!!: " + fsGBT.currentVectorPos +" not equal " +getValidator(ModelType.GRADIANTBOOSTTREE).getVectorSize());
+            System.exit(100);
+        }
+
+        predict += modelSet.get(ModelType.GRADIANTBOOSTTREE).predict(Vectors.dense(fsGBT.vectorize()));
+
+        return predict/2;*/
     }
 
     public void saveModel(ModelType type, PredictionPeriodicity period, String codif) {
         Model rfModel = modelSet.get(type);
         if (rfModel.getModel() != null)
             rfModel.getValidator().saveModel( codif + ModelType.code(type) + period.toString());
+    }
+
+    public void export(CsvFileWriter fileWriter, String name, String p) {
+        if (modelSet.get(ModelType.RANDOMFOREST) != null) modelSet.get(ModelType.RANDOMFOREST).getValidator().export(fileWriter,name+ ModelType.code(ModelType.RANDOMFOREST) + p);
+        if (modelSet.get(ModelType.GRADIANTBOOSTTREE) != null) modelSet.get(ModelType.GRADIANTBOOSTTREE).getValidator().export(fileWriter,name +ModelType.code(ModelType.GRADIANTBOOSTTREE) + p);
     }
 }

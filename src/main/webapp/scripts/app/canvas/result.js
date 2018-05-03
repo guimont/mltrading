@@ -1,8 +1,8 @@
 var result = [];
 
 
-var SIZERESX=1000;
-var RSIZERESX=1020;
+var SIZERESX=700;
+var RSIZERESX=720;
 var SIZERESY=240;
 
 /**
@@ -39,8 +39,8 @@ function loadResult (data) {
     chartResult({x:30,y:20}, layerChart, true);
     stageResult.add(layerChart);
 
-    loadIndice(result.indice,"indicePanel","", true)
-    loadIndice(result.sector,"sectorPanel","", true)
+    loadIndice(result.indice,"indicePanelDetail","", true)
+    loadIndice(result.sector,"sectorPanelDetail","", true)
 
 
    /* var layerChartIndice = new Kinetic.Layer();
@@ -287,7 +287,7 @@ function drawZoom(group,pos, data,min, heightM, marge, layer) {
 
 }
 
-var margeX = 12
+var margeX = 7
 function drawValue(group, pos, data,min, heightM, marge,  i ,  layer) {
 
     var pred5;

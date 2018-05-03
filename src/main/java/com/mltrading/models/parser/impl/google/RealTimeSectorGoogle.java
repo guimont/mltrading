@@ -16,8 +16,9 @@ import java.net.URL;
  */
 public class RealTimeSectorGoogle extends ParserCommon implements RealTimeParser {
 
+    //*doc.select("#finance_onebox").get(0).child(2).text()
     static String startUrl="https://finance.google.com/finance?q=INDEXEURO%3A";
-    static String refCode = "div.id-price-panel";
+    static String refCode = "#finance_onebox";
 
     public void refreshCache() {
         CacheStockSector.getSectorCache().values().forEach(s -> refreshCache(s));
@@ -38,12 +39,10 @@ public class RealTimeSectorGoogle extends ParserCommon implements RealTimeParser
 
             Elements links = doc.select(refCode);
 
-            String value = links.get(0).child(0).text();
 
-            String values[] = value.split(" ");
-
-            ss.setValue(new Double(values[0].replaceAll(",", "")));
-            ss.setVariation(new Float(values[2].replaceAll("\\(", "").replaceAll("%\\)", "")));
+            ss.setValue(new Double( links.get(0).child(2).child(0).child(0).text().replaceAll(String.valueOf((char) 160), "").replaceAll(",", ".")));
+            ss.setVariation(new Float( links.get(0).child(2).child(0).child(1).text().split(" ")[1]
+                .replaceAll(",", ".").replaceAll("\\(", "").replaceAll("%\\)", "").replaceAll(String.valueOf((char) 160), "")));
 
 
 

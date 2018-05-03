@@ -8,8 +8,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import com.mltrading.ml.CacheMLStock;
 import com.mltrading.ml.MlForecast;
 import com.mltrading.ml.model.ModelType;
-import com.mltrading.models.parser.impl.RealTimeParserBoursorama;
-import com.mltrading.models.parser.impl.google.RealTimeSectorGoogle;
+import com.mltrading.models.parser.impl.boursorama.RealTimeParserBoursorama;
+import com.mltrading.models.parser.impl.boursorama.RealTimeSectorBoursorama;
 import com.mltrading.repository.ArticleRepository;
 import com.mltrading.service.ExtractionService;
 import org.slf4j.Logger;
@@ -30,14 +30,14 @@ public class ScheduleParserGeneral  {
     private static ExtractionService service = new ExtractionService();
 
     private RealTimeParserBoursorama realTimeParserBoursorama;
-    private RealTimeSectorGoogle realTimeSectorGoogle;
+    private RealTimeSectorBoursorama realTimeSectorBoursorama;
 
     @javax.inject.Inject
     private ArticleRepository articleRepository;
 
     public ScheduleParserGeneral() {
         realTimeParserBoursorama = new RealTimeParserBoursorama();
-        realTimeSectorGoogle = new RealTimeSectorGoogle();
+        realTimeSectorBoursorama = new RealTimeSectorBoursorama();
     }
 
     protected class GlobalTimerTask extends TimerTask {
@@ -56,16 +56,14 @@ public class ScheduleParserGeneral  {
 
     private void updatePredictor() {
 
-
-        CacheMLStock.load();
-
-        MlForecast.updatePredictor(ModelType.RANDOMFOREST);
+      CacheMLStock.load();
+      MlForecast.updatePredictor(ModelType.RANDOMFOREST);
     }
 
 
     protected void runExtraction() {
         realTimeParserBoursorama.refreshCache();
-        realTimeSectorGoogle.refreshCache();
+        realTimeSectorBoursorama.refreshCache();
 
     }
 

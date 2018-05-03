@@ -33,31 +33,20 @@
                     <div class="panel">
                         <div class="panel-body" style="overflow-x:hidden;">
                             <p class="pull-right">
-                                <a ui-sref="detail({code: '{{top.code}}'})" class="text-muted no-decor" data-toggle="tooltip" data-container="body" title="View details" aria-label="View details"><i class="icon-arrow-right-circle fa-lg"></i></a>
+                                <a ui-sref="detail({code: '{{selected[0].code}}'})" class="text-muted no-decor" data-toggle="tooltip" data-container="body" title="View details" aria-label="View details"><i class="icon-arrow-right-circle fa-lg"></i></a>
                             </p>
-                            <p><strong  class="badge" style="width: 45px; background-color: silver; "><span>{{top.codif}}</span> <small class="text-muted" style="margin-left: 20px">{{top.name}}</small></strong></p>
+                            <div class="col-lg-3 col-md-3">
+                                <p><strong  class="badge" style="width: 45px; background-color: silver; "><span>{{selected[0].code}}</span> <small class="text-muted" style="margin-left: 20px">{{selected[0].name}}</small></strong></p>
 
-                            <p><strong class="fa-lg">{{top.value}}</strong></p>
-                            <p><strong class="fa-lg" style="color:{{getcolorSign(top.variation)}}">{{top.variation}}</strong></p>
-                        </div><!-- /.panel-body -->
-                    </div><!-- /.panel -->
-                </div><!-- /.cols -->
-
-                <div class="col-lg-6 col-md-6">
-                    <div class="panel">
-                        <div class="panel-body" style="overflow-x:hidden;">
-                            <p class="pull-right">
-                                <a href="#" class="text-muted no-decor" data-toggle="tooltip" data-container="body" title="View details" aria-label="View details"><i class="icon-arrow-right-circle fa-lg"></i></a>
-                            </p>
-                            <p><strong  class="badge" style="width: 45px; background-color: silver; "><span>{{flop.codif}}</span> <small class="text-muted" style="margin-left: 20px">{{flop.name}}</small></strong></p>
-                            <div>
-                                <span id="spark-posts"></span>
+                                <p><strong class="fa-lg">{{selected[0].value}}</strong></p>
+                                <p><strong class="fa-lg" style="color:{{getcolorSign(selected[0].prediction.yieldD20)}}">{{selected[0].prediction.yieldD20.toFixed(3)}}</strong></p>
                             </div>
-                            <p><strong class="fa-lg">{{flop.value}}</strong></p>
-                            <p><strong class="fa-lg" style="color:{{getcolorSign(flop.variation)}}">{{flop.variation}}</strong></p>
+                            <div class="col-lg-9 col-md-9">
+                                <span id="Selected_0" width="300" height="80"></span>
+                            </div>
                         </div><!-- /.panel-body -->
                         <div class="progress progress-xs no-margin" data-toggle="tooltip" data-container="body" title="173/200 of max post today" style="height: 3px">
-                            <div class="progress-bar bg-violet" style="width:62%"></div>
+                            <div class="progress-bar" style="width:100%;background-color:{{getcolorSign(selected[0].prediction.YieldD20)}}"></div>
                         </div>
                     </div><!-- /.panel -->
                 </div><!-- /.cols -->
@@ -66,15 +55,20 @@
                     <div class="panel">
                         <div class="panel-body" style="overflow-x:hidden;">
                             <p class="pull-right">
-                                <a href="#" class="text-muted no-decor" data-toggle="tooltip" data-container="body" title="View details" aria-label="View details"><i class="icon-arrow-right-circle fa-lg"></i></a>
+                                <a ui-sref="detail({code: '{{selected[1].code}}'})" class="text-muted no-decor" data-toggle="tooltip" data-container="body" title="View details" aria-label="View details"><i class="icon-arrow-right-circle fa-lg"></i></a>
                             </p>
-                            <p><strong  class="badge" style="width: 45px; background-color: silver; "><span>{{flop.codif}}</span> <small class="text-muted" style="margin-left: 20px">{{flop.name}}</small></strong></p>
+                            <div class="col-lg-3 col-md-3">
+                                <p><strong  class="badge" style="width: 45px; background-color: silver; "><span>{{selected[1].code}}</span> <small class="text-muted" style="margin-left: 20px">{{selected[1].name}}</small></strong></p>
 
-                            <p><strong class="fa-lg">{{flop.value}}</strong></p>
-                            <p><strong class="fa-lg" style="color:{{getcolorSign(flop.variation)}}">{{flop.variation}}</strong></p>
+                                <p><strong class="fa-lg">{{selected[1].value}}</strong></p>
+                                <p><strong class="fa-lg" style="color:{{getcolorSign(selected[1].prediction.yieldD20)}}">{{selected[1].prediction.yieldD20.toFixed(3)}}</strong></p>
+                            </div>
+                            <div class="col-lg-9 col-md-9">
+                                <span id="Selected_1" width="300" height="80"></span>
+                            </div>
                         </div><!-- /.panel-body -->
                         <div class="progress progress-xs no-margin" data-toggle="tooltip" data-container="body" title="173/200 of max post today" style="height: 3px">
-                            <div class="progress-bar bg-violet" style="width:62%"></div>
+                            <div class="progress-bar" style="width:100%;background-color:{{getcolorSign(selected[1].prediction.YieldD20)}}"></div>
                         </div>
                     </div><!-- /.panel -->
                 </div><!-- /.cols -->
@@ -83,15 +77,42 @@
                     <div class="panel">
                         <div class="panel-body" style="overflow-x:hidden;">
                             <p class="pull-right">
-                                <a href="#" class="text-muted no-decor" data-toggle="tooltip" data-container="body" title="View details" aria-label="View details"><i class="icon-arrow-right-circle fa-lg"></i></a>
+                                <a ui-sref="detail({code: '{{selected[2].code}}'})" class="text-muted no-decor" data-toggle="tooltip" data-container="body" title="View details" aria-label="View details"><i class="icon-arrow-right-circle fa-lg"></i></a>
                             </p>
-                            <p><strong  class="badge" style="width: 45px; background-color: silver; "><span>{{flop.codif}}</span> <small class="text-muted" style="margin-left: 20px">{{flop.name}}</small></strong></p>
+                            <div class="col-lg-3 col-md-3">
+                                <p><strong  class="badge" style="width: 45px; background-color: silver; "><span>{{selected[2].code}}</span> <small class="text-muted" style="margin-left: 20px">{{selected[2].name}}</small></strong></p>
 
-                            <p><strong class="fa-lg">{{flop.value}}</strong></p>
-                            <p><strong class="fa-lg" style="color:{{getcolorSign(flop.variation)}}">{{flop.variation}}</strong></p>
+                                <p><strong class="fa-lg">{{selected[2].value}}</strong></p>
+                                <p><strong class="fa-lg" style="color:{{getcolorSign(selected[2].prediction.yieldD20)}}">{{selected[2].prediction.yieldD20.toFixed(3)}}</strong></p>
+                            </div>
+                            <div class="col-lg-9 col-md-9">
+                                <span id="Selected_2" width="300" height="80"></span>
+                            </div>
                         </div><!-- /.panel-body -->
                         <div class="progress progress-xs no-margin" data-toggle="tooltip" data-container="body" title="173/200 of max post today" style="height: 3px">
-                            <div class="progress-bar bg-violet" style="width:100%"></div>
+                            <div class="progress-bar" style="width:100%;background-color:{{getcolorSign(selected[2].prediction.YieldD20)}}"></div>
+                        </div>
+                    </div><!-- /.panel -->
+                </div><!-- /.cols -->
+
+                <div class="col-lg-6 col-md-6">
+                    <div class="panel">
+                        <div class="panel-body" style="overflow-x:hidden;">
+                            <p class="pull-right">
+                                <a ui-sref="detail({code: '{{selected[3].code}}'})" class="text-muted no-decor" data-toggle="tooltip" data-container="body" title="View details" aria-label="View details"><i class="icon-arrow-right-circle fa-lg"></i></a>
+                            </p>
+                            <div class="col-lg-3 col-md-3">
+                                <p><strong  class="badge" style="width: 45px; background-color: silver; "><span>{{selected[3].code}}</span> <small class="text-muted" style="margin-left: 20px">{{selected[3].name}}</small></strong></p>
+
+                                <p><strong class="fa-lg">{{selected[3].value}}</strong></p>
+                                <p><strong class="fa-lg" style="color:{{getcolorSign(selected[3].prediction.yieldD20)}}">{{selected[3].prediction.yieldD20.toFixed(3)}}</strong></p>
+                            </div>
+                            <div class="col-lg-9 col-md-9">
+                                <span id="Selected_3" width="300" height="80"></span>
+                            </div>
+                        </div><!-- /.panel-body -->
+                        <div class="progress progress-xs no-margin" data-toggle="tooltip" data-container="body" title="173/200 of max post today" style="height: 3px">
+                            <div class="progress-bar" style="width:100%;background-color:{{getcolorSign(selected[3].prediction.YieldD20)}}"></div>
                         </div>
                     </div><!-- /.panel -->
                 </div><!-- /.cols -->
@@ -121,7 +142,7 @@
                             </thead>
                             <tbody>
                             <tr ng-repeat="rt in rts | filter:filter | orderBy:'-name':true" ng-hide="audit.filtered">
-                                <td  ><a ui-sref="detail({code: '{{rt.code}}'})">{{rt.name}}</a></td>
+                                <td  ><a ui-sref="detail({code: '{{rt.codif}}'})">{{rt.name}}</a></td>
                                 <td><small>{{rt.code}}</small></td>
                                 <td><small class="badge" style="width: 45px; background-color: silver">{{rt.codif}}</small></td>
                                 <td><i style="margin-left: 5px;color: lightslategrey" class="{{getIcon(rt.sector)}}" data-toggle="tooltip" data-container="body" title="View details" aria-label="View details"/></td>

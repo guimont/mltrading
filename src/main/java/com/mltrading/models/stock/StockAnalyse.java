@@ -18,9 +18,16 @@ public class StockAnalyse extends StockBase{
     public static int COL_MACD_POS   = 4;
     public static int COL_MOMENTUM_POS  = 5;
     public static int COL_STDDEV_POS  = 6;
+    public static int COL_GARCH20_POS  = 7;
+    public static int COL_GARCHVOL20_POS  = 8;
+    public static int COL_GARCH50_POS  = 9;
+    public static int COL_GARCHVOL50_POS  = 10;
+    public static int COL_GARCH100_POS  = 11;
+    public static int COL_GARCHVOL100_POS  = 12;
+    public static int COL_RESERVE  = 10;
 
 
-    public static int N_AT = 7;
+    public static int N_AT = 13 + COL_RESERVE;
 
 
     private Double mma20;
@@ -36,6 +43,18 @@ public class StockAnalyse extends StockBase{
     private Double stdDev;
 
     private Double macd;
+
+    private Double garch20;
+
+    private Double garch_vol_20;
+
+    private Double garch50;
+
+    private Double garch_vol_50;
+
+    private Double garch100;
+
+    private Double garch_vol_100;
 
     public Double getMacd() {
         return macd;
@@ -94,19 +113,53 @@ public class StockAnalyse extends StockBase{
     }
 
 
-    @Override
-    public String toString() {
-        return "StockAnalyse{" +
-            "mma20=" + mma20 +
-            ", mma50=" + mma50 +
-            ", mme12=" + mme12 +
-            ", mme26=" + mme26 +
-            ", momentum=" + momentum +
-            ", stdDev=" + stdDev +
-            ", macd=" + macd +
-            '}';
+    public Double getGarch50() {
+        return garch50;
     }
 
+    public void setGarch50(Double garch50) {
+        this.garch50 = garch50;
+    }
+
+    public Double getGarch_vol_50() {
+        return garch_vol_50;
+    }
+
+    public void setGarch_vol_50(Double garch_vol_50) {
+        this.garch_vol_50 = garch_vol_50;
+    }
+
+    public Double getGarch100() {
+        return garch100;
+    }
+
+    public void setGarch100(Double garch100) {
+        this.garch100 = garch100;
+    }
+
+    public Double getGarch_vol_100() {
+        return garch_vol_100;
+    }
+
+    public void setGarch_vol_100(Double garch_vol_100) {
+        this.garch_vol_100 = garch_vol_100;
+    }
+
+    public Double getGarch20() {
+        return garch20;
+    }
+
+    public void setGarch20(Double garch20) {
+        this.garch20 = garch20;
+    }
+
+    public Double getGarch_vol_20() {
+        return garch_vol_20;
+    }
+
+    public void setGarch_vol_20(Double garch_vol_20) {
+        this.garch_vol_20 = garch_vol_20;
+    }
 
     public static StockAnalyse getAnalyse(String code, String date) {
         return cache.getStockAnalyse(code, date);
@@ -137,6 +190,13 @@ public class StockAnalyse extends StockBase{
         copy.setMomentum(this.momentum);
         copy.setStdDev(this.stdDev);
         copy.setMacd(this.macd);
+        copy.setGarch20(this.garch20);
+        copy.setGarch_vol_20(this.garch_vol_20);
+        copy.setGarch50(this.garch50);
+        copy.setGarch_vol_50(this.garch_vol_50);
+        copy.setGarch100(this.garch100);
+        copy.setGarch_vol_100(this.garch_vol_100);
+
         return copy;
     }
 }

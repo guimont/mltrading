@@ -35,6 +35,9 @@ public class StockSector extends StockHistory{
         this.urlInvestir = urlInvestir;
     }
 
+    public String getUrlInvestir() {
+        return urlInvestir;
+    }
 
     public Float getVariation() {
         return variation;

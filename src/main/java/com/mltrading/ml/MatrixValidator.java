@@ -6,6 +6,7 @@ import com.mltrading.models.stock.cache.CacheRawMaterial;
 import com.mltrading.models.stock.cache.CacheStockIndice;
 import com.mltrading.models.stock.cache.CacheStockSector;
 import com.mltrading.models.stock.StockAnalyse;
+import com.mltrading.models.util.CsvFileWriter;
 import org.influxdb.dto.BatchPoints;
 import org.influxdb.dto.Point;
 import org.influxdb.dto.QueryResult;
@@ -28,6 +29,54 @@ public class MatrixValidator implements Serializable,Cloneable {
 
     public Integer[][] getMatrix() {
         return matrix;
+    }
+
+    public void export(CsvFileWriter fileWriter,String name) {
+
+        StringBuilder stringBuilder = new StringBuilder();
+
+        stringBuilder.append(name);
+        stringBuilder.append(CsvFileWriter.COMMA_DELIMITER);
+
+
+        for (int i = 0 ; i < globalROW; i++) {
+            for (int j = 0; j < globalCOL; j++){
+                stringBuilder.append(matrix[i][j].intValue());
+                stringBuilder.append(CsvFileWriter.COMMA_DELIMITER);
+            }
+        }
+        stringBuilder.append(maxDepth);stringBuilder.append(CsvFileWriter.COMMA_DELIMITER);
+        stringBuilder.append( maxBins);stringBuilder.append(CsvFileWriter.COMMA_DELIMITER);
+        stringBuilder.append( numTrees);stringBuilder.append(CsvFileWriter.COMMA_DELIMITER);
+        stringBuilder.append( seed);stringBuilder.append(CsvFileWriter.COMMA_DELIMITER);
+        stringBuilder.append( error);stringBuilder.append(CsvFileWriter.COMMA_DELIMITER);
+        stringBuilder.append( rate);stringBuilder.append(CsvFileWriter.COMMA_DELIMITER);
+        stringBuilder.append( vectorSize);stringBuilder.append(CsvFileWriter.COMMA_DELIMITER);
+        stringBuilder.append( vSize);
+        fileWriter.writeData(stringBuilder.toString());
+
+    }
+
+    public MatrixValidator importMatrixValidator(String[] tokens) {
+
+        int counter = 1;
+
+        for (int i = 0 ; i < globalROW; i++) {
+            for (int j = 0; j < globalCOL; j++){
+                matrix[i][j] = new Integer(tokens[counter++]);
+            }
+        }
+
+        maxDepth = new Integer(tokens[counter++]);
+        maxBins = new Integer(tokens[counter++]);
+        numTrees = new Integer(tokens[counter++]);
+        seed = new Integer(tokens[counter++]);
+        error= new Double(tokens[counter++]);
+        rate= new Double(tokens[counter++]);
+        vectorSize= new Integer(tokens[counter++]);
+        vSize= new Integer(tokens[counter++]);
+
+        return this;
     }
 
 
@@ -56,8 +105,8 @@ public class MatrixValidator implements Serializable,Cloneable {
     public int vectorSize;
 
 
-    public static String dbNamePerf = "perf";
-    public static String dbNameModel = "modelNote";
+    public static String dbNamePerf = "perf2";
+    public static String dbNameModel = "modelNote2";
 
     Integer matrix[][];
 
@@ -66,6 +115,7 @@ public class MatrixValidator implements Serializable,Cloneable {
      */
     static public int HS_POS = 0;
     static public int N_HS = 1;
+    static public int N_ROW_RESERVE = 10;
 
     static public int HS_COL = 0;
     static public int HS_PERIOD_COL = 1;
@@ -79,7 +129,7 @@ public class MatrixValidator implements Serializable,Cloneable {
         return col;
     }
 
-    public static int globalROW = CacheStockSector.N_SECTOR+ CacheStockIndice.N_INDICE+ CacheRawMaterial.N_RAW+ N_HS;
+    public static int globalROW = CacheStockSector.N_SECTOR+ CacheStockIndice.N_INDICE+ CacheRawMaterial.N_RAW+ N_HS + N_ROW_RESERVE;
     private static int globalCOL = N_HS_COL+StockAnalyse.N_AT;
 
     public Integer getMaxDepth() {
@@ -615,6 +665,70 @@ public class MatrixValidator implements Serializable,Cloneable {
     public boolean getATSTDDEV(int indice) {
         return matrix[indice][StockAnalyse.COL_STDDEV_POS + N_HS_COL] == 1;
     }
+
+
+
+    /**
+     * get matrix COL_GARCH20_POS for @indice
+     * @param indice
+     * @return
+     */
+    public boolean getATGARCH20(int indice) {
+        return matrix[indice][StockAnalyse.COL_GARCH20_POS + N_HS_COL] == 1;
+    }
+
+
+    /**
+     * get matrix COL_GARCHVOL50_POS for @indice
+     * @param indice
+     * @return
+     */
+    public boolean getATGARCHVOL20(int indice) {
+        return matrix[indice][StockAnalyse.COL_GARCHVOL20_POS + N_HS_COL] == 1;
+    }
+
+
+    /**
+     * get matrix COL_GARCH50_POS for @indice
+     * @param indice
+     * @return
+     */
+    public boolean getATGARCH50(int indice) {
+        return matrix[indice][StockAnalyse.COL_GARCH50_POS + N_HS_COL] == 1;
+    }
+
+
+    /**
+     * get matrix COL_GARCHVOL50_POS for @indice
+     * @param indice
+     * @return
+     */
+    public boolean getATGARCHVOL50(int indice) {
+        return matrix[indice][StockAnalyse.COL_GARCHVOL50_POS + N_HS_COL] == 1;
+    }
+
+
+
+    /**
+     * get matrix COL_GARCH100_POS for @indice
+     * @param indice
+     * @return
+     */
+    public boolean getATGARCH100(int indice) {
+        return matrix[indice][StockAnalyse.COL_GARCH100_POS + N_HS_COL] == 1;
+    }
+
+
+    /**
+     * get matrix COL_GARCHVOL100_POS for @indice
+     * @param indice
+     * @return
+     */
+    public boolean getATGARCHVOL100(int indice) {
+        return matrix[indice][StockAnalyse.COL_GARCHVOL100_POS + N_HS_COL] == 1;
+    }
+
+
 
 
 
