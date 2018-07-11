@@ -3,7 +3,6 @@ package com.mltrading.web.rest;
 import com.mltrading.ml.*;
 
 import com.mltrading.ml.model.ModelType;
-import com.mltrading.models.stock.StockPrediction;
 import com.mltrading.models.stock.StockValidator;
 import com.mltrading.security.AuthoritiesConstants;
 import org.slf4j.Logger;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.security.RolesAllowed;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -47,9 +45,9 @@ public class MLPredictionResource {
             }
 
             for (MLPerformances mlPerformances : l.getPerfList()) {
-                if (mlPerformances.getMl(PredictionPeriodicity.D5) != null && mlPerformances.getMl(PredictionPeriodicity.D5).getValue() ==0.) mlPerformances.setMl(null, PredictionPeriodicity.D5);
-                if (mlPerformances.getMl(PredictionPeriodicity.D20) != null && mlPerformances.getMl(PredictionPeriodicity.D20).getValue() ==0.) mlPerformances.setMl(null, PredictionPeriodicity.D20);
-                if (mlPerformances.getMl(PredictionPeriodicity.D40) != null && mlPerformances.getMl(PredictionPeriodicity.D40).getValue() ==0.) mlPerformances.setMl(null, PredictionPeriodicity.D40);
+                if (mlPerformances.getMl(PredictionPeriodicity.D5) != null && mlPerformances.getMl(PredictionPeriodicity.D5).getCurrentValue() ==0.) mlPerformances.setMl(null, PredictionPeriodicity.D5);
+                if (mlPerformances.getMl(PredictionPeriodicity.D20) != null && mlPerformances.getMl(PredictionPeriodicity.D20).getCurrentValue() ==0.) mlPerformances.setMl(null, PredictionPeriodicity.D20);
+                if (mlPerformances.getMl(PredictionPeriodicity.D40) != null && mlPerformances.getMl(PredictionPeriodicity.D40).getCurrentValue() ==0.) mlPerformances.setMl(null, PredictionPeriodicity.D40);
 
                 mlPerformances.convertUI();
             }
@@ -69,7 +67,7 @@ public class MLPredictionResource {
         MLStocks ms = CacheMLStock.getMLStockCache().get(key);
         if (ms != null) {
            // Map<PredictionPeriodicity, MatrixValidator> mvList = ms.getModel().getValidators();
-            //List<StockValidator>  res = mvList.entrySet().stream().map(p -> new StockValidator().filled(key, p.getKey(),p.getValue())).collect(Collectors.toList());
+            //List<StockValidator>  res = mvList.entrySet().stream().map(p -> new StockValidator().filled(key, p.getKey(),p.getCurrentValue())).collect(Collectors.toList());
             //return res;
 
             return ms.getValidators(ModelType.RANDOMFOREST).entrySet().stream()

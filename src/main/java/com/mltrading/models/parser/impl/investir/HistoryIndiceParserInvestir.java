@@ -38,7 +38,7 @@ public class HistoryIndiceParserInvestir extends ParserCommon implements History
                 if (url.contains("investir"))
                     parser(url,g,range);
 
-            }  catch (IOException e) {
+            }  catch (Exception e) {
                 e.printStackTrace();
                 System.out.println("ERROR for : " + g.getName());
             }
@@ -58,7 +58,7 @@ public class HistoryIndiceParserInvestir extends ParserCommon implements History
     }
 
 
-    private void parser(String url, StockIndice g, int range) throws MalformedURLException {
+    private void parser(String url, StockIndice g, int range) throws MalformedURLException, InterruptedException {
         String text = loadUrl(new URL(url));
 
         Document doc = Jsoup.parse(text);

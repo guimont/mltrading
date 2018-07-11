@@ -79,7 +79,7 @@ public class MLModel {
         return predict/2;*/
     }
 
-    public void saveModel(ModelType type, PredictionPeriodicity period, String codif) {
+    public void saveModel(ModelType type, PredictionPeriodicity period, String codif) throws InterruptedException {
         Model rfModel = modelSet.get(type);
         if (rfModel.getModel() != null)
             rfModel.getValidator().saveModel( codif + ModelType.code(type) + period.toString());

@@ -56,7 +56,7 @@ public class HistorySectorParserGoogle extends ParserCommon implements HistorySe
                 String url = startUrl + g.getCode()+ endUrl + 0;
                 parser(url,g,range);
 
-            }  catch (IOException e) {
+            }  catch (Exception e) {
                 e.printStackTrace();
                 System.out.println("ERROR for : " + g.getName());
             }
@@ -76,7 +76,7 @@ public class HistorySectorParserGoogle extends ParserCommon implements HistorySe
                 try {
                     String url = startUrl + g.getCode()+ endUrl + numPage;
                     parser(url, g, NO_RANGE);
-                }  catch (IOException e) {
+                }  catch (Exception e) {
                     e.printStackTrace();
                     System.out.println("ERROR for : " + g.getName());
                 }
@@ -85,7 +85,7 @@ public class HistorySectorParserGoogle extends ParserCommon implements HistorySe
     }
 
 
-    private void parser(String url, StockSector g, int range) throws MalformedURLException {
+    private void parser(String url, StockSector g, int range) throws MalformedURLException, InterruptedException {
         String text = loadUrl(new URL(url));
 
         Document doc = Jsoup.parse(text);

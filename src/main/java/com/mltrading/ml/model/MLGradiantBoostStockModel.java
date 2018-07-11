@@ -3,7 +3,6 @@ package com.mltrading.ml.model;
 import com.mltrading.ml.CacheMLStock;
 import org.apache.spark.mllib.linalg.Vector;
 import org.apache.spark.mllib.tree.model.GradientBoostedTreesModel;
-import org.apache.spark.mllib.tree.model.RandomForestModel;
 import scala.Serializable;
 
 public class MLGradiantBoostStockModel extends Model<GradientBoostedTreesModel> implements Serializable {
@@ -37,8 +36,8 @@ public class MLGradiantBoostStockModel extends Model<GradientBoostedTreesModel> 
 
     @Override
     void load(String path, String period, String codif) {
-        this.model = GradientBoostedTreesModel.load(CacheMLStock.getJavaSparkContext().sc(), path + "model/Model" + ModelType.code(ModelType.GRADIANTBOOSTTREE) + period.toString() + codif);
-        this.validator.loadValidator(codif + ModelType.code(ModelType.GRADIANTBOOSTTREE) + period.toString());
+        this.model = GradientBoostedTreesModel.load(CacheMLStock.getJavaSparkContext().sc(), path + "model/Model" + ModelType.code(ModelType.GRADIANTBOOSTTREE) + period + codif);
+        this.validator.loadValidator(codif + ModelType.code(ModelType.GRADIANTBOOSTTREE) + period);
     }
 
     @Override

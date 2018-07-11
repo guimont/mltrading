@@ -66,6 +66,9 @@ public class ExtractionResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String extract(@Valid @RequestBody ExtractDTO extDTO) {
 
+        try {
+
+
         if (extDTO.getTarget().equalsIgnoreCase(ALL)) {
             if (extDTO.getPeriod() == AUTO) {
                 log.info("Processing perdiod to update");
@@ -134,6 +137,10 @@ public class ExtractionResource {
         else if (extDTO.getTarget().equalsIgnoreCase(AT)) {
             if (extDTO.getPeriod() == FULL)
                 service.processAT();
+            else if (extDTO.getPeriod() == EXPORT)
+                export.exportAT();
+            else if (extDTO.getPeriod() == IMPORT)
+                export.importAT();
             else
                 service.processATPeriod(extDTO.getPeriod());
         }
@@ -158,7 +165,9 @@ public class ExtractionResource {
 
 
 
-
+        } catch (Exception e) {
+            log.error(e.toString());
+        }
 
 
 
@@ -183,7 +192,13 @@ public class ExtractionResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String getExtractionSpecific() {
         //<stockRepository.deleteAll();
-        service.extractionSpecific("FR0000051732");
+
+        try {
+            service.extractionSpecific("FR0000051732");
+        } catch (Exception e) {
+            log.error(e.toString());
+        }
+
         return "ok";
     }
 
@@ -200,11 +215,17 @@ public class ExtractionResource {
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String getExtractionSeriesDailly() {
+        try {
+
         log.info("Processing perdiod to update");
         int diff = service.getLastUpdateRef();
         log.info("Perdiod to update is: " + diff);
         if (diff > 0)
             service.extractionCurrent(articleRepository,diff);
+    } catch (Exception e) {
+        log.error(e.toString());
+    }
+
         return "ok";
     }
 
@@ -212,7 +233,12 @@ public class ExtractionResource {
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String getExtractionSeriesWeekly() {
+        try {
         service.extractionCurrent(articleRepository,5);
+    } catch (Exception e) {
+        log.error(e.toString());
+    }
+
         return "ok";
     }
 
@@ -260,7 +286,12 @@ public class ExtractionResource {
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String processAT() {
+        try {
         service.processAT();
+        } catch (Exception e) {
+            log.error(e.toString());
+        }
+
         return "ok";
     }
 
@@ -343,7 +374,7 @@ public class ExtractionResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String evaluate() {
 
-        MlForecast.updatePredictor(ModelType.RANDOMFOREST);
+
 
 
         return "ok";

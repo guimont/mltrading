@@ -461,7 +461,7 @@ public class MatrixValidator implements Serializable,Cloneable {
      * @param error
      * @param rate
      */
-    public void save(String code, int error, double rate) {
+    public void save(String code, int error, double rate) throws InterruptedException {
         BatchPoints bp = InfluxDaoConnector.getBatchPointsV1(dbNamePerf);
 
         Point.Builder pt = Point.measurement(code);
@@ -514,7 +514,7 @@ public class MatrixValidator implements Serializable,Cloneable {
         }
     }
 
-    public void saveModel(String code) {
+    public void saveModel(String code) throws InterruptedException {
         BatchPoints bp = InfluxDaoConnector.getBatchPointsV1(dbNameModel);
         Point.Builder pt = Point.measurement(code);
         for (int i = 0 ; i < globalROW; i++) {

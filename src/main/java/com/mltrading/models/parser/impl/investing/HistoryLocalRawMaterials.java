@@ -54,7 +54,7 @@ public class HistoryLocalRawMaterials extends ParserCommon implements HistoryRaw
                 System.out.println("url: " + url);
                 parser(r,NO_RANGE,url);
 
-            } catch (MalformedURLException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -70,14 +70,14 @@ public class HistoryLocalRawMaterials extends ParserCommon implements HistoryRaw
         for (StockRawMat r: CacheRawMaterial.getCache().values()) {
             try {
                parser(r,range,r.getUrl());
-            } catch (MalformedURLException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
 
-    private void parser(StockRawMat r, int range, String url) throws MalformedURLException {
+    private void parser(StockRawMat r, int range, String url) throws MalformedURLException, InterruptedException {
         String text = loadUrl(new URL(url));
         Document doc = Jsoup.parse(text);
         Elements links = doc.select(refCode);

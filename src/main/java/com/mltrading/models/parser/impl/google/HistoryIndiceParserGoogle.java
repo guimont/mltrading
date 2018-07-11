@@ -61,7 +61,7 @@ public class HistoryIndiceParserGoogle extends ParserCommon implements HistoryIn
                 String url = startUrl + g.getPlace() + separator + g.getCodeUrl()+ endUrl + 0;
                 parser(url,g);
 
-            }  catch (IOException e) {
+            }  catch (Exception e) {
                 e.printStackTrace();
                 System.out.println("ERROR for : " + g.getName());
             }
@@ -83,7 +83,7 @@ public class HistoryIndiceParserGoogle extends ParserCommon implements HistoryIn
 
                     parser(url, g);
 
-                }  catch (IOException e) {
+                }  catch (Exception e) {
                     e.printStackTrace();
                     System.out.println("ERROR for : " + g.getName());
                 }
@@ -92,7 +92,7 @@ public class HistoryIndiceParserGoogle extends ParserCommon implements HistoryIn
     }
 
 
-    private void parser(String url, StockIndice g) throws MalformedURLException {
+    private void parser(String url, StockIndice g) throws MalformedURLException, InterruptedException {
         String text = loadUrl(new URL(url));
 
         Document doc = Jsoup.parse(text);

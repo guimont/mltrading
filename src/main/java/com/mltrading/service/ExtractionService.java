@@ -99,7 +99,7 @@ public class ExtractionService {
     }
 
 
-    public void extractionCurrent(ArticleRepository articleRepository,int period) {
+    public void extractionCurrent(ArticleRepository articleRepository,int period) throws InterruptedException {
         histParser.fetchCurrent(period);
         indiceParser.fetchCurrent(period);
         sectorParser.fetchCurrent(period);
@@ -118,7 +118,7 @@ public class ExtractionService {
     }
     //
 
-    public  void extractionSpecific(String code) {
+    public  void extractionSpecific(String code) throws InterruptedException {
         StockGeneral g = CacheStockGeneral.getIsinCache().get(code);
         histParser.fetchSpecific(g);
         Analyse a = new Analyse();
@@ -197,12 +197,12 @@ public class ExtractionService {
     }
 
 
-    public void processAT() {
+    public void processAT() throws InterruptedException {
         Analyse a = new Analyse();
         a.processAll();
     }
 
-    public void processATPeriod(int period) {
+    public void processATPeriod(int period) throws InterruptedException {
         Analyse a = new Analyse();
         a.processDaily(period);
     }

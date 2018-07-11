@@ -146,7 +146,7 @@ public class MLStock  implements Serializable {
      * fomat is 'codif''V''period'. Example ORAVD5
      * @param type
      */
-    public void saveValidator(ModelType type) {
+    public void saveValidator(ModelType type) throws InterruptedException {
         this.model.saveModel(type, period, codif);
     }
 

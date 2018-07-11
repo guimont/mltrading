@@ -40,6 +40,7 @@ public class CacheStockGeneral {
         aMap.put("FR0000120644", new StockGeneral("FR0000120644","Danone","BN","xpar","PA", "FRCG" ,  "FRFPR"));
         aMap.put("FR0010208488", new StockGeneral("FR0010208488","Engie","ENGI","xpar","PA", "FRUT" ,  "FRGWM"));
         aMap.put("FR0000121667", new StockGeneral("FR0000121667","Essilor Intl","EI","xpar","PA", "FRHC" ,  "FRHC"));
+        aMap.put("FR0000052292", new StockGeneral("FR0000052292","HERMES INTL","RMS","xpar","PA", "FRCG" ,  "FRCG"));
         aMap.put("FR0000121485", new StockGeneral("FR0000121485","Kering","KER","xpar","PA", "FRCS" ,  "FRGR"));
         //aMap.put("FR0000121964", new StockGeneral("FR0000121964","klepierre","LI","xpar","PA", "FRFIN" ,  "FRRE"));
         aMap.put("FR0000120321", new StockGeneral("FR0000120321","Loreal","OREAL","xpar","PA", "FRCG" ,  "FRPG"));
@@ -60,10 +61,11 @@ public class CacheStockGeneral {
         aMap.put("FR0000130809", new StockGeneral("FR0000130809","Societe Generale","GLE","xpar","PA", "FRFIN" ,  "FRFIN"));
         aMap.put("BE0003470755", new StockGeneral("BE0003470755","Solvay","SOLB","xbru","BR", "FRBM" ,  "FRBM"));
         aMap.put("FR0000121220", new StockGeneral("FR0000121220","Sodexo","SW","xpar","PA", "FRCS" ,  "FRCS"));
-        aMap.put("NL0000226223", new StockGeneral("NL0000226223","STEF","STM","xpar","PA", "FRTEC" ,  "FRTEC"));
+        aMap.put("NL0000226223", new StockGeneral("NL0000226223","stmicroelectronics","STM","xpar","PA", "FRTEC" ,  "FRTEC"));
         aMap.put("gb00bdsfg982", new StockGeneral("gb00bdsfg982","technipfmc","FTI","xpar","PA", "FROG" ,  "FROG"));
         aMap.put("FR0000120271", new StockGeneral("FR0000120271","Total","FP","xpar","PA", "FROG" ,  "FROG"));
-        aMap.put("FR0000124711", new StockGeneral("FR0000124711","Unibail-Rodamco","UL","xams","PA", "FRFIN" ,  "FRRE"));
+        aMap.put("FR0013326246", new StockGeneral("FR0013326246","Unibail-Rodamco-we","URW","xams","PA", "FRFIN" ,  "FRRE"));
+        //aMap.put("FR0000124711", new StockGeneral("FR0000124711","Unibail-Rodamco","UL","xams","PA", "FRFIN" ,  "FRRE"));
         aMap.put("FR0013176526", new StockGeneral("FR0013176526","Valeo","FR","xpar","PA", "FRCG" ,  "FRAP")); // FR0000130338
         aMap.put("FR0000124141", new StockGeneral("FR0000124141","Veolia environnement","VIE","xpar","PA", "FRUT" ,  "FRGWM"));
         aMap.put("FR0000125486", new StockGeneral("FR0000125486","Vinci","DG","xpar","PA", "FRIN" ,  "FRCM"));
@@ -184,7 +186,7 @@ public class CacheStockGeneral {
         //https://investir.lesechos.fr/cours/profil-societe-action-hermes-intl,xpar,rms,fr0000052292,isin.html
         aMap.put("FR0000052292", new StockGeneral("FR0000052292","HERMES INTL","RMS","xpar","PA", "FRCG" ,  "FRCG"));
         //https://investir.lesechos.fr/cours/profil-societe-action-hsbc-holdings,xpar,hsb,gb0005405286,isin.html
-        aMap.put("GB0005405286", new StockGeneral("GB0005405286","HERMES INTL","HSB","xpar","PA", "FRFIN" ,  "FRFIN"));
+        aMap.put("GB0005405286", new StockGeneral("GB0005405286","HSBC HOLDING","HSB","xpar","PA", "FRFIN" ,  "FRFIN"));
         //https://investir.lesechos.fr/cours/profil-societe-action-icade,xpar,icad,fr0000035081,isin.html
         aMap.put("FR0000035081", new StockGeneral("FR0000035081","ICADE","ICAD","xpar","PA", "FRFIN" ,  "FRFIN"));
         //https://investir.lesechos.fr/cours/profil-societe-action-iliad,xpar,ild,fr0004035913,isin.html

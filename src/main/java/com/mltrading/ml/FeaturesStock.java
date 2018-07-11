@@ -135,7 +135,7 @@ public class FeaturesStock extends Feature implements Serializable {
 
                     final StockHistory res = StockHistory.getStockHistoryDayOffset(codif, date, PredictionPeriodicity.convert(p));
                     if (res != null) {
-                        fs.setResultValue(res.getValue(), p);
+                        fs.setResultValue(res.getCurrentValue(), p);
                         fs.setDate(res.getDay(), p);
                     } else {
                         fs.setResultValue(0., p);
@@ -265,6 +265,7 @@ public class FeaturesStock extends Feature implements Serializable {
             for (StockSector g : CacheStockSector.getSectorCache().values()) {
                 int row = validator.getIndice(g.getRow(), MatrixValidator.TypeHistory.SEC);
                 //if (row != rowS) { //if same row, sector of this stock already done
+                log.trace("get sector " + g.getCodif() +"stock for: " + codif + " and date: " + date);
                 filledFeaturesStock(fs,validator,row,date,g.getCodif());
             }
 
@@ -273,14 +274,14 @@ public class FeaturesStock extends Feature implements Serializable {
         /** ALL indice*/
         for (StockIndice g : CacheStockIndice.getIndiceCache().values()) {
             int row = validator.getIndice(g.getRow(), MatrixValidator.TypeHistory.IND);
+            log.trace("get indice " + g.getCodif() +"stock for: " + codif + " and date: " + date);
             filledFeaturesStock(fs,validator,row,date,g.getCodif());
-
-
         }
 
         /** ALL raw*/
         for (StockRawMat g : CacheRawMaterial.getCache().values()) {
             int row = validator.getIndice(g.getRow(), MatrixValidator.TypeHistory.RAW);
+            log.trace("get raw " + g.getCodif() +"stock for: " + codif + " and date: " + date);
             filledFeaturesStock(fs,validator,row,date,g.getCodif());
         }
 

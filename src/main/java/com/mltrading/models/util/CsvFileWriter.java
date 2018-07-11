@@ -1,6 +1,7 @@
 package com.mltrading.models.util;
 
 
+import com.mltrading.models.stock.StockAnalyse;
 import com.mltrading.models.stock.StockHistory;
 
 import java.io.FileWriter;
@@ -75,6 +76,46 @@ public class CsvFileWriter {
             fileWriter.append(String.valueOf(sh.getHighest()));
             fileWriter.append(COMMA_DELIMITER);
             fileWriter.append(String.valueOf(sh.getVolume()));
+            fileWriter.append(NEW_LINE_SEPARATOR);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void writeData(String code,StockAnalyse sa) {
+        try {
+            fileWriter.append(code);
+            fileWriter.append(COMMA_DELIMITER);
+            fileWriter.append(sa.getDay());
+            fileWriter.append(COMMA_DELIMITER);
+            fileWriter.append(String.valueOf(sa.getMme12()));
+            fileWriter.append(COMMA_DELIMITER);
+            fileWriter.append(String.valueOf(sa.getMme26()));
+            fileWriter.append(COMMA_DELIMITER);
+            fileWriter.append(String.valueOf(sa.getMacd()));
+            fileWriter.append(COMMA_DELIMITER);
+            fileWriter.append(String.valueOf(sa.getMma20()));
+            fileWriter.append(COMMA_DELIMITER);
+            fileWriter.append(String.valueOf(sa.getMma50()));
+            fileWriter.append(COMMA_DELIMITER);
+            fileWriter.append(String.valueOf(sa.getMomentum()));
+            fileWriter.append(COMMA_DELIMITER);
+            fileWriter.append(String.valueOf(sa.getStdDev()));
+            fileWriter.append(COMMA_DELIMITER);
+            fileWriter.append(String.valueOf(sa.getGarch20()));
+            fileWriter.append(COMMA_DELIMITER);
+            fileWriter.append(String.valueOf(sa.getGarch50()));
+            fileWriter.append(COMMA_DELIMITER);
+            fileWriter.append(String.valueOf(sa.getGarch100()));
+            fileWriter.append(COMMA_DELIMITER);
+            fileWriter.append(String.valueOf(sa.getGarch_vol_20()));
+            fileWriter.append(COMMA_DELIMITER);
+            fileWriter.append(String.valueOf(sa.getGarch_vol_50()));
+            fileWriter.append(COMMA_DELIMITER);
+            fileWriter.append(String.valueOf(sa.getGarch_vol_100()));
+
+
             fileWriter.append(NEW_LINE_SEPARATOR);
         } catch (IOException e) {
             e.printStackTrace();

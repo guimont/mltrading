@@ -34,13 +34,13 @@ public class HistoryVolatilityParserInvesting extends ParserCommon implements Vo
     public void fetchCurrent(int period) {
         try {
             parser(url, period);
-        } catch (MalformedURLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
 
-    private void parser(String url,  int range) throws MalformedURLException {
+    private void parser(String url,  int range) throws MalformedURLException, InterruptedException {
         String text = loadUrl(new URL(url));
 
         Document doc = Jsoup.parse(text);

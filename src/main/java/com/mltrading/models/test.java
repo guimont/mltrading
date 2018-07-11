@@ -1,17 +1,24 @@
 package com.mltrading.models;
 
 import com.mltrading.config.MLProperties;
+import com.mltrading.models.parser.Analyse;
 import com.mltrading.models.parser.impl.boursorama.RealTimeSectorBoursorama;
 import com.mltrading.models.parser.impl.investing.HistoryIndiceParserInvesting;
+import com.mltrading.models.parser.impl.investing.HistoryParserInvesting;
 import com.mltrading.models.parser.impl.investing.HistoryVolatilityParserInvesting;
 import com.mltrading.models.parser.impl.investir.HistoryParserInvestir;
 import com.mltrading.models.parser.impl.yahoo.HistoryIndiceParserYahoo;
+import com.mltrading.models.stock.StockGeneral;
+import com.mltrading.models.stock.cache.CacheStockGeneral;
 import com.mltrading.models.util.CsvFileReader;
 import com.mltrading.service.ExtractionService;
 
 import com.mltrading.service.UserService;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by gmo on 18/06/2015.
@@ -43,6 +50,77 @@ public class test {
 
         }
     }*/
+/*
+    public static void main(String[] args) {
+        MLProperties.load();
+        try {
+            /*HistoryParserInvesting importStock = new HistoryParserInvesting();
+            importStock.loader("localhost:7090", "RMS", "FR0000052292"); //RMS hermes
+
+            System.out.println("Start analyse");
+            Analyse analyse = new Analyse();
+
+            analyse.processAnalysisAll("RMS");
+
+            System.out.println("**************************");
+            System.out.println("END analyse");
+            System.out.println("**************************");*/
+
+            /*HistoryParserInvesting importStock = new HistoryParserInvesting();
+            importStock.loader("localhost:7090", "URW", "FR0013326246"); //RMS hermes
+
+            System.out.println("Start analyse");
+            Analyse analyse = new Analyse();
+
+            analyse.processAnalysisAll("URW");
+
+            System.out.println("**************************");
+            System.out.println("END analyse");
+            System.out.println("**************************");*/
+            /*HistoryParserInvesting importStock = new HistoryParserInvesting();
+            importStock.loader("localhost:7090", "STM", "NL0000226223"); //RMS hermes
+
+            System.out.println("Start analyse");
+            Analyse analyse = new Analyse();
+
+            analyse.processAnalysisAll("STM");
+
+            System.out.println("**************************");
+            System.out.println("END analyse");
+            System.out.println("**************************");*
+
+            HistoryParserInvesting importStock = new HistoryParserInvesting();
+            importStock.loader("localhost:7090", "FTI", "gb00bdsfg982"); //RMS hermes
+
+            System.out.println("Start analyse");
+            Analyse analyse = new Analyse();
+
+            analyse.processAnalysisAll("FTI");
+
+            System.out.println("**************************");
+            System.out.println("END analyse");
+            System.out.println("**************************");
+
+
+        }catch (Exception e) {
+            System.out.println(e);
+        }
+
+    }
+    /*
+
+    public static void main(String[] args) {
+        MLProperties.load();
+        List<StockGeneral> l = new ArrayList(CacheStockGeneral.getIsinCache().values());
+
+
+        for (StockGeneral s : l) {
+            System.out.println(s.getCodif());
+        }
+    }
+
+/*
+     public static void main(String[] args) {
 
 /*
     public static void main(String[] args) {

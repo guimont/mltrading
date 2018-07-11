@@ -89,6 +89,7 @@ public class TimeSeriesDaoInfluxImpl implements TimeSeriesDao,DaoChecker {
     @Override
     public List<StockHistory> extract(final String code, final Map<String,Map<String, Integer>> indexCache ,final  Map<String,List<StockHistory>> historyCache ) {
         String query = "SELECT * FROM "+code +" where time > '2010-01-01T00:00:00Z' ORDER BY ASC";
+        //QueryResult list = (QueryResult) Requester.sendRequest(new QueryRequest(query, dbName));
         QueryResult list = (QueryResult) Requester.sendRequest(new QueryRequest(query, dbName));
 
         if (checker(list) == false)

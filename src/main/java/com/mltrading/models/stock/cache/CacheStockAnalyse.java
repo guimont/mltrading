@@ -77,6 +77,31 @@ public class CacheStockAnalyse extends CacheStockTimeSeries<String, Integer,Stoc
 
 
 
+    /**
+     * get all elements
+     * @param code
+
+     * @return
+     */
+    public List<StockAnalyse> getAllStockAnalyse(final String code) {
+        return getAllStockAnalyse(code, true);
+    }
+
+    /**
+     * get all elements
+     * @param code
+     * @param inMemory
+     * @return
+     */
+    public List<StockAnalyse> getAllStockAnalyse(final String code,  boolean inMemory) {
+        if (inMemory == true) {
+            List<StockAnalyse> list = getInCache(code);
+            return(list);
+        }
+        else
+            throw  new NotImplementedException();
+    }
+
 
 
     /**

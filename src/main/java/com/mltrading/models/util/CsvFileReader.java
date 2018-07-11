@@ -3,8 +3,10 @@ package com.mltrading.models.util;
 import com.mltrading.dao.InfluxDaoConnector;
 
 import com.mltrading.ml.MatrixValidator;
+import com.mltrading.models.parser.Analyse;
 import com.mltrading.models.parser.HistoryCommon;
 import com.mltrading.models.parser.HistoryParser;
+import com.mltrading.models.stock.StockAnalyse;
 import com.mltrading.models.stock.StockHistory;
 import org.influxdb.dto.BatchPoints;
 
@@ -33,13 +35,19 @@ public class CsvFileReader implements HistoryCommon{
     private static final int VOLUME_IDX = 6;
 
 
+
+
     BufferedReader fileReader = null;
 
-    public CsvFileReader(String fileName) {
+    public CsvFileReader(String fileName, boolean isAT) {
         System.out.println("############################################################");
         System.out.println("Import start !!!");
         System.out.println("############################################################");
-       readData(fileName);
+
+        if (isAT)
+            readDataAT(fileName);
+        else
+            readData(fileName);
     }
 
     public CsvFileReader() {
@@ -125,6 +133,8 @@ public class CsvFileReader implements HistoryCommon{
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         } finally {
             try {
                 System.out.println("############################################################");
@@ -138,6 +148,99 @@ public class CsvFileReader implements HistoryCommon{
 
         }
     }
+
+
+    private static final int MME12 = 2;
+    private static final int MME26 = 3;
+    private static final int MACD = 4;
+    private static final int MMA20 = 5;
+    private static final int MMA50 = 6;
+    private static final int MOMENTUM = 7;
+    private static final int STDDEV = 8;
+    private static final int GARCH20 = 9;
+    private static final int GARCH50 = 10;
+    private static final int GARCH100 = 11;
+    private static final int GARCHVOL20 = 12;
+    private static final int GARCHVOL50 = 13;
+    private static final int GARCHVOL100 = 14;
+
+    private void readDataAT(String fileName) {
+        try {
+
+            fileReader = new BufferedReader(new FileReader(fileName));
+            fileReader.readLine();
+            String line = "";
+
+
+
+
+
+            while ((line = fileReader.readLine()) != null) {
+                String[] tokens = line.split(COMMA_DELIMITER);
+
+                if (tokens.length > 0) {
+                    String code = tokens[CODE_IDX];
+                    String date = tokens[DATE_IDX];
+                    String mme12 = tokens[MME12];
+                    String mme26 = tokens[MME26];
+                    String macd = tokens[MACD];
+                    String mma20 = tokens[MMA20];
+                    String mma50 = tokens[MMA50];
+                    String momentum = tokens[MOMENTUM];
+                    String stddev = tokens[STDDEV];
+                    String garch20 = tokens[GARCH20];
+                    String garch50 = tokens[GARCH50];
+                    String garch100 = tokens[GARCH100];
+                    String garchvol20 = tokens[GARCHVOL20];
+                    String garchvol50 = tokens[GARCHVOL50];
+                    String garchvol100 = tokens[GARCHVOL100];
+
+
+
+                    StockAnalyse sa = new StockAnalyse();
+                    sa.setDay(date);
+                    sa.setMme12(new Double(mme12));
+                    sa.setMme26(new Double(mme26));
+                    sa.setMacd(new Double(macd));
+                    sa.setMma20(new Double(mma20));
+                    sa.setMma50(new Double(mma50));
+                    sa.setMomentum(new Double(momentum));
+                    sa.setStdDev(new Double(stddev));
+                    sa.setGarch20(new Double(garch20));
+                    sa.setGarch50(new Double(garch50));
+                    sa.setGarch100(new Double(garch100));
+                    sa.setGarch_vol_20(new Double(garchvol20));
+                    sa.setGarch_vol_50(new Double(garchvol50));
+                    sa.setGarch_vol_100(new Double(garchvol100));
+
+                    Analyse.saveAnalysis(code, sa);
+
+                }
+            }
+
+
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                System.out.println("############################################################");
+                System.out.println("Import is end  !!!");
+                System.out.println("############################################################");
+                fileReader.close();
+            } catch (IOException e) {
+                System.out.println("Error while closing fileReader !!!");
+                e.printStackTrace();
+            }
+
+        }
+    }
+
+
 
 
 }

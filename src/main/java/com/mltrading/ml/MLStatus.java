@@ -32,14 +32,14 @@ public class MLStatus implements Serializable,DaoChecker{
 
     private int countD1 = 0, countD5 = 0, countD20 = 0, countD40 = 0;
 
-    private List<MLPerformances> perfList;
+    private List<MLPerformances> perfList = null;
 
 
     /**
      * save perf for all period
      * @param code
      */
-    public void savePerf(String code, ModelType type) {
+    public void savePerf(String code, ModelType type) throws InterruptedException {
         for (MLPerformances perfs : perfList) {
             perfs.save(code, type);
         }
@@ -50,7 +50,7 @@ public class MLStatus implements Serializable,DaoChecker{
      * @param code
      * @param p
      */
-    public void savePerf(String code, PredictionPeriodicity p, ModelType type) {
+    public void savePerf(String code, PredictionPeriodicity p, ModelType type) throws InterruptedException {
         for (MLPerformances perfs : perfList) {
             perfs.save(code,p, type);
         }
@@ -58,7 +58,7 @@ public class MLStatus implements Serializable,DaoChecker{
     }
 
 
-    public void saveLastPerf(String code, ModelType type) {
+    public void saveLastPerf(String code, ModelType type) throws InterruptedException {
         perfList.get(perfList.size()-1).save(code,type);
     }
 
@@ -82,26 +82,26 @@ public class MLStatus implements Serializable,DaoChecker{
         int errD1 = 0, errD5 =0, errD20 =0, errD40 =0;
         int countD1 = 0, countD5 = 0, countD20 = 0, countD40 = 0;
         for (MLPerformances p : perfList) {
-            if (p.getMl(PredictionPeriodicity.D1) != null && p.getMl(PredictionPeriodicity.D1).getValue()!=0) {
+            if (p.getMl(PredictionPeriodicity.D1) != null && p.getMl(PredictionPeriodicity.D1).getCurrentValue()!=0) {
                 avgD1 += p.getMl(PredictionPeriodicity.D1).getRealyield() - p.getMl(PredictionPeriodicity.D1).getYield();
                 errD1 += p.getMl(PredictionPeriodicity.D1).isSign() == false ? 1 : 0;
                 countD1++;
             }
 
-            if (p.getMl(PredictionPeriodicity.D5) != null && p.getMl(PredictionPeriodicity.D5).getValue()!=0) {
+            if (p.getMl(PredictionPeriodicity.D5) != null && p.getMl(PredictionPeriodicity.D5).getCurrentValue()!=0) {
                 avgD5 += p.getMl(PredictionPeriodicity.D5).getRealyield() - p.getMl(PredictionPeriodicity.D5).getYield();
                 errD5 += p.getMl(PredictionPeriodicity.D5).isSign() == false ? 1 : 0;
                 countD5++;
             }
 
 
-            if (p.getMl(PredictionPeriodicity.D20) != null && p.getMl(PredictionPeriodicity.D20).getValue()!=0) {
+            if (p.getMl(PredictionPeriodicity.D20) != null && p.getMl(PredictionPeriodicity.D20).getCurrentValue()!=0) {
                 avgD20 += p.getMl(PredictionPeriodicity.D20).getRealyield() - p.getMl(PredictionPeriodicity.D20).getYield();
                 errD20 += p.getMl(PredictionPeriodicity.D20).isSign() == false ? 1 : 0;
                 countD20++;
             }
 
-            if (p.getMl(PredictionPeriodicity.D40) != null && p.getMl(PredictionPeriodicity.D40).getValue()!=0) {
+            if (p.getMl(PredictionPeriodicity.D40) != null && p.getMl(PredictionPeriodicity.D40).getCurrentValue()!=0) {
                 avgD40 += p.getMl(PredictionPeriodicity.D40).getRealyield() - p.getMl(PredictionPeriodicity.D40).getYield();
                 errD40 += p.getMl(PredictionPeriodicity.D40).isSign() == false ? 1 : 0;
                 countD40++;
@@ -301,7 +301,7 @@ public class MLStatus implements Serializable,DaoChecker{
 
     }
 
-
+/* old version
     static public int DATE_COLUMN = 1;
     static public int ERROR_COLUMN = 2;
     static public int PREDICTION_COLUMN = 3;
@@ -309,6 +309,16 @@ public class MLStatus implements Serializable,DaoChecker{
     static public int REALYIELD_COLUMN = 5;
     static public int SIGN_COLUMN = 6;
     static public int VALUE_COLUMN = 7;
+    static public int YIELD_COLUMN = 8;*/
+
+
+    static public int VALUE_COLUMN = 1;
+    static public int DATE_COLUMN = 2;
+    static public int ERROR_COLUMN = 3;
+    static public int PREDICTION_COLUMN = 4;
+    static public int REALVALUE_COLUMN = 5;
+    static public int REALYIELD_COLUMN = 6;
+    static public int SIGN_COLUMN = 7;
     static public int YIELD_COLUMN = 8;
 
     public static void populate(MLPerformance mlp, QueryResult meanQ, int i) {
@@ -318,7 +328,7 @@ public class MLStatus implements Serializable,DaoChecker{
         mlp.setRealvalue((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(REALVALUE_COLUMN));
         mlp.setRealyield((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(REALYIELD_COLUMN));
         mlp.setSign((boolean) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(SIGN_COLUMN));
-        mlp.setValue((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(VALUE_COLUMN));
+        mlp.setCurrentValue((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(VALUE_COLUMN));
         mlp.setYield((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(YIELD_COLUMN));
 
     }

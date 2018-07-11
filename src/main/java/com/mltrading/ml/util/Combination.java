@@ -70,8 +70,12 @@ public class Combination extends Evaluate{
         if (null != mls) {
             mls.getStatus(type).calculeAvgPrd();
 
-            mls.getModel(p).getValidator(type).save(mls.getCodif() + ModelType.code(type) +
-                p, mls.getStatus(type).getErrorRate(p), mls.getStatus(type).getAvg(p));
+            try {
+                mls.getModel(p).getValidator(type).save(mls.getCodif() + ModelType.code(type) +
+                    p, mls.getStatus(type).getErrorRate(p), mls.getStatus(type).getAvg(p));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
         } else {
             CacheMLActivities.addActivities(new MLActivities("optimize", codif, "failed", 0, 0, true));

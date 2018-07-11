@@ -71,7 +71,7 @@ public class DiaryParserBoursorama extends ParserCommon implements DiaryParser {
                 System.out.println(g.getRealCodif());
                 parser(url, g, dateTime);
 
-            }  catch (IOException e) {
+            }  catch (Exception e) {
                 e.printStackTrace();
                 System.out.println("ERROR for : " + g.getName());
             }
@@ -82,7 +82,7 @@ public class DiaryParserBoursorama extends ParserCommon implements DiaryParser {
 
 
 
-    private void parser(String url, StockGeneral g, DateTime dateTime) throws MalformedURLException {
+    private void parser(String url, StockGeneral g, DateTime dateTime) throws MalformedURLException, InterruptedException {
 
         String text = loadUrl(new URL(url));
 

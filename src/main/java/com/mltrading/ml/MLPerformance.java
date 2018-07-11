@@ -17,11 +17,11 @@ public class MLPerformance implements Serializable{
     private String date;
     private double prediction;
 
-    /** value in Dday.. depend on period*/
-    private double realvalue;
+    /** currentValue in Dday.. depend on period*/
+    private double realValue;
 
-    /** day value same of all vlue in MLPerformances*/
-    private double value;
+    /** day currentValue same of all vlue in MLPerformances*/
+    private double currentValue;
 
 
     private double error;
@@ -41,15 +41,15 @@ public class MLPerformance implements Serializable{
 
     public MLPerformance() {}
 
-    public MLPerformance(String date, double prediction, double  value, double realvalue,double yield, double realyield, boolean sign) {
+    public MLPerformance(String date, double prediction, double realValue, double  currentValue, double yield, double realyield, boolean sign) {
         this.yield = yield;
         this.realyield = realyield;
         this.sign = sign;
         this.date = date;
         this.prediction = prediction;
-        this.realvalue = realvalue;
-        this.value = value;
-        this.error = realvalue - prediction;
+        this.realValue = realValue;
+        this.currentValue = currentValue;
+        this.error = realValue - prediction;
     }
 
 
@@ -70,19 +70,19 @@ public class MLPerformance implements Serializable{
     }
 
     public double getRealvalue() {
-        return realvalue;
+        return realValue;
     }
 
     public void setRealvalue(double realvalue) {
-        this.realvalue = realvalue;
+        this.realValue = realvalue;
     }
 
-    public double getValue() {
-        return value;
+    public double getCurrentValue() {
+        return currentValue;
     }
 
-    public void setValue(double currentValue) {
-        this.value = currentValue;
+    public void setCurrentValue(double currentValue) {
+        this.currentValue = currentValue;
     }
 
     public double getYield() {
@@ -114,7 +114,13 @@ public class MLPerformance implements Serializable{
     }
 
     public static MLPerformance calculYields(String date, double prediction, double  realvalue, double currentValue) {
-        //sign : value - currentValue
+        //sign : currentValue - currentValue
+
+        if (currentValue == 0) {
+            System.out.println("unexpected error go to evil");
+            return new MLPerformance(date,prediction, realvalue, currentValue, 0, 0, false);
+        }
+
         boolean sign =(int) Math.signum(realvalue - currentValue) == (int) Math.signum(prediction - currentValue);
         double yield_1D = calculYield(prediction, currentValue);
         double realyield_1D = calculYield(realvalue, currentValue);
@@ -130,7 +136,7 @@ public class MLPerformance implements Serializable{
      * @return
      */
     public static MLPerformance calculOnlyYields(String date, double prediction,double yield) {
-        //sign : value - currentValue
+        //sign : currentValue - currentValue
         boolean sign =(int) Math.signum(prediction) == (int) Math.signum(yield);
 
 
@@ -140,15 +146,15 @@ public class MLPerformance implements Serializable{
 
 
 
-    public void savePerformance(BatchPoints bp, String code) {
+    public void savePerformance(BatchPoints bp, String code) throws InterruptedException {
         Point pt = Point.measurement(code)
             .field("datePred",date)
             .field("sign", sign)
             .field("yield", yield)
             .field("realyield", realyield)
             .field("prediction", prediction)
-            .field("realvalue", realvalue)
-            .field("value", value)
+            .field("realvalue", realValue)
+            .field("currentValue", currentValue)
             .field("error", error)
             .build();
         bp.point(pt);
@@ -163,8 +169,8 @@ public class MLPerformance implements Serializable{
         cloneObject.yield = this.yield;
         cloneObject.realyield = this.realyield;
         cloneObject.prediction = this.prediction;
-        cloneObject.realvalue = this.realvalue;
-        cloneObject.value = this.value;
+        cloneObject.realValue = this.realValue;
+        cloneObject.currentValue = this.currentValue;
         cloneObject.error = this.error;
 
         return cloneObject;

@@ -2,6 +2,9 @@ package com.mltrading.models.stock;
 
 
 import com.mltrading.models.stock.cache.CacheStockAnalyse;
+import org.influxdb.dto.BatchPoints;
+
+import java.util.List;
 
 /**
  * Created by gmo on 16/11/2015.
@@ -180,6 +183,12 @@ public class StockAnalyse extends StockBase{
         return a;*/
     }
 
+    public static List<StockAnalyse> getAllAnalyse(final String code) {
+        return cache.getAllStockAnalyse(code);
+
+    }
+
+
     @Override
     protected Object clone() throws CloneNotSupportedException {
         StockAnalyse copy = new StockAnalyse();
@@ -199,4 +208,6 @@ public class StockAnalyse extends StockBase{
 
         return copy;
     }
+
+
 }

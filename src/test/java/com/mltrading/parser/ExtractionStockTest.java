@@ -27,7 +27,11 @@ public class ExtractionStockTest {
         histParser.fetchSpecific(testSg);
 
         Analyse a = new Analyse();
-        a.processAnalysisAll(testSg.getCodif());
+        try {
+            a.processAnalysisAll(testSg.getCodif());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
     }
 

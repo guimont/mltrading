@@ -46,7 +46,7 @@ public class Analyse {
 
 
 
-    public void processAll() {
+    public void processAll() throws InterruptedException {
 
         for (StockGeneral g: CacheStockGeneral.getIsinCache().values()) {
             processAnalysisAll(g.getCodif());
@@ -70,7 +70,7 @@ public class Analyse {
 
     static int MARGIN = 4;
 
-    public void processDaily(int period) {
+    public void processDaily(int period) throws InterruptedException {
         List<String> dateList = null;
 
         log.info("Start analyse for period: " + period);
@@ -142,7 +142,7 @@ public class Analyse {
 
 
 
-    public void processAllRaw() {
+    public void processAllRaw() throws InterruptedException {
 
         for (StockRawMat g : CacheRawMaterial.getCache().values()) {
             processAnalysisAll(g.getCode());
@@ -150,7 +150,7 @@ public class Analyse {
     }
 
 
-    public void processSectorAll() {
+    public void processSectorAll() throws InterruptedException {
 
         for (StockSector g : CacheStockSector.getSectorCache().values()) {
             processAnalysisAll(g.getCode());
@@ -158,14 +158,14 @@ public class Analyse {
 
     }
 
-    public void processVcacAll() {
+    public void processVcacAll() throws InterruptedException {
 
         processAnalysisAll("VCAC");
     }
 
 
 
-    public void processIndiceAll() {
+    public void processIndiceAll() throws InterruptedException {
 
         for (StockIndice g : CacheStockIndice.getIndiceCache().values()) {
             processAnalysisAll(g.getCode());
@@ -173,7 +173,7 @@ public class Analyse {
 
     }
 
-    public void processAnalysisSpecific(String code, String date) {
+    public void processAnalysisSpecific(String code, String date) throws InterruptedException {
 
         List<Container> cList = new ArrayList<>();
 
@@ -237,7 +237,7 @@ public class Analyse {
         double[] vectorGlobal = new double[values.size()];
         int currentVectorPos = 0;
             for (StockHistory sh : values) {
-            vectorGlobal[currentVectorPos++] = sh.getValue();
+            vectorGlobal[currentVectorPos++] = sh.getCurrentValue();
         }
         GARCH garchGlobal = new GARCH(vectorGlobal);
         Map<String, Object> bestParams = garchGlobal.getBestParameters();
@@ -248,7 +248,7 @@ public class Analyse {
      * @param code
      */
 
-    public void processAnalysisAll(String code) {
+    public void processAnalysisAll(String code) throws InterruptedException {
 
         List<Container> cList = new ArrayList<>();
 
@@ -262,10 +262,6 @@ public class Analyse {
             log.warn("Not enough element in code "+ code +". Cannot launch AT parser");
             return;
         }
-
-        List<StockHistory> values = CacheStockHistory.CacheStockHistoryHolder().getAllStockHistory(code);
-
-
 
 
         //TODO not always 1 for value => consensus or other
@@ -317,7 +313,7 @@ public class Analyse {
     }
 
 
-    public void saveAnalysis(String code, Container c) {
+    public void saveAnalysis(String code, Container c) throws InterruptedException {
 
         BatchPoints bp = InfluxDaoConnector.getBatchPoints(StockHistory.dbName);
 
@@ -341,6 +337,34 @@ public class Analyse {
         InfluxDaoConnector.writePoints(bp);
 
     }
+
+    public static void saveAnalysis(String code, StockAnalyse sa) throws InterruptedException {
+
+        BatchPoints bp = InfluxDaoConnector.getBatchPoints(StockHistory.dbName);
+
+        Point pt = Point.measurement(code+"T").time(new DateTime(sa.getDay()).getMillis(), TimeUnit.MILLISECONDS)
+            //.field(VALUE, c.getIndice().get(VALUE))
+            .field(MM20, sa.getMma20())
+            .field(MM50, sa.getMma50())
+            .field(STDDEV, sa.getStdDev())
+            .field(MME12, sa.getMme12())
+            .field(MME26, sa.getMme26())
+            .field(MOMENTUM, sa.getMomentum())
+            .field(GARCH_20, sa.getGarch20())
+            .field(GARCHVOL_20, sa.getGarch_vol_20())
+            .field(GARCH_50, sa.getGarch50())
+            .field(GARCHVOL_50, sa.getGarch_vol_50())
+            .field(GARCH_100, sa.getGarch100())
+            .field(GARCHVOL_100, sa.getGarch_vol_100())
+            .build();
+        bp.point(pt);
+
+        InfluxDaoConnector.writePoints(bp);
+
+    }
+
+
+
 
 
     /**

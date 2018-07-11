@@ -81,7 +81,7 @@ public class VolatilityGoogle extends ParserCommon implements VolatilityParser,H
                             ind.setOpening(new Double(t.get(1).text().replaceAll(" ", "").replace(",", ".")));
                             ind.setHighest(new Double(t.get(2).text().replaceAll(" ", "").replace(",", ".")));
                             ind.setLowest(new Double(t.get(3).text().replaceAll(" ", "").replace(",", ".")));
-                            ind.setValue(new Double(t.get(4).text().replaceAll(" ", "").replace(",", ".")));
+                            ind.setCurrentValue(new Double(t.get(4).text().replaceAll(" ", "").replace(",", ".")));
                             ind.setVolume(new Double(0));
                             saveHistory(bp, ind);
                             System.out.println(ind.toString());
@@ -163,7 +163,7 @@ public class VolatilityGoogle extends ParserCommon implements VolatilityParser,H
                 InfluxDaoConnector.writePoints(bp);
 
 
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 System.out.println("ERROR for : " + code);
             }

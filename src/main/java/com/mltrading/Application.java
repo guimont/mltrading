@@ -82,7 +82,7 @@ public class Application {
 
         /*update data from web*/
         ScheduleUpdate update = new ScheduleUpdate();
-        //update.start();
+        update.start();
 
         /*load model and prevision*/
         ScheduleParserGeneral g = new ScheduleParserGeneral();

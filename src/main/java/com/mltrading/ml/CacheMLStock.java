@@ -114,6 +114,8 @@ public class CacheMLStock {
                 validate = mls.getStatus(ModelType.GRADIANTBOOSTTREE).loadPerf(s.getCodif(),ModelType.GRADIANTBOOSTTREE);
                 if (validate) mls.load(ModelType.GRADIANTBOOSTTREE);
 
+                mls.getStatus(ModelType.ENSEMBLE).loadPerf(s.getCodif(), ModelType.ENSEMBLE);
+
                 mlStockMap.put(s.getCodif(), mls);
                 CacheMLActivities.addActivities(a.setEndDate().setStatus("Success"));
 
@@ -160,6 +162,7 @@ public class CacheMLStock {
         SynchWorker.delete();
 
 
+
         for (MLStocks mls : mlStockMap.values()) {
             PeriodicityList.periodicity.forEach(p -> {
                 if (mls.getSock(p).isModelImprove() == true) {
@@ -172,10 +175,21 @@ public class CacheMLStock {
                 modelTypes.forEach(t -> {
             /* saveValidator Validator each time because old validator is deleted*/
                     if (mls.getStatus(t).getPerfList() != null) {
-                        mls.getStatus(t).savePerf(mls.getCodif(), t);
-                        mls.saveValidator(t);
+                        try {
+                            log.info("Save perf: " + mls.getCodif()+ " for model: " + t);
+                            mls.getStatus(t).savePerf(mls.getCodif(), t);
+                            log.info("Save validator: " + mls.getCodif()+ " for model: " + t);
+                            mls.saveValidator(t);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
                     }
                 });
+
+                if (mls.getStatus(ModelType.ENSEMBLE).getPerfList() != null) {
+                    mls.getStatus(ModelType.ENSEMBLE).savePerf(mls.getCodif(), ModelType.ENSEMBLE);
+                }
             }
             catch (Exception e) {
                 log.error("Import failed: " + e);
@@ -193,7 +207,11 @@ public class CacheMLStock {
      */
     public static void savePerf(ModelType type) {
         for (MLStocks mls : mlStockMap.values()) {
-            mls.getStatus(type).saveLastPerf(mls.getCodif(),type);
+            try {
+                mls.getStatus(type).saveLastPerf(mls.getCodif(),type);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 

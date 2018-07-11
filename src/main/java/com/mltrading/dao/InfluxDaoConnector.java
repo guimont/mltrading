@@ -25,6 +25,7 @@ public class InfluxDaoConnector {
     private InfluxDao dao;
     private static final Logger log = LoggerFactory.getLogger(InfluxDaoConnector.class);
 
+    private static int ERROR_RATE = 100;
 
     public InfluxDaoConnector() {
         dao = new InfluxDaoImpl();
@@ -52,14 +53,23 @@ public class InfluxDaoConnector {
         return InfluxDaoConnectorHolder.instance;
     }
 
-    public static void writePoints(final BatchPoints batchPoints) {
-        int loop = 0;
+    public static void writePoints(final BatchPoints batchPoints) throws InterruptedException {
+        writePoints(batchPoints, 0);
+    }
+
+
+    public static void writePoints(final BatchPoints batchPoints, int loop) {
         try {
             getInstance().dao.getDB().write(batchPoints);
         } catch (Exception e) {
-            if (loop < 3) {
+            if (loop < ERROR_RATE) {
                 loop++;
-                writePoints(batchPoints);
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
+                writePoints(batchPoints, loop);
             }else {
                 log.error("InfluxDaoConnector writePoints error:" + e);
             }
@@ -67,15 +77,24 @@ public class InfluxDaoConnector {
     }
 
     public static QueryResult getPoints(final String queryString, String dbName) {
-        int loop = 0;
+        return getPoints(queryString, dbName, 0);
+    }
+
+
+    public static QueryResult getPoints(final String queryString, String dbName, int loop) {
         QueryResult result = null;
         try {
             Query query = new Query(queryString, dbName);
             result = getInstance().dao.getDB().query(query);
         } catch (Exception e) {
-            if (loop < 3) {
+            if (loop < ERROR_RATE) {
                 loop++;
-                getPoints(queryString,dbName);
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
+                return getPoints(queryString,dbName,loop);
             } else {
                 log.error("InfluxDaoConnector getPoints error:" + e);
             }

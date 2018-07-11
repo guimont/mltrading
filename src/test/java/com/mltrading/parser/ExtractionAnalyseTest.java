@@ -14,7 +14,11 @@ public class ExtractionAnalyseTest {
         MLProperties.load();
         int period= 20;
         Analyse a = new Analyse();
-        a.processDaily(period);
+        try {
+            a.processDaily(period);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
     }
 

@@ -22,9 +22,17 @@ angular.module('mltradingApp')
             });
         };
 
+        $scope.showPredictionEnsemble = function(codif) {
+                    PerformanceService.getPerformance(codif,"ENSEMBLE").then(function (data) {
+                        $scope.perfsEnsemble =  data
+                        loadEnsemble($scope.perfsEnsemble);
+                    });
+                };
+
 
         $scope.showPrediction( code);
         $scope.showPredictionGBT( code);
+        $scope.showPredictionEnsemble( code);
 
 
         $scope.showValidator = function(codif) {

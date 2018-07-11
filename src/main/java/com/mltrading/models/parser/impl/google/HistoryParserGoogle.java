@@ -178,7 +178,7 @@ public class HistoryParserGoogle extends ParserCommon implements HistoryParser,H
             InfluxDaoConnector.writePoints(bp);
 
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             System.out.println("ERROR for : " + g.getName());
         }

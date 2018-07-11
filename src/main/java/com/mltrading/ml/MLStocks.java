@@ -53,6 +53,8 @@ public class MLStocks  implements Serializable {
         statusMap.put(ModelType.RANDOMFOREST, statusRF);
         MLStatus statusGBT = new MLStatus();
         statusMap.put(ModelType.GRADIANTBOOSTTREE, statusGBT);
+        MLStatus statusENSEMBLE = new MLStatus();
+        statusMap.put(ModelType.ENSEMBLE, statusENSEMBLE);
     }
 
     public MLStock getSock(PredictionPeriodicity period) {
@@ -89,7 +91,7 @@ public class MLStocks  implements Serializable {
     }
 
 
-    public void saveValidator(ModelType type) {
+    public void saveValidator(ModelType type) throws InterruptedException {
         for (Map.Entry<PredictionPeriodicity, MLStock> entry : container.entrySet()) {
             entry.getValue().saveValidator(type);
         }
