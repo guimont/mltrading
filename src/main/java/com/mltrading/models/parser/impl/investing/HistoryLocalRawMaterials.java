@@ -62,6 +62,26 @@ public class HistoryLocalRawMaterials extends ParserCommon implements HistoryRaw
 
 
     /**
+     * parse local server with raw html page (manually extract)
+     * @param host
+     */
+    public  void loaderSpecific(String host, String key) {
+        for (StockRawMat r: CacheRawMaterial.getCache().values()) {
+            if (!r.getCode().equalsIgnoreCase(key))
+                continue;
+            try {
+                String url = localUrl + host + path + r.getName() + ".html";
+                System.out.println("url: " + url);
+                parser(r,NO_RANGE,url);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    /**
      * parse raw investing.com
      * @param range
      */

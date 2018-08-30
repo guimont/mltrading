@@ -79,14 +79,16 @@ public class Application {
 
         SynchWorker.init();
 
+        /*load model and prevision*/
+        ScheduleParserGeneral g = new ScheduleParserGeneral();
+        g.start();
+
 
         /*update data from web*/
         ScheduleUpdate update = new ScheduleUpdate();
         update.start();
 
-        /*load model and prevision*/
-        ScheduleParserGeneral g = new ScheduleParserGeneral();
-        g.start();
+
 
         log.info("Access URLs:\n----------------------------------------------------------\n\t" +
             "Local: \t\thttp://127.0.0.1:{}\n\t" +

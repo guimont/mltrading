@@ -106,7 +106,7 @@ public class CacheRawMaterial {
         aMap.put("UKRI1Y", new StockRawMat("UKRI1Y", "UK_1_an", "https://fr.investing.com/rates-bonds/uk-1-year-bond-yield-historical-data", RAW_UKRI1Y_POS));
         aMap.put("UKRI10Y", new StockRawMat("UKRI10Y", "UK_10_ans", "https://fr.investing.com/rates-bonds/uk-10-year-bond-yield-historical-data", RAW_UKRI10Y_POS));
 
-        aMap.put("GYRI1M", new StockRawMat("GYRI1M", "Germany_1_mois", "https://fr.investing.com/rates-bonds/germany-1-month-bond-yield-historical-data", RAW_GYRI1M_POS));
+        aMap.put("GYRI1M", new StockRawMat("GYRI1M", "Germany_1_mois", "https://fr.investing.com/rates-bonds/germany-3-month-bond-yield-historical-data", RAW_GYRI1M_POS));
         aMap.put("GYRI1Y", new StockRawMat("GYRI1Y", "Germany_1_an", "https://fr.investing.com/rates-bonds/germany-1-year-bond-yield-historical-data", RAW_GYRI1Y_POS));
         aMap.put("GYRI10Y", new StockRawMat("GYRI10Y", "Germany_10_ans", "https://fr.investing.com/rates-bonds/germany-10-year-bond-yield-historical-data", RAW_GYRI10Y_POS));
 

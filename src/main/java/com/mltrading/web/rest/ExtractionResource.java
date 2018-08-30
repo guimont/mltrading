@@ -1,12 +1,14 @@
 package com.mltrading.web.rest;
 
 
+import com.mltrading.dao.InfluxDaoConnector;
 import com.mltrading.ml.CacheMLStock;
+import com.mltrading.ml.MatrixValidator;
 import com.mltrading.ml.model.ModelType;
+import com.mltrading.ml.model.ModelTypeList;
 import com.mltrading.ml.ranking.MLStockRanking;
 import com.mltrading.ml.MlForecast;
 import com.mltrading.models.stock.CheckConsistency;
-import com.mltrading.models.stock.Stock;
 import com.mltrading.repository.ArticleRepository;
 import com.mltrading.repository.StockRepository;
 import com.mltrading.service.ExportService;
@@ -18,7 +20,6 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 /**
  * Created by gmo on 07/01/2016.
@@ -58,8 +59,8 @@ public class ExtractionResource {
     private MLStockRanking ranking;
 
 
-    private static ExtractionService service = new ExtractionService();
-    private static ExportService export = new ExportService();
+    private static ExtractionService extractionService = new ExtractionService();
+    private static ExportService exportService = new ExportService();
 
     @RequestMapping(value = "/extract",
         method = RequestMethod.POST,
@@ -69,99 +70,99 @@ public class ExtractionResource {
         try {
 
 
-        if (extDTO.getTarget().equalsIgnoreCase(ALL)) {
-            if (extDTO.getPeriod() == AUTO) {
-                log.info("Processing perdiod to update");
-                int diff = service.getLastUpdateRef();
-                log.info("Perdiod to update is: " + diff);
-                if (diff > 0)
-                    service.extractionCurrent(articleRepository,diff);
+            if (extDTO.getTarget().equalsIgnoreCase(ALL)) {
+                if (extDTO.getPeriod() == AUTO) {
+                    log.info("Processing perdiod to update");
+                    int diff = extractionService.getLastUpdateRef();
+                    log.info("Perdiod to update is: " + diff);
+                    if (diff > 0)
+                        extractionService.extractionCurrent(articleRepository,diff);
+                }
+                else if (extDTO.getPeriod() == FULL) {
+                    extractionService.extractFull(articleRepository);
+                } else {
+                    extractionService.extractionCurrent(articleRepository,extDTO.getPeriod());
+                }
+            } else if (extDTO.getTarget().equalsIgnoreCase(SERIES)) {
+                if (extDTO.getPeriod() == FULL)
+                    extractionService.extractSeriesFull();
+                else if (extDTO.getPeriod() == EXPORT)
+                    exportService.exportStock();
+                else if (extDTO.getPeriod() == IMPORT)
+                    exportService.importStock();
+                else
+                    extractionService.extractSeriesPeriod(extDTO.getPeriod());
             }
-            else if (extDTO.getPeriod() == FULL) {
-                service.extractFull(articleRepository);
-            } else {
-                service.extractionCurrent(articleRepository,extDTO.getPeriod());
+            else if (extDTO.getTarget().equalsIgnoreCase(SECTOR)) {
+                if (extDTO.getPeriod() == FULL)
+                    extractionService.extractSectorFull();
+                else if (extDTO.getPeriod() == EXPORT)
+                    exportService.exportSector();
+                else if (extDTO.getPeriod() == IMPORT)
+                    exportService.importSector();
+                else
+                    extractionService.extractSectorPeriod(extDTO.getPeriod());
+            } else if (extDTO.getTarget().equalsIgnoreCase(INDICE)) {
+                if (extDTO.getPeriod() == FULL)
+                    extractionService.extractIndiceFull();
+                else if (extDTO.getPeriod() == EXPORT)
+                    exportService.exportIndice();
+                else if (extDTO.getPeriod() == IMPORT)
+                    exportService.importIndice();
+                else
+                    extractionService.extractIndicePeriod(extDTO.getPeriod());
             }
-        } else if (extDTO.getTarget().equalsIgnoreCase(SERIES)) {
-            if (extDTO.getPeriod() == FULL)
-                service.extractSeriesFull();
-            else if (extDTO.getPeriod() == EXPORT)
-                export.exportStock();
-            else if (extDTO.getPeriod() == IMPORT)
-                export.importStock();
-            else
-                service.extractSeriesPeriod(extDTO.getPeriod());
-        }
-        else if (extDTO.getTarget().equalsIgnoreCase(SECTOR)) {
-            if (extDTO.getPeriod() == FULL)
-                service.extractSectorFull();
-            else if (extDTO.getPeriod() == EXPORT)
-                export.exportSector();
-            else if (extDTO.getPeriod() == IMPORT)
-                export.importSector();
-            else
-                service.extractSectorPeriod(extDTO.getPeriod());
-        } else if (extDTO.getTarget().equalsIgnoreCase(INDICE)) {
-            if (extDTO.getPeriod() == FULL)
-                service.extractIndiceFull();
-            else if (extDTO.getPeriod() == EXPORT)
-                export.exportIndice();
-            else if (extDTO.getPeriod() == IMPORT)
-                export.importIndice();
-            else
-                service.extractIndicePeriod(extDTO.getPeriod());
-        }
-        else if (extDTO.getTarget().equalsIgnoreCase(VCAC)) {
-            if (extDTO.getPeriod() == FULL)
-                service.extractVcacFull();
-            else if (extDTO.getPeriod() == EXPORT)
-                export.exportVcac();
-            else if (extDTO.getPeriod() == IMPORT)
-                export.importVcac();
-            else
-                service.extractVcacPeriod(extDTO.getPeriod());
-        }
-
-        else if (extDTO.getTarget().equalsIgnoreCase(RAW)) {
-            if (extDTO.getPeriod() == FULL)
-                service.extractRawFull("localhost:7090");
-            else if (extDTO.getPeriod() == EXPORT)
-                export.exportRaw();
-            else if (extDTO.getPeriod() == IMPORT)
-                export.importRaw();
-            else
-                service.extractRawPeriod(extDTO.getPeriod());
-        }
-
-
-        else if (extDTO.getTarget().equalsIgnoreCase(AT)) {
-            if (extDTO.getPeriod() == FULL)
-                service.processAT();
-            else if (extDTO.getPeriod() == EXPORT)
-                export.exportAT();
-            else if (extDTO.getPeriod() == IMPORT)
-                export.importAT();
-            else
-                service.processATPeriod(extDTO.getPeriod());
-        }
-
-        else if (extDTO.getTarget().equalsIgnoreCase(DIARY)) {
-            if (extDTO.getPeriod() == FULL)
-                service.extractDiaryFull();
-            else
-                service.extractDiaryPeriod(extDTO.getPeriod());
-        }
-
-        else if (extDTO.getTarget().equalsIgnoreCase(ARTICLE)) {
-            if (extDTO.getPeriod() == FULL) {
-                service.extractArticlesFull();
-                service.extractArticleFull(articleRepository);
-            } else {
-                service.extractArticlesPeriod();
-                service.extractArticlePeriod(articleRepository);
+            else if (extDTO.getTarget().equalsIgnoreCase(VCAC)) {
+                if (extDTO.getPeriod() == FULL)
+                    extractionService.extractVcacFull();
+                else if (extDTO.getPeriod() == EXPORT)
+                    exportService.exportVcac();
+                else if (extDTO.getPeriod() == IMPORT)
+                    exportService.importVcac();
+                else
+                    extractionService.extractVcacPeriod(extDTO.getPeriod());
             }
 
-        }
+            else if (extDTO.getTarget().equalsIgnoreCase(RAW)) {
+                if (extDTO.getPeriod() == FULL)
+                    extractionService.extractRawFull("localhost:7090");
+                else if (extDTO.getPeriod() == EXPORT)
+                    exportService.exportRaw();
+                else if (extDTO.getPeriod() == IMPORT)
+                    exportService.importRaw();
+                else
+                    extractionService.extractRawPeriod(extDTO.getPeriod());
+            }
+
+
+            else if (extDTO.getTarget().equalsIgnoreCase(AT)) {
+                if (extDTO.getPeriod() == FULL)
+                    extractionService.processAT();
+                else if (extDTO.getPeriod() == EXPORT)
+                    exportService.exportAT();
+                else if (extDTO.getPeriod() == IMPORT)
+                    exportService.importAT();
+                else
+                    extractionService.processATPeriod(extDTO.getPeriod());
+            }
+
+            else if (extDTO.getTarget().equalsIgnoreCase(DIARY)) {
+                if (extDTO.getPeriod() == FULL)
+                    extractionService.extractDiaryFull();
+                else
+                    extractionService.extractDiaryPeriod(extDTO.getPeriod());
+            }
+
+            else if (extDTO.getTarget().equalsIgnoreCase(ARTICLE)) {
+                if (extDTO.getPeriod() == FULL) {
+                    extractionService.extractArticlesFull();
+                    extractionService.extractArticleFull(articleRepository);
+                } else {
+                    extractionService.extractArticlesPeriod();
+                    extractionService.extractArticlePeriod(articleRepository);
+                }
+
+            }
 
 
 
@@ -173,7 +174,7 @@ public class ExtractionResource {
 
 
 
-            return "ok";
+        return "ok";
     }
 
 
@@ -183,7 +184,7 @@ public class ExtractionResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String getExtractionAction() {
         stockRepository.deleteAll();
-        service.extractStock(stockRepository);
+        extractionService.extractStock(stockRepository);
         return "ok";
     }
 
@@ -194,7 +195,7 @@ public class ExtractionResource {
         //<stockRepository.deleteAll();
 
         try {
-            service.extractionSpecific("FR0000051732");
+            extractionService.extractionSpecific("FR0000051732");
         } catch (Exception e) {
             log.error(e.toString());
         }
@@ -207,7 +208,7 @@ public class ExtractionResource {
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String getExtractionSeries() {
-        service.extractFull(articleRepository);
+        extractionService.extractFull(articleRepository);
         return "ok";
     }
 
@@ -217,14 +218,14 @@ public class ExtractionResource {
     public String getExtractionSeriesDailly() {
         try {
 
-        log.info("Processing perdiod to update");
-        int diff = service.getLastUpdateRef();
-        log.info("Perdiod to update is: " + diff);
-        if (diff > 0)
-            service.extractionCurrent(articleRepository,diff);
-    } catch (Exception e) {
-        log.error(e.toString());
-    }
+            log.info("Processing perdiod to update");
+            int diff = extractionService.getLastUpdateRef();
+            log.info("Perdiod to update is: " + diff);
+            if (diff > 0)
+                extractionService.extractionCurrent(articleRepository,diff);
+        } catch (Exception e) {
+            log.error(e.toString());
+        }
 
         return "ok";
     }
@@ -234,10 +235,10 @@ public class ExtractionResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String getExtractionSeriesWeekly() {
         try {
-        service.extractionCurrent(articleRepository,5);
-    } catch (Exception e) {
-        log.error(e.toString());
-    }
+            extractionService.extractionCurrent(articleRepository,5);
+        } catch (Exception e) {
+            log.error(e.toString());
+        }
 
         return "ok";
     }
@@ -247,7 +248,7 @@ public class ExtractionResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String getExtractionRaw() {
 
-        service.extractRawFull("localhost:7090");
+        extractionService.extractRawFull("localhost:7090");
         return "ok";
     }
 
@@ -256,7 +257,7 @@ public class ExtractionResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String getExtractionVCac() {
 
-        service.extractVcacFull();
+        extractionService.extractVcacFull();
         return "ok";
     }
 
@@ -266,7 +267,7 @@ public class ExtractionResource {
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String getExtractionSector() {
-        service.extractSectorFull();
+        extractionService.extractSectorFull();
         return "ok";
     }
 
@@ -274,7 +275,7 @@ public class ExtractionResource {
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String getExtractionIndice() {
-        service.extractIndiceFull();
+        extractionService.extractIndiceFull();
         return "ok";
     }
 
@@ -287,7 +288,7 @@ public class ExtractionResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String processAT() {
         try {
-        service.processAT();
+            extractionService.processAT();
         } catch (Exception e) {
             log.error(e.toString());
         }
@@ -374,8 +375,19 @@ public class ExtractionResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String evaluate() {
 
+        //CacheMLStock.load(); not need !!
+        MlForecast ml = new MlForecast();
+        /*InfluxDaoConnector.deleteDB(MatrixValidator.dbNameModelPerf);
 
+        ModelTypeList.modelTypes.forEach(t -> {
+            ml.processList(t);
+            CacheMLStock.savePerf(t);
+        });
 
+*/
+        ml.updateEnsemble();
+        //      CacheMLStock.savePerf(ModelType.ENSEMBLE);
+        //      ml.updatePredictor();
 
         return "ok";
     }

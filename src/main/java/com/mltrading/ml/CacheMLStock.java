@@ -27,6 +27,8 @@ public class CacheMLStock {
     //
 
     public static final List<ModelType> modelTypes = Arrays.asList(ModelType.RANDOMFOREST, ModelType.GRADIANTBOOSTTREE);
+    public static final List<PredictionPeriodicity> periodicity = Arrays.asList(PredictionPeriodicity.D1, PredictionPeriodicity.D5, PredictionPeriodicity.D20, PredictionPeriodicity.D40);
+
 
     public static String SPARK_DEFAULT_MEMORY = "4g";
 
@@ -206,6 +208,20 @@ public class CacheMLStock {
      * update perf list with last value
      */
     public static void savePerf(ModelType type) {
+
+        for (MLStocks mls : mlStockMap.values()) {
+            try {
+                mls.getStatus(type).savePerf(mls.getCodif(),type);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * update perf list with last value
+     */
+    public static void saveLastPerf(ModelType type) {
         for (MLStocks mls : mlStockMap.values()) {
             try {
                 mls.getStatus(type).saveLastPerf(mls.getCodif(),type);
@@ -233,6 +249,7 @@ public class CacheMLStock {
         try {
             FileUtils.deleteDirectory(new File(path + "model"));
             InfluxDaoConnector.deleteDB(MatrixValidator.dbNameModel);
+            InfluxDaoConnector.deleteDB(MatrixValidator.dbNameModelPerf);
         } catch (IOException e) {
             log.error("Cannot remove folder model: " + e);
         }

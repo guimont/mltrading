@@ -107,6 +107,7 @@ public class MatrixValidator implements Serializable,Cloneable {
 
     public static String dbNamePerf = "perf2";
     public static String dbNameModel = "modelNote2";
+    public static String dbNameModelPerf = "modelPerf";
 
     Integer matrix[][];
 

@@ -30,6 +30,8 @@ public class MLStocks  implements Serializable {
 
     private HashMap<ModelType,MLStatus> statusMap = new HashMap<>();
 
+    double ratio = 1.;
+
     JavaRDD<FeaturesStock> testData;
 
     public boolean isEmtpyModel() {
@@ -325,5 +327,13 @@ public class MLStocks  implements Serializable {
         for (Map.Entry<PredictionPeriodicity, MLStock> entry : container.entrySet()) {
             entry.getValue().setModel(mls.getModel(entry.getKey(),type),type);
         }
+    }
+
+    public double getRatio() {
+        return this.ratio;
+    }
+
+    public void setRatio(double ratio) {
+        this.ratio = ratio;
     }
 }

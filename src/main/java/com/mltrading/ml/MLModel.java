@@ -58,6 +58,13 @@ public class MLModel {
         rfModel.save(path + "model/Model" +ModelType.code(type)+ period.toString() + codif);
     }
 
+
+    /**
+     * aggregate model prediction
+     * @param s => ratio is modeling by <code>updateEnsemble</code> function
+     * @param date
+     * @return
+     */
     public double aggregate(MLStocks s, String date) {
         FeaturesStock fs = FeaturesStock.createRT(s.getCodif(), getValidator(ModelType.RANDOMFOREST), date);
         if (fs.currentVectorPos != getValidator(ModelType.RANDOMFOREST).getVectorSize()) {
@@ -65,10 +72,9 @@ public class MLModel {
             System.exit(100);
         }
 
-        double predict = modelSet.get(ModelType.RANDOMFOREST).predict(Vectors.dense(fs.vectorize()));
-        return predict;
+        double predict = modelSet.get(ModelType.RANDOMFOREST).predict(Vectors.dense(fs.vectorize())) * s.getRatio();
 
-        /*FeaturesStock fsGBT = FeaturesStock.createRT(s.getCodif(), getValidator(ModelType.GRADIANTBOOSTTREE), date);
+        FeaturesStock fsGBT = FeaturesStock.createRT(s.getCodif(), getValidator(ModelType.GRADIANTBOOSTTREE), date);
         if (fsGBT.currentVectorPos != getValidator(ModelType.GRADIANTBOOSTTREE).getVectorSize()) {
             log.error("model broken!!!!!: " + fsGBT.currentVectorPos +" not equal " +getValidator(ModelType.GRADIANTBOOSTTREE).getVectorSize());
             System.exit(100);
@@ -76,7 +82,7 @@ public class MLModel {
 
         predict += modelSet.get(ModelType.GRADIANTBOOSTTREE).predict(Vectors.dense(fsGBT.vectorize()));
 
-        return predict/2;*/
+        return predict/(1+s.getRatio());
     }
 
     public void saveModel(ModelType type, PredictionPeriodicity period, String codif) throws InterruptedException {

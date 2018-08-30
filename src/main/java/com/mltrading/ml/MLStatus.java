@@ -261,13 +261,13 @@ public class MLStatus implements Serializable,DaoChecker{
 
         //offset is mult by 2 because it is no dense data
         String query = "SELECT * FROM "+code + ModelType.code(type) +"PD1 where time > '2015-06-01T00:00:00Z'";
-        QueryResult listP1 = InfluxDaoConnector.getPoints(query, MatrixValidator.dbNameModel);
+        QueryResult listP1 = InfluxDaoConnector.getPoints(query, MatrixValidator.dbNameModelPerf);
         query = "SELECT * FROM "+code+ ModelType.code(type) +"PD5 where time > '2015-06-01T00:00:00Z'";
-        QueryResult listP5 = InfluxDaoConnector.getPoints(query, MatrixValidator.dbNameModel);
+        QueryResult listP5 = InfluxDaoConnector.getPoints(query, MatrixValidator.dbNameModelPerf);
         query = "SELECT * FROM "+code+ ModelType.code(type) +"PD20 where time > '2015-06-01T00:00:00Z'";
-        QueryResult listP20 = InfluxDaoConnector.getPoints(query, MatrixValidator.dbNameModel);
+        QueryResult listP20 = InfluxDaoConnector.getPoints(query, MatrixValidator.dbNameModelPerf);
         query = "SELECT * FROM "+code + ModelType.code(type) +"PD40 where time > '2015-06-01T00:00:00Z'";
-        QueryResult listP40 = InfluxDaoConnector.getPoints(query, MatrixValidator.dbNameModel);
+        QueryResult listP40 = InfluxDaoConnector.getPoints(query, MatrixValidator.dbNameModelPerf);
 
         if (checker(listP1) == false) return false;
         if (checker(listP5) == false) return false;

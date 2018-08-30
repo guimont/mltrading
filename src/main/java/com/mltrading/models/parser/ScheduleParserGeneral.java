@@ -57,7 +57,7 @@ public class ScheduleParserGeneral  {
     private void updatePredictor() {
 
       CacheMLStock.load();
-      MlForecast.updatePredictor(ModelType.RANDOMFOREST);
+      MlForecast.updatePredictor();
     }
 
 

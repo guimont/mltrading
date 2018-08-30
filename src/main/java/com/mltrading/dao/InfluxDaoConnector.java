@@ -37,6 +37,7 @@ public class InfluxDaoConnector {
         if (!repo.contains(StockHistory.dbName)) dao.createDB(StockHistory.dbName);
         if (!repo.contains(MatrixValidator.dbNamePerf)) dao.createDB(MatrixValidator.dbNamePerf);
         if (!repo.contains(MatrixValidator.dbNameModel)) dao.createDB(MatrixValidator.dbNameModel);
+        if (!repo.contains(MatrixValidator.dbNameModelPerf)) dao.createDB(MatrixValidator.dbNameModelPerf);
         if (!repo.contains(StockDocument.dbName)) dao.createDB(StockDocument.dbName);
         if (!repo.contains(HistogramDocument.dbName)) dao.createDB(HistogramDocument.dbName);
 

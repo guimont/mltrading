@@ -1,9 +1,13 @@
 package com.mltrading.models.parser;
 
 
+import com.mltrading.dao.InfluxDaoConnector;
+import com.mltrading.ml.CacheMLActivities;
 import com.mltrading.ml.CacheMLStock;
+import com.mltrading.ml.MatrixValidator;
 import com.mltrading.ml.MlForecast;
 import com.mltrading.ml.model.ModelType;
+import com.mltrading.ml.model.ModelTypeList;
 import com.mltrading.repository.ArticleRepository;
 import com.mltrading.service.ExtractionService;
 import org.slf4j.Logger;
@@ -44,17 +48,38 @@ public class ScheduleUpdate {
 
 
     protected void runUpdate() {
+
+        if (CacheMLActivities.setIsRunning() == false) {
+            log.error("optimizing still running, cannot launch runUpdate");
+            return;
+        }
         //System.out.print("now ?");
         updateBase();
 
-
         //CacheMLStock.load(); not need !!
         MlForecast ml = new MlForecast();
-        ml.processList(ModelType.RANDOMFOREST);
-        //load status
-        CacheMLStock.savePerf(ModelType.RANDOMFOREST);
 
-        MlForecast.updatePredictor(ModelType.RANDOMFOREST);
+        //clean model perf database
+        InfluxDaoConnector.deleteDB(MatrixValidator.dbNameModelPerf);
+
+
+        //process result with model and save them
+        ModelTypeList.modelTypes.forEach( t -> {
+            ml.processList(t);
+            CacheMLStock.savePerf(t);
+
+        });
+
+        //process aggragation model and save it
+        ml.updateEnsemble();
+        CacheMLStock.savePerf(ModelType.ENSEMBLE);
+
+        //update result
+        ml.updatePredictor();
+
+        // close mutex
+        CacheMLActivities.endRunning();
+
     }
 
 
@@ -68,7 +93,7 @@ public class ScheduleUpdate {
         this.timer = new Timer("UpdateProcess", true);
         Date t = today.getTime();
         long u = TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS);
-        if (t.before(Date.from(Instant.now()))) extractionPassed.set(false);
+        //if (t.before(Date.from(Instant.now()))) extractionPassed.set(false);
         this.timer.scheduleAtFixedRate(this.timerTask, t, u); // 60*60*24*100 = 8640000ms
 
     }

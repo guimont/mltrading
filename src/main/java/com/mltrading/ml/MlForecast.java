@@ -3,9 +3,11 @@ package com.mltrading.ml;
 import com.mltrading.config.MLProperties;
 import com.mltrading.ml.genetic.GeneticAlgorithm;
 import com.mltrading.ml.model.GradiantBoostStock;
+import com.mltrading.ml.model.MlModelGeneric;
 import com.mltrading.ml.model.ModelType;
 import com.mltrading.ml.model.RandomForestStock;
 import com.mltrading.ml.util.Combination;
+import com.mltrading.ml.util.Ensemble;
 import com.mltrading.ml.util.Evaluate;
 import com.mltrading.ml.util.FixedThreadPoolExecutor;
 import com.mltrading.models.stock.*;
@@ -44,8 +46,18 @@ public class MlForecast extends Evaluate{
 
         List<StockGeneral> l = new ArrayList(CacheStockGeneral.getIsinCache().values());
 
+        MlModelGeneric rfs;
+
+
+        if (type == ModelType.RANDOMFOREST) {
+            rfs = new RandomForestStock();
+        }
+        else {
+            rfs = new GradiantBoostStock();
+        }
+
+
         for (StockGeneral s : l) {
-            RandomForestStock rfs = new RandomForestStock();
             MLStocks mls = CacheMLStock.getMLStockCache().get(s.getCodif());
             if (mls != null && mls.isEmtpyModel() == false) {
                 mls = rfs.processRFResult(s.getCodif(), mls);
@@ -57,7 +69,6 @@ public class MlForecast extends Evaluate{
         List<StockSector> ls = new ArrayList(CacheStockSector.getSectorCache().values());
 
         for (StockSector s : ls) {
-            RandomForestStock rfs = new RandomForestStock();
             MLStocks mls = CacheMLStock.getMLStockCache().get(s.getCodif());
             if (mls != null && mls.isEmtpyModel() == false) {
                 mls = rfs.processRFResult(s.getCodif(), mls);
@@ -333,7 +344,7 @@ public class MlForecast extends Evaluate{
                 optimize(CacheStockSector.getSectorCache().values().stream(), CacheStockSector.getSectorCache().values().size(), backloop, validator, type);
 
             updateEnsemble();
-            updatePredictor(type);
+            updatePredictor();
 
 
             CacheMLActivities.addActivities(new MLActivities("saveValidator forecast model", "", "start", 0, 0, false));
@@ -351,43 +362,58 @@ public class MlForecast extends Evaluate{
 
         CacheMLStock.getMLStockCache().values()
             .forEach( m -> {
-                List<MLPerformances> mlPerformancesRF =  m.getStatus(ModelType.RANDOMFOREST).getPerfList();
-                List<MLPerformances> mlPerformancesGBT =  m.getStatus(ModelType.GRADIANTBOOSTTREE).getPerfList();
+
+                final GeneticAlgorithm<Ensemble> algo = new GeneticAlgorithm<>(e -> e.evaluate(m), () -> Ensemble.newInstance(),
+                    (first, second) -> first.merge(second), e -> e.mutate());
+
+                algo.initialize(20);
+
+                /*if model is empty*/
+                algo.iterate(100, 2, 10, 0, 4);
 
 
-                if (mlPerformancesRF .size() == 0 || mlPerformancesGBT.size()==0)
-                    return;
+                {
+                    List<MLPerformances> mlPerformancesRF =  m.getStatus(ModelType.RANDOMFOREST).getPerfList();
+                    List<MLPerformances> mlPerformancesGBT =  m.getStatus(ModelType.GRADIANTBOOSTTREE).getPerfList();
 
-                int size = mlPerformancesRF .size();
+                    m.ratio = algo.best().getRatio();
 
-                List<MLPerformances> listEnsemble = new ArrayList<>();
+                    if (mlPerformancesRF .size() == 0 || mlPerformancesGBT.size()==0)
+                        return;
 
-                for (int index = 0; index< size; index++){
+                    int size = mlPerformancesRF .size();
 
-                    MLPerformances mlRF = mlPerformancesRF.get(index);
-                    MLPerformances mlGBT = mlPerformancesGBT.get(index);
-                    MLPerformances perf = new MLPerformances(mlRF.getDate());
-                    periodicity.forEach(p -> {
-                       MLPerformance mpRF = mlRF.getMl(p);
-                       MLPerformance mpGBT = mlGBT.getMl(p);
+                    List<MLPerformances> listEnsemble = new ArrayList<>();
+
+                    for (int index = 0; index< size; index++){
+
+                        MLPerformances mlRF = mlPerformancesRF.get(index);
+                        MLPerformances mlGBT = mlPerformancesGBT.get(index);
+                        MLPerformances perf = new MLPerformances(mlRF.getDate());
+                        periodicity.forEach(p -> {
+                            MLPerformance mpRF = mlRF.getMl(p);
+                            MLPerformance mpGBT = mlGBT.getMl(p);
 
 
-                       perf.setMl(MLPerformance.calculYields(mlRF.getDate(),
-                           (mpRF.getPrediction()+mpGBT.getPrediction())/2.,
-                           mpRF.getRealvalue(),mpRF.getCurrentValue()),p);
+                            perf.setMl(MLPerformance.calculYields(mlRF.getDate(),
+                                (mpRF.getPrediction() * m.getRatio() + mpGBT.getPrediction())/(1. + m.ratio),
+                                mpRF.getRealvalue(), mpRF.getCurrentValue()), p);
 
 
-                    });
-                    listEnsemble.add(perf);
+                        });
+                        listEnsemble.add(perf);
+
+
+                    }
+
+                    m.getStatus(ModelType.ENSEMBLE).setPerfList(listEnsemble);
+                    m.getStatus(ModelType.ENSEMBLE).calculeAvgPrd();
+
 
 
                 }
+            });
 
-                m.getStatus(ModelType.ENSEMBLE).setPerfList(listEnsemble);
-
-
-
-                });
 
     }
 
@@ -734,18 +760,18 @@ public class MlForecast extends Evaluate{
     /**
      *
      */
-    public static void updatePredictor(ModelType type) {
-        CacheStockGeneral.getCache().values().forEach(s -> updatePredictor(s, type, true));
+    public static void updatePredictor() {
+        CacheStockGeneral.getCache().values().forEach(s -> updatePredictor(s,  true));
 
-        CacheStockSector.getSectorCache().values().forEach(s -> updatePredictor(s, type, false));
+        CacheStockSector.getSectorCache().values().forEach(s -> updatePredictor(s,false));
     }
 
-    private static void updatePredictor(StockHistory sg, ModelType type, boolean bRanking) {
+    private static void updatePredictor(StockHistory sg, boolean bRanking) {
         MLPredictor predictor = new MLPredictor();
 
         CacheMLStock.getMlRankCache();
 
-        StockPrediction p = predictor.prediction(sg.getCodif(), type, bRanking);
+        StockPrediction p = predictor.prediction(sg.getCodif(),bRanking);
 
         if (p != null) {
             sg.setPrediction(p);

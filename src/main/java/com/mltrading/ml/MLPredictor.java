@@ -27,7 +27,7 @@ public class MLPredictor  implements Serializable {
      * @param bRanking use ranking model (not enable for sector)
      * @return
      */
-    public StockPrediction prediction(String codif, ModelType type, boolean bRanking) {
+    public StockPrediction prediction(String codif,  boolean bRanking) {
 
 
         MLStocks s = CacheMLStock.getMLStockCache().get(codif);
@@ -39,7 +39,7 @@ public class MLPredictor  implements Serializable {
                 PeriodicityList.periodicity.forEach(p -> {
 
                     sp.setPrediction(s.getModel(p).aggregate( s, date),p);
-                    sp.setConfidence(100 - (s.getStatus(type).getErrorRate(p) * 100 / s.getStatus(type).getCount(p)), p);
+                    sp.setConfidence(100 - (s.getStatus(ModelType.ENSEMBLE).getErrorRate(p) * 100 / s.getStatus(ModelType.ENSEMBLE).getCount(p)), p);
                 });
 
                 if (bRanking && CacheMLStock.getMlRankCache().getModel() != null) {

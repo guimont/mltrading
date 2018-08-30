@@ -4,6 +4,7 @@ import com.mltrading.config.MLProperties;
 import com.mltrading.models.parser.Analyse;
 import com.mltrading.models.parser.impl.boursorama.RealTimeSectorBoursorama;
 import com.mltrading.models.parser.impl.investing.HistoryIndiceParserInvesting;
+import com.mltrading.models.parser.impl.investing.HistoryLocalRawMaterials;
 import com.mltrading.models.parser.impl.investing.HistoryParserInvesting;
 import com.mltrading.models.parser.impl.investing.HistoryVolatilityParserInvesting;
 import com.mltrading.models.parser.impl.investir.HistoryParserInvestir;
@@ -19,6 +20,7 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by gmo on 18/06/2015.
@@ -31,6 +33,7 @@ public class test {
 
     @Inject
     private static UserService userService;
+
 
 
     /*public static void main(String[] args) {
@@ -49,22 +52,22 @@ public class test {
             }*
 
         }
-    }*/
-/*
+    }*
+
     public static void main(String[] args) {
         MLProperties.load();
         try {
-            /*HistoryParserInvesting importStock = new HistoryParserInvesting();
-            importStock.loader("localhost:7090", "RMS", "FR0000052292"); //RMS hermes
+            HistoryLocalRawMaterials raw = new HistoryLocalRawMaterials();
+            raw.loaderSpecific("localhost:7090", "GYRI1M");
 
             System.out.println("Start analyse");
             Analyse analyse = new Analyse();
 
-            analyse.processAnalysisAll("RMS");
+            analyse.processAnalysisAll("GYRI1M");
 
             System.out.println("**************************");
             System.out.println("END analyse");
-            System.out.println("**************************");*/
+            System.out.println("**************************");
 
             /*HistoryParserInvesting importStock = new HistoryParserInvesting();
             importStock.loader("localhost:7090", "URW", "FR0013326246"); //RMS hermes
@@ -99,7 +102,7 @@ public class test {
 
             System.out.println("**************************");
             System.out.println("END analyse");
-            System.out.println("**************************");
+            System.out.println("**************************");*
 
 
         }catch (Exception e) {

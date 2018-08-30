@@ -182,32 +182,25 @@ public abstract class MlModelGeneric<Model> implements Serializable {
         List<FeaturesStock> resFSList = new ArrayList<>();
 
         for (int i = 0; i < fsLD1.size(); i++) {
-            double pred = 0;
+            double pred1 = 0.;
+
             try {
                 FeaturesStock fsD1 = fsLD1.get(i);
-                pred = predict(mls, PredictionPeriodicity.D1, Vectors.dense(fsD1.vectorize()));
+                pred1 = predict(mls, PredictionPeriodicity.D1, Vectors.dense(fsD1.vectorize()));
             } catch (Exception e) {
                 System.out.print(e.toString());
             }
 
+            FeaturesStock fsResult = new FeaturesStock(fsLD1.get(i), pred1, PredictionPeriodicity.D1);
 
-            FeaturesStock fsResult = new FeaturesStock(fsLD1.get(i), pred, PredictionPeriodicity.D1);
-
-            FeaturesStock fsD5 = fsLD5.get(i);
-            pred = mls.getModel(PredictionPeriodicity.D5,ModelType.RANDOMFOREST).predict(Vectors.dense(fsD5.vectorize()));
-            fsResult.setPredictionValue(pred, PredictionPeriodicity.D5);
-            fsResult.setDate(fsD5.getDate(PredictionPeriodicity.D5), PredictionPeriodicity.D5);
-
-
-            FeaturesStock fsD20 = fsLD20.get(i);
-            pred = mls.getModel(PredictionPeriodicity.D20,ModelType.RANDOMFOREST).predict(Vectors.dense(fsD20.vectorize()));
-            fsResult.setPredictionValue(pred, PredictionPeriodicity.D20);
-            fsResult.setDate(fsD20.getDate(PredictionPeriodicity.D20), PredictionPeriodicity.D20);
-
-            FeaturesStock fsD40 = fsLD40.get(i);
-            pred = mls.getModel(PredictionPeriodicity.D40,ModelType.RANDOMFOREST).predict(Vectors.dense(fsD40.vectorize()));
-            fsResult.setPredictionValue(pred, PredictionPeriodicity.D40);
-            fsResult.setDate(fsD40.getDate(PredictionPeriodicity.D40), PredictionPeriodicity.D40);
+            int finalI = i;
+            PeriodicityList.periodicity.forEach(p -> {
+                if (p == PredictionPeriodicity.D1) return;
+                FeaturesStock fsD = map.get(p).get(finalI);
+                final double pred = predict(mls,p,Vectors.dense(fsD.vectorize()));
+                fsResult.setPredictionValue(pred, p);
+                fsResult.setDate(fsD.getDate(p), p);
+            });
 
             resFSList.add(fsResult);
         }

@@ -45,9 +45,11 @@ public class MLPredictionResource {
             }
 
             for (MLPerformances mlPerformances : l.getPerfList()) {
-                if (mlPerformances.getMl(PredictionPeriodicity.D5) != null && mlPerformances.getMl(PredictionPeriodicity.D5).getCurrentValue() ==0.) mlPerformances.setMl(null, PredictionPeriodicity.D5);
-                if (mlPerformances.getMl(PredictionPeriodicity.D20) != null && mlPerformances.getMl(PredictionPeriodicity.D20).getCurrentValue() ==0.) mlPerformances.setMl(null, PredictionPeriodicity.D20);
-                if (mlPerformances.getMl(PredictionPeriodicity.D40) != null && mlPerformances.getMl(PredictionPeriodicity.D40).getCurrentValue() ==0.) mlPerformances.setMl(null, PredictionPeriodicity.D40);
+
+                if (mlPerformances.getMl(PredictionPeriodicity.D1).getRealvalue() ==0.)  mlPerformances.setMl(null, PredictionPeriodicity.D1);
+                if (mlPerformances.getMl(PredictionPeriodicity.D5) != null && mlPerformances.getMl(PredictionPeriodicity.D5).getRealvalue() ==0.) mlPerformances.setMl(null, PredictionPeriodicity.D5);
+                if (mlPerformances.getMl(PredictionPeriodicity.D20) != null && mlPerformances.getMl(PredictionPeriodicity.D20).getRealvalue() ==0.) mlPerformances.setMl(null, PredictionPeriodicity.D20);
+                if (mlPerformances.getMl(PredictionPeriodicity.D40) != null && mlPerformances.getMl(PredictionPeriodicity.D40).getRealvalue() ==0.) mlPerformances.setMl(null, PredictionPeriodicity.D40);
 
                 mlPerformances.convertUI();
             }
