@@ -70,7 +70,7 @@ public class DatabaseInfoList {
 
         sr.stream().map(s -> rawList.add(DatabaseInfo.populate(s.getCode(), StockHistory.getStockHistoryLastInvert(s.getCode(), RANGE)))).collect(Collectors.toList());
 
-        sd.stream().map(s -> diarryList.add(DatabaseInfo.populateDocument(s.getCodif(), StockDocument.getStockHistoryLastInvert(s.getCodif(), NO_RANGE)))).collect(Collectors.toList());
+        sd.stream().map(s -> diarryList.add(DatabaseInfo.populateDocument(s.getCodif(), StockDocument.getStockHistoryLastInvert(s.getCodif(),StockDocument.TYPE_DIARY, NO_RANGE)))).collect(Collectors.toList());
 
 
         return this;

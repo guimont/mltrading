@@ -10,14 +10,16 @@ public class ForecastDTO {
     private String target;
     private int globalLoop;
     private int inputLoop;
+    private String specific;
 
 
-    public ForecastDTO(String validator, String modelType, String target, int globalLoop, int inputLoop) {
+    public ForecastDTO(String validator, String modelType, String target, int globalLoop, int inputLoop, String specific) {
         this.validator = validator;
         this.target = target;
         this.globalLoop = globalLoop;
         this.inputLoop = inputLoop;
         this.modelType = modelType;
+        this.specific = specific;
     }
 
     public ForecastDTO() {
@@ -61,5 +63,13 @@ public class ForecastDTO {
 
     public void setModelType(String modelType) {
         this.modelType = modelType;
+    }
+
+    public String getSpecific() {
+        return specific;
+    }
+
+    public void setSpecific(String specific) {
+        this.specific = specific;
     }
 }

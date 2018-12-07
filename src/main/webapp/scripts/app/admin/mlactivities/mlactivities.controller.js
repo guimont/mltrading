@@ -27,9 +27,9 @@ angular.module('mltradingApp')
             inputLoop: "1",
             validator: "generateSimpleModel",
             modelType: "RANOMFOREST",
-            target: "PX1"
+            target: "PX1",
+            specific: "ALL"
         };
-
 
 
         $scope.forecast = function() {

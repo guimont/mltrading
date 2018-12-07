@@ -293,3 +293,37 @@ ul#strengthBar {
 .review-block-description{
     font-size:13px;
 }
+
+
+.detail {
+    margin-top: 20px;
+    padding: 15px;
+    margin-left: 15px;
+    border-left: 15px;
+    border-left-color: #48CFAD;
+    border-left-style: solid;
+    border-left-width: 8px;
+    background-color: white;
+    width: 97.5%;
+    margin-bottom: 25px;
+    float: inherit;
+
+}
+
+meter {
+    /* Reset the default appearance */
+    margin: 0 auto 1em;
+    width: 80%;
+    height: .5em;
+
+    /* Applicable only to Firefox */
+    background: none;
+    background-color: rgba(0,0,0,0.1);
+}
+
+meter::-webkit-meter-bar {
+    background: none;
+    background-color: rgba(0,0,0,0.1);
+}
+
+.cp-spinner{width:38px;height:38px;display:inline-block;box-sizing:border-box;position:relative}.cp-skeleton{border-radius:50%;border-top:solid 6px #f56151;border-right:solid 6px transparent;border-bottom:solid 6px transparent;border-left:solid 6px transparent;animation:cp-skeleton-animate 5s linear infinite}.cp-skeleton:before{border-radius:50%;content:" ";width:38px;height:38px;display:inline-block;box-sizing:border-box;border-top:solid 6px transparent;border-right:solid 6px transparent;border-bottom:solid 6px transparent;border-left:solid 6px #f56151;position:absolute;top:-6px;left:-6px;transform:rotateZ(-30deg)}.cp-skeleton:after{border-radius:50%;content:" ";width:38px;height:38px;display:inline-block;box-sizing:border-box;border-top:solid 6px transparent;border-right:solid 6px #f56151;border-bottom:solid 6px transparent;border-left:solid 6px transparent;position:absolute;top:-6px;right:-6px;transform:rotateZ(30deg)}@keyframes cp-skeleton-animate{0%{transform:rotate(0);opacity:1}50%{opacity:.7}100%{transform:rotate(360deg);opacity:1}}

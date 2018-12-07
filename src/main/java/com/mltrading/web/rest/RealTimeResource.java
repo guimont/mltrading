@@ -96,9 +96,7 @@ public class RealTimeResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     @RolesAllowed(AuthoritiesConstants.USER)
     public StockDetail getDetail(@RequestParam(value = "key") String key) {
-
         Stock s = stockRepository.findOne(key);
-
 
 
         StockHistory sh;

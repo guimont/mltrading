@@ -6,7 +6,7 @@
  */
 
 
-function loadIndice(dataV, id, label,bdate) {
+function loadIndice(dataV, id, label,bdate, color) {
 
     var data = {
         labels: [],
@@ -14,13 +14,15 @@ function loadIndice(dataV, id, label,bdate) {
             {
                 label: label,
                 fill: origin,
-                backgroundColor: "rgba(75,192,192,0.2)",
-                borderColor: "rgba(75,192,192,1)",
+                backgroundColor: color,
+                //borderColor: "rgba(75,192,192,1)",
+                borderColor: color,
 
                 borderDash: [],
                 borderDashOffset: 0.0,
 
-                pointBorderColor: "rgba(75,192,192,1)",
+                //pointBorderColor: "rgba(75,192,192,1)",
+                pointBorderColor:color,
                 pointBackgroundColor: "#fff",
                 pointBorderWidth: 1,
                 pointHoverRadius: 5,

@@ -179,17 +179,17 @@ public class FeaturesStock extends Feature implements Serializable {
 
             /** add in index ???
              * volatility cac
-             *
-             if (validator.cacVola) {
-             try {
-             List<StockHistory> sVCac = StockHistory.getStockHistoryDateInvert("VCAC", date, validator.perdiodcacVola);
-             fs.linearize(sVCac);
+             **/
+           /* if (validator.getVCAC()) {
+                try {
+                    List<StockHistory> sVCac = StockHistory.getStockHistoryDateInvert("VCAC", date, validator.getVCACHist());
+                    fs.linearize(sVCac,false);
 
-             } catch (Exception e) {
-             log.error("Cannot get vcac stock for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
-             throw  e ;
-             }
-             }*/
+                } catch (Exception e) {
+                    log.error("Cannot get vcac stock for: " + codif + " and date: " + date + " //exception:" + e);
+                    throw  e ;
+                }
+            }*/
 
 
             fsL.add(fs);
@@ -244,6 +244,21 @@ public class FeaturesStock extends Feature implements Serializable {
 
         featureGenericParam(fs, codif, validator, date);
 
+/** add in index ???
+ * volatility cac
+ **/
+        /*if (validator.getVCAC()) {
+            try {
+                List<StockHistory> sVCac = StockHistory.getStockHistoryDateInvert("VCAC", date, validator.getVCACHist());
+                fs.linearize(sVCac,false);
+
+            } catch (Exception e) {
+                log.error("Cannot get vcac stock for: " + codif + " and date: " + date + " //exception:" + e);
+                throw  e ;
+            }
+        }*/
+
+
         return fs;
     }
 
@@ -271,19 +286,19 @@ public class FeaturesStock extends Feature implements Serializable {
 
 
 
-        /** ALL indice*/
-        for (StockIndice g : CacheStockIndice.getIndiceCache().values()) {
-            int row = validator.getIndice(g.getRow(), MatrixValidator.TypeHistory.IND);
-            log.trace("get indice " + g.getCodif() +"stock for: " + codif + " and date: " + date);
-            filledFeaturesStock(fs,validator,row,date,g.getCodif());
-        }
+            /** ALL indice*/
+            for (StockIndice g : CacheStockIndice.getIndiceCache().values()) {
+                int row = validator.getIndice(g.getRow(), MatrixValidator.TypeHistory.IND);
+                log.trace("get indice " + g.getCodif() +"stock for: " + codif + " and date: " + date);
+                filledFeaturesStock(fs,validator,row,date,g.getCodif());
+            }
 
-        /** ALL raw*/
-        for (StockRawMat g : CacheRawMaterial.getCache().values()) {
-            int row = validator.getIndice(g.getRow(), MatrixValidator.TypeHistory.RAW);
-            log.trace("get raw " + g.getCodif() +"stock for: " + codif + " and date: " + date);
-            filledFeaturesStock(fs,validator,row,date,g.getCodif());
-        }
+            /** ALL raw*/
+            for (StockRawMat g : CacheRawMaterial.getCache().values()) {
+                int row = validator.getIndice(g.getRow(), MatrixValidator.TypeHistory.RAW);
+                log.trace("get raw " + g.getCodif() +"stock for: " + codif + " and date: " + date);
+                filledFeaturesStock(fs,validator,row,date,g.getCodif());
+            }
 
         } catch (Exception e) {
             log.error("Cannot get sector/indicd/raw/analyse stock for: " + codif + " and date: " + date + " //exception:" + e );

@@ -78,17 +78,20 @@ public class Application {
 
 
         SynchWorker.init();
+        System.out.println("********************* Load model *****************************");
 
         /*load model and prevision*/
         ScheduleParserGeneral g = new ScheduleParserGeneral();
         g.start();
 
+        System.out.println("********************* Load model done *****************************");
 
         /*update data from web*/
         ScheduleUpdate update = new ScheduleUpdate();
         update.start();
 
 
+        System.out.println("********************* Starting ok *****************************");
 
         log.info("Access URLs:\n----------------------------------------------------------\n\t" +
             "Local: \t\thttp://127.0.0.1:{}\n\t" +

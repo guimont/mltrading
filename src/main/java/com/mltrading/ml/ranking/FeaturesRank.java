@@ -5,6 +5,8 @@ import com.mltrading.ml.model.ModelType;
 import com.mltrading.models.stock.*;
 import com.mltrading.models.stock.cache.CacheStockGeneral;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -12,6 +14,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class FeaturesRank extends Feature implements Serializable{
+
+    private static final Logger log = LoggerFactory.getLogger(FeaturesRank.class);
 
     private String codif;
     private static List<PredictionPeriodicity> periodicity = Arrays.asList(PredictionPeriodicity.D20, PredictionPeriodicity.D40);
@@ -47,10 +51,7 @@ public class FeaturesRank extends Feature implements Serializable{
         this.codif = codif;
     }
 
-    @Override
-    protected Object clone() throws CloneNotSupportedException {
-        return super.clone();
-    }
+
 
     /**
      * create feature vector for ranking model training
@@ -62,6 +63,13 @@ public class FeaturesRank extends Feature implements Serializable{
     public  static List<FeaturesRank> create(List<StockGeneral> l, int rangeMin, int rangeMax) {
         List<FeaturesRank> frL = new ArrayList<>();
 
+        if (rangeMin < rangeMax) {
+            log.error("range born inferrior cannot be less than rangeMax");
+            return null;
+
+        }
+
+
         for (StockGeneral s : l) {
 
             String codif = s.getCodif();
@@ -70,8 +78,13 @@ public class FeaturesRank extends Feature implements Serializable{
 
 
             List<String> rangeDate;
+
+            /**
+             * to extract data between range without refactoring cache, extract overall and reduce range
+             */
             try {
-                rangeDate = StockHistory.getDateHistoryListOffsetLimit(codif, rangeMin + rangeMax);
+                rangeDate = StockHistory.getDateHistoryListOffsetLimit(codif, rangeMin);
+                rangeDate = rangeDate.subList(1, rangeMin - rangeMax);
             } catch (Exception e) {
                 return null;
             }

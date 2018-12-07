@@ -11,6 +11,7 @@ import org.apache.spark.mllib.linalg.Vector;
 import org.apache.spark.mllib.linalg.Vectors;
 import org.apache.spark.mllib.regression.LabeledPoint;
 import org.apache.spark.mllib.tree.model.TreeEnsembleModel;
+
 import scala.Serializable;
 
 import java.util.List;

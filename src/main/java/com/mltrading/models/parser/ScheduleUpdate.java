@@ -93,7 +93,7 @@ public class ScheduleUpdate {
         this.timer = new Timer("UpdateProcess", true);
         Date t = today.getTime();
         long u = TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS);
-        //if (t.before(Date.from(Instant.now()))) extractionPassed.set(false);
+        if (t.before(Date.from(Instant.now()))) extractionPassed.set(false);
         this.timer.scheduleAtFixedRate(this.timerTask, t, u); // 60*60*24*100 = 8640000ms
 
     }

@@ -18,7 +18,6 @@ public class CheckConsistency {
     private static final Logger log = LoggerFactory.getLogger(CheckConsistency.class);
 
 
-    private static int OFFSET_BASE = 50;
     private static int RANGE_MAX = 1550;
     private static int XT_PERIOD = 20;
     private static int XT_DAY = 1;
@@ -39,7 +38,7 @@ public class CheckConsistency {
             log.info("create FeaturesStock for: " + stock.getCodif());
 
             try {
-                List<String> rangeDateStock = StockHistory.getDateHistoryListOffsetLimit(stock.getCodif(), RANGE_MAX);
+                List<String> rangeDateStock = StockHistory.getDateHistoryListOffsetLimit("ORA", RANGE_MAX);
                 if (rangeDate == null || rangeDateStock.size() > rangeDate.size())
                     rangeDate = rangeDateStock;
 
@@ -59,6 +58,7 @@ public class CheckConsistency {
                     StockHistory res = StockHistory.getStockHistoryDayAfter(stock.getCodif(), date);
                 } catch (Exception e) {
                     log.error("Cannot get date for: " + stock.getCodif() + " and date: " + date + " //exception:" + e);
+                    errorConsistency.writeData(STOCK, stock.getCode(), stock.getCodif(), date, XT_DAY);
                 }
 
                 /**

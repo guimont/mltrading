@@ -109,10 +109,13 @@ public class ExtractionService {
         articles.fetchCurrent();
         article.fetchCurrent(articleRepository);
         diaryParser.fetchCurrent(period);
+
+        CacheStockHistory.CacheStockHistoryHolder().clearCache();
+
         Analyse a = new Analyse();
         a.processDaily(period);
 
-        CacheStockHistory.CacheStockHistoryHolder().clearCache();
+
         CacheStockAnalyse.CacheStockAnalyseHolder().clearCache();
         CacheStockDiary.CacheStockHistoryHolder().clearCache();
     }

@@ -1,106 +1,75 @@
-<div class="container">
-    <h3>{{detail.name}} / {{detail.code}} </h3>
-<!--    <div class="col-md-5">
-        <div class="panel-heading">
-            <i class="fa fa-bell fa-fw"></i> Notification
-        </div>
-        <div class="panel-body">
-            <div class="list list-group">
-                <a class="list list-group-item">
-                    <i class="fa fa-fw"> </i> marche
-                    <span class="pull-right text-muted small">
-                        <em>{{detail.stock.marche}}</em>
-                    </span>
-                </a>
-
-                <a class="list list-group-item">
-                    <i class="fa fa-fw"> </i> codif
-                    <span class="pull-right text-muted small">
-                        <em>{{detail.code}}</em>
-                    </span>
-                </a>
-
-                <a class="list list-group-item">
-                    <i class="fa fa-fw"> </i> indice
-                    <span class="pull-right text-muted small">
-                        <em>{{detail.stock.indice}}</em>
-                    </span>
-                </a>
-
-                <a class="list list-group-item">
-                    <i class="fa fa-fw"> </i> reuters
-                    <span class="pull-right text-muted small">
-                        <em>{{detail.stock.reuters}}</em>
-                    </span>
-                </a>
-
-                <a class="list list-group-item">
-                    <i class="fa fa-fw"> </i> eligib
-                    <span class="pull-right text-muted small">
-                        <em>{{detail.stock.eligib}}</em>
-                    </span>
-                </a>
-
-                <a class="list list-group-item">
-                    <i class="fa fa-fw"> </i> Title numbers
-                    <span class="pull-right text-muted small">
-                        <em>{{detail.stock.titleNb}}</em>
-                    </span>
-                </a>
-
-                <a class="list list-group-item">
-                    <i class="fa fa-fw"> </i> Capitalization
-                    <span class="pull-right text-muted small">
-                        <em>{{detail.stock.capitalization}}</em>
-                    </span>
-                </a>
-
-                <a class="list list-group-item">
-                    <i class="fa fa-fw"> </i> Own Founds
-                    <span class="pull-right text-muted small">
-                        <em>{{detail.stock.ownFounds}}</em>
-                    </span>
-                </a>
-
-                <a class="list list-group-item">
-                    <i class="fa fa-fw"> </i> Debt
-                    <span class="pull-right text-muted small">
-                        <em>{{detail.stock.debt}}</em>
-                    </span>
-                </a>
-
-                <a class="list list-group-item">
-                    <i class="fa fa-fw"> </i> Net Debt
-                    <span class="pull-right text-muted small">
-                        <em>{{detail.stock.netDebt}}</em>
-                    </span>
-                </a>
-
-            </div>
-
-        </div>
-    </div>-->
-    <!--div class="col-md-7">
-
-    </div>-->
+<div class="container"  style="margin: unset; width: 95%">
 
     <!--<div class="col-md-12">-->
     <div class="col-lg-12 col-md-12">
+        <div class="detail" style="border-left-color: {{getcolorSign(detail.variation)}}">
+
+                <div class="col-lg-3 col-md-3">
+                    <h2><strong>{{detail.name}} </strong></h2>
+                    <h2><strong>{{detail.value}}</strong> Eur</h2>
+                    <h3 style="color: {{getcolorSign(detail.variation)}}; margin-block-start: unset">{{detail.variation}}%</h3>
+                    <p><strong  class="badge" style="width: 45px; background-color: silver; "><span>{{detail.code}}</span> <small class="text-muted" style="margin-left: 20px">{{selected[0].name}}</small></strong></p>
+                </div>
+                <div class="col-lg-3 col-md-3" style="border-left-style: outset;">
+                    <div class="col-lg-6 col-md-6" >
+                    <p style="color: lightslategrey;">Openning</p>
+                    <p ><strong>{{detail.open}}</strong></p>
+
+
+                    <p style="color: lightslategrey;">High</p>
+                    <p ><strong>{{detail.high}}</strong></p>
+
+                    <p style="color: lightslategrey;">Low</p>
+                    <p><strong>{{detail.low}}</strong></p>
+
+                    </div>
+                    <div class="col-lg-6 col-md-6" >
+                        <p style="color: lightslategrey;">Performance</p>
+                        <p ><strong>{{detail.prediction.yieldD20.toFixed(2)}}</strong></p>
+
+                        <p style="color: lightslategrey;">Accuracy 20 days</p>
+                        <p  style="color : {{getcolor(detail.prediction.confidenceD20)}}">{{detail.prediction.confidenceD20}}%</p>
+
+                        <p style="color: lightslategrey;">Accuracy 40 days</p>
+                        <p  style="color : {{getcolor(detail.prediction.confidenceD40)}}">{{detail.prediction.confidenceD40}}%</p>
+                    </div>
+
+                </div>
+                <div class="col-lg-3 col-md-3" style="    border-left-style: outset;">
+                    <p style="color: lightslategrey;">Title numbers</p>
+                    <p><strong>{{detail.stock.titleNb}}</strong></p>
+
+                    <p style="color: lightslategrey;">Volume</p>
+                    <p><strong>{{detail.volume}}</strong></p>
+
+                    <p style="color: lightslategrey;">Volume exchange</p>
+                    <p><strong>{{calculateVolumeDay()}} %</strong></p>
+
+                </div>
+                <div class="col-lg-3 col-md-3" style="    border-left-style: outset;">
+                    <p style="color: lightslategrey;">Sector</strong></p>
+                    <p style="color: steelblue"> <strong>{{detail.sectorCode}}</strong></p>
+
+                    <p style="color: lightslategrey;">Indice</strong></p>
+                    <p style="color: steelblue"> <strong> {{detail.stock.indice}}</strong></p>
+
+
+                    <p style="color: lightslategrey;">Elligibility</strong></p>
+                    <p style="color: steelblue">  {{detail.stock.eligib}}</p>
+
+                </div>
+
+        </div><!-- /.panel -->
+
         <div class="col-lg-10 col-md-10">
         <!--<div class="col-md-4">
         </div>-->
 
-        <div class="mypanel panel panel-primary" style="border-color:lightslategray">
-            <div class="panel-heading" style="background-color: lightslategray">
-                <span class="label label-default" style="margin-left: 5px;background-color: lightslategray">60/d</span><span class="label label-danger" >4.2%</span></span>
-                <span class="label label-default" style="margin-left: 5px;background-color: lightslategray">5/d</span><span class="label label-success" >5%</span></span>
-                <span class="label label-default" style="margin-left: 5px;background-color: lightslategray"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> 20 days </span>
-                <span class="label label-success" >{{(detail.prediction.PredictionD20 /detail.value).toFixed(2)}}</span>
-                </span>
-            </div>
+        <div  style="border-color:lightslategray">
 
-            <div class="panel-body">
-                <div class="col-lg-3 col-md-3">
+
+            <div >
+               <!-- <div class="col-lg-3 col-md-3" style="padding: 2px">
                     <div class="panel-body">
                         <div class="list list-group">
                             <a class="list list-group-item">
@@ -157,27 +126,13 @@
 
                         </div>
                     </div>
-                </div>
-                <div class="col-lg-9 col-md-9">
-                    <span id="result"></span>
+                </div>-->
+
+                <div style="background-color: white;margin-bottom: 30px;">
+                    <span id="result" style="margin: 20px" width="1000" height="250"></span>
                 </div>
             </div>
         </div>
-
-                <!--</div>-->
-
-
-
-                <!-- <div style="margin-bottom: 20px;margin-top: 20px;margin-left: 0px">
-                     <span class="label label-default" style="background-color: lightslategray">Variation</span>
-                     <span style="margin-left: 5px;"><span class="label label-default" style="margin-left: 5px;background-color: lightslategray">60 days </span><span class="label label-danger" style="margin-left: 5px;">4.2%</span></span>
-                     <span style="margin-left: 5px;"><span class="label label-default" style="margin-left: 5px;background-color: lightslategray">5 days </span><span class="label label-success" style="margin-left: 5px;">5%</span></span>
-                     <span style="margin-left: 5px;"><span class="label label-default" style="margin-left: 5px;background-color: lightslategray"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> 5 days </span><span class="label label-success" style="margin-left: 5px;">52%</span></span>
-                     <span style="margin-left: 5px;"><span class="label label-default" style="margin-left: 5px;background-color: lightslategray"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> 20 days </span>
-                         <span class="label label-success" style="margin-left: 5px;">{{(detail.prediction.PredictionD20 /detail.value).toFixed(2)}}</span>
-                     </span>
-                 </div>-->
-
 
                 <div class="mypanel panel panel-primary" style="border-color:lightslategray">
                     <div class="panel-heading" style="background-color: lightslategray">
@@ -221,9 +176,12 @@
                         <table class="table table-condensed table-striped table-bordered table-responsive">
                             <thead>
                             <tr>
-                                <th ng-click="predicate = 'timestamp'; reverse=!reverse"><span translate="realtime.table.header.principal">Date</span></th>
-                                <th ng-click="predicate = 'principal'; reverse=!reverse"><span translate="realtime.table.header.code">Link</span></th>
+                                <th ng-click="predicate = 'timestamp'; reverse=!reverse"><span >Date</span></th>
+                                <th ng-click="predicate = 'principal'; reverse=!reverse"><span >News</span></th>
                             </tr>
+                            <tr ng-repeat="document in detail.documents | filter:filter | orderBy:'-name':true" ng-hide="audit.filtered">
+                                <td >{{document.date}}</a></td>
+                                <td><small>{{document.ref}}</small></td>
                             </thead>
                         </table>
 
@@ -235,6 +193,14 @@
 
             </div>
         <div class="col-lg-2 col-md-2">
+
+            <div >
+                <div style="background-color: lightslategrey; height: 1200px; width: 198px">
+                    <span id="kineticMapRF"></span>
+                    <span id="kineticMapGBT"></span>
+                </div>
+            </div>
+
             <div style="background-color: #0a6aa1"></div>
         </div>
     </div>

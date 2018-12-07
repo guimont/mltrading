@@ -14,7 +14,9 @@ public class StockGeneral extends StockHistory implements Serializable {
     private Double variation;
     private Double firstJanuaryVariation;
 
-
+    public StockGeneral(String codif) {
+        setCodif(codif);
+    }
 
 
     public String getSector() {

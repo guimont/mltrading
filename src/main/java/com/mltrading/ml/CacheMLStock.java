@@ -5,6 +5,7 @@ import com.mltrading.config.MLProperties;
 import com.mltrading.dao.InfluxDaoConnector;
 import com.mltrading.ml.model.ModelType;
 import com.mltrading.ml.ranking.MLRank;
+import com.mltrading.models.stock.StockSector;
 import com.mltrading.models.stock.cache.CacheStockGeneral;
 import com.mltrading.models.stock.cache.CacheStockSector;
 import com.mltrading.models.stock.StockGeneral;
@@ -96,9 +97,7 @@ public class CacheMLStock {
         //load model local
         for (StockHistory s : sl) {
             MLStocks mls = new MLStocks(s.getCodif());
-            modelTypes.forEach(t -> {
-                mls.distibute(t);
-            });
+            modelTypes.forEach(mls::distibute);
         }
 
 
@@ -167,7 +166,7 @@ public class CacheMLStock {
 
         for (MLStocks mls : mlStockMap.values()) {
             PeriodicityList.periodicity.forEach(p -> {
-                if (mls.getSock(p).isModelImprove() == true) {
+                if (mls.getSock(p).isModelImprove()) {
                     mls.saveModel(p, type);
                     mls.saveDB(p, type);
                 }
@@ -271,12 +270,27 @@ public class CacheMLStock {
             MLStocks mls = new MLStocks(s.getCodif());
             mls.saveDB(type);
         }
+
+        List<StockSector> ss = new ArrayList(CacheStockSector.getSectorCache().values());
+        for (StockSector s : ss) {
+            MLStocks mls = new MLStocks(s.getCodif());
+            mls.saveDB(type);
+        }
     }
 
 
     public static void loadDB() {
         List<StockGeneral> sl = new ArrayList(CacheStockGeneral.getIsinCache().values());
         for (StockGeneral s : sl) {
+            MLStocks mls = new MLStocks(s.getCodif());
+            modelTypes.forEach(t -> {
+                mls.loadDB(t);
+            });
+
+        }
+
+        List<StockSector> ss = new ArrayList(CacheStockSector.getSectorCache().values());
+        for (StockSector s : ss) {
             MLStocks mls = new MLStocks(s.getCodif());
             modelTypes.forEach(t -> {
                 mls.loadDB(t);

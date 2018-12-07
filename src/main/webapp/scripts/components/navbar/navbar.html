@@ -1,5 +1,5 @@
 <nav class="navbar navbar-default" role="navigation" style="margin-bottom: 0px;">
-    <div class="container">
+    <div class="container" style="width: 100%">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse">
                 <span class="sr-only">Toggle navigation</span>
@@ -15,6 +15,7 @@
 
         </div>
         <div class="collapse navbar-collapse" id="navbar-collapse" ng-switch="isAuthenticated()">
+            <div class="cp-spinner cp-skeleton" style="margin-top: 8px"></div>
             <ul class="nav navbar-nav nav-pills navbar-right">
                 <li ui-sref-active="active">
                     <a ui-sref="home">

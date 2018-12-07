@@ -121,7 +121,13 @@ public class HistoryParserInvestir extends ParserCommon implements HistoryParser
 
     @Override
     public void fetchSpecific(StockGeneral g) {
-
+        String url = startUrl + g.getName().toLowerCase().replaceAll(" ", "-")
+            + separator + g.getPlace()  + separator + g.getRealCodif().toLowerCase()+separator+g.getCode().toLowerCase()+endUrl;
+        try {
+            parser(url,g,20);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

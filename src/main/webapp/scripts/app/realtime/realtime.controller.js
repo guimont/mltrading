@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('mltradingApp')
-    .controller('RealtimeController', function ($scope,$state, $http, RealtimeService) {
+    .controller('RealtimeController', function ($scope,$state, $http, RealtimeService, color) {
 
         $scope.updatingRT = true;
 
@@ -25,7 +25,7 @@ angular.module('mltradingApp')
         $scope.showIndice = function() {
             RealtimeService.findIndice().then(function (data) {
                 $scope.indice = data;
-                loadIndice($scope.indice,"indicePanel","PX1 stock", false);
+                loadIndice($scope.indice,"indicePanel","PX1 stock", false, "rgba(75,192,192,0.2)");
             });
         };
 
@@ -38,7 +38,13 @@ angular.module('mltradingApp')
             RealtimeService.findAll().then(function (data) {
                 $scope.rts = data;
                 //$state.reload();
+                var meter = document.getElementById('strength-meter');
+
+                if (meter != null)
+                    meter.value = 1;
             });
+
+
 
 
         };
@@ -92,8 +98,7 @@ angular.module('mltradingApp')
         }
 
         $scope.getcolorSign = function(val) {
-            if (val < 0) return '#ED5565!important';
-            return '#48CFAD!important';
+            return color.getcolorSign(val);
         }
 
 

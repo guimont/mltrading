@@ -17,6 +17,10 @@ public class StockPerformanceTest {
     public void testLoad() {
         MLProperties.load();
 
+        for (StockHistory sh :CacheStockGeneral.getIsinCache().values()) {
+            System.out.println(sh.getCodif());
+        }
+
         /*load all model to make this operation .. hard to test in unit test
         /*for (StockHistory sh :CacheStockGeneral.getIsinCache().values()) {
             MLStocks mls = new MLStocks(sh.getCodif());

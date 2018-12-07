@@ -8,7 +8,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 /**
  * Created by gmo on 03/03/2016.
@@ -21,14 +24,30 @@ public class StockDetail implements Serializable{
     private Stock stock;
     private Double value;
 
+    private Double variation;
+    private Double open;
+    private Double high;
+    private Double close;
+    private Double low;
+
+    private Double volume;
+
+    private String indiceRef;
+
+
 
     private List<StockHistory> sector;
     private List<StockHistory> indice;
     private StockPrediction prediction;
     private List<DetailData> data;
+    private List<StockDocument> documents;
+    private List<StockDocument> dailys;
 
-    private static int PERIOD = 40;
+    private static int PERIOD = 80;
     private String sectorCode;
+
+    private Double RFD20[];
+    private Double GBTD20[];
 
 
     public static StockDetail populate(Stock s, StockHistory sh) {
@@ -40,16 +59,55 @@ public class StockDetail implements Serializable{
         detail.setStock(s);
         detail.setPrediction(sh.getPrediction());
         detail.setName(sh.getName());
-        //detail.setSector();
         detail.setData(populateData(sh.getCodif()));
-        detail.setValue(sh.getOpening());
 
-        if (s != null)
-            detail.sector = StockHistory.getStockHistoryLast(s.getSector(), PERIOD);
+        StockGeneral sg = CacheStockGeneral.getCache().get(sh.getCode());
+        detail.setVariation(sg.getVariation());
+        detail.setHigh(sg.getHighest());
+        detail.setOpen(sg.getOpening());
+        detail.setLow(sg.getLowest());
+        detail.setVolume(sg.getVolume());
+        detail.setValue(sg.getValue());
+        detail.setSectorCode(sg.getSector());
+
+        detail.setPrediction(sg.getPrediction());
+
+        detail.documents = new ArrayList<>();
+
+        if (sg != null)
+            detail.sector = StockHistory.getStockHistoryLast(sg.getSector(), PERIOD);
         else
             detail.sector = StockHistory.getStockHistoryLast(sh.getCodif(), PERIOD); //itself
         detail.indice = StockHistory.getStockHistoryLast("PX1", PERIOD); // code cac => use transform to match indice
 
+        List<StockDocument> preList = StockDocument.getStockHistoryLastInvert(sh.getCodif(),StockDocument.TYPE_ARTICLE, PERIOD);
+        preList.forEach(d -> {
+            //don't take html ref .. not an article
+            if (!d.getRef().toLowerCase().contains("html")) {
+                String[] split = d.getRef().split("/");
+                d.setRef(split[split.length - 1].replaceAll("-", " ").replaceAll(".php", "").replaceAll("bref", ""));
+                detail.documents.add(d);
+            }
+        });
+
+
+        detail.dailys = StockDocument.getStockHistoryLastInvert(sh.getCodif(),StockDocument.TYPE_DIARY, PERIOD);
+
+
+        String date = StockHistory.getLastDateHistory(sh.getCodif());
+        MLStocks mlStocks = CacheMLStock.getMLStockCache().get(sh.getCodif());
+
+        if (mlStocks != null) {
+            MatrixValidator matrixValidator = mlStocks.getModel(PredictionPeriodicity.D20, ModelType.RANDOMFOREST).getValidator();
+            FeaturesStock featuresStock = FeaturesStock.createRT(sh.getCodif(), matrixValidator, date);
+            detail.setRFD20(featuresStock.getVector());
+
+            matrixValidator = mlStocks.getModel(PredictionPeriodicity.D20, ModelType.GRADIANTBOOSTTREE).getValidator();
+            featuresStock = FeaturesStock.createRT(sh.getCodif(), matrixValidator, date);
+            detail.setGBTD20(featuresStock.getVector());
+        }
+
+        //preList.sort(Comparator.comparing(d -> d.getDate()));
 
         return detail;
     }
@@ -232,5 +290,92 @@ public class StockDetail implements Serializable{
         return sectorCode;
     }
 
+    public List<StockDocument> getDocuments() {
+        return documents;
+    }
 
+    public void setDocuments(List<StockDocument> documents) {
+        this.documents = documents;
+    }
+
+
+    public Double getVariation() {
+        return variation;
+    }
+
+    public void setVariation(Double variation) {
+        this.variation = variation;
+    }
+
+    public Double getOpen() {
+        return open;
+    }
+
+    public void setOpen(Double open) {
+        this.open = open;
+    }
+
+    public Double getHigh() {
+        return high;
+    }
+
+    public void setHigh(Double high) {
+        this.high = high;
+    }
+
+    public Double getClose() {
+        return close;
+    }
+
+    public void setClose(Double close) {
+        this.close = close;
+    }
+
+    public Double getLow() {
+        return low;
+    }
+
+    public void setLow(Double low) {
+        this.low = low;
+    }
+
+    public Double getVolume() {
+        return volume;
+    }
+
+    public void setVolume(Double volume) {
+        this.volume = volume;
+    }
+
+    public String getIndiceRef() {
+        return indiceRef;
+    }
+
+    public void setIndiceRef(String indiceRef) {
+        this.indiceRef = indiceRef;
+    }
+
+    public List<StockDocument> getDailys() {
+        return dailys;
+    }
+
+    public void setDailys(List<StockDocument> dailys) {
+        this.dailys = dailys;
+    }
+
+    public Double[] getRFD20() {
+        return RFD20;
+    }
+
+    public void setRFD20(Double[] RFD20) {
+        this.RFD20 = RFD20;
+    }
+
+    public Double[] getGBTD20() {
+        return GBTD20;
+    }
+
+    public void setGBTD20(Double[] GBTD20) {
+        this.GBTD20 = GBTD20;
+    }
 }

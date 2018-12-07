@@ -1,9 +1,12 @@
 var result = [];
 
 
-var SIZERESX=700;
-var RSIZERESX=720;
+var SIZERESX=1100;
+var RSIZERESX=1080;
 var SIZERESY=240;
+
+var margeX = 9;
+var GLOBAL_X =1200;
 
 /**
  * init stage kinetic canvas
@@ -12,44 +15,27 @@ var SIZERESY=240;
  */
 function loadResult (data) {
 
+    if (data == null)
+        return;
+
     var stageResult = new Kinetic.Stage({
         container: "result",
         width: SIZERESX,
         height: SIZERESY
     });
 
-
-   /* var stageIndice = new Kinetic.Stage({
-        container: "indice",
-        width: SIZERESX/2,
-        height: SIZERESY
-    });
-
-    var stageSector = new Kinetic.Stage({
-        container: "sector",
-        width: SIZERESX/2,
-        height: SIZERESY
-    });*/
-
-
     var layerChart = new Kinetic.Layer();
 
     result = data;
 
-    chartResult({x:30,y:20}, layerChart, true);
+    GLOBAL_X = window.innerWidth;
+    margeX = window.innerWidth/180;
+
+    chartResult({x:5,y:20}, layerChart, true);
     stageResult.add(layerChart);
 
-    loadIndice(result.indice,"indicePanelDetail","", true)
-    loadIndice(result.sector,"sectorPanelDetail","", true)
-
-
-   /* var layerChartIndice = new Kinetic.Layer();
-    draw({x:30,y:20},layerChartIndice,'indice')
-    stageIndice.add(layerChartIndice);
-
-    var layerChartSector = new Kinetic.Layer();
-    draw({x:30,y:20},layerChartSector,'sector')
-    stageSector.add(layerChartSector);*/
+    loadIndice(result.indice,"indicePanelDetail","", false, "rgba(75,192,192,0.2)")
+    loadIndice(result.sector,"sectorPanelDetail","", false, "rgba(119,136,153,0.2)")
 
 };
 
@@ -72,15 +58,12 @@ function chartResult(pos, layer) {
     var marge =  SIZERESY/4;
 
     for (var i=0; i<result.data.length;i++) {
-        //if (result.data[i].value != 0) drawValue(group, pos, result.data ,min ,  heightM,marge, i,  layer, 'grey','square' );
-        //drawValue(group, pos, result.data[i].predD1- min,  heightM,marge, i,  layer, 'blue' );
-        //drawValue(group, pos, result.data[i].predD5- min,  heightM,marge, i,  layer, 'green' );
         drawValue(group, pos, result.data, min,  heightM,marge, i,  layer);
 
     }
 
     var groupEffect = new Kinetic.Group();
-    effect(groupEffect, pos, result.data, min,  heightM,marge,  layer)
+    //effect(groupEffect, pos, result.data, min,  heightM,marge,  layer)
 
     drawGridRes(group,pos, max, max-min,  heightM, marge);
 
@@ -287,10 +270,8 @@ function drawZoom(group,pos, data,min, heightM, marge, layer) {
 
 }
 
-var margeX = 7
-function drawValue(group, pos, data,min, heightM, marge,  i ,  layer) {
 
-    var pred5;
+function drawValue(group, pos, data,min, heightM, marge,  i ,  layer) {
 
     var line = new Kinetic.Rect({
         x: pos.x * 2 + i *(margeX),
@@ -306,7 +287,7 @@ function drawValue(group, pos, data,min, heightM, marge,  i ,  layer) {
         x: pos.x * 2 + i *(margeX)-5,
         y: 30,
         width: 10,
-        height:SIZERESY-40,
+        height:SIZERESY-0,
         opacity: 0
     });
 
@@ -359,37 +340,30 @@ function drawValue(group, pos, data,min, heightM, marge,  i ,  layer) {
         group.add(pred);
     }
 
-    if (i> 39) {
-        if (data[i].predD5 > 0) {
-            pred5 = new Kinetic.Circle({
-                x: pos.x * 2 + i * (margeX) +1,
-                y: SIZERESY - (data[i].predD5 - min) * heightM - marge,
-                width: 3,
-                height: 6,
-                opacity: 0.2,
-                fill: 'blue'
-            });
-            group.add(pred5);
-        }
-
-        if (i > 43 && data[i].predD20 > 0) {
-            var pred = new Kinetic.Circle({
+    if (i> 79) {
+        if (i > 89 && data[i].predD20 > 0) {
+            var pred = new Kinetic.Ellipse({
                 x: pos.x * 2 + i * (margeX) +1,
                 y: SIZERESY - (data[i].predD20 - min) * heightM - marge,
-                height: 6,
+                radius: {
+                    x: 3,
+                    y: 12
+                },
                 opacity: 0.2,
                 fill: 'orange'
             });
             group.add(pred);
         }
 
-        if (i > 58 && data[i].predD40 > 0) {
+        if (i > 108 && data[i].predD40 > 0) {
 
-            var pred = new Kinetic.Circle({
+            var pred = new Kinetic.Ellipse({
                 x: pos.x * 2 + i * (margeX) +1,
                 y: SIZERESY - (data[i].predD40 - min) * heightM - marge,
-                width: 3,
-                height: 6,
+                radius: {
+                    x: 3,
+                    y: 12
+                },
                 opacity: 0.2,
                 fill: 'green'
             });
@@ -406,14 +380,14 @@ function drawValue(group, pos, data,min, heightM, marge,  i ,  layer) {
     ref.on('mouseover', function() {
         dist = 0;
         //detail.start();
-        anim.stop()
+        //anim.stop()
         group.add(chartGroup);
         layer.draw();
     });
 
     ref.on('mouseout', function() {
         //detail.stop();
-        anim.start()
+        //anim.start()
         chartGroup.remove();
         layer.draw();
     });
@@ -504,40 +478,11 @@ function showPred() {
 
 function  drawGridRes(group, pos, maxV, max,  heightM, marge) {
 
-    group.add(new Kinetic.Rect({
-        x: pos.x,
-        y: SIZERESY-20,
-        width: RSIZERESX,
-        height: 1,
-        fill: 'lightgrey'
-
-    }));
 
     group.add(new Kinetic.Rect({
-        x: pos.x,
-        y: 20,
-        width: 1,
-        height:SIZERESY-40,
-        fill: 'lightgrey'
-
-    }));
-
-    /*group.add(new Kinetic.Rect({
-     x: pos.x,
-     y: SIZERESY - max * heightM  - marge,
-     width: SIZERESX,
-     height: 1,
-     fill: 'blue',
-     opacity: 0.2
-
-     }));
-
-
-     */
-    group.add(new Kinetic.Rect({
-        x: pos.x,
+        x: pos.x+10,
         y: SIZERESY - max * heightM  - marge,
-        width: RSIZERESX,
+        width: margeX*120,
         height: 1,
         fill: 'AC7969',
         opacity: 0.1
@@ -554,9 +499,20 @@ function  drawGridRes(group, pos, maxV, max,  heightM, marge) {
 
     }));
 
+
+    group.add(new Kinetic.Rect({
+        x: pos.x+10,
+        y: SIZERESY - 20 ,
+        width: margeX*120,
+        height: 1,
+        fill: 'AC7969',
+        opacity: 0.1
+
+    }));
+
     group.add(new Kinetic.Text({
         x:0,
-        y: SIZERESY + max * heightM  - marge,
+        y: SIZERESY - 30 ,
         text: (maxV - 2*max).toFixed(2),
         fontFamily: 'Calibri',
         fontSize: 9,

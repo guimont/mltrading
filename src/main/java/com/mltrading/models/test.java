@@ -54,16 +54,28 @@ public class test {
         }
     }*
 
+
+    public static void main(String[] args) {
+        MLProperties.load();
+
+        Analyse a = new Analyse();
+        try {
+            a.processAll();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }*
+
     public static void main(String[] args) {
         MLProperties.load();
         try {
             HistoryLocalRawMaterials raw = new HistoryLocalRawMaterials();
-            raw.loaderSpecific("localhost:7090", "GYRI1M");
+            //raw.loaderSpecific("localhost:7090", "UKRI10Y");
 
             System.out.println("Start analyse");
             Analyse analyse = new Analyse();
 
-            analyse.processAnalysisAll("GYRI1M");
+            analyse.processAnalysisAll("UKRI10Y");
 
             System.out.println("**************************");
             System.out.println("END analyse");

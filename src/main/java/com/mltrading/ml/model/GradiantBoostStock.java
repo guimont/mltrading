@@ -34,6 +34,12 @@ public class GradiantBoostStock extends MlModelGeneric<MLGradiantBoostStockModel
         mls.setModel(period, model, ModelType.GRADIANTBOOSTTREE);
     }
 
+    /**
+     * train model with gradiant boost
+     * @param trainingData
+     * @param validator
+     * @return
+     */
     @Override
     protected MLGradiantBoostStockModel trainModel(JavaRDD<LabeledPoint> trainingData, MatrixValidator validator) {
         BoostingStrategy boostingStrategy = BoostingStrategy.defaultParams("Regression");

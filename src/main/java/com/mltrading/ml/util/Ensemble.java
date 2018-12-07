@@ -25,7 +25,7 @@ public class Ensemble {
     private static final Random random = new Random(0);
     private static final Logger log = LoggerFactory.getLogger(Ensemble.class);
 
-    Double rangeList[] = {0., 0.1, 0.25 ,0.35 , 0.5, 0.65, 0.75, 1. , 1.25 ,1.35, 1.5, 1.75, 3., 10.};
+    Double rangeList[] = {0., 0.1, 0.25 ,0.35 , 0.5, 0.65, 0.75, 1. , 1.25 ,1.35, 1.5, 1.75, 10., 1000.};
 
     Double ratio;
 
@@ -78,7 +78,7 @@ public class Ensemble {
                 MLPerformance mpGBT = mlGBT.getMl(p);
 
 
-                perf.setMl(MLPerformance.calculYields(mlRF.getDate(),
+                perf.setMl(MLPerformance.calculYields(mlRF.getMl(p).getDate(),
                     (mpRF.getPrediction() * this.getRatio() + mpGBT.getPrediction())/(1. + this.ratio),
                     mpRF.getRealvalue(), mpRF.getCurrentValue()), p);
 

@@ -49,7 +49,10 @@ public class MLPerformance implements Serializable{
         this.prediction = prediction;
         this.realValue = realValue;
         this.currentValue = currentValue;
-        this.error = realValue - prediction;
+        if (realValue != -1)
+            this.error = realValue - prediction;
+        else
+            this.error = 0.;
     }
 
 

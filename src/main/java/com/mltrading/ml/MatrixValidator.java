@@ -116,7 +116,8 @@ public class MatrixValidator implements Serializable,Cloneable {
      */
     static public int HS_POS = 0;
     static public int N_HS = 1;
-    static public int N_ROW_RESERVE = 10;
+    static public int N_CAC = 1;
+    static public int N_ROW_RESERVE = 9;
 
     static public int HS_COL = 0;
     static public int HS_PERIOD_COL = 1;
@@ -130,7 +131,7 @@ public class MatrixValidator implements Serializable,Cloneable {
         return col;
     }
 
-    public static int globalROW = CacheStockSector.N_SECTOR+ CacheStockIndice.N_INDICE+ CacheRawMaterial.N_RAW+ N_HS + N_ROW_RESERVE;
+    public static int globalROW = CacheStockSector.N_SECTOR+ CacheStockIndice.N_INDICE+ CacheRawMaterial.N_RAW+ N_HS + N_CAC + N_ROW_RESERVE;
     private static int globalCOL = N_HS_COL+StockAnalyse.N_AT;
 
     public Integer getMaxDepth() {
@@ -729,6 +730,24 @@ public class MatrixValidator implements Serializable,Cloneable {
         return matrix[indice][StockAnalyse.COL_GARCHVOL100_POS + N_HS_COL] == 1;
     }
 
+    /**
+     * get matrix COL_VCAC for @indice
+
+     * @return
+     */
+    public boolean getVCAC() {
+        return matrix[globalROW-N_ROW_RESERVE][HS_COL] == 1;
+    }
+
+
+    /**
+     * get matrix COL_VCAC for @indice
+
+     * @return
+     */
+    public int getVCACHist() {
+        return matrix[globalROW-N_ROW_RESERVE][HS_PERIOD_COL];
+    }
 
 
 

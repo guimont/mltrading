@@ -149,7 +149,8 @@
                                 <td>{{rt.value}}</td>
                                 <td>{{rt.volume}}</td>
                                 <td style="color: {{getcolorSign(rt.variation)}}">{{rt.variation}}</td>
-                                <td style="color: {{getcolor(rt.prediction.confidenceD20)}}">{{prediction(rt.prediction.predictionD20, rt.prediction.confidenceD20)}}</td>
+                                <!--<td style="color: {{getcolor(rt.prediction.confidenceD20)}}">{{prediction(rt.prediction.predictionD20, rt.prediction.confidenceD20)}}</td>-->
+                                <td><meter style="width:100px;width: {{rt.prediction.confidenceD20}}%"></meter></td>
                                 <td>
                                     <a ui-sref="performance({code: '{{rt.codif}}'})" ><i style="margin-left: 5px" class="glyphicon glyphicon-eye-open"/></a>
                                 </td>

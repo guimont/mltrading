@@ -26,6 +26,8 @@ public class StockDocument extends StockBase implements Serializable, Comparable
     DateTime timeInsert;
 
 
+
+
     public String getSource() {
         return source;
     }
@@ -127,6 +129,7 @@ public class StockDocument extends StockBase implements Serializable, Comparable
 
     }
 
+
     public static List<StockDocument> getStockDocumentInvert(final String code, final String type) {
 
         List<StockDocument> docList = new ArrayList<>();
@@ -196,8 +199,8 @@ public class StockDocument extends StockBase implements Serializable, Comparable
     }
 
 
-    public static List<StockDocument> getStockHistoryLastInvert(String code, int max) {
-        return cache.getStockHistoryLastInvert(code,max);
+    public static List<StockDocument> getStockHistoryLastInvert(String code,String type ,int max) {
+        return cache.getStockHistoryLastInvert(code+type,max);
     }
 
 

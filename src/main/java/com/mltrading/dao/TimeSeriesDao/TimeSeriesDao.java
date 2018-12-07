@@ -11,17 +11,17 @@ import java.util.Map;
  */
 public interface TimeSeriesDao {
 
-    public List<StockHistory> extract(final String code);
-    public List<StockHistory> extract(final String code, final Map<String,Map<String, Integer>> indexCache ,final Map<String,List<StockHistory>> historyCache );
-    public StockHistory extractSpecific(final String code, final String date);
-    public StockHistory extractSpecificAfter(final String code, final String date);
-    public StockHistory extractSpecificBefore(final String code, final String date);
-    public StockHistory extractSpecificOffset(final String code, final String date, int offset);
-    public List<StockHistory>  extractLasts(final String code, int count);
+    List<StockHistory> extract(final String code);
+    List<StockHistory> extract(final String code, final Map<String,Map<String, Integer>> indexCache ,final Map<String,List<StockHistory>> historyCache );
+    StockHistory extractSpecific(final String code, final String date);
+    StockHistory extractSpecificAfter(final String code, final String date);
+    StockHistory extractSpecificBefore(final String code, final String date);
+    StockHistory extractSpecificOffset(final String code, final String date, int offset);
+    List<StockHistory>  extractLasts(final String code, int count);
     List<StockHistory> extractDateInvert(final String code, final String date, int offset);
-    public  StockHistory extractLastHistory(final String code);
+    StockHistory extractLastHistory(final String code);
 
-    public List<StockAnalyse> extractAnalyse(final String code);
-    public StockAnalyse extractAnalyseSpecific(final String code, final String date);
-    public List<StockAnalyse> extractAnalyse(final String code, final Map<String,Map<String, Integer>> indexCache ,final Map<String,List<StockAnalyse>> historyCache );
+    List<StockAnalyse> extractAnalyse(final String code);
+    StockAnalyse extractAnalyseSpecific(final String code, final String date);
+    List<StockAnalyse> extractAnalyse(final String code, final Map<String,Map<String, Integer>> indexCache ,final Map<String,List<StockAnalyse>> historyCache );
 }

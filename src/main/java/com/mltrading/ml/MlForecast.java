@@ -1,5 +1,6 @@
 package com.mltrading.ml;
 
+import com.google.common.collect.Lists;
 import com.mltrading.config.MLProperties;
 import com.mltrading.ml.genetic.GeneticAlgorithm;
 import com.mltrading.ml.model.GradiantBoostStock;
@@ -21,10 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.stream.Stream;
@@ -44,7 +42,7 @@ public class MlForecast extends Evaluate{
 
     public void processList(ModelType type) {
 
-        List<StockGeneral> l = new ArrayList(CacheStockGeneral.getIsinCache().values());
+        List<StockGeneral> l = new ArrayList<>(CacheStockGeneral.getIsinCache().values());
 
         MlModelGeneric rfs;
 
@@ -66,7 +64,7 @@ public class MlForecast extends Evaluate{
         }
 
 
-        List<StockSector> ls = new ArrayList(CacheStockSector.getSectorCache().values());
+        List<StockSector> ls = new ArrayList<>(CacheStockSector.getSectorCache().values());
 
         for (StockSector s : ls) {
             MLStocks mls = CacheMLStock.getMLStockCache().get(s.getCodif());
@@ -107,7 +105,7 @@ public class MlForecast extends Evaluate{
     public void exportModel() {
         CsvFileWriter fileWriter = new CsvFileWriter("MatrixValidator.csv", "");
 
-        List<StockGeneral> l = new ArrayList(CacheStockGeneral.getIsinCache().values());
+        List<StockGeneral> l = new ArrayList<>(CacheStockGeneral.getIsinCache().values());
 
 
         for (StockGeneral s : l) {
@@ -117,7 +115,7 @@ public class MlForecast extends Evaluate{
             }
         }
 
-        List<StockSector> ls = new ArrayList(CacheStockSector.getSectorCache().values());
+        List<StockSector> ls = new ArrayList<>(CacheStockSector.getSectorCache().values());
 
         for (StockSector s : ls) {
             MLStocks mls = CacheMLStock.getMLStockCache().get(s.getCodif());
@@ -142,7 +140,7 @@ public class MlForecast extends Evaluate{
 
 
 
-            List<StockGeneral> l = new ArrayList(CacheStockGeneral.getIsinCache().values());
+            List<StockGeneral> l = new ArrayList<>(CacheStockGeneral.getIsinCache().values());
 
             /**
              * Start RANDOMFOREST import
@@ -231,7 +229,7 @@ public class MlForecast extends Evaluate{
             }
 
 
-            List<StockSector> ls = new ArrayList(CacheStockSector.getSectorCache().values());
+            List<StockSector> ls = new ArrayList<>(CacheStockSector.getSectorCache().values());
 
             /**
              * Start RANDOMFOREST import
@@ -317,16 +315,36 @@ public class MlForecast extends Evaluate{
     }
 
 
-    /**
-     * optimization for matrix validator
-     * @param loop: indicate loop for each saveValidator model
-     * @param backloop: iteration before saveValidator
-     * @param validator: validator model
-     * @param target: PX1 or sector only
-     */
-    public void optimize(int loop, int backloop, String validator, String target, ModelType type) {
+    public void optimize(int loop, int backloop, String validator, String target, ModelType type, String specific) {
 
-        if (CacheMLActivities.setIsRunning() == false) {
+
+        if (specific.equalsIgnoreCase("ALL")) {
+            if (target.equals("PX1"))
+                optimizeBase(new ArrayList(CacheStockGeneral.getIsinCache().values()), CacheStockGeneral.getIsinCache().values().size() ,
+                    loop, backloop, validator, type);
+            else
+                optimizeBase(new ArrayList(CacheStockSector.getSectorCache().values()), CacheStockSector.getSectorCache().values().size() ,
+                    loop, backloop, validator, type);
+        }
+        /*else {
+
+                optimizeBase(Stream.of(CacheStockGeneral.getIsinCache().get(CacheStockGeneral.getCode(specific))),
+                    1 , loop,  backloop, validator, type);
+            }*/
+
+    }
+
+
+
+        /**
+         * optimization for matrix validator
+         * @param loop : indicate loop for each saveValidator model
+         * @param backloop : iteration before saveValidator
+         * @param validator : validator model
+         */
+        private void optimizeBase(List list, int size, int loop, int backloop, String validator, ModelType type) {
+
+        if (!CacheMLActivities.setIsRunning()) {
             log.error("optimizing still running, cannot launch new optimization");
             return;
         }
@@ -338,10 +356,8 @@ public class MlForecast extends Evaluate{
                     if (m!=null)
                         m.resetScoring();
                 });
-            if (target.equals("PX1"))
-                optimize(CacheStockGeneral.getIsinCache().values().stream(), CacheStockGeneral.getIsinCache().values().size(), backloop, validator, type);
-            else
-                optimize(CacheStockSector.getSectorCache().values().stream(), CacheStockSector.getSectorCache().values().size(), backloop, validator, type);
+
+            optimize(list, size , backloop, validator, type);
 
             updateEnsemble();
             updatePredictor();
@@ -363,8 +379,8 @@ public class MlForecast extends Evaluate{
         CacheMLStock.getMLStockCache().values()
             .forEach( m -> {
 
-                final GeneticAlgorithm<Ensemble> algo = new GeneticAlgorithm<>(e -> e.evaluate(m), () -> Ensemble.newInstance(),
-                    (first, second) -> first.merge(second), e -> e.mutate());
+                final GeneticAlgorithm<Ensemble> algo = new GeneticAlgorithm<>(e -> e.evaluate(m), Ensemble::newInstance,
+                    Ensemble::merge, Ensemble::mutate);
 
                 algo.initialize(20);
 
@@ -395,7 +411,12 @@ public class MlForecast extends Evaluate{
                             MLPerformance mpGBT = mlGBT.getMl(p);
 
 
-                            perf.setMl(MLPerformance.calculYields(mlRF.getDate(),
+                            if (mpRF.getRealvalue() == -1)
+                                perf.setMl(new MLPerformance(mlRF.getMl(p).getDate(),(mpRF.getPrediction() * m.getRatio() + mpGBT.getPrediction())/(1. + m.ratio), -1, mpRF.getCurrentValue(), 0, 0, true), p);
+
+                            else
+
+                            perf.setMl(MLPerformance.calculYields(mlRF.getMl(p).getDate(),
                                 (mpRF.getPrediction() * m.getRatio() + mpGBT.getPrediction())/(1. + m.ratio),
                                 mpRF.getRealvalue(), mpRF.getCurrentValue()), p);
 
@@ -420,12 +441,12 @@ public class MlForecast extends Evaluate{
 
     /**
      * sub function to iterate and use threadpool
-     * @param stream
+     * @param list
      * @param size
      * @param backloop
      * @param validator
      */
-    private void optimize(Stream<? extends StockHistory> stream, int size, int backloop, String validator,  ModelType type) {
+    private void optimize(List<? extends StockHistory> list, int size, int backloop, String validator,  ModelType type) {
 
         final CountDownLatch latches = new CountDownLatch(size);
         //final CountDownLatch latches = new CountDownLatch(1); //testmode ORA
@@ -433,8 +454,10 @@ public class MlForecast extends Evaluate{
 
         CacheMLActivities.addActivities(new MLActivities("optimize forecast", "", "start", 0, 0, false));
 
+
+
         //For test purpose only
-        stream./*filter(s -> s.getCodif().equals("ORA")).*/forEach(s -> executorRef.submit(() -> {    //For test purpose only
+        list.stream()./*filter(s -> s.getCodif().equals("ORA")).*/forEach(s -> executorRef.submit(() -> {    //For test purpose only
             try {
                 if (validator.contains("optimizeModel"))
                     optimizeModel(s.getCodif(),type);
@@ -507,6 +530,11 @@ public class MlForecast extends Evaluate{
                 GradiantBoostStock rfs = new GradiantBoostStock();
                 rfs.processRFRef(codif, mls, false);
             }
+
+            if (codif.equalsIgnoreCase("BN"))
+                log.error("BN");
+
+
 
 
             if (null != mls) {

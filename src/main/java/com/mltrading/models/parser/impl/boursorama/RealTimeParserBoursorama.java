@@ -24,27 +24,26 @@ public class RealTimeParserBoursorama extends ParserCommon implements RealTimePa
     //static String cac40 = "http://www.boursorama.com/bourse/actions/cours_az.phtml?MARCHE=1rPCAC&validate=";
     //static String cac40 = "http://www.boursorama.com/bourse/actions/cours_az.phtml?MARCHE=1rPCAC&valid=";
 
-    static String cac40 =  "https://www.boursorama.com/bourse/actions/cotations/?quotation_az_filter[market]=1rPCAC";
-    static String cac40_2 =  "https://www.boursorama.com/bourse/actions/cotations/page-2?quotation_az_filter%5Bmarket%5D=1rPCAC";
-    //static String refCode = "tbody";
-
-
-    static String refCode = ".c-block";
-
 
 
     public int refreshCache() {
-        return refreshCache(cac40,27);
+       return loaderCache(false);
 
     }
 
     public int loaderCache() {
-        loaderStock(cac40,27);
-        return loaderStock(cac40_2,11);
+        return loaderCache(true);
+    }
 
+    public int loaderCache(boolean init) {
+        String cac40 =  "https://www.boursorama.com/bourse/actions/cotations/?quotation_az_filter[market]=1rPCAC";
+        String cac40_2 =  "https://www.boursorama.com/bourse/actions/cotations/page-2?quotation_az_filter%5Bmarket%5D=1rPCAC";
+        loaderStock(cac40,26, init);
+        return loaderStock(cac40_2,12, init);
     }
 
 
+    /*
     private int refreshCache(String url,int pageElt) {
 
         try {
@@ -99,6 +98,8 @@ public class RealTimeParserBoursorama extends ParserCommon implements RealTimePa
                     g.setValue(new Double(data[index].replaceAll(" \\(c\\)","").replaceAll(" \\(s\\)","")));
                     g.setVariation(new Double(data[index+1].replaceAll("%", "")));
                     g.setOpening(new Double(data[index+2].replace("ND","0")));
+                    g.setHighest(new Double(data[index+3].replace("ND","0")));
+                    g.setLowest(new Double(data[index+4].replace("ND","0")));
                     g.setVolume(new Double(data[index+6].replaceAll(" ", "")));
 
 
@@ -116,7 +117,7 @@ public class RealTimeParserBoursorama extends ParserCommon implements RealTimePa
 
             /*for (StockGeneral g: CacheStockGeneral.getCache().values()) {
                 System.out.println(g.getCode());
-            }*/
+            }*
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -124,19 +125,19 @@ public class RealTimeParserBoursorama extends ParserCommon implements RealTimePa
 
         return 0;
     }
+*/
 
 
 
-
-
-    //doc.select(".c-block").select("tr")
 
     /**
      * use boursorama to create cac 40
-     * @param url
-     * @return
+     * @param url cac4O url to parse
+     * @return result
      */
-    private int loaderStock(String url,int pageElt) {
+    private int loaderStock(String url,int pageElt, boolean init) {
+
+        String refCode = ".c-block";
 
         try {
             String text = loadUrl(new URL(url));
@@ -150,31 +151,19 @@ public class RealTimeParserBoursorama extends ParserCommon implements RealTimePa
 
             for (Element link : sublinks) {
 
-                StockGeneral g = new StockGeneral();
 
                 if (max > pageElt) break;
 
-                if (link.hasAttr("data-ist") == false)
+                if (!link.hasAttr("data-ist"))
                     continue;
-
-               // if (!link.hasAttr("href")) break;
 
                 String balise = link.text();
 
                 String data[] = balise.split(" ");
 
-                /* specific format for solvay*/
-                /*if (balise.contains("SOLB")) {
-                    g.setCodif("SOLB");
-                } else if (balise.contains("OREAL")) {
-                    g.setCodif("OREAL");
-                } else {
-
-                    String splitRes[] = balise.split("=1r");
-                    splitRes = splitRes[1].split("\">");
-                    g.setCodif(splitRes[0].substring(1));
-                }*/
-
+                /*
+                 * Specific mapping for value
+                 */
                 String codif =  link.attr("data-ist");
                 if (codif.contains("1rP"))
                     codif = codif.split("1rP")[1];
@@ -187,7 +176,16 @@ public class RealTimeParserBoursorama extends ParserCommon implements RealTimePa
                     codif = "OREAL";
 
 
-                g.setCodif(codif);
+                StockGeneral g;
+
+                if (init)
+                    g = new StockGeneral(codif);
+                else {
+                    String code = CacheStockGeneral.getCode(codif);
+                    g = CacheStockGeneral.getCache().get(code);
+                }
+
+
 
                 StringBuilder name = new StringBuilder();
                 int index = 0;
@@ -199,6 +197,8 @@ public class RealTimeParserBoursorama extends ParserCommon implements RealTimePa
                 g.setValue(new Double(data[index].replaceAll(" \\(c\\)","").replaceAll(" \\(s\\)","")));
                 g.setVariation(new Double(data[index+1].replaceAll("%", "")));
                 g.setOpening(new Double(data[index+2].replace("ND","0")));
+                g.setHighest(new Double(data[index+3].replace("ND","0")));
+                g.setLowest(new Double(data[index+4].replace("ND","0")));
                 g.setVolume(new Double(data[index+6].replaceAll(" ", "")));
 
                 g.setCode(CacheStockGeneral.getCode(g.getCodif()));
@@ -208,19 +208,13 @@ public class RealTimeParserBoursorama extends ParserCommon implements RealTimePa
                 max++;
 
                 try {
-                    CacheStockGeneral.getCache().put(g.getCode(), g);
+                    if (init)
+                        CacheStockGeneral.getCache().put(g.getCode(), g);
                 } catch (Exception e) {
                     System.out.print(e);
                 }
             }
 
-
-            System.out.println(CacheStockGeneral.getCache().size());
-
-
-            /*for (StockGeneral g: CacheStockGeneral.getCache().values()) {
-                System.out.println(g.getCode());
-            }*/
 
         } catch (IOException e) {
             e.printStackTrace();
