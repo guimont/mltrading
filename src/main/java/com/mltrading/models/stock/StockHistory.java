@@ -120,6 +120,10 @@ public class StockHistory extends StockBase implements Serializable , Comparable
     }
 
 
+
+
+
+
     public StockHistory(StockGeneral g) {
         this.setCode(g.getCode());
         this.setName(g.getName());

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.security.RolesAllowed;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -74,7 +75,8 @@ public class RealTimeResource {
                 predState.add(new Pair<>((Math.abs(s.getPrediction().getYieldD20()*s.getPrediction().getConfidenceD20())), s.getRealCodif()));
         });
 
-        predState.sort(Comparator.comparingDouble(Pair::first));
+        predState.sort(Collections.reverseOrder(Comparator.comparingDouble(Pair::first)));
+
 
         int size = predState.size();
         if (size > 5) {

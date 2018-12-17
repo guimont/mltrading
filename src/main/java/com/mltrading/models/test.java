@@ -52,7 +52,7 @@ public class test {
             }*
 
         }
-    }*
+    }*/
 
 
     public static void main(String[] args) {
@@ -60,12 +60,13 @@ public class test {
 
         Analyse a = new Analyse();
         try {
-            a.processAll();
+            a.processDaily(20);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-    }*
+    }
 
+    /*
     public static void main(String[] args) {
         MLProperties.load();
         try {

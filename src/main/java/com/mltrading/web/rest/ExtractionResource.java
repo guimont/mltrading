@@ -1,6 +1,10 @@
 package com.mltrading.web.rest;
 
 
+import com.mltrading.assetmanagement.AssetManagement;
+import com.mltrading.assetmanagement.AssetProperties;
+import com.mltrading.assetmanagement.CacheAssetMemory;
+import com.mltrading.assetmanagement.Simulation;
 import com.mltrading.dao.InfluxDaoConnector;
 import com.mltrading.ml.CacheMLStock;
 import com.mltrading.ml.MatrixValidator;
@@ -20,6 +24,8 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by gmo on 07/01/2016.
@@ -362,9 +368,21 @@ public class ExtractionResource {
     public String loadML() {
 
 
-        CacheMLStock.load();
-        MlForecast ml = new MlForecast();
-        ml.processList(ModelType.RANDOMFOREST);
+        Simulation simulation = new Simulation();
+        List<AssetManagement> assetManagementList = CacheAssetMemory.getInstance().getAssetManagementList();
+        assetManagementList.clear();
+
+        AssetProperties properties = new AssetProperties("bink", 0, true, 9);
+        properties.setPart(10000);
+        AssetManagement assetToSim = new AssetManagement(100000,properties);
+
+        AssetManagement assetToSimLess = new AssetManagement(10000);
+        assetManagementList.add(assetToSim);
+        assetManagementList.add(assetToSimLess);
+        simulation.run(assetManagementList);
+
+        simulation.cleanAsset(assetToSim);
+        simulation.cleanAsset(assetToSimLess);
 
         return "ok";
     }

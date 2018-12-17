@@ -15,7 +15,7 @@
 
         </div>
         <div class="collapse navbar-collapse" id="navbar-collapse" ng-switch="isAuthenticated()">
-            <div class="cp-spinner cp-skeleton" style="margin-top: 8px"></div>
+            <!--<div class="cp-spinner cp-skeleton" style="margin-top: 8px"></div>-->
             <ul class="nav navbar-nav nav-pills navbar-right">
                 <li ui-sref-active="active">
                     <a ui-sref="home">
@@ -27,6 +27,12 @@
                     <a ui-sref="realtime">
                         <span class="glyphicon glyphicon-list-alt"></span>
                         <span translate="global.menu.realtime">realtime</span>
+                    </a>
+                </li>
+                <li ui-sref-active="active">
+                    <a ui-sref="asset">
+                        <span class="glyphicon glyphicon-list-alt"></span>
+                        <span translate="global.menu.asset">Asset Management</span>
                     </a>
                 </li>
 

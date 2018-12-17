@@ -5,6 +5,7 @@
         "menu": {
             "home": "Home",
             "realtime": "Real Time",
+            "asset": "Asset Management",
             "entities": {
                 "main": "Entities",
                 "additionalEntity": "JHipster will add additional entities here (do not translate!)"

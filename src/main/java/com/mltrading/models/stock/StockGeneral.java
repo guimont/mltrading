@@ -38,6 +38,24 @@ public class StockGeneral extends StockHistory implements Serializable {
     public StockGeneral() {
     }
 
+
+    public StockGeneral(StockHistory sh, StockGeneral sg) {
+        this.setOpening(sh.getOpening());
+        this.setHighest(sh.getHighest());
+        this.setValue(sh.getValue());
+        this.setVolume(sh.getVolume());
+        this.setLowest(sh.getLowest());
+        this.setDay(sh.getDay());
+
+        this.setCodif(sg.getCodif());
+        this.setCode(sg.getCode());
+        this.setName(sg.getName());
+        this.setSector(sg.getSector());
+
+    }
+
+
+
     public StockGeneral(String code, String name,  String codif, String place, String placeCodif) {
         this.setCode(code);
         this.setName(name);

@@ -23,6 +23,7 @@ public class StockPrediction implements Serializable{
 
 
     private double YieldD20 = 0;
+    private boolean increase;
 
     public StockPrediction(String codif) {
         this.codif = codif;
@@ -139,7 +140,21 @@ public class StockPrediction implements Serializable{
         return YieldD20;
     }
 
-    public void setYieldD20(double yieldD20) {
+    public StockPrediction setYieldD20(double yieldD20) {
         YieldD20 = yieldD20;
+
+        if (yieldD20> 0) setIncrease(true);
+        else setIncrease(false);
+
+
+        return this;
+    }
+
+    public boolean isIncrease() {
+        return increase;
+    }
+
+    public void setIncrease(boolean increase) {
+        this.increase = increase;
     }
 }
