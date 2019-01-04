@@ -3,14 +3,12 @@ package com.mltrading.assetmanagement;
 import com.mltrading.ml.CacheMLStock;
 import com.mltrading.ml.MLStocks;
 import com.mltrading.ml.PeriodicityList;
-import com.mltrading.ml.PredictionPeriodicity;
 import com.mltrading.ml.model.ModelType;
 import com.mltrading.ml.ranking.FeaturesRank;
 import com.mltrading.models.stock.StockGeneral;
 import com.mltrading.models.stock.StockHistory;
 import com.mltrading.models.stock.StockPrediction;
 import com.mltrading.models.stock.cache.CacheStockGeneral;
-import org.apache.hadoop.util.hash.Hash;
 import org.apache.spark.mllib.linalg.Vectors;
 
 import java.util.HashMap;
@@ -64,7 +62,7 @@ public class Simulation {
             try {
                 StockPrediction sp = new StockPrediction(codif);
 
-                PeriodicityList.periodicity.forEach(p -> {
+                PeriodicityList.periodicityLong.forEach(p -> {
 
                     sp.setPrediction(s.getModel(p).aggregate( s, date),p);
                     sp.setConfidence(100 - (s.getStatus(ModelType.ENSEMBLE).getErrorRate(p) * 100 / s.getStatus(ModelType.ENSEMBLE).getCount(p)), p);

@@ -17,6 +17,8 @@ public class MLPerformance implements Serializable{
     private String date;
     private double prediction;
 
+    private String currentDate;
+
     /** currentValue in Dday.. depend on period*/
     private double realValue;
 
@@ -31,8 +33,8 @@ public class MLPerformance implements Serializable{
         return date;
     }
 
-    public static MLPerformance generateEmptyMLPerformance(String date) {
-        return new MLPerformance(date,0,0,0,0,0,true);
+    public static MLPerformance generateEmptyMLPerformance(String date, String currentDate) {
+        return new MLPerformance(date, currentDate , 0,0,0,0,0,true);
     }
 
     public void setDate(String date) {
@@ -41,11 +43,12 @@ public class MLPerformance implements Serializable{
 
     public MLPerformance() {}
 
-    public MLPerformance(String date, double prediction, double realValue, double  currentValue, double yield, double realyield, boolean sign) {
+    public MLPerformance(String date, String currentDate, double prediction, double realValue, double  currentValue, double yield, double realyield, boolean sign) {
         this.yield = yield;
         this.realyield = realyield;
         this.sign = sign;
         this.date = date;
+        this.currentDate = currentDate;
         this.prediction = prediction;
         this.realValue = realValue;
         this.currentValue = currentValue;
@@ -108,6 +111,14 @@ public class MLPerformance implements Serializable{
         return sign;
     }
 
+    public String getCurrentDate() {
+        return currentDate;
+    }
+
+    public void setCurrentDate(String currentDate) {
+        this.currentDate = currentDate;
+    }
+
     public void setSign(boolean sign) {
         this.sign = sign;
     }
@@ -116,19 +127,19 @@ public class MLPerformance implements Serializable{
         return (p-v)/v;
     }
 
-    public static MLPerformance calculYields(String date, double prediction, double  realvalue, double currentValue) {
+    public static MLPerformance calculYields(String date, String currentDate ,double prediction, double  realvalue, double currentValue) {
         //sign : currentValue - currentValue
 
         if (currentValue == 0) {
             System.out.println("unexpected error go to evil");
-            return new MLPerformance(date,prediction, realvalue, currentValue, 0, 0, false);
+            return new MLPerformance(date, currentDate, prediction, realvalue, currentValue, 0, 0, false);
         }
 
         boolean sign =(int) Math.signum(realvalue - currentValue) == (int) Math.signum(prediction - currentValue);
         double yield_1D = calculYield(prediction, currentValue);
         double realyield_1D = calculYield(realvalue, currentValue);
 
-        return new MLPerformance(date,prediction, realvalue, currentValue, yield_1D, realyield_1D, sign);
+        return new MLPerformance(date, currentDate, prediction, realvalue, currentValue, yield_1D, realyield_1D, sign);
     }
 
 
@@ -138,12 +149,12 @@ public class MLPerformance implements Serializable{
      * @param prediction
      * @return
      */
-    public static MLPerformance calculOnlyYields(String date, double prediction,double yield) {
+    public static MLPerformance calculOnlyYields(String date, String currentDate, double prediction,double yield) {
         //sign : currentValue - currentValue
         boolean sign =(int) Math.signum(prediction) == (int) Math.signum(yield);
 
 
-        return new MLPerformance(date,prediction, yield, yield, prediction, yield, sign);
+        return new MLPerformance(date, currentDate, prediction, yield, yield, prediction, yield, sign);
     }
 
 
@@ -152,6 +163,7 @@ public class MLPerformance implements Serializable{
     public void savePerformance(BatchPoints bp, String code) throws InterruptedException {
         Point pt = Point.measurement(code)
             .field("datePred",date)
+            .field("currentDate",currentDate)
             .field("sign", sign)
             .field("yield", yield)
             .field("realyield", realyield)
@@ -168,6 +180,7 @@ public class MLPerformance implements Serializable{
     public MLPerformance clone() {
         MLPerformance cloneObject = new MLPerformance();
         cloneObject.date = this.date;
+        cloneObject.currentDate = this.currentDate;
         cloneObject.sign = this.sign;
         cloneObject.yield = this.yield;
         cloneObject.realyield = this.realyield;

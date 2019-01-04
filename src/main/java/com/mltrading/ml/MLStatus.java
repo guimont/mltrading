@@ -82,7 +82,7 @@ public class MLStatus implements Serializable,DaoChecker{
         int errD1 = 0, errD5 =0, errD20 =0, errD40 =0;
         int countD1 = 0, countD5 = 0, countD20 = 0, countD40 = 0;
         for (MLPerformances p : perfList) {
-            if (p.getMl(PredictionPeriodicity.D1) != null && p.getMl(PredictionPeriodicity.D1).getCurrentValue()!=0) {
+            /*if (p.getMl(PredictionPeriodicity.D1) != null && p.getMl(PredictionPeriodicity.D1).getCurrentValue()!=0) {
                 avgD1 += p.getMl(PredictionPeriodicity.D1).getRealyield() - p.getMl(PredictionPeriodicity.D1).getYield();
                 errD1 += p.getMl(PredictionPeriodicity.D1).isSign() == false ? 1 : 0;
                 countD1++;
@@ -92,16 +92,16 @@ public class MLStatus implements Serializable,DaoChecker{
                 avgD5 += p.getMl(PredictionPeriodicity.D5).getRealyield() - p.getMl(PredictionPeriodicity.D5).getYield();
                 errD5 += p.getMl(PredictionPeriodicity.D5).isSign() == false ? 1 : 0;
                 countD5++;
-            }
+            }*/
 
 
-            if (p.getMl(PredictionPeriodicity.D20) != null && p.getMl(PredictionPeriodicity.D20).getCurrentValue()!=0) {
+            if (p.getMl(PredictionPeriodicity.D20) != null && p.getMl(PredictionPeriodicity.D20).getRealvalue()!= -1) {
                 avgD20 += p.getMl(PredictionPeriodicity.D20).getRealyield() - p.getMl(PredictionPeriodicity.D20).getYield();
                 errD20 += p.getMl(PredictionPeriodicity.D20).isSign() == false ? 1 : 0;
                 countD20++;
             }
 
-            if (p.getMl(PredictionPeriodicity.D40) != null && p.getMl(PredictionPeriodicity.D40).getCurrentValue()!=0) {
+            if (p.getMl(PredictionPeriodicity.D40) != null && p.getMl(PredictionPeriodicity.D40).getRealvalue() != -1) {
                 avgD40 += p.getMl(PredictionPeriodicity.D40).getRealyield() - p.getMl(PredictionPeriodicity.D40).getYield();
                 errD40 += p.getMl(PredictionPeriodicity.D40).isSign() == false ? 1 : 0;
                 countD40++;
@@ -109,18 +109,18 @@ public class MLStatus implements Serializable,DaoChecker{
 
         }
 
-        this.setCountD1(countD1);
-        this.setCountD5(countD5);
+        //this.setCountD1(countD1);
+        //this.setCountD5(countD5);
         this.setCountD20(countD20);
         this.setCountD40(countD40);
 
-        this.setAvgD1(avgD1 / countD1 * 100);
-        this.setAvgD5(avgD5 / countD5 * 100);
+        //this.setAvgD1(avgD1 / countD1 * 100);
+        //this.setAvgD5(avgD5 / countD5 * 100);
         this.setAvgD20(avgD20 / countD20 * 100);
         this.setAvgD40(avgD40 / countD40 * 100);
 
-        this.setErrorRateD1(errD1);
-        this.setErrorRateD5(errD5);
+        //this.setErrorRateD1(errD1);
+        //this.setErrorRateD5(errD5);
         this.setErrorRateD20(errD20);
         this.setErrorRateD40(errD40);
 
@@ -260,36 +260,36 @@ public class MLStatus implements Serializable,DaoChecker{
         perfList = new ArrayList();
 
         //offset is mult by 2 because it is no dense data
-        String query = "SELECT * FROM "+code + ModelType.code(type) +"PD1 where time > '2015-06-01T00:00:00Z'";
+       /* String query = "SELECT * FROM "+code + ModelType.code(type) +"PD1 where time > '2015-06-01T00:00:00Z'";
         QueryResult listP1 = InfluxDaoConnector.getPoints(query, MatrixValidator.dbNameModelPerf);
         query = "SELECT * FROM "+code+ ModelType.code(type) +"PD5 where time > '2015-06-01T00:00:00Z'";
-        QueryResult listP5 = InfluxDaoConnector.getPoints(query, MatrixValidator.dbNameModelPerf);
-        query = "SELECT * FROM "+code+ ModelType.code(type) +"PD20 where time > '2015-06-01T00:00:00Z'";
+        QueryResult listP5 = InfluxDaoConnector.getPoints(query, MatrixValidator.dbNameModelPerf);*/
+        String query = "SELECT * FROM "+code+ ModelType.code(type) +"PD20 where time > '2015-06-01T00:00:00Z'";
         QueryResult listP20 = InfluxDaoConnector.getPoints(query, MatrixValidator.dbNameModelPerf);
         query = "SELECT * FROM "+code + ModelType.code(type) +"PD40 where time > '2015-06-01T00:00:00Z'";
         QueryResult listP40 = InfluxDaoConnector.getPoints(query, MatrixValidator.dbNameModelPerf);
 
-        if (checker(listP1) == false) return false;
-        if (checker(listP5) == false) return false;
+        //if (checker(listP1) == false) return false;
+        //if (checker(listP5) == false) return false;
         if (checker(listP20) == false) return false;
         if (checker(listP40) == false) return false;
 
-        int sizeP1 = listP1.getResults().get(0).getSeries().get(0).getValues().size();
-        int sizeP5 = listP5.getResults().get(0).getSeries().get(0).getValues().size();
+        //int sizeP1 = listP1.getResults().get(0).getSeries().get(0).getValues().size();
+        //int sizeP5 = listP5.getResults().get(0).getSeries().get(0).getValues().size();
         int sizeP20 = listP20.getResults().get(0).getSeries().get(0).getValues().size();
         int sizeP40 = listP40.getResults().get(0).getSeries().get(0).getValues().size();
 
         /*if (sizeP1 < max)
             return ;*/
 
-        for (int i = sizeP1-max; i < sizeP1; i++) {
+        for (int i = sizeP20-max; i < sizeP20; i++) {
             MLPerformances mlps = new MLPerformances();
 
-            populate(mlps.getMl(PredictionPeriodicity.D1), listP1, i);
-            if (i < sizeP5 ) populate(mlps.getMl(PredictionPeriodicity.D5), listP5, i); else mlps.setMl(null, PredictionPeriodicity.D5);
+            //populate(mlps.getMl(PredictionPeriodicity.D1), listP1, i);
+            //if (i < sizeP5 ) populate(mlps.getMl(PredictionPeriodicity.D5), listP5, i); else mlps.setMl(null, PredictionPeriodicity.D5);
             if (i < sizeP20 ) populate(mlps.getMl(PredictionPeriodicity.D20), listP20, i);  else mlps.setMl(null, PredictionPeriodicity.D20);
             if (i < sizeP40 ) populate(mlps.getMl(PredictionPeriodicity.D40), listP40, i);  else mlps.setMl(null, PredictionPeriodicity.D40);
-            mlps.setDate(mlps.getMl(PredictionPeriodicity.D1).getDate());
+            mlps.setDate(mlps.getMl(PredictionPeriodicity.D20).getCurrentDate()); // old current date have to be equals for models
 
             perfList.add(mlps);
 
@@ -301,28 +301,19 @@ public class MLStatus implements Serializable,DaoChecker{
 
     }
 
-/* old version
-    static public int DATE_COLUMN = 1;
-    static public int ERROR_COLUMN = 2;
-    static public int PREDICTION_COLUMN = 3;
-    static public int REALVALUE_COLUMN = 4;
-    static public int REALYIELD_COLUMN = 5;
-    static public int SIGN_COLUMN = 6;
-    static public int VALUE_COLUMN = 7;
-    static public int YIELD_COLUMN = 8;*/
-
-
-    static public int VALUE_COLUMN = 1;
-    static public int DATE_COLUMN = 2;
-    static public int ERROR_COLUMN = 3;
-    static public int PREDICTION_COLUMN = 4;
-    static public int REALVALUE_COLUMN = 5;
-    static public int REALYIELD_COLUMN = 6;
-    static public int SIGN_COLUMN = 7;
-    static public int YIELD_COLUMN = 8;
+    static public int CURRENT_DATE_COLUMN = 1;
+    static public int VALUE_COLUMN = 2;
+    static public int DATE_COLUMN = 3;
+    static public int ERROR_COLUMN = 4;
+    static public int PREDICTION_COLUMN = 5;
+    static public int REALVALUE_COLUMN = 6;
+    static public int REALYIELD_COLUMN = 7;
+    static public int SIGN_COLUMN = 8;
+    static public int YIELD_COLUMN = 9;
 
     public static void populate(MLPerformance mlp, QueryResult meanQ, int i) {
         mlp.setDate((String) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(DATE_COLUMN));
+        mlp.setCurrentDate((String) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(CURRENT_DATE_COLUMN));
         mlp.setError((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(ERROR_COLUMN));
         mlp.setPrediction((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(PREDICTION_COLUMN));
         mlp.setRealvalue((Double) meanQ.getResults().get(0).getSeries().get(0).getValues().get(i).get(REALVALUE_COLUMN));

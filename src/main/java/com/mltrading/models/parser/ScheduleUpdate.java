@@ -115,7 +115,7 @@ public class ScheduleUpdate {
      */
     void updateBase() {
         try {
-            int diff = service.getLastUpdateRef() -1; //remove -1
+            int diff = service.getLastUpdateRef() +5; //remove -1
             log.info("Have to extract " +  diff + " days in influxdb base");
 
             if (diff > 0)

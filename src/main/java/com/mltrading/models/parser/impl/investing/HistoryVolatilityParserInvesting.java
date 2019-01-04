@@ -27,7 +27,12 @@ public class HistoryVolatilityParserInvesting extends ParserCommon implements Vo
 
     @Override
     public void fetch() {
-
+        try {
+            parser("http://localhost:7090/raw/CAC40.html", 10000);
+        }
+        catch (Exception e) {
+                e.printStackTrace();
+            }
     }
 
     @Override
@@ -71,6 +76,11 @@ public class HistoryVolatilityParserInvesting extends ParserCommon implements Vo
             ind.setCodif(code);
             ind.setName(name);
 
+            try {
+                ind.setDayInvest(link.child(0).text());
+            } catch (Exception e) {
+                break;
+            }
             ind.setDayInvest(link.child(0).text());
 
             if (CacheStockHistory.CacheStockHistoryHolder().isInStockHistory(code, ind.getDay()))
@@ -100,7 +110,7 @@ public class HistoryVolatilityParserInvesting extends ParserCommon implements Vo
                 ind.setOpening(new Double(0));
             }
             ind.setConsensusNote(new Double(0));
-            //saveHistory(bp, ind);
+            saveHistory(bp, ind);
             System.out.println(ind.toString());
 
 

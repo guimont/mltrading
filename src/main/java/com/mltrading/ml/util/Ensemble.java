@@ -73,12 +73,12 @@ public class Ensemble {
             MLPerformances mlGBT = mlPerformancesGBT.get(index);
             MLPerformances perf = new MLPerformances(mlRF.getDate());
 
-            CacheMLStock.periodicity.forEach(p -> {
+            PeriodicityList.periodicityLong.forEach(p -> {
                 MLPerformance mpRF = mlRF.getMl(p);
                 MLPerformance mpGBT = mlGBT.getMl(p);
 
 
-                perf.setMl(MLPerformance.calculYields(mlRF.getMl(p).getDate(),
+                perf.setMl(MLPerformance.calculYields(mlRF.getMl(p).getDate(), mlRF.getMl(p).getCurrentDate(),
                     (mpRF.getPrediction() * this.getRatio() + mpGBT.getPrediction())/(1. + this.ratio),
                     mpRF.getRealvalue(), mpRF.getCurrentValue()), p);
 
@@ -92,7 +92,7 @@ public class Ensemble {
 
         MLStatus checkStatus = new MLStatus();
 
-        CacheMLStock.periodicity.forEach(p -> {
+        PeriodicityList.periodicityLong.forEach(p -> {
             try {
                 checkStatus.setPerfList(listEnsemble, p);
             } catch (Exception e) {

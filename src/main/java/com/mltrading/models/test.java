@@ -54,7 +54,7 @@ public class test {
         }
     }*/
 
-
+/*
     public static void main(String[] args) {
         MLProperties.load();
 
@@ -66,21 +66,25 @@ public class test {
         }
     }
 
-    /*
+
     public static void main(String[] args) {
         MLProperties.load();
         try {
-            HistoryLocalRawMaterials raw = new HistoryLocalRawMaterials();
-            //raw.loaderSpecific("localhost:7090", "UKRI10Y");
+            HistoryVolatilityParserInvesting raw = new HistoryVolatilityParserInvesting();
+            //raw.fetch();
 
             System.out.println("Start analyse");
             Analyse analyse = new Analyse();
 
-            analyse.processAnalysisAll("UKRI10Y");
+            analyse.processAnalysisAll("VCAC");
 
             System.out.println("**************************");
             System.out.println("END analyse");
             System.out.println("**************************");
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
 
             /*HistoryParserInvesting importStock = new HistoryParserInvesting();
             importStock.loader("localhost:7090", "URW", "FR0013326246"); //RMS hermes

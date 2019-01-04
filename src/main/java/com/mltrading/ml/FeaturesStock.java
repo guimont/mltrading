@@ -127,26 +127,7 @@ public class FeaturesStock extends Feature implements Serializable {
             fs.setCurrentDate(date);
 
 
-            if (setResult(fs,PeriodicityList.periodicity,codif,date) == false) continue;
-
-            /* remove after check
-            try {
-                periodicity.forEach(p -> {
-
-                    final StockHistory res = StockHistory.getStockHistoryDayOffset(codif, date, PredictionPeriodicity.convert(p));
-                    if (res != null) {
-                        fs.setResultValue(res.getCurrentValue(), p);
-                        fs.setDate(res.getDay(), p);
-                    } else {
-                        fs.setResultValue(0., p);
-                        fs.setDate("J+N", p);
-                    }});
-
-
-            } catch (Exception e) {
-                log.error("Cannot get date for: " + codif + " and date: " + date + " //exception:" + e);
-                continue;
-            }*/
+            if (setResult(fs,PeriodicityList.periodicityLong,codif,date) == false) continue;
 
             /**
              * stock
@@ -155,7 +136,6 @@ public class FeaturesStock extends Feature implements Serializable {
                 List<StockHistory> sh = StockHistory.getStockHistoryDateInvert(codif, date, validator.getPeriodStockHist());
                 fs.linearize(sh, validator.getPeriodVolume());
                 StockHistory current = StockHistory.getStockHistory(codif, date);
-                //fs.linearize(current, validator); already done
                 fs.setCurrentValue(current.getValue());
 
             } catch (Exception e) {

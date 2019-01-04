@@ -76,7 +76,7 @@ public abstract class MLModelRanking<R extends TreeEnsembleModel> implements Ser
                     //Double diff = pl.getPredictionValue() - pl.getResultValue();
                     MLPerformances perf = new MLPerformances(pl.getCurrentDate());
                     perf.setCodif(pl.getCodif());
-                    perf.setMl(MLPerformance.calculOnlyYields(pl.getDate(PredictionPeriodicity.D20), pl.getPredictionValue(PredictionPeriodicity.D20), pl.getResultValue(PredictionPeriodicity.D20)), PredictionPeriodicity.D20);
+                    perf.setMl(MLPerformance.calculOnlyYields(pl.getDate(PredictionPeriodicity.D20),pl.getCurrentDate() , pl.getPredictionValue(PredictionPeriodicity.D20), pl.getResultValue(PredictionPeriodicity.D20)), PredictionPeriodicity.D20);
 
                     return perf;
 

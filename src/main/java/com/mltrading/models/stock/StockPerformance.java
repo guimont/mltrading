@@ -23,7 +23,7 @@ public class StockPerformance implements Serializable{
 
     public StockPerformance() {
         container = new HashMap<>();
-        PeriodicityList.periodicity.forEach(p ->
+        PeriodicityList.periodicityLong.forEach(p ->
             container.put(p, new PerfModel(p))
         );
     }
@@ -138,7 +138,7 @@ public class StockPerformance implements Serializable{
                 query = "SELECT count(vectorSize) FROM " + code + "V" + PredictionPeriodicity.D1;
                 result = InfluxDaoConnector.getPoints(query, MatrixValidator.dbNamePerf);
                 this.setIteration (new Double((Double)result.getResults().get(0).getSeries().get(0).getValues().get(0).get(1)).intValue());
-                PeriodicityList.periodicity.forEach(p -> {
+                PeriodicityList.periodicityLong.forEach(p -> {
                     MLStatus l = s.getStatus(ModelType.RANDOMFOREST);
                     PerfModel pm = container.get(p);
                     MatrixValidator mv = s.getModel(p).getValidator(ModelType.RANDOMFOREST);

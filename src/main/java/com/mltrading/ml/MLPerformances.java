@@ -144,8 +144,8 @@ public class MLPerformances  implements Serializable, Comparable<MLPerformances>
      */
     public void convertUI() {
 
-        mlD1 = container.get(PredictionPeriodicity.D1);
-        mlD5 = container.get(PredictionPeriodicity.D5);
+        //mlD1 = container.get(PredictionPeriodicity.D1);
+        //mlD5 = container.get(PredictionPeriodicity.D5);
         mlD20 = container.get(PredictionPeriodicity.D20);
         mlD40 = container.get(PredictionPeriodicity.D40);
     }

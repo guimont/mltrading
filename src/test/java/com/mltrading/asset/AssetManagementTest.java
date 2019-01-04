@@ -1,8 +1,6 @@
 package com.mltrading.asset;
 
-import com.mltrading.assetmanagement.AssetManagement;
-import com.mltrading.assetmanagement.AssetProperties;
-import com.mltrading.assetmanagement.AssetStock;
+import com.mltrading.assetmanagement.*;
 import com.mltrading.models.stock.StockGeneral;
 import com.mltrading.models.stock.StockPrediction;
 import com.mltrading.models.stock.cache.CacheStockGeneral;
@@ -25,7 +23,7 @@ public class AssetManagementTest {
         sg.setPrediction(pred);
 
 
-        AssetManagement assetManagement = new AssetManagement(10000);
+        AssetManagement assetManagement = new AssetManagement(new RulingSimple(),10000);
 
 
 
@@ -58,7 +56,7 @@ public class AssetManagementTest {
         sg.setPrediction(pred);
 
 
-        AssetManagement assetManagement = new AssetManagement(10000);
+        AssetManagement assetManagement = new AssetManagement(new RulingSimple(),10000);
 
 
 

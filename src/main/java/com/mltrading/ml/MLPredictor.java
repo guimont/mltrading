@@ -36,7 +36,7 @@ public class MLPredictor  implements Serializable {
                 StockPrediction sp = new StockPrediction(codif);
                 String date = StockHistory.getLastDateHistory(codif);
 
-                PeriodicityList.periodicity.forEach(p -> {
+                PeriodicityList.periodicityLong.forEach(p -> {
 
                     sp.setPrediction(s.getModel(p).aggregate( s, date),p);
                     sp.setConfidence(100 - (s.getStatus(ModelType.ENSEMBLE).getErrorRate(p) * 100 / s.getStatus(ModelType.ENSEMBLE).getCount(p)), p);

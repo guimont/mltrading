@@ -28,7 +28,6 @@ public class CacheMLStock {
     //
 
     public static final List<ModelType> modelTypes = Arrays.asList(ModelType.RANDOMFOREST, ModelType.GRADIANTBOOSTTREE);
-    public static final List<PredictionPeriodicity> periodicity = Arrays.asList(PredictionPeriodicity.D1, PredictionPeriodicity.D5, PredictionPeriodicity.D20, PredictionPeriodicity.D40);
 
 
     public static String SPARK_DEFAULT_MEMORY = "4g";
@@ -110,10 +109,10 @@ public class CacheMLStock {
                 MLStocks mls = new MLStocks(s.getCodif());
 
                 validate = mls.getStatus(ModelType.RANDOMFOREST).loadPerf(s.getCodif(), ModelType.RANDOMFOREST);
-                if (validate) mls.load(ModelType.RANDOMFOREST);
+                mls.load(ModelType.RANDOMFOREST);
 
                 validate = mls.getStatus(ModelType.GRADIANTBOOSTTREE).loadPerf(s.getCodif(),ModelType.GRADIANTBOOSTTREE);
-                if (validate) mls.load(ModelType.GRADIANTBOOSTTREE);
+                mls.load(ModelType.GRADIANTBOOSTTREE);
 
                 mls.getStatus(ModelType.ENSEMBLE).loadPerf(s.getCodif(), ModelType.ENSEMBLE);
 
@@ -126,7 +125,7 @@ public class CacheMLStock {
             }
         }
 
-        if (validate == false) {
+        if (!validate) {
             log.error("load perf is not correctly filled. Need to regenerate data");
             /*MlForecast ml = new MlForecast();
             ml.processList();
@@ -165,26 +164,21 @@ public class CacheMLStock {
 
 
         for (MLStocks mls : mlStockMap.values()) {
-            PeriodicityList.periodicity.forEach(p -> {
-                if (mls.getSock(p).isModelImprove()) {
-                    mls.saveModel(p, type);
-                    mls.saveDB(p, type);
-                }
+            PeriodicityList.periodicityLong.stream().filter(p -> mls.getSock(p).isModelImprove()).forEach(p -> {
+                mls.saveModel(p, type);
+                mls.saveDB(p, type);
             });
 
             try {
-                modelTypes.forEach(t -> {
-            /* saveValidator Validator each time because old validator is deleted*/
-                    if (mls.getStatus(t).getPerfList() != null) {
-                        try {
-                            log.info("Save perf: " + mls.getCodif()+ " for model: " + t);
-                            mls.getStatus(t).savePerf(mls.getCodif(), t);
-                            log.info("Save validator: " + mls.getCodif()+ " for model: " + t);
-                            mls.saveValidator(t);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-
+                /* saveValidator Validator each time because old validator is deleted*/
+                modelTypes.stream().filter(t -> mls.getStatus(t).getPerfList() != null).forEach(t -> {
+                    try {
+                        log.info("Save perf: " + mls.getCodif() + " for model: " + t);
+                        mls.getStatus(t).savePerf(mls.getCodif(), t);
+                        log.info("Save validator: " + mls.getCodif() + " for model: " + t);
+                        mls.saveValidator(t);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
                 });
 
@@ -220,6 +214,7 @@ public class CacheMLStock {
     /**
      * update perf list with last value
      */
+    @SuppressWarnings("unused")
     public static void saveLastPerf(ModelType type) {
         for (MLStocks mls : mlStockMap.values()) {
             try {
@@ -242,7 +237,7 @@ public class CacheMLStock {
     }
 
 
-    public static void deleteModel() {
+    private static void deleteModel() {
         String path = MLStock.path;
 
         try {
@@ -264,6 +259,7 @@ public class CacheMLStock {
      */
 
 
+    @SuppressWarnings("unused")
     public static void saveDB(ModelType type) {
         List<StockGeneral> sl = new ArrayList(CacheStockGeneral.getIsinCache().values());
         for (StockGeneral s : sl) {
@@ -278,7 +274,7 @@ public class CacheMLStock {
         }
     }
 
-
+    @SuppressWarnings("unused")
     public static void loadDB() {
         List<StockGeneral> sl = new ArrayList(CacheStockGeneral.getIsinCache().values());
         for (StockGeneral s : sl) {

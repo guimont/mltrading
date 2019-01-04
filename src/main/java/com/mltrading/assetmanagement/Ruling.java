@@ -8,5 +8,6 @@ public interface Ruling {
 
 
     double process(Map<String, StockGeneral> stockMap,  Map<String,AssetStock> assetStockMap, AssetProperties properties, double invest);
+    double process(Map<String,AssetStock> assetStockMap, AssetProperties properties, double invest);
 
 }

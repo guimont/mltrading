@@ -18,6 +18,7 @@ public class AssetManagement implements Serializable {
     private double assetValue;
     private AssetProperties properties;
     private int id;
+    private Ruling rule;
 
 
     private static final AtomicInteger sequence = new AtomicInteger();
@@ -28,22 +29,20 @@ public class AssetManagement implements Serializable {
 
 
     void decision() {
-        RulingSimple rule = new RulingSimple();
         assetValue = rule.process(curentAssetStock, properties, assetValue);
     }
 
     void decision(Map<String,StockGeneral>  stockGeneralMap) {
-        RulingSimple rule = new RulingSimple();
         assetValue = rule.process(stockGeneralMap, curentAssetStock, properties, assetValue);
     }
 
-    public AssetManagement(double assetValue) {
-        this.assetValue = assetValue;
-        properties = new AssetProperties("bink", 0, true, 9);
-        id = next();
+
+    public AssetManagement(Ruling rule,double assetValue) {
+        this(rule, assetValue, new AssetProperties("bink", 0, true, 9));
     }
 
-    public AssetManagement(double assetValue, AssetProperties properties) {
+    public AssetManagement(Ruling rule,double assetValue, AssetProperties properties) {
+        this.rule = rule;
         this.assetValue = assetValue;
         this.properties = properties;
         id = next();

@@ -35,8 +35,8 @@ public class MLStocks  implements Serializable {
     JavaRDD<FeaturesStock> testData;
 
     public boolean isEmtpyModel() {
-        if (container.get(PredictionPeriodicity.D1).getModel(ModelType.RANDOMFOREST).getModel() == null &&
-            container.get(PredictionPeriodicity.D1).getModel(ModelType.GRADIANTBOOSTTREE).getModel() == null)
+        if (container.get(PredictionPeriodicity.D20).getModel(ModelType.RANDOMFOREST).getModel() == null &&
+            container.get(PredictionPeriodicity.D20).getModel(ModelType.GRADIANTBOOSTTREE).getModel() == null)
             return true;
 
         return false;

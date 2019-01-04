@@ -6,11 +6,19 @@ import com.mltrading.models.stock.cache.CacheStockGeneral;
 
 import java.util.*;
 
-public class RulingSimple implements Ruling {
+public class RulingAjusted implements Ruling {
 
 
     public double process( Map<String,AssetStock> assetStockMap, AssetProperties properties, double invest) {
         return process(CacheStockGeneral.getCache(), assetStockMap, properties, invest);
+    }
+
+
+    private int getEquityTransaction(Collection<AssetStock> assets) {
+        final int[] equity = {0};
+        assets.stream().map( a-> a.isIncrease()? equity[0]++: equity[0]--);
+
+        return equity[0];
     }
 
 
@@ -29,6 +37,7 @@ public class RulingSimple implements Ruling {
         predState.sort(Collections.reverseOrder(Comparator.comparingDouble(Pair::first)));
 
 
+        int equityTransaction = getEquityTransaction(assetStockMap.values());
 
 
         Iterator iterator = predState.iterator();
@@ -45,9 +54,26 @@ public class RulingSimple implements Ruling {
 
             StockGeneral sg = stockMap.get(CacheStockGeneral.getCode(codeSelected.second()));
 
-            AssetStock assetStock = new AssetStock(sg.getCodif(),sg.getSector(),properties);
-            invest -= assetStock.buyIt(sg);
-            assetStockMap.put(sg.getCodif(), assetStock);
+
+            /* if always 2 stock with incresae expected, need decrease invest to equilibrate asset*/
+            if (equityTransaction >= 2 && !sg.getPrediction().isIncrease()) {
+
+                AssetStock assetStock = new AssetStock(sg.getCodif(), sg.getSector(), properties);
+                invest -= assetStock.buyIt(sg);
+                assetStockMap.put(sg.getCodif(), assetStock);
+            }
+            else  if (equityTransaction <= 2 && sg.getPrediction().isIncrease()) {
+                AssetStock assetStock = new AssetStock(sg.getCodif(), sg.getSector(), properties);
+                invest -= assetStock.buyIt(sg);
+                assetStockMap.put(sg.getCodif(), assetStock);
+            }
+
+            else  {
+                AssetStock assetStock = new AssetStock(sg.getCodif(), sg.getSector(), properties);
+                invest -= assetStock.buyIt(sg);
+                assetStockMap.put(sg.getCodif(), assetStock);
+            }
+
 
             if (iterator.hasNext())
                 codeSelected = (Pair<Double, String>) iterator.next();
