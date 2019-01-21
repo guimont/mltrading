@@ -93,9 +93,9 @@ public class MatrixValidator implements Serializable,Cloneable {
         RAW
     }
 
-    Integer maxDepth = 5;
-    Integer maxBins = 32;
-    Integer numTrees = 100; // Use more in practice.
+    Integer maxDepth = 6;
+    Integer maxBins = 48;
+    Integer numTrees = 200; // Use more in practice.
     Integer seed = 12345;
 
     int col = 0;
@@ -105,9 +105,8 @@ public class MatrixValidator implements Serializable,Cloneable {
     public int vectorSize;
 
 
-    public static String dbNamePerf = "perf2";
-    public static String dbNameModel = "modelNote2";
-    public static String dbNameModelPerf = "modelPerf";
+    //public static String dbNamePerf = "perf2";
+
 
     Integer matrix[][];
 
@@ -462,7 +461,7 @@ public class MatrixValidator implements Serializable,Cloneable {
      * @param code
      * @param error
      * @param rate
-     */
+     *
     public void save(String code, int error, double rate) throws InterruptedException {
         BatchPoints bp = InfluxDaoConnector.getBatchPointsV1(dbNamePerf);
 
@@ -485,10 +484,9 @@ public class MatrixValidator implements Serializable,Cloneable {
         Point f = pt.build();
         bp.point(f);
         InfluxDaoConnector.writePoints(bp);
+    }*/
 
-    }
-
-    public void loadValidator(String code) {
+    public void loadValidator(String code, String dbNameModel) {
 
         try {
             String query = "SELECT * FROM " + code;
@@ -516,7 +514,7 @@ public class MatrixValidator implements Serializable,Cloneable {
         }
     }
 
-    public void saveModel(String code) throws InterruptedException {
+    public void saveModel(String code, String dbNameModel) throws InterruptedException {
         BatchPoints bp = InfluxDaoConnector.getBatchPointsV1(dbNameModel);
         Point.Builder pt = Point.measurement(code);
         for (int i = 0 ; i < globalROW; i++) {

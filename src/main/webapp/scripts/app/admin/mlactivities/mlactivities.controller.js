@@ -28,7 +28,8 @@ angular.module('mltradingApp')
             validator: "generateSimpleModel",
             modelType: "RANOMFOREST",
             target: "PX1",
-            specific: "ALL"
+            specific: "ALL",
+            forecastType: "BASE"
         };
 
 

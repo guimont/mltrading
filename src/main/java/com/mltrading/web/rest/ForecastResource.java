@@ -2,8 +2,7 @@ package com.mltrading.web.rest;
 
 import com.mltrading.ml.CacheMLActivities;
 import com.mltrading.ml.MlForecast;
-import com.mltrading.ml.model.ModelType;
-import com.mltrading.models.stock.StockPerformance;
+
 import com.mltrading.models.stock.StockPerformanceList;
 import com.mltrading.models.util.MLActivities;
 import com.mltrading.security.AuthoritiesConstants;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,8 +25,6 @@ import java.util.List;
 @RequestMapping("/api")
 public class ForecastResource {
 
-    @javax.inject.Inject
-    private MlForecast forecast;
 
     @RequestMapping(value = "/ML/Activities/all",
         method = RequestMethod.GET,
@@ -55,8 +51,8 @@ public class ForecastResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String optimizeML(@Valid @RequestBody ForecastDTO fcDTO) {
 
-        forecast.optimize(fcDTO.getGlobalLoop(), fcDTO.getInputLoop(), fcDTO.getValidator(), fcDTO.getTarget(),
-            ModelType.get(fcDTO.getModelType()), fcDTO.getSpecific());
+        MlForecast forecast = new MlForecast(fcDTO);
+        forecast.optimize();
 
         return "ok";
     }
@@ -65,6 +61,7 @@ public class ForecastResource {
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     public void exportMatrixValidator() {
+        MlForecast forecast = new MlForecast(null);
         forecast.exportModel();
     }
 
@@ -72,6 +69,7 @@ public class ForecastResource {
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     public void importMatrixValidator() {
+        MlForecast forecast = new MlForecast(null);
         forecast.importModel();
     }
 

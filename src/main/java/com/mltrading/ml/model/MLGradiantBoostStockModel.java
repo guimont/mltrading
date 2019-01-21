@@ -17,9 +17,9 @@ public class MLGradiantBoostStockModel extends Model<GradientBoostedTreesModel> 
         super();
     }
 
-    public MLGradiantBoostStockModel(String path, String period, String codif) {
-        super(period, codif, ModelType.GRADIANTBOOSTTREE);
-        load(path, period, codif);
+    public MLGradiantBoostStockModel(String path, String period, String codif, String modelExtendedPrefix) {
+        super(period, codif, ModelType.GRADIANTBOOSTTREE, modelExtendedPrefix);
+        load(path, period, codif, modelExtendedPrefix);
     }
 
 
@@ -35,9 +35,9 @@ public class MLGradiantBoostStockModel extends Model<GradientBoostedTreesModel> 
 
 
     @Override
-    void load(String path, String period, String codif) {
-        this.model = GradientBoostedTreesModel.load(CacheMLStock.getJavaSparkContext().sc(), path + "model/Model" + ModelType.code(ModelType.GRADIANTBOOSTTREE) + period + codif);
-        this.validator.loadValidator(codif + ModelType.code(ModelType.GRADIANTBOOSTTREE) + period);
+    void load(String path, String period, String codif, String modelExtendedPrefix) {
+        this.model = GradientBoostedTreesModel.load(CacheMLStock.getJavaSparkContext().sc(), path + "model/Model" + ModelType.code(ModelType.GRADIANTBOOSTTREE) + period + codif + modelExtendedPrefix);
+        //this.validator.loadValidator(codif + ModelType.code(ModelType.GRADIANTBOOSTTREE) + period);
     }
 
     @Override

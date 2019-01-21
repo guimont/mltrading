@@ -9,6 +9,7 @@ import com.mltrading.ml.model.MLGradiantBoostStockModel;
 import com.mltrading.ml.model.MLRandomForestModel;
 import com.mltrading.ml.model.Model;
 import com.mltrading.ml.model.ModelType;
+import com.mltrading.web.rest.dto.ForecastDTO;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
@@ -24,9 +25,16 @@ import java.util.Map;
  * basic class implementation for machine learning status
  * container of MLStock and MLStatus for result
  */
-public class MLStocks  implements Serializable {
+public class MLStocks  implements Serializable {;
+
+    private String dbName;
+    private String dbNamePerf;
+    protected String modelExtendedPrefix;
+    private int    featureSize;
+    private int    renderingSize;
+
     private String codif;
-    private Map<PredictionPeriodicity,MLStock> container;
+    protected Map<PredictionPeriodicity,MLStock> container;
 
     private HashMap<ModelType,MLStatus> statusMap = new HashMap<>();
 
@@ -43,13 +51,12 @@ public class MLStocks  implements Serializable {
     }
 
 
-    public MLStocks(String codif) {
+    public MLStocks(String codif, String dbName, String dbNamePerf, String modelExtendedPrefix, int featureSize, int renderingSize) {
         this.codif = codif;
         container = new HashMap<>();
-        container.put(PredictionPeriodicity.D1, new MLStock(codif, PredictionPeriodicity.D1));
-        container.put(PredictionPeriodicity.D5, new MLStock(codif, PredictionPeriodicity.D5));
-        container.put(PredictionPeriodicity.D20, new MLStock(codif, PredictionPeriodicity.D20));
-        container.put(PredictionPeriodicity.D40, new MLStock(codif, PredictionPeriodicity.D40));
+
+        container.put(PredictionPeriodicity.D20, new MLStock(codif, PredictionPeriodicity.D20, modelExtendedPrefix));
+        container.put(PredictionPeriodicity.D40, new MLStock(codif, PredictionPeriodicity.D40, modelExtendedPrefix));
 
         MLStatus statusRF = new MLStatus();
         statusMap.put(ModelType.RANDOMFOREST, statusRF);
@@ -57,7 +64,27 @@ public class MLStocks  implements Serializable {
         statusMap.put(ModelType.GRADIANTBOOSTTREE, statusGBT);
         MLStatus statusENSEMBLE = new MLStatus();
         statusMap.put(ModelType.ENSEMBLE, statusENSEMBLE);
+
+        this.dbName = dbName;
+        this.dbNamePerf = dbNamePerf;
+        this.modelExtendedPrefix = modelExtendedPrefix;
+        this.featureSize = featureSize;
+        this.renderingSize = renderingSize;
     }
+
+    public static MLStocks newStock(String codif, ForecastDTO forecastDTO) {
+        if (forecastDTO.getForecastType().equalsIgnoreCase("BASE"))
+            return new MLStocksBase(codif);
+        else if (forecastDTO.getForecastType().equalsIgnoreCase("SHORT"))
+            return new MLStocksShort(codif);
+
+        else return null;
+    }
+
+
+
+
+
 
     public MLStock getSock(PredictionPeriodicity period) {
         return container.get(period);
@@ -230,7 +257,7 @@ public class MLStocks  implements Serializable {
     @Deprecated
     public MLStocks replaceValidator(MLStocks ref, ModelType type) {
         int position = this.getModel(PredictionPeriodicity.D1).getValidator(type).getCol();
-        MLStocks copy = new MLStocks(this.getCodif());
+        MLStocks copy = new MLStocks(this.getCodif(), this.dbName, this.dbNamePerf, this.modelExtendedPrefix, this.featureSize, this.renderingSize);
 
         for (Map.Entry<PredictionPeriodicity, MLStock> entry : container.entrySet()) {
             copy.getModel(entry.getKey()).setValidator(type,ref.getModel(entry.getKey()).getValidator(type).clone());
@@ -335,5 +362,47 @@ public class MLStocks  implements Serializable {
 
     public void setRatio(double ratio) {
         this.ratio = ratio;
+    }
+
+
+    public String getDbName() {
+        return dbName;
+    }
+
+    public void setDbName(String dbName) {
+        this.dbName = dbName;
+    }
+
+    public String getModelExtendedPrefix() {
+        return modelExtendedPrefix;
+    }
+
+    public void setModelExtendedPrefix(String modelExtendedPrefix) {
+        this.modelExtendedPrefix = modelExtendedPrefix;
+    }
+
+    public int getFeatureSize() {
+        return featureSize;
+    }
+
+    public void setFeatureSize(int featureSize) {
+        this.featureSize = featureSize;
+    }
+
+    public int getRenderingSize() {
+        return renderingSize;
+    }
+
+    public void setRenderingSize(int renderingSize) {
+        this.renderingSize = renderingSize;
+    }
+
+
+    public String getDbNamePerf() {
+        return dbNamePerf;
+    }
+
+    public void setDbNamePerf(String dbNamePerf) {
+        this.dbNamePerf = dbNamePerf;
     }
 }

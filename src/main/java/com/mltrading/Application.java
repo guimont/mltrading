@@ -85,10 +85,11 @@ public class Application {
         g.start();
 
         System.out.println("********************* Load model done *****************************");
-
         /*update data from web*/
-        ScheduleUpdate update = new ScheduleUpdate();
-        update.start();
+        if (MLProperties.getProperty("UpdateData","Y").equalsIgnoreCase("Y")) {
+            ScheduleUpdate update = new ScheduleUpdate();
+            update.start();
+        }
 
 
         System.out.println("********************* Starting ok *****************************");

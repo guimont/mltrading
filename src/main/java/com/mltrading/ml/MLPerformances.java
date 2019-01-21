@@ -83,10 +83,11 @@ public class MLPerformances  implements Serializable, Comparable<MLPerformances>
         this.codif = codif;
     }
 
+
     public MLPerformances() {
         container = new HashMap<>();
-        container.put(PredictionPeriodicity.D1,new MLPerformance());
-        container.put(PredictionPeriodicity.D5,new MLPerformance());
+        //container.put(PredictionPeriodicity.D1,new MLPerformance());
+        //container.put(PredictionPeriodicity.D5,new MLPerformance());
         container.put(PredictionPeriodicity.D20,new MLPerformance());
         container.put(PredictionPeriodicity.D40,new MLPerformance());
     }
@@ -103,15 +104,16 @@ public class MLPerformances  implements Serializable, Comparable<MLPerformances>
     }
 
 
-    void save(String code,  ModelType type) throws InterruptedException {
-        BatchPoints bp = InfluxDaoConnector.getBatchPointsV1(MatrixValidator.dbNameModelPerf);
+    void save(String code,  ModelType type, String dbName) throws InterruptedException {
+        BatchPoints bp = InfluxDaoConnector.getBatchPointsV1(dbName);
         for (Map.Entry<PredictionPeriodicity, MLPerformance> entry : container.entrySet()) {
             entry.getValue().savePerformance(bp,code+ModelType.code(type) +"P"+entry.getKey());
         }
+        InfluxDaoConnector.writePoints(bp);
     }
 
-    void save(String code, PredictionPeriodicity p, ModelType type) throws InterruptedException {
-        BatchPoints bp = InfluxDaoConnector.getBatchPointsV1(MatrixValidator.dbNameModelPerf);
+    void save(String code, PredictionPeriodicity p, ModelType type, String dbName) throws InterruptedException {
+        BatchPoints bp = InfluxDaoConnector.getBatchPointsV1(dbName);
         container.get(p).savePerformance(bp,code+ModelType.code(type) +"P"+p.toString());
     }
 

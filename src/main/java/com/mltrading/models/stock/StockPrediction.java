@@ -21,6 +21,7 @@ public class StockPrediction implements Serializable{
     private double confidenceD20 = 0;
     private double confidenceD40 = 0;
 
+    private double logConfidenceD20 = 0;
 
     private double YieldD20 = 0;
     private boolean increase;
@@ -156,5 +157,13 @@ public class StockPrediction implements Serializable{
 
     public void setIncrease(boolean increase) {
         this.increase = increase;
+    }
+
+    public double getLogConfidenceD20() {
+        return logConfidenceD20;
+    }
+
+    public void setLogConfidenceD20(double logConfidenceD20) {
+        this.logConfidenceD20 = logConfidenceD20;
     }
 }

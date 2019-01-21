@@ -2,8 +2,11 @@ package com.mltrading.web.rest;
 
 
 import com.mltrading.assetmanagement.*;
+import com.mltrading.dao.InfluxDaoConnector;
 import com.mltrading.ml.CacheMLStock;
+import com.mltrading.ml.MatrixValidator;
 import com.mltrading.ml.model.ModelType;
+import com.mltrading.ml.model.ModelTypeList;
 import com.mltrading.ml.ranking.MLStockRanking;
 import com.mltrading.ml.MlForecast;
 import com.mltrading.models.stock.CheckConsistency;
@@ -12,6 +15,7 @@ import com.mltrading.repository.StockRepository;
 import com.mltrading.service.ExportService;
 import com.mltrading.service.ExtractionService;
 import com.mltrading.web.rest.dto.ExtractDTO;
+import com.mltrading.web.rest.dto.ForecastDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -49,10 +53,6 @@ public class ExtractionResource {
 
     @javax.inject.Inject
     private ArticleRepository articleRepository;
-
-    @javax.inject.Inject
-    private  MlForecast forecast;
-
 
     @javax.inject.Inject
     private MLStockRanking ranking;
@@ -387,15 +387,17 @@ public class ExtractionResource {
     public String evaluate() {
 
         //CacheMLStock.load(); not need !!
-        MlForecast ml = new MlForecast();
-        /*InfluxDaoConnector.deleteDB(MatrixValidator.dbNameModelPerf);
+        ForecastDTO forecastDTO = new ForecastDTO();
+        forecastDTO.setForecastType("BASE");
+        MlForecast ml = new MlForecast(forecastDTO);
+        InfluxDaoConnector.deleteDB(CacheMLStock.dbNameModelPerf);
 
         ModelTypeList.modelTypes.forEach(t -> {
             ml.processList(t);
             CacheMLStock.savePerf(t);
         });
 
-*/
+
         ml.updateEnsemble();
         CacheMLStock.savePerf(ModelType.ENSEMBLE);
         ml.updatePredictor();

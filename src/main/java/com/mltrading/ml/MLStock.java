@@ -33,13 +33,15 @@ public class MLStock  implements Serializable {
     private String codif;
     private PredictionPeriodicity period;
     private MLModel model;
+    private  String modelExtendedPrefix;
 
     private boolean modelImprove;
     private static final Logger log = LoggerFactory.getLogger(MLStock.class);
 
-    public MLStock(String codif, PredictionPeriodicity period) {
+    public MLStock(String codif, PredictionPeriodicity period,  String modelExtendedPrefix) {
         this.period = period;
         this.codif = codif;
+        this.modelExtendedPrefix = modelExtendedPrefix;
 
         model = new MLModel();
     }
@@ -86,7 +88,7 @@ public class MLStock  implements Serializable {
      */
     public void removeModelDB(ModelType type) {
         try {
-            GridFS gfsModel = (GridFS) Requester.sendRequest(new QueryMongoRequest("model/Model" + ModelType.code(type) + period.toString() + codif));
+            GridFS gfsModel = (GridFS) Requester.sendRequest(new QueryMongoRequest("model/Model" + ModelType.code(type) + period.toString() + codif + modelExtendedPrefix));
 
             MongoUtil.removeDB(gfsModel);
         } catch (Exception e) {
@@ -103,9 +105,9 @@ public class MLStock  implements Serializable {
             removeModelDB(type);
 
             try {
-                GridFS gfsModel = (GridFS) Requester.sendRequest(new QueryMongoRequest("model/Model" + ModelType.code(type)+ period.toString() + codif));
+                GridFS gfsModel = (GridFS) Requester.sendRequest(new QueryMongoRequest("model/Model" + ModelType.code(type)+ period.toString() + codif + modelExtendedPrefix));
 
-                File dir = new File(path + "model/Model" + ModelType.code(type)+ period.toString() + codif);
+                File dir = new File(path + "model/Model" + ModelType.code(type)+ period.toString() + codif + modelExtendedPrefix);
                 MongoUtil.saveDirectory(gfsModel, dir);
             } catch (Exception e) {
                 log.error("saveModel: " + codif + e);
@@ -121,7 +123,7 @@ public class MLStock  implements Serializable {
      * load spark ml model form filesystem
      */
     public void loadModel(ModelType type) {
-        this.model.load(path, period, codif, type);
+        this.model.load(path, period, codif, type, modelExtendedPrefix);
     }
 
 
@@ -138,7 +140,7 @@ public class MLStock  implements Serializable {
      */
     public void saveModel(ModelType type) {
         //this.model.save(CacheMLStock.getJavaSparkContext().sc(), path + "model/Model" + period.toString() + codif);
-        this.model.save(type ,path, period, codif);
+        this.model.save(type ,path, period, codif, modelExtendedPrefix);
     }
 
     /**
@@ -147,7 +149,7 @@ public class MLStock  implements Serializable {
      * @param type
      */
     public void saveValidator(ModelType type) throws InterruptedException {
-        this.model.saveModel(type, period, codif);
+        this.model.saveModel(type, period, codif, modelExtendedPrefix);
     }
 
 
@@ -156,9 +158,9 @@ public class MLStock  implements Serializable {
      */
     public void distibute(ModelType type) {
         try {
-            GridFS gfsModel = (GridFS) Requester.sendRequest(new QueryMongoRequest("model/Model" + ModelType.code(type) + period.toString() + codif));
-            File dir = new File(path+"model/Model" + ModelType.code(type) + period.toString() + codif+"/data");
-            File dirmeta = new File(path+"model/Model" + ModelType.code(type) + period.toString() + codif+"/metadata");
+            GridFS gfsModel = (GridFS) Requester.sendRequest(new QueryMongoRequest("model/Model" + ModelType.code(type) + period.toString() + codif + modelExtendedPrefix));
+            File dir = new File(path+"model/Model" + ModelType.code(type) + period.toString() + codif + modelExtendedPrefix +"/data");
+            File dirmeta = new File(path+"model/Model" + ModelType.code(type) + period.toString() + codif + modelExtendedPrefix +"/metadata");
             MongoUtil.distribute(gfsModel, dir, dirmeta);
         } catch (Exception e) {
             log.error("saveModel: " + codif + e);

@@ -10,6 +10,7 @@ import com.mltrading.ml.model.ModelType;
 import com.mltrading.ml.model.ModelTypeList;
 import com.mltrading.repository.ArticleRepository;
 import com.mltrading.service.ExtractionService;
+import com.mltrading.web.rest.dto.ForecastDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,17 +58,18 @@ public class ScheduleUpdate {
         updateBase();
 
         //CacheMLStock.load(); not need !!
-        MlForecast ml = new MlForecast();
+        ForecastDTO forecastDTO = new ForecastDTO();
+        forecastDTO.setForecastType("BASE");
+        MlForecast ml = new MlForecast(forecastDTO);
 
         //clean model perf database
-        InfluxDaoConnector.deleteDB(MatrixValidator.dbNameModelPerf);
+        InfluxDaoConnector.deleteDB(CacheMLStock.dbNameModelPerf);
 
 
         //process result with model and save them
         ModelTypeList.modelTypes.forEach( t -> {
             ml.processList(t);
             CacheMLStock.savePerf(t);
-
         });
 
         //process aggragation model and save it

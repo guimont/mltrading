@@ -19,9 +19,9 @@ public class MLRandomForestModel extends Model<RandomForestModel> implements Ser
         super();
     }
 
-    public MLRandomForestModel(String path, String period, String codif) {
-        super(period, codif, ModelType.RANDOMFOREST);
-        load(path, period, codif);
+    public MLRandomForestModel(String path, String period, String codif, String modelExtendedPrefix) {
+        super(period, codif, ModelType.RANDOMFOREST, modelExtendedPrefix);
+        load(path, period, codif, modelExtendedPrefix);
     }
 
 
@@ -37,9 +37,9 @@ public class MLRandomForestModel extends Model<RandomForestModel> implements Ser
 
 
     @Override
-    void load(String path, String period, String codif) {
-        this.model = RandomForestModel.load(CacheMLStock.getJavaSparkContext().sc(), path + "model/Model" +  ModelType.code(ModelType.RANDOMFOREST) + period.toString() + codif);
-        this.validator.loadValidator(codif +  ModelType.code(ModelType.RANDOMFOREST) + period.toString());
+    void load(String path, String period, String codif,  String modelExtendedPrefix) {
+        this.model = RandomForestModel.load(CacheMLStock.getJavaSparkContext().sc(), path + "model/Model" +  ModelType.code(ModelType.RANDOMFOREST) + period + codif + modelExtendedPrefix);
+        //this.validator.loadValidator(codif +  ModelType.code(ModelType.RANDOMFOREST) + period);
     }
 
     @Override

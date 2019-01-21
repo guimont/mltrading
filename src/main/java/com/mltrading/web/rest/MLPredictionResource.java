@@ -46,8 +46,8 @@ public class MLPredictionResource {
 
             for (MLPerformances mlPerformances : l.getPerfList()) {
 
-                if (mlPerformances.getMl(PredictionPeriodicity.D1).getRealvalue() ==0.)  mlPerformances.setMl(null, PredictionPeriodicity.D1);
-                if (mlPerformances.getMl(PredictionPeriodicity.D5) != null && mlPerformances.getMl(PredictionPeriodicity.D5).getRealvalue() ==0.) mlPerformances.setMl(null, PredictionPeriodicity.D5);
+                //if (mlPerformances.getMl(PredictionPeriodicity.D1).getRealvalue() ==0.)  mlPerformances.setMl(null, PredictionPeriodicity.D1);
+                //if (mlPerformances.getMl(PredictionPeriodicity.D5) != null && mlPerformances.getMl(PredictionPeriodicity.D5).getRealvalue() ==0.) mlPerformances.setMl(null, PredictionPeriodicity.D5);
                 if (mlPerformances.getMl(PredictionPeriodicity.D20) != null && mlPerformances.getMl(PredictionPeriodicity.D20).getRealvalue() ==0.) mlPerformances.setMl(null, PredictionPeriodicity.D20);
                 if (mlPerformances.getMl(PredictionPeriodicity.D40) != null && mlPerformances.getMl(PredictionPeriodicity.D40).getRealvalue() ==0.) mlPerformances.setMl(null, PredictionPeriodicity.D40);
 
@@ -58,6 +58,41 @@ public class MLPredictionResource {
         } else
             return null;
     }
+
+
+    @RequestMapping(value = "/ml/getPerformanceShort",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @RolesAllowed(AuthoritiesConstants.ADMIN)
+
+    public MLStatus getPerformanceShort(@RequestParam(value = "key") String key, @RequestParam(value = "model") String model) {
+
+        MLStocks ms = CacheMLStock.getMLStockShortCache().get(key);
+        if (ms != null) {
+            MLStatus l = ms.getStatus(ModelType.get(model)).clone();
+            List pList = l.getPerfList();
+            try {
+                Collections.sort(pList);
+            }catch (Exception e) {
+                log.error(e.getMessage());
+            }
+
+            for (MLPerformances mlPerformances : l.getPerfList()) {
+
+                //if (mlPerformances.getMl(PredictionPeriodicity.D1).getRealvalue() ==0.)  mlPerformances.setMl(null, PredictionPeriodicity.D1);
+                //if (mlPerformances.getMl(PredictionPeriodicity.D5) != null && mlPerformances.getMl(PredictionPeriodicity.D5).getRealvalue() ==0.) mlPerformances.setMl(null, PredictionPeriodicity.D5);
+                if (mlPerformances.getMl(PredictionPeriodicity.D20) != null && mlPerformances.getMl(PredictionPeriodicity.D20).getRealvalue() ==0.) mlPerformances.setMl(null, PredictionPeriodicity.D20);
+                if (mlPerformances.getMl(PredictionPeriodicity.D40) != null && mlPerformances.getMl(PredictionPeriodicity.D40).getRealvalue() ==0.) mlPerformances.setMl(null, PredictionPeriodicity.D40);
+
+                mlPerformances.convertUI();
+            }
+
+            return l;
+        } else
+            return null;
+    }
+
+
 
     @RequestMapping(value = "/ml/getValidator",
         method = RequestMethod.GET,

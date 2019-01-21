@@ -60,8 +60,11 @@ public class Ensemble {
         List<MLPerformances> mlPerformancesGBT =  mls.getStatus(ModelType.GRADIANTBOOSTTREE).getPerfList();
 
 
-        if (mlPerformancesRF .size() == 0 || mlPerformancesGBT.size()==0)
+        if ((((mlPerformancesRF == null) || (mlPerformancesGBT == null))
+            || (((mlPerformancesRF != null) && (mlPerformancesRF.size() == 0)) || ((mlPerformancesGBT != null) && (mlPerformancesGBT.size() == 0)))))
             return BADSCORE;
+
+
 
         int size = mlPerformancesRF .size();
 

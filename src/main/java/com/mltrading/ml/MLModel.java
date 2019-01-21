@@ -44,18 +44,18 @@ public class MLModel {
 
 
 
-    public void load(String path, PredictionPeriodicity period, String codif, ModelType type) {
+    public void load(String path, PredictionPeriodicity period, String codif, ModelType type, String modelExtendedPrefix) {
         Model model = null;
         if (type == ModelType.RANDOMFOREST)
-            model = new MLRandomForestModel(path , period.toString(), codif);
+            model = new MLRandomForestModel(path , period.toString(), codif, modelExtendedPrefix);
         else if (type == ModelType.GRADIANTBOOSTTREE)
-            model = new MLGradiantBoostStockModel(path , period.toString(), codif);
+            model = new MLGradiantBoostStockModel(path , period.toString(), codif, modelExtendedPrefix);
         modelSet.put(type, model);
     }
 
-    public void save(ModelType type, String path, PredictionPeriodicity period, String codif) {
+    public void save(ModelType type, String path, PredictionPeriodicity period, String codif, String extended) {
         Model rfModel = modelSet.get(type);
-        rfModel.save(path + "model/Model" +ModelType.code(type)+ period.toString() + codif);
+        rfModel.save(path + "model/Model" +ModelType.code(type)+ period.toString() + codif + extended);
     }
 
 
@@ -85,10 +85,10 @@ public class MLModel {
         return predict/(1+s.getRatio());
     }
 
-    public void saveModel(ModelType type, PredictionPeriodicity period, String codif) throws InterruptedException {
+    public void saveModel(ModelType type, PredictionPeriodicity period, String codif, String modelExtendedPrefix) throws InterruptedException {
         Model rfModel = modelSet.get(type);
         if (rfModel.getModel() != null)
-            rfModel.getValidator().saveModel( codif + ModelType.code(type) + period.toString());
+            rfModel.getValidator().saveModel( codif + ModelType.code(type) + period.toString(), CacheMLStock.guessDbName(modelExtendedPrefix));
     }
 
     public void export(CsvFileWriter fileWriter, String name, String p) {

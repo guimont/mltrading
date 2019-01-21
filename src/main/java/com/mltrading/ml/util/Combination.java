@@ -5,6 +5,7 @@ import com.mltrading.ml.model.GradiantBoostStock;
 import com.mltrading.ml.model.ModelType;
 import com.mltrading.ml.model.RandomForestStock;
 import com.mltrading.models.util.MLActivities;
+import com.mltrading.web.rest.dto.ForecastDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,9 +48,10 @@ public class Combination extends Evaluate{
     }
 
     static int SCORENOTREACHABLE =  500;
-    public double evaluate(String codif, PredictionPeriodicity p, ModelType type) {
+    public double evaluate(String codif, PredictionPeriodicity p, ForecastDTO forecastDTO) {
+        final ModelType type = ModelType.get(forecastDTO.getModelType());
 
-        final MLStocks mls = new MLStocks(codif);
+        final MLStocks mls = MLStocks.newStock(codif, forecastDTO);
 
         CacheMLActivities.addActivities(new MLActivities("optimize", codif, "start", 0, 0, false));
 
@@ -69,16 +71,6 @@ public class Combination extends Evaluate{
 
         if (null != mls) {
             mls.getStatus(type).calculeAvgPrd();
-
-            //too much volume dont save each try
-                /*
-            try {
-                mls.getModel(p).getValidator(type).save(mls.getCodif() + ModelType.code(type) +
-                    p, mls.getStatus(type).getErrorRate(p), mls.getStatus(type).getAvg(p));
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            */
 
         } else {
             CacheMLActivities.addActivities(new MLActivities("optimize", codif, "failed", 0, 0, true));
@@ -107,5 +99,8 @@ public class Combination extends Evaluate{
     }
 
 
+    @Override
+    public void updateEnsemble() {
 
+    }
 }

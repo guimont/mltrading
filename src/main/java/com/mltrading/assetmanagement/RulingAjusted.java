@@ -2,6 +2,7 @@ package com.mltrading.assetmanagement;
 
 import akka.japi.Pair;
 import com.mltrading.models.stock.StockGeneral;
+import com.mltrading.models.stock.StockPrediction;
 import com.mltrading.models.stock.cache.CacheStockGeneral;
 
 import java.util.*;
@@ -22,6 +23,11 @@ public class RulingAjusted implements Ruling {
     }
 
 
+    public double evaluateAsset(StockGeneral sg) {
+        return sg.getPerformanceEstimate()*sg.getPrediction().getLogConfidenceD20()* sg.getPredictionShort().getConfidenceD20();
+    }
+
+
     public double process(Map<String,StockGeneral> stockMap, Map<String,AssetStock> assetStockMap, AssetProperties properties, double invest) {
 
 
@@ -31,7 +37,7 @@ public class RulingAjusted implements Ruling {
 
         l.forEach(s -> {
             if (s.getPrediction() != null)
-                predState.add(new Pair<>((Math.abs(s.getPrediction().getYieldD20()*s.getPrediction().getConfidenceD20())), s.getCodif()));
+                predState.add(new Pair<>(Math.abs(evaluateAsset(s)), s.getCodif()));
         });
 
         predState.sort(Collections.reverseOrder(Comparator.comparingDouble(Pair::first)));

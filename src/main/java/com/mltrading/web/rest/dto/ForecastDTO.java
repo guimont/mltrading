@@ -11,6 +11,7 @@ public class ForecastDTO {
     private int globalLoop;
     private int inputLoop;
     private String specific;
+    private String forecastType;
 
 
     public ForecastDTO(String validator, String modelType, String target, int globalLoop, int inputLoop, String specific) {
@@ -71,5 +72,13 @@ public class ForecastDTO {
 
     public void setSpecific(String specific) {
         this.specific = specific;
+    }
+
+    public String getForecastType() {
+        return forecastType;
+    }
+
+    public void setForecastType(String forecastType) {
+        this.forecastType = forecastType;
     }
 }

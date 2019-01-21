@@ -25,30 +25,6 @@ var perf = [];
 function load (data) {
 
 
-    var stagePredictionD1 = new Kinetic.Stage({
-        container: "kinetic1D",
-        width: 1220,
-        height: 200
-    });
-
-    var stagePredictionD1Error = new Kinetic.Stage({
-        container: "kinetic1DError",
-        width: 1220,
-        height: 200
-    });
-
-    var stagePredictionD5 = new Kinetic.Stage({
-        container: "kinetic5D",
-        width: 1220,
-        height: 200
-    });
-
-    var stagePredictionD5Error = new Kinetic.Stage({
-        container: "kinetic5DError",
-        width: 1220,
-        height: 200
-    });
-
     var stagePredictionD20 = new Kinetic.Stage({
         container: "kinetic20D",
         width: 1220,
@@ -75,14 +51,6 @@ function load (data) {
 
 
 
-
-
-    var layerChart = new Kinetic.Layer();
-    var layerChartError = new Kinetic.Layer();
-
-    var layerChartD5 = new Kinetic.Layer();
-    var layerChartErrorD5 = new Kinetic.Layer();
-
     var layerChartD20 = new Kinetic.Layer();
     var layerChartErrorD20 = new Kinetic.Layer();
 
@@ -94,13 +62,6 @@ function load (data) {
 
     perf = data;
 
-    chartRun({x:20,y:75}, layerChart, 'mlD1', 'yield', 'realyield', 'grey' , true, 1);
-    chartRun({x:20,y:75}, layerChart, 'mlD1', 'realyield', 'yield', '#96B399', false,0.5);
-    chartRun({x:20,y:75}, layerChartError, 'mlD1', 'error', 'error', 'orange', false, 0.6);
-
-    chartRun({x:20,y:75}, layerChartD5, 'mlD5', 'yield', 'realyield', 'grey' , true, 1);
-    chartRun({x:20,y:75}, layerChartD5, 'mlD5', 'realyield', 'yield', '#96B399', false,0.5);
-    chartRun({x:20,y:75}, layerChartErrorD5, 'mlD5', 'error', 'error', 'orange', false, 0.6);
 
     chartRun({x:20,y:75}, layerChartD20, 'mlD20', 'yield', 'realyield', 'grey' , true, 1);
     chartRun({x:20,y:75}, layerChartD20, 'mlD20', 'realyield', 'yield', '#96B399', false,0.5);
@@ -110,10 +71,7 @@ function load (data) {
     chartRun({x:20,y:75}, layerChartD40, 'mlD40', 'realyield', 'yield', '#96B399', false,0.5);
     chartRun({x:20,y:75}, layerChartErrorD40, 'mlD40', 'error', 'error', 'orange', false, 0.6);
 
-    stagePredictionD1.add(layerChart);
-    stagePredictionD1Error.add(layerChartError);
-    stagePredictionD5.add(layerChartD5);
-    stagePredictionD5Error.add(layerChartErrorD5);
+
     stagePredictionD20.add(layerChartD20);
     stagePredictionD20Error.add(layerChartErrorD20);
     stagePredictionD40.add(layerChartD40);
@@ -132,30 +90,6 @@ function loadGBT (data) {
 
 
 
-
-    var stagePredictionD1GBT = new Kinetic.Stage({
-        container: "kinetic1DGBT",
-        width: 1220,
-        height: 200
-    });
-
-    var stagePredictionD1ErrorGBT = new Kinetic.Stage({
-        container: "kinetic1DErrorGBT",
-        width: 1220,
-        height: 200
-    });
-
-    var stagePredictionD5GBT = new Kinetic.Stage({
-        container: "kinetic5DGBT",
-        width: 1220,
-        height: 200
-    });
-
-    var stagePredictionD5ErrorGBT = new Kinetic.Stage({
-        container: "kinetic5DErrorGBT",
-        width: 1220,
-        height: 200
-    });
 
     var stagePredictionD20GBT = new Kinetic.Stage({
         container: "kinetic20DGBT",
@@ -182,11 +116,6 @@ function loadGBT (data) {
     });
 
 
-    var layerChartGBT = new Kinetic.Layer();
-    var layerChartErrorGBT = new Kinetic.Layer();
-
-    var layerChartD5GBT = new Kinetic.Layer();
-    var layerChartErrorD5GBT = new Kinetic.Layer();
 
     var layerChartD20GBT = new Kinetic.Layer();
     var layerChartErrorD20GBT = new Kinetic.Layer();
@@ -197,13 +126,6 @@ function loadGBT (data) {
 
     perf = data;
 
-    chartRun({x:20,y:75}, layerChartGBT, 'mlD1', 'yield', 'realyield', 'grey' , true, 1);
-    chartRun({x:20,y:75}, layerChartGBT, 'mlD1', 'realyield', 'yield', '#96B399', false,0.5);
-    chartRun({x:20,y:75}, layerChartErrorGBT, 'mlD1', 'error', 'error', 'orange', false, 0.6);
-
-    chartRun({x:20,y:75}, layerChartD5GBT, 'mlD5', 'yield', 'realyield', 'grey' , true, 1);
-    chartRun({x:20,y:75}, layerChartD5GBT, 'mlD5', 'realyield', 'yield', '#96B399', false,0.5);
-    chartRun({x:20,y:75}, layerChartErrorD5GBT, 'mlD5', 'error', 'error', 'orange', false, 0.6);
 
     chartRun({x:20,y:75}, layerChartD20GBT, 'mlD20', 'yield', 'realyield', 'grey' , true, 1);
     chartRun({x:20,y:75}, layerChartD20GBT, 'mlD20', 'realyield', 'yield', '#96B399', false,0.5);
@@ -214,10 +136,6 @@ function loadGBT (data) {
     chartRun({x:20,y:75}, layerChartErrorD40GBT, 'mlD40', 'error', 'error', 'orange', false, 0.6);
 
 
-    stagePredictionD1GBT.add(layerChartGBT);
-    stagePredictionD1ErrorGBT.add(layerChartErrorGBT);
-    stagePredictionD5GBT.add(layerChartD5GBT);
-    stagePredictionD5ErrorGBT.add(layerChartErrorD5GBT);
     stagePredictionD20GBT.add(layerChartD20GBT);
     stagePredictionD20ErrorGBT.add(layerChartErrorD20GBT);
     stagePredictionD40GBT.add(layerChartD40GBT);
@@ -234,29 +152,7 @@ function loadGBT (data) {
 function loadEnsemble (data) {
 
 
-    var stagePredictionD1Ensemble = new Kinetic.Stage({
-        container: "kinetic1DEnsemble",
-        width: 1220,
-        height: 200
-    });
 
-    var stagePredictionD1ErrorEnsemble = new Kinetic.Stage({
-        container: "kinetic1DErrorEnsemble",
-        width: 1220,
-        height: 200
-    });
-
-    var stagePredictionD5Ensemble = new Kinetic.Stage({
-        container: "kinetic5DEnsemble",
-        width: 1220,
-        height: 200
-    });
-
-    var stagePredictionD5ErrorEnsemble = new Kinetic.Stage({
-        container: "kinetic5DErrorEnsemble",
-        width: 1220,
-        height: 200
-    });
 
     var stagePredictionD20Ensemble = new Kinetic.Stage({
         container: "kinetic20DEnsemble",
@@ -283,11 +179,6 @@ function loadEnsemble (data) {
     });
 
 
-    var layerChartEnsemble = new Kinetic.Layer();
-    var layerChartErrorEnsemble = new Kinetic.Layer();
-
-    var layerChartD5Ensemble = new Kinetic.Layer();
-    var layerChartErrorD5Ensemble = new Kinetic.Layer();
 
     var layerChartD20Ensemble = new Kinetic.Layer();
     var layerChartErrorD20Ensemble = new Kinetic.Layer();
@@ -298,13 +189,6 @@ function loadEnsemble (data) {
 
     perf = data;
 
-    chartRun({x:20,y:75}, layerChartEnsemble, 'mlD1', 'yield', 'realyield', 'grey' , true, 1);
-    chartRun({x:20,y:75}, layerChartEnsemble, 'mlD1', 'realyield', 'yield', '#96B399', false,0.5);
-    chartRun({x:20,y:75}, layerChartErrorEnsemble, 'mlD1', 'error', 'error', 'orange', false, 0.6);
-
-    chartRun({x:20,y:75}, layerChartD5Ensemble, 'mlD5', 'yield', 'realyield', 'grey' , true, 1);
-    chartRun({x:20,y:75}, layerChartD5Ensemble, 'mlD5', 'realyield', 'yield', '#96B399', false,0.5);
-    chartRun({x:20,y:75}, layerChartErrorD5Ensemble, 'mlD5', 'error', 'error', 'orange', false, 0.6);
 
     chartRun({x:20,y:75}, layerChartD20Ensemble, 'mlD20', 'yield', 'realyield', 'grey' , true, 1);
     chartRun({x:20,y:75}, layerChartD20Ensemble, 'mlD20', 'realyield', 'yield', '#96B399', false,0.5);
@@ -315,10 +199,6 @@ function loadEnsemble (data) {
     chartRun({x:20,y:75}, layerChartErrorD40Ensemble, 'mlD40', 'error', 'error', 'orange', false, 0.6);
 
 
-    stagePredictionD1Ensemble.add(layerChartEnsemble);
-    stagePredictionD1ErrorEnsemble.add(layerChartErrorEnsemble);
-    stagePredictionD5Ensemble.add(layerChartD5Ensemble);
-    stagePredictionD5ErrorEnsemble.add(layerChartErrorD5Ensemble);
     stagePredictionD20Ensemble.add(layerChartD20Ensemble);
     stagePredictionD20ErrorEnsemble.add(layerChartErrorD20Ensemble);
     stagePredictionD40Ensemble.add(layerChartD40Ensemble);

@@ -39,9 +39,9 @@ public class MLStatus implements Serializable,DaoChecker{
      * save perf for all period
      * @param code
      */
-    public void savePerf(String code, ModelType type) throws InterruptedException {
+    public void savePerf(String code, ModelType type, String dbName) throws InterruptedException {
         for (MLPerformances perfs : perfList) {
-            perfs.save(code, type);
+            perfs.save(code, type, dbName);
         }
     }
 
@@ -50,16 +50,16 @@ public class MLStatus implements Serializable,DaoChecker{
      * @param code
      * @param p
      */
-    public void savePerf(String code, PredictionPeriodicity p, ModelType type) throws InterruptedException {
+    public void savePerf(String code, PredictionPeriodicity p, ModelType type, String dbName) throws InterruptedException {
         for (MLPerformances perfs : perfList) {
-            perfs.save(code,p, type);
+            perfs.save(code,p, type, dbName);
         }
 
     }
 
 
-    public void saveLastPerf(String code, ModelType type) throws InterruptedException {
-        perfList.get(perfList.size()-1).save(code,type);
+    public void saveLastPerf(String code, ModelType type, String dbName) throws InterruptedException {
+        perfList.get(perfList.size()-1).save(code,type, dbName);
     }
 
     /**
@@ -255,40 +255,70 @@ public class MLStatus implements Serializable,DaoChecker{
      * @param type
      * @return O or max last StockHistory
      */
-    public boolean loadPerf(final String code, ModelType type) {
-        final int max = CacheMLStock.RENDERING;
+    public boolean loadPerf(final String code, ModelType type, String base,  final int max) {
+
         perfList = new ArrayList();
 
-        //offset is mult by 2 because it is no dense data
-       /* String query = "SELECT * FROM "+code + ModelType.code(type) +"PD1 where time > '2015-06-01T00:00:00Z'";
-        QueryResult listP1 = InfluxDaoConnector.getPoints(query, MatrixValidator.dbNameModelPerf);
-        query = "SELECT * FROM "+code+ ModelType.code(type) +"PD5 where time > '2015-06-01T00:00:00Z'";
-        QueryResult listP5 = InfluxDaoConnector.getPoints(query, MatrixValidator.dbNameModelPerf);*/
-        String query = "SELECT * FROM "+code+ ModelType.code(type) +"PD20 where time > '2015-06-01T00:00:00Z'";
-        QueryResult listP20 = InfluxDaoConnector.getPoints(query, MatrixValidator.dbNameModelPerf);
-        query = "SELECT * FROM "+code + ModelType.code(type) +"PD40 where time > '2015-06-01T00:00:00Z'";
-        QueryResult listP40 = InfluxDaoConnector.getPoints(query, MatrixValidator.dbNameModelPerf);
 
-        //if (checker(listP1) == false) return false;
-        //if (checker(listP5) == false) return false;
+        String query = "SELECT * FROM "+code+ ModelType.code(type) +"PD20 where time > '2015-06-01T00:00:00Z'";
+        QueryResult listP20 = InfluxDaoConnector.getPoints(query, base);
+        query = "SELECT * FROM "+code + ModelType.code(type) +"PD40 where time > '2015-06-01T00:00:00Z'";
+        QueryResult listP40 = InfluxDaoConnector.getPoints(query, base);
+
+
         if (checker(listP20) == false) return false;
         if (checker(listP40) == false) return false;
 
-        //int sizeP1 = listP1.getResults().get(0).getSeries().get(0).getValues().size();
-        //int sizeP5 = listP5.getResults().get(0).getSeries().get(0).getValues().size();
+
         int sizeP20 = listP20.getResults().get(0).getSeries().get(0).getValues().size();
         int sizeP40 = listP40.getResults().get(0).getSeries().get(0).getValues().size();
 
-        /*if (sizeP1 < max)
-            return ;*/
+
 
         for (int i = sizeP20-max; i < sizeP20; i++) {
             MLPerformances mlps = new MLPerformances();
 
-            //populate(mlps.getMl(PredictionPeriodicity.D1), listP1, i);
-            //if (i < sizeP5 ) populate(mlps.getMl(PredictionPeriodicity.D5), listP5, i); else mlps.setMl(null, PredictionPeriodicity.D5);
             if (i < sizeP20 ) populate(mlps.getMl(PredictionPeriodicity.D20), listP20, i);  else mlps.setMl(null, PredictionPeriodicity.D20);
             if (i < sizeP40 ) populate(mlps.getMl(PredictionPeriodicity.D40), listP40, i);  else mlps.setMl(null, PredictionPeriodicity.D40);
+            mlps.setDate(mlps.getMl(PredictionPeriodicity.D20).getCurrentDate()); // old current date have to be equals for models
+
+            perfList.add(mlps);
+
+        }
+
+        calculeAvgPrd();
+
+        return true;
+
+    }
+
+
+
+    /**
+     * return last max StockHistory
+     * @param code
+     * @param type
+     * @return O or max last StockHistory
+     */
+    @Deprecated
+    public boolean loadShortPerf(final String code, ModelType type, String base) {
+        final int max = CacheMLStock.RENDERING_SHORT;
+        perfList = new ArrayList();
+
+
+        String query = "SELECT * FROM "+code+ ModelType.code(type) +"PD20 where time > '2015-06-01T00:00:00Z'";
+        QueryResult listP20 = InfluxDaoConnector.getPoints(query, base);
+
+        if (checker(listP20) == false) return false;
+
+        int sizeP20 = listP20.getResults().get(0).getSeries().get(0).getValues().size();
+
+
+
+        for (int i = sizeP20-max; i < sizeP20; i++) {
+            MLPerformances mlps = new MLPerformances();
+
+            if (i < sizeP20 ) populate(mlps.getMl(PredictionPeriodicity.D20), listP20, i);  else mlps.setMl(null, PredictionPeriodicity.D20);
             mlps.setDate(mlps.getMl(PredictionPeriodicity.D20).getCurrentDate()); // old current date have to be equals for models
 
             perfList.add(mlps);
@@ -330,7 +360,7 @@ public class MLStatus implements Serializable,DaoChecker{
 
 
     public void setPerfList(List<MLPerformances> perfList,PredictionPeriodicity p) throws Exception {
-        if (p == PredictionPeriodicity.D1 || this.perfList == null) {
+        if (this.perfList == null) {
             this.perfList = perfList;
         } else replaceElementList(perfList,p);
     }

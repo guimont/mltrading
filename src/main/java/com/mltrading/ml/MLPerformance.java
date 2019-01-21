@@ -173,7 +173,7 @@ public class MLPerformance implements Serializable{
             .field("error", error)
             .build();
         bp.point(pt);
-        InfluxDaoConnector.writePoints(bp);
+
     }
 
 

@@ -130,13 +130,13 @@ public class StockPerformance implements Serializable{
                 this.setName(code);
                 this.setModelType("RandomForest");
 
-                String query = "SELECT (vectorSize) FROM " + code + "V" + PredictionPeriodicity.D1 + " ORDER BY DESC limit 1";
-                QueryResult result = InfluxDaoConnector.getPoints(query, MatrixValidator.dbNamePerf);
+                String query = "SELECT (vectorSize) FROM " + code + "V" + PredictionPeriodicity.D20 + " ORDER BY DESC limit 1";
+                QueryResult result = InfluxDaoConnector.getPoints(query, CacheMLStock.dbNameModelPerf);
                 this.setLastUpdate((String) result.getResults().get(0).getSeries().get(0).getValues().get(0).get(0));
 
                 /* considering iteration is same for all period*/
-                query = "SELECT count(vectorSize) FROM " + code + "V" + PredictionPeriodicity.D1;
-                result = InfluxDaoConnector.getPoints(query, MatrixValidator.dbNamePerf);
+                query = "SELECT count(vectorSize) FROM " + code + "V" + PredictionPeriodicity.D20;
+                result = InfluxDaoConnector.getPoints(query, CacheMLStock.dbNameModelPerf);
                 this.setIteration (new Double((Double)result.getResults().get(0).getSeries().get(0).getValues().get(0).get(1)).intValue());
                 PeriodicityList.periodicityLong.forEach(p -> {
                     MLStatus l = s.getStatus(ModelType.RANDOMFOREST);

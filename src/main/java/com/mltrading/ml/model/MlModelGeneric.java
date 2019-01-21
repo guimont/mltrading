@@ -41,7 +41,7 @@ public abstract class MlModelGeneric<Model> implements Serializable {
 
         PeriodicityList.periodicityLong.forEach(p ->  {
             CacheMLActivities.addActivities(new MLActivities("FeaturesStock", codif, "start", 0, 0, false));
-            List<FeaturesStock> fsL = FeaturesStock.create(codif, getValidator(mls, p), CacheMLStock.RANGE_MAX);
+            List<FeaturesStock> fsL = FeaturesStock.create(codif, getValidator(mls, p), mls.getFeatureSize());
             CacheMLActivities.addActivities(new MLActivities("FeaturesStock", codif, "start", 0, 0, true));
             subprocessRF(mls, fsL, p, false);
         });
@@ -53,7 +53,7 @@ public abstract class MlModelGeneric<Model> implements Serializable {
     public MLStocks processRFRef(String codif, MLStocks mls, boolean merge) {
 
         CacheMLActivities.addActivities(new MLActivities("FeaturesStock", codif, "start", 0, 0, false));
-        List<FeaturesStock> fsL = FeaturesStock.create(codif, getValidator(mls, PredictionPeriodicity.D1), CacheMLStock.RANGE_MAX);
+        List<FeaturesStock> fsL = FeaturesStock.create(codif, getValidator(mls, PredictionPeriodicity.D20), mls.getFeatureSize());
         CacheMLActivities.addActivities(new MLActivities("FeaturesStock", codif, "start", 0, 0, true));
 
         PeriodicityList.periodicityLong.forEach(p -> subprocessRF(mls, fsL, p, merge));
@@ -64,7 +64,7 @@ public abstract class MlModelGeneric<Model> implements Serializable {
     public MLStocks processRFRef(String codif, MLStocks mls, boolean merge, PredictionPeriodicity p) {
 
         CacheMLActivities.addActivities(new MLActivities("FeaturesStock", codif, "start", 0, 0, false));
-        List<FeaturesStock> fsL = FeaturesStock.create(codif, getValidator(mls,p), CacheMLStock.RANGE_MAX);
+        List<FeaturesStock> fsL = FeaturesStock.create(codif, getValidator(mls,p), mls.getFeatureSize());
         CacheMLActivities.addActivities(new MLActivities("FeaturesStock", codif, "start", 0, 0, true));
         subprocessRF(mls, fsL, p, merge);
         return mls;
@@ -76,7 +76,7 @@ public abstract class MlModelGeneric<Model> implements Serializable {
 
         if (null == fsL) return null;
 
-        int born = fsL.size() - CacheMLStock.RENDERING;
+        int born = fsL.size() - mls.getRenderingSize();
 
         List<FeaturesStock> fsLTrain = fsL.subList(0, born);
         List<FeaturesStock> fsLTest = fsL.subList(born, fsL.size());
@@ -158,10 +158,10 @@ public abstract class MlModelGeneric<Model> implements Serializable {
 
         PeriodicityList.periodicityLong.forEach(p -> {
 
-            List<FeaturesStock> fsL = FeaturesStock.create(codif, getValidator(mls, p), CacheMLStock.RENDERING);
+            List<FeaturesStock> fsL = FeaturesStock.create(codif, getValidator(mls, p), mls.getRenderingSize());
             if (fsL.get(0).currentVectorPos != getValidator(mls, p).getVectorSize()) {
                 log.error("size vector not corresponding");
-                log.error("validator: " + getValidator(mls, PredictionPeriodicity.D1).getVectorSize());
+                log.error("validator: " + getValidator(mls, PredictionPeriodicity.D20).getVectorSize());
                 log.error("vector: " + fsL.get(0).currentVectorPos);
             }
             map.put(p, fsL);

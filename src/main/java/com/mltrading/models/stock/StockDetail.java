@@ -165,7 +165,7 @@ public class StockDetail implements Serializable{
             else d.setOpening(he.getValue());
 
 
-            MLPerformance perf = findPred(mls.getStatus(type).getPerfList(), he.getDay(), PredictionPeriodicity.D5);
+           /* MLPerformance perf = findPred(mls.getStatus(type).getPerfList(), he.getDay(), PredictionPeriodicity.D5);
             if (perf != null) {
                 d.setPredD1(perf.getPrediction());
             }
@@ -176,7 +176,7 @@ public class StockDetail implements Serializable{
             if (perf5 != null) {
                 d.setPredD5(perf5.getPrediction());
                 d.setSignD5(perf5.isSign());
-            }
+            }*/
 
 
             MLPerformance perf20 = findPred(mls.getStatus(type).getPerfList(), he.getDay(), PredictionPeriodicity.D20);
@@ -202,7 +202,7 @@ public class StockDetail implements Serializable{
                 if (mls.getStatus().getPerfList().get(size - 5 + i).getMlD5() != null)
                     d.setPredD5(mls.getStatus().getPerfList().get(size - 5 + i).getMlD5().getPrediction());
             */
-            if ( i - 5 < 0) d.setPredD5(mls.getStatus(type).getPerfList().get(size - 5 + i).getMl(PredictionPeriodicity.D5).getPrediction());
+            //if ( i - 5 < 0) d.setPredD5(mls.getStatus(type).getPerfList().get(size - 5 + i).getMl(PredictionPeriodicity.D5).getPrediction());
             if ( i - 20 < 0) d.setPredD20(mls.getStatus(type).getPerfList().get(size - 20 + i).getMl(PredictionPeriodicity.D20).getPrediction());
             d.setPredD40(mls.getStatus(type).getPerfList().get(size-40+i).getMl(PredictionPeriodicity.D40).getPrediction());
             data.add(d);

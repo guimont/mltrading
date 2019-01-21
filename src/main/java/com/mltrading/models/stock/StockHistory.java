@@ -93,11 +93,20 @@ public class StockHistory extends StockBase implements Serializable , Comparable
     private Double consensusNote;
 
     private StockPrediction prediction;
+    private StockPrediction predictionShort;
 
     private double performanceEstimate;
 
     public double getPerformanceEstimate() {
         return performanceEstimate;
+    }
+
+    public StockPrediction getPredictionShort() {
+        return predictionShort;
+    }
+
+    public void setPredictionShort(StockPrediction predictionShort) {
+        this.predictionShort = predictionShort;
     }
 
     public void setPerformanceEstimate(double performanceEstimate) {

@@ -5,10 +5,8 @@ import com.mltrading.config.MLProperties;
 import com.mltrading.dao.InfluxDaoConnector;
 import com.mltrading.ml.model.ModelType;
 import com.mltrading.ml.ranking.MLRank;
-import com.mltrading.models.stock.StockSector;
 import com.mltrading.models.stock.cache.CacheStockGeneral;
 import com.mltrading.models.stock.cache.CacheStockSector;
-import com.mltrading.models.stock.StockGeneral;
 import com.mltrading.models.stock.StockHistory;
 import com.mltrading.models.util.MLActivities;
 import org.apache.spark.SparkConf;
@@ -27,23 +25,40 @@ import java.util.*;
 public class CacheMLStock {
     //
 
+
+    public static String dbNameModel = "modelNote2";
+    public static String dbNameModelPerf = "modelPerf";
+
+    public static String dbNameModelShort = "modelNoteShort";
+    public static String dbNameModelShortPerf = "modelShortPerf";
+
     public static final List<ModelType> modelTypes = Arrays.asList(ModelType.RANDOMFOREST, ModelType.GRADIANTBOOSTTREE);
 
 
     public static String SPARK_DEFAULT_MEMORY = "4g";
 
+    public static int RENDERING_SHORT = 90;
     public static int RENDERING = 300;
     public static int RANGE_MAX = 1500;
+    public static int RANGE_MIN = 300;
+
+    public static String NO_EXTENDED ="";
+    public static String SHORT_EXTENDED ="SH";
 
     private static final Logger log = LoggerFactory.getLogger(CacheMLStock.class);
 
     private static final Map<String, MLStocks> mlStockMap;
+
+    private static final Map<String, MLStocks> mlStockShortMap;
+
+
     private static  MLRank mlRank = null;
 
     static {
         System.setProperty("hadoop.home.dir", MLProperties.getProperty("spark.hadoop.path"));
         System.setProperty("spark.sql.warehouse.dir", MLProperties.getProperty("spark.warehouse"));
         mlStockMap = new HashMap<>();
+        mlStockShortMap = new HashMap<>();
     }
 
     //static SparkConf sparkConf = new SparkConf().setAppName("JavaRandomForest").setMaster("local[*]");
@@ -71,10 +86,9 @@ public class CacheMLStock {
         CacheMLActivities.addActivities(g);
 
         deleteDB();
-        SynchWorker.delete();
+        //SynchWorker.delete();
         // load model on worker
-        SynchWorker.load();
-
+        //SynchWorker.load();
 
         mlRank = new MLRank();
         mlRank.loadModel();
@@ -93,31 +107,40 @@ public class CacheMLStock {
     public static void load(List<? extends StockHistory> sl) {
 
 
-        //load model local
-        for (StockHistory s : sl) {
-            MLStocks mls = new MLStocks(s.getCodif());
-            modelTypes.forEach(mls::distibute);
-        }
-
-
-        boolean validate = true;
 
         for (StockHistory s : sl) {
             MLActivities a = new MLActivities("CacheMLStock", "", "load", 0, 0, false);
             try {
 
-                MLStocks mls = new MLStocks(s.getCodif());
 
-                validate = mls.getStatus(ModelType.RANDOMFOREST).loadPerf(s.getCodif(), ModelType.RANDOMFOREST);
-                mls.load(ModelType.RANDOMFOREST);
+                MLStocks mls = new MLStocksBase(s.getCodif());
+                modelTypes.forEach(mls::distibute);
 
-                validate = mls.getStatus(ModelType.GRADIANTBOOSTTREE).loadPerf(s.getCodif(),ModelType.GRADIANTBOOSTTREE);
-                mls.load(ModelType.GRADIANTBOOSTTREE);
+                modelTypes.forEach( t -> {
+                    mls.getStatus(t).loadPerf(s.getCodif(),t, mls.getDbNamePerf(), CacheMLStock.RENDERING);
+                    mls.load(t);
+                });
 
-                mls.getStatus(ModelType.ENSEMBLE).loadPerf(s.getCodif(), ModelType.ENSEMBLE);
+                mls.getStatus(ModelType.ENSEMBLE).loadPerf(s.getCodif(), ModelType.ENSEMBLE, mls.getDbNamePerf(), CacheMLStock.RENDERING);
 
                 mlStockMap.put(s.getCodif(), mls);
+
+
+
+                /**Short model***/
+                MLStocks mlsShort = new MLStocksShort(s.getCodif());
+                //ModelType t = ModelType.RANDOMFOREST;
+                modelTypes.forEach(mlsShort::distibute);
+                //mlsShort.distibute(t);
+                modelTypes.forEach( t -> {
+                    mlsShort.getStatus(t).loadPerf(s.getCodif(),t, mlsShort.getDbNamePerf(), CacheMLStock.RENDERING_SHORT);
+                    mlsShort.load(t);
+                });
+                mlsShort.getStatus(ModelType.ENSEMBLE).loadPerf(s.getCodif(), ModelType.ENSEMBLE, mls.getDbNamePerf(), CacheMLStock.RENDERING_SHORT);
+                mlStockShortMap.put(s.getCodif(), mlsShort);
                 CacheMLActivities.addActivities(a.setEndDate().setStatus("Success"));
+
+
 
             } catch (Exception e) {
                 log.error(e.toString());
@@ -125,20 +148,15 @@ public class CacheMLStock {
             }
         }
 
-        if (!validate) {
-            log.error("load perf is not correctly filled. Need to regenerate data");
-            /*MlForecast ml = new MlForecast();
-            ml.processList();
-            //load status
-            CacheMLStock.savePerf();*/
-        }
-
-
     }
 
 
     public static Map<String, MLStocks> getMLStockCache() {
         return mlStockMap;
+    }
+
+    public static Map<String, MLStocks> getMLStockShortCache() {
+        return mlStockShortMap;
     }
 
     public static MLRank getMlRankCache() {
@@ -154,16 +172,26 @@ public class CacheMLStock {
     }
 
 
+
     public static void save(ModelType type) {
+        deleteModel(CacheMLStock.dbNameModel, CacheMLStock.dbNameModelPerf);
+        //SynchWorker.delete(); don't use this not works
+        saveCommon(type, mlStockMap);
+    }
 
-        if (mlStockMap.values().isEmpty()) return;
+    public static void saveShort(ModelType type) {
 
-        deleteModel();
-        SynchWorker.delete();
+        deleteModel(CacheMLStock.dbNameModelShort, CacheMLStock.dbNameModelShortPerf);
+        //SynchWorker.delete();
+        saveCommon(type, mlStockShortMap );
+    }
 
 
+    private static void saveCommon(ModelType type,  Map<String, MLStocks> map) {
 
-        for (MLStocks mls : mlStockMap.values()) {
+        if (map.values().isEmpty()) return;
+
+        for (MLStocks mls : map.values()) {
             PeriodicityList.periodicityLong.stream().filter(p -> mls.getSock(p).isModelImprove()).forEach(p -> {
                 mls.saveModel(p, type);
                 mls.saveDB(p, type);
@@ -174,7 +202,7 @@ public class CacheMLStock {
                 modelTypes.stream().filter(t -> mls.getStatus(t).getPerfList() != null).forEach(t -> {
                     try {
                         log.info("Save perf: " + mls.getCodif() + " for model: " + t);
-                        mls.getStatus(t).savePerf(mls.getCodif(), t);
+                        mls.getStatus(t).savePerf(mls.getCodif(), t, mls.getDbNamePerf());
                         log.info("Save validator: " + mls.getCodif() + " for model: " + t);
                         mls.saveValidator(t);
                     } catch (InterruptedException e) {
@@ -183,28 +211,27 @@ public class CacheMLStock {
                 });
 
                 if (mls.getStatus(ModelType.ENSEMBLE).getPerfList() != null) {
-                    mls.getStatus(ModelType.ENSEMBLE).savePerf(mls.getCodif(), ModelType.ENSEMBLE);
+                    mls.getStatus(ModelType.ENSEMBLE).savePerf(mls.getCodif(), ModelType.ENSEMBLE, mls.getDbNamePerf());
                 }
             }
             catch (Exception e) {
-                log.error("Import failed: " + e);
+                log.error("Save failed: " + e);
             }
-
-
 
         }
 
-        SynchWorker.save();
+        //SynchWorker.save();  don't use this not works
     }
 
+
     /**
-     * update perf list with last value
+     * update perf list
      */
     public static void savePerf(ModelType type) {
 
         for (MLStocks mls : mlStockMap.values()) {
             try {
-                mls.getStatus(type).savePerf(mls.getCodif(),type);
+                mls.getStatus(type).savePerf(mls.getCodif(),type, mls.getDbNamePerf());
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -215,10 +242,11 @@ public class CacheMLStock {
      * update perf list with last value
      */
     @SuppressWarnings("unused")
+    @Deprecated
     public static void saveLastPerf(ModelType type) {
         for (MLStocks mls : mlStockMap.values()) {
             try {
-                mls.getStatus(type).saveLastPerf(mls.getCodif(),type);
+                mls.getStatus(type).saveLastPerf(mls.getCodif(),type, mls.getDbNamePerf());
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -226,6 +254,9 @@ public class CacheMLStock {
     }
 
 
+    /**
+     * delete model directory from local storage
+     */
     public static void deleteDB() {
         String path = MLStock.path;
 
@@ -237,29 +268,49 @@ public class CacheMLStock {
     }
 
 
-    private static void deleteModel() {
+    /**
+     * delete model directory from local storage and model form influx db perf and validator
+     * @param modelDBName
+     * @param perfDBName
+     */
+    private static void deleteModel(String modelDBName, String perfDBName) {
         String path = MLStock.path;
 
         try {
             FileUtils.deleteDirectory(new File(path + "model"));
-            InfluxDaoConnector.deleteDB(MatrixValidator.dbNameModel);
-            InfluxDaoConnector.deleteDB(MatrixValidator.dbNameModelPerf);
+            InfluxDaoConnector.deleteDB(modelDBName);
+            InfluxDaoConnector.deleteDB(perfDBName);
         } catch (IOException e) {
             log.error("Cannot remove folder model: " + e);
         }
     }
 
 
+    /**
+     * Tricks to bypass Object design not efficiency
+     * @param prefix
+     * @return db validator name (short or long)
+     */
+    public static String guessDbName(String prefix) {
+        if (prefix.equalsIgnoreCase(CacheMLStock.NO_EXTENDED)) return CacheMLStock.dbNameModel;
+        if (prefix.equalsIgnoreCase(CacheMLStock.SHORT_EXTENDED)) return CacheMLStock.dbNameModelShort;
+
+        return null;
+
+    }
+
 
     /**
      *
      * sync server function
      * not use in main jar
-     *
+     * never work fine ... so dont watse time on this for moment
      */
 
 
-    @SuppressWarnings("unused")
+
+    /*
+        @SuppressWarnings("unused")
     public static void saveDB(ModelType type) {
         List<StockGeneral> sl = new ArrayList(CacheStockGeneral.getIsinCache().values());
         for (StockGeneral s : sl) {
@@ -293,7 +344,7 @@ public class CacheMLStock {
             });
 
         }
-    }
+    }*/
 
 
 }

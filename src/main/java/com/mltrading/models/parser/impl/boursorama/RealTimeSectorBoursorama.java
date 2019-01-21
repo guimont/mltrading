@@ -24,15 +24,17 @@ public class RealTimeSectorBoursorama extends ParserCommon implements RealTimePa
         try {
             String text = loadUrl(new URL(startUrl+ss.getCode()));
 
-            Document doc = Jsoup.parse(text);
+            if (text != null) {
+                Document doc = Jsoup.parse(text);
+                ss.setValue(new Double(doc.select(".c-faceplate__price").select(".c-instrument--last").text()
+                    .replaceAll(" ", "").replaceAll(",", ".")));
+                ss.setVariation(new Float(doc.select(".c-faceplate__fluctuation").select(".c-instrument--variation").text()
+                    .replaceAll(",", ".").replaceAll(" ", "").replaceAll("%", "")));
 
-
-            ss.setValue(new Double( doc.select(".c-faceplate__price").select(".c-instrument--last").text()
-                .replaceAll(" ", "").replaceAll(",", ".")));
-            ss.setVariation(new Float( doc.select(".c-faceplate__fluctuation").select(".c-instrument--variation").text()
-                .replaceAll(",", ".").replaceAll(" ", "").replaceAll("%","")));
-
-
+            }
+            else {
+                System.out.println("Cannot refresh cache for code: " + ss.getCode());
+            }
 
         } catch (Exception e) {
             System.out.println("code: " + ss.getCode());

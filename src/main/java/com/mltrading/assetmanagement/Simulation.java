@@ -15,6 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.mltrading.ml.MlForecast.updatePredictor;
+
 
 /**
  * create simulation asset Management
@@ -35,11 +37,9 @@ public class Simulation {
             CacheStockGeneral.getCache().values().forEach(sg -> {
 
                 StockGeneral sgSim = new StockGeneral(StockHistory.getStockHistory(sg.getCodif(), d), sg);
-                StockPrediction prediction = prediction(sgSim.getCodif(), d);
-                sgSim.setPrediction(prediction);
+                updatePredictor(sgSim,true);
 
                 mapSim.put(sgSim.getCode(), sgSim);
-
 
             });
             assetToSim.evaluate(mapSim);
@@ -49,48 +49,14 @@ public class Simulation {
     }
 
 
-    /**
-     * Predict value for stock
-     * @param codif
-     * @return
-     */
-    private StockPrediction prediction(String codif, String date) {
-
-
-        MLStocks s = CacheMLStock.getMLStockCache().get(codif);
-        if (s != null) {
-            try {
-                StockPrediction sp = new StockPrediction(codif);
-
-                PeriodicityList.periodicityLong.forEach(p -> {
-
-                    sp.setPrediction(s.getModel(p).aggregate( s, date),p);
-                    sp.setConfidence(100 - (s.getStatus(ModelType.ENSEMBLE).getErrorRate(p) * 100 / s.getStatus(ModelType.ENSEMBLE).getCount(p)), p);
-                });
-
-                if (CacheMLStock.getMlRankCache().getModel() != null) {
-                    FeaturesRank fr = FeaturesRank.createRT(codif, date, sp);
-                    sp.setYieldD20(CacheMLStock.getMlRankCache().getModel().predict(Vectors.dense(fr.vectorize())));
-                }
-
-
-                return sp;
-            }catch (Exception e) {
-                System.out.print(e.toString());
-                return null;
-            }
-        }
-        else {
-            return null;
-        }
-    }
 
 
     public void cleanAsset(AssetManagement assetToSim) {
         assetToSim.curentAssetStock.values().forEach( assetStock -> {
             StockGeneral sg  = CacheStockGeneral.getCache().get(CacheStockGeneral.getCode(assetStock.getCode()));
-            assetStock.buyIt(sg);
+            assetStock.sellIt(sg.getValue());
             assetToSim.setMargin(assetStock);
+            assetToSim.assetStockList.add(assetStock);
         });
     }
 }

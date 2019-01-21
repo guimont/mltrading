@@ -4,7 +4,7 @@ import com.mltrading.dao.impl.InfluxDaoImpl;
 
 import com.mltrading.influxdb.dto.QueryRequest;
 
-import com.mltrading.ml.MatrixValidator;
+import com.mltrading.ml.CacheMLStock;
 import com.mltrading.models.stock.HistogramDocument;
 import com.mltrading.models.stock.StockDocument;
 import com.mltrading.models.stock.StockHistory;
@@ -33,11 +33,12 @@ public class InfluxDaoConnector {
 
         List<String> repo = dao.getDB().describeDatabases();
 
-
         if (!repo.contains(StockHistory.dbName)) dao.createDB(StockHistory.dbName);
-        if (!repo.contains(MatrixValidator.dbNamePerf)) dao.createDB(MatrixValidator.dbNamePerf);
-        if (!repo.contains(MatrixValidator.dbNameModel)) dao.createDB(MatrixValidator.dbNameModel);
-        if (!repo.contains(MatrixValidator.dbNameModelPerf)) dao.createDB(MatrixValidator.dbNameModelPerf);
+        if (!repo.contains(CacheMLStock.dbNameModel)) dao.createDB(CacheMLStock.dbNameModel);
+        if (!repo.contains(CacheMLStock.dbNameModelPerf)) dao.createDB(CacheMLStock.dbNameModelPerf);
+
+        if (!repo.contains(CacheMLStock.dbNameModelShort)) dao.createDB(CacheMLStock.dbNameModelShort);
+        if (!repo.contains(CacheMLStock.dbNameModelShortPerf)) dao.createDB(CacheMLStock.dbNameModelShortPerf);
         if (!repo.contains(StockDocument.dbName)) dao.createDB(StockDocument.dbName);
         if (!repo.contains(HistogramDocument.dbName)) dao.createDB(HistogramDocument.dbName);
 

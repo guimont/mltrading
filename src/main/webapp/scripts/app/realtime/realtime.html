@@ -145,12 +145,15 @@
                                 <td  ><a ui-sref="detail({code: '{{rt.codif}}'})">{{rt.name}}</a></td>
                                 <td><small>{{rt.code}}</small></td>
                                 <td><small class="badge" style="width: 45px; background-color: silver">{{rt.codif}}</small></td>
-                                <td><i style="margin-left: 5px;color: lightslategrey" class="{{getIcon(rt.sector)}}" data-toggle="tooltip" data-container="body" title="View details" aria-label="View details"/></td>
+                                <td><i style="margin-left: 5px;color: lightslategrey" class="{{getIcon(rt.sector)}}" data-toggle="tooltip" data-container="body" title="{{rt.sector}}" aria-label="View details"/></td>
                                 <td>{{rt.value}}</td>
                                 <td>{{rt.volume}}</td>
                                 <td style="color: {{getcolorSign(rt.variation)}}">{{rt.variation}}</td>
                                 <!--<td style="color: {{getcolor(rt.prediction.confidenceD20)}}">{{prediction(rt.prediction.predictionD20, rt.prediction.confidenceD20)}}</td>-->
-                                <td><meter style="width:100px;width: {{rt.prediction.confidenceD20}}%"></meter></td>
+                                <td>
+                                    <meter data-toggle="tooltip" title="{{rt.prediction.confidenceD20}}" style="background-color: {{getcolor(rt.prediction.confidenceD20)}};width: {{rt.prediction.confidenceD20}}%; margin: unset"></meter>
+                                    <meter data-toggle="tooltip" title="{{rt.predictionShort.confidenceD20}}" style="background-color: {{getcolor(rt.predictionShort.confidenceD20)}};width: {{rt.predictionShort.confidenceD20}}%; min-width: 50%"></meter>
+                                </td>
                                 <td>
                                     <a ui-sref="performance({code: '{{rt.codif}}'})" ><i style="margin-left: 5px" class="glyphicon glyphicon-eye-open"/></a>
                                 </td>
@@ -187,7 +190,10 @@
                                 <td><i style="margin-left: 5px;color: lightslategrey" class="{{getIcon(rt.codif)}}" data-toggle="tooltip" data-container="body" title="View details" aria-label="View details"/></td>
                                 <td>{{rt.value}}</td>
                                 <td style="color: {{getcolorSign(rt.variation)}}">{{rt.variation}}</td>
-                                <td style="color: {{getcolor(rt.prediction.confidenceD20)}}">{{prediction(rt.prediction.predictionD20, rt.prediction.confidenceD20)}}</td>
+                                <td>
+                                    <span style="color: {{getcolor(rt.prediction.confidenceD20)}}">{{prediction(rt.prediction.predictionD20, rt.prediction.confidenceD20)}}</span>
+                                    <span style="color: {{getcolor(rt.predictionShort.confidenceD20)}}">{{prediction(rt.predictionShort.predictionD20, rt.predictionShort.confidenceD20)}}</span>
+                                </td>
                                 <td>
                                     <a ui-sref="performance({code: '{{rt.codif}}'})" ><i style="margin-left: 5px" class="glyphicon glyphicon-eye-open"/></a>
                                 </td>
