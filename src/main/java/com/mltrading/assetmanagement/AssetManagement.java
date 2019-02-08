@@ -19,6 +19,7 @@ public class AssetManagement implements Serializable {
     private AssetProperties properties;
     private int id;
     private Ruling rule;
+    private Evaluate evaluate;
 
 
     private static final AtomicInteger sequence = new AtomicInteger();
@@ -29,20 +30,27 @@ public class AssetManagement implements Serializable {
 
 
     void decision() {
-        assetValue = rule.process(curentAssetStock, properties, assetValue);
+        assetValue = rule.process(this);
     }
 
     void decision(Map<String,StockGeneral>  stockGeneralMap) {
-        assetValue = rule.process(stockGeneralMap, curentAssetStock, properties, assetValue);
+        assetValue = rule.process(stockGeneralMap, this);
+    }
+
+    public void evaluate(Map<String, StockGeneral> stockGeneralMap) {
+        evaluate.evaluate(stockGeneralMap,this);
     }
 
 
-    public AssetManagement(Ruling rule,double assetValue) {
-        this(rule, assetValue, new AssetProperties("bink", 0, true, 9));
+
+
+    public AssetManagement(Ruling rule,Evaluate evaluate, double assetValue) {
+        this(rule, evaluate,assetValue, new AssetProperties("bink", 0, true, 9));
     }
 
-    public AssetManagement(Ruling rule,double assetValue, AssetProperties properties) {
+    public AssetManagement(Ruling rule,Evaluate evaluate, double assetValue, AssetProperties properties) {
         this.rule = rule;
+        this.evaluate = evaluate;
         this.assetValue = assetValue;
         this.properties = properties;
         id = next();
@@ -61,35 +69,6 @@ public class AssetManagement implements Serializable {
     }
 
 
-
-    public void evaluate() {
-        evaluate(CacheStockGeneral.getCache());
-    }
-
-
-
-    public void evaluate(Map<String,StockGeneral> stockMap) {
-
-        Map<String,AssetStock> copy = curentAssetStock.entrySet()
-            .stream()
-            .collect(Collectors.toMap(Map.Entry::getKey,
-                Map.Entry::getValue));
-
-        copy.values().forEach( a-> {
-
-            String code = a.getCode();
-            StockGeneral sg =stockMap.get(CacheStockGeneral.getCode(code));
-
-            if (a.makeAction(sg.getValue())) {
-                a.sellIt(sg.getValue());
-                assetStockList.add(a);
-                curentAssetStock.remove(a.getCode());
-                setMargin(a);
-            }
-
-        });
-
-    }
 
 
     public Map<String, AssetStock> getCurentAssetStock() {
@@ -122,5 +101,13 @@ public class AssetManagement implements Serializable {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public AssetProperties getProperties() {
+        return properties;
+    }
+
+    public void setProperties(AssetProperties properties) {
+        this.properties = properties;
     }
 }

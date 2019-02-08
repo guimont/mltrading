@@ -1,5 +1,6 @@
 package com.mltrading.asset;
 
+import com.mltrading.assetmanagement.AssetManagement;
 import com.mltrading.assetmanagement.AssetProperties;
 import com.mltrading.assetmanagement.AssetStock;
 import com.mltrading.assetmanagement.RulingSimple;
@@ -36,7 +37,8 @@ public class RulingTest {
 
 
         RulingSimple ruling = new RulingSimple();
-        ruling.process(curentAssetStock,new AssetProperties("bink", 0, true, 9), INVEST);
+        //AssetManagement assetManagement = new AssetManagement();
+        //ruling.process(curentAssetStock,new AssetProperties("bink", 0, true, 9), INVEST);
 
         assertThat(curentAssetStock.size()).isEqualTo(1);
     }
@@ -75,7 +77,7 @@ public class RulingTest {
 
 
         RulingSimple ruling = new RulingSimple();
-        ruling.process(currentAssetStock,new AssetProperties("bink", 0, true, 9), INVEST);
+        //ruling.process(currentAssetStock,new AssetProperties("bink", 0, true, 9), INVEST);
 
         assertThat(currentAssetStock.size()).isEqualTo(2);
         assertThat(currentAssetStock.get("AC").getPriceStopWin()).isEqualTo(69.12*0.946);
@@ -102,7 +104,7 @@ public class RulingTest {
 
 
         RulingSimple ruling = new RulingSimple();
-        ruling.process(curentAssetStock,new AssetProperties("bink", 0, true, 9), INVEST);
+        //ruling.process(curentAssetStock,new AssetProperties("bink", 0, true, 9), INVEST);
 
         assertThat(curentAssetStock.size()).isEqualTo(1);
         assertThat(curentAssetStock.get("ORA").getPriceStopWin()).isEqualTo(44.72*1.042);
@@ -130,7 +132,7 @@ public class RulingTest {
 
 
         RulingSimple ruling = new RulingSimple();
-        ruling.process(curentAssetStock,new AssetProperties("bink", 0, true, 9), INVEST);
+        //ruling.process(curentAssetStock,new AssetProperties("bink", 0, true, 9), INVEST);
 
         assertThat(curentAssetStock.size()).isEqualTo(1);
         assertThat(curentAssetStock.get("ORA").getPriceStopWin()).isEqualTo(44.72*0.958);
@@ -172,7 +174,7 @@ public class RulingTest {
 
         RulingSimple ruling = new RulingSimple();
         /*limit invest to one part*/
-        ruling.process(currentAssetStock,new AssetProperties("bink", 0, true, 9), 3000);
+        //ruling.process(currentAssetStock,new AssetProperties("bink", 0, true, 9), 3000);
 
         assertThat(currentAssetStock.size()).isEqualTo(1);
 

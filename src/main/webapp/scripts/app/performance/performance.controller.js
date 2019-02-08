@@ -11,28 +11,54 @@ angular.module('mltradingApp')
         $scope.showPrediction = function(codif) {
             PerformanceService.getPerformance(codif, "RANDOMFOREST").then(function (data) {
                 $scope.perfs =  data
-                load($scope.perfs);
+                load($scope.perfs,'kinetic');
             });
         };
 
         $scope.showPredictionGBT = function(codif) {
             PerformanceService.getPerformance(codif,"GRADIANTBOOSTTREE").then(function (data) {
                 $scope.perfsGBT =  data
-                loadGBT($scope.perfsGBT);
+                loadGBT($scope.perfsGBT, 'kinetic');
             });
         };
 
         $scope.showPredictionEnsemble = function(codif) {
                     PerformanceService.getPerformance(codif,"ENSEMBLE").then(function (data) {
                         $scope.perfsEnsemble =  data
-                        loadEnsemble($scope.perfsEnsemble);
+                        loadEnsemble($scope.perfsEnsemble, 'kinetic');
                     });
                 };
+
+
+        $scope.showPredictionShort = function(codif) {
+            PerformanceService.getPerformanceShort(codif, "RANDOMFOREST").then(function (data) {
+                $scope.perfsShort =  data
+                load($scope.perfsShort,'kineticShort');
+            });
+        };
+
+        $scope.showPredictionShortGBT = function(codif) {
+            PerformanceService.getPerformanceShort(codif,"GRADIANTBOOSTTREE").then(function (data) {
+                $scope.perfsShortGBT =  data
+                loadGBT($scope.perfsShortGBT,'kineticShort');
+            });
+        };
+
+        $scope.showPredictionShortEnsemble = function(codif) {
+            PerformanceService.getPerformanceShort(codif,"ENSEMBLE").then(function (data) {
+                $scope.perfsShortEnsemble =  data
+                loadEnsemble($scope.perfsShortEnsemble,'kineticShort');
+            });
+        };
 
 
         $scope.showPrediction( code);
         $scope.showPredictionGBT( code);
         $scope.showPredictionEnsemble( code);
+
+        $scope.showPredictionShort( code);
+        $scope.showPredictionShortGBT( code);
+        $scope.showPredictionShortEnsemble( code);
 
 
         $scope.showValidator = function(codif) {

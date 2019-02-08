@@ -36,7 +36,7 @@ public class test {
 
 
 
-    /*public static void main(String[] args) {
+    public static void main(String[] args) {
         for (StockGeneral g : CacheStockGeneral.getIsinCache().values()) {
             System.out.println(g.getCodif());
             /*try {
@@ -49,10 +49,10 @@ public class test {
                 v.saveModel(g.getCodif()+"VD20");
             } catch (Exception e) {
                 System.out.println(g.getCodif()+"execption");
-            }*
+            }**/
 
         }
-    }*/
+    }
 
 /*
     public static void main(String[] args) {

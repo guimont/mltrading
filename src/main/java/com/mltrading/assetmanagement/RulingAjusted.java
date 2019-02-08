@@ -6,20 +6,26 @@ import com.mltrading.models.stock.StockPrediction;
 import com.mltrading.models.stock.cache.CacheStockGeneral;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class RulingAjusted implements Ruling {
 
 
-    public double process( Map<String,AssetStock> assetStockMap, AssetProperties properties, double invest) {
-        return process(CacheStockGeneral.getCache(), assetStockMap, properties, invest);
+    public double process( AssetManagement assetManagement ) {
+        return process(CacheStockGeneral.getCache(), assetManagement);
     }
 
 
     private int getEquityTransaction(Collection<AssetStock> assets) {
-        final int[] equity = {0};
-        assets.stream().map( a-> a.isIncrease()? equity[0]++: equity[0]--);
 
-        return equity[0];
+        int equity = 0;
+
+        for (AssetStock a: assets) {
+            if (a.isIncrease()) equity++;
+            else equity--;
+        }
+
+        return equity;
     }
 
 
@@ -28,7 +34,13 @@ public class RulingAjusted implements Ruling {
     }
 
 
-    public double process(Map<String,StockGeneral> stockMap, Map<String,AssetStock> assetStockMap, AssetProperties properties, double invest) {
+    public double process(Map<String,StockGeneral> stockMap,AssetManagement assetManagement ) {
+
+
+        Map<String,AssetStock> assetStockMap = assetManagement.curentAssetStock;
+        AssetProperties properties = assetManagement.getProperties();
+        double invest =  assetManagement.getAssetValue();
+        List<String> notUse = assetManagement.assetStockList.stream().map(a -> a.getCode()).collect(Collectors.toList());
 
 
         List<StockGeneral> l = new ArrayList<>(stockMap.values());
@@ -37,56 +49,45 @@ public class RulingAjusted implements Ruling {
 
         l.forEach(s -> {
             if (s.getPrediction() != null)
-                predState.add(new Pair<>(Math.abs(evaluateAsset(s)), s.getCodif()));
+                predState.add(new Pair<>(evaluateAsset(s), s.getCodif()));
         });
 
-        predState.sort(Collections.reverseOrder(Comparator.comparingDouble(Pair::first)));
 
 
-        int equityTransaction = getEquityTransaction(assetStockMap.values());
+        while (invest > properties.getPart()) {
+            int equityTransaction = getEquityTransaction(assetStockMap.values());
 
-
-        Iterator iterator = predState.iterator();
-        Pair<Double, String> codeSelected = (Pair<Double, String>) iterator.next();
-        while (codeSelected != null && invest > properties.getPart()) {
-
-            if (assetStockMap.containsKey(codeSelected.second())) {
-                if (iterator.hasNext())
-                    codeSelected = (Pair<Double, String>) iterator.next();
-                else
-                    codeSelected = null;
-                continue;
+            if (equityTransaction > 0) {
+                predState.sort(Comparator.comparingDouble(Pair::first));
+            } else {
+                predState.sort(Collections.reverseOrder(Comparator.comparingDouble(Pair::first)));
             }
 
-            StockGeneral sg = stockMap.get(CacheStockGeneral.getCode(codeSelected.second()));
+            Iterator iterator = predState.iterator();
+            Pair<Double, String> codeSelected = (Pair<Double, String>) iterator.next();
+            while (codeSelected != null) {
+                if (assetStockMap.containsKey(codeSelected.second()) || notUse.contains(codeSelected.second())) {
+                    if (iterator.hasNext())
+                        codeSelected = (Pair<Double, String>) iterator.next();
+                    else
+                        codeSelected = null;
+                    continue;
+                }
 
+                //notUse.stream().map(a -> a.getCode()).filter(c -> c.compareTo(codeSelected.second()))
 
-            /* if always 2 stock with incresae expected, need decrease invest to equilibrate asset*/
-            if (equityTransaction >= 2 && !sg.getPrediction().isIncrease()) {
-
+                StockGeneral sg = stockMap.get(CacheStockGeneral.getCode(codeSelected.second()));
                 AssetStock assetStock = new AssetStock(sg.getCodif(), sg.getSector(), properties);
                 invest -= assetStock.buyIt(sg);
                 assetStockMap.put(sg.getCodif(), assetStock);
-            }
-            else  if (equityTransaction <= 2 && sg.getPrediction().isIncrease()) {
-                AssetStock assetStock = new AssetStock(sg.getCodif(), sg.getSector(), properties);
-                invest -= assetStock.buyIt(sg);
-                assetStockMap.put(sg.getCodif(), assetStock);
-            }
 
-            else  {
-                AssetStock assetStock = new AssetStock(sg.getCodif(), sg.getSector(), properties);
-                invest -= assetStock.buyIt(sg);
-                assetStockMap.put(sg.getCodif(), assetStock);
-            }
-
-
-            if (iterator.hasNext())
-                codeSelected = (Pair<Double, String>) iterator.next();
-            else
                 codeSelected = null;
+            }
+
 
         }
+
+
 
         return invest;
 

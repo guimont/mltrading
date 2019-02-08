@@ -22,6 +22,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -367,15 +368,22 @@ public class ExtractionResource {
 
         AssetProperties properties = new AssetProperties("bink", 0, true, 9);
         properties.setPart(15000);
-        AssetManagement assetToSim = new AssetManagement(new RulingSimple(),100000,properties);
 
-        AssetManagement assetToSimADJ = new AssetManagement(new RulingAjusted(),100000,properties);
+
+        AssetManagement assetToSim = new AssetManagement(new RulingSimple(), new EvaluateSimple(), 100000,properties);
+        AssetManagement assetToSimADJ = new AssetManagement(new RulingAjusted(),new EvaluateSimple(),100000,properties);
+        AssetManagement assetToSimADJExt = new AssetManagement(new RulingAjusted(),new EvaluateAdjusted(),100000,properties);
+
+
         assetManagementList.add(assetToSim);
         assetManagementList.add(assetToSimADJ);
+        assetManagementList.add(assetToSimADJExt);
+
         simulation.run(assetManagementList);
 
         simulation.cleanAsset(assetToSim);
         simulation.cleanAsset(assetToSimADJ);
+        simulation.cleanAsset(assetToSimADJExt);
 
         return "ok";
     }
@@ -386,21 +394,33 @@ public class ExtractionResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String evaluate() {
 
-        //CacheMLStock.load(); not need !!
-        ForecastDTO forecastDTO = new ForecastDTO();
-        forecastDTO.setForecastType("BASE");
-        MlForecast ml = new MlForecast(forecastDTO);
-        InfluxDaoConnector.deleteDB(CacheMLStock.dbNameModelPerf);
 
-        ModelTypeList.modelTypes.forEach(t -> {
-            ml.processList(t);
-            CacheMLStock.savePerf(t);
+        Arrays.asList("BASE","SHORT").forEach(ft -> {
+            ForecastDTO forecastDTO = new ForecastDTO();
+            forecastDTO.setForecastType(ft);
+            MlForecast ml = new MlForecast(forecastDTO);
+
+            //clean model perf database
+            //change db name according to forecasttype .. not clean
+            String baseName = CacheMLStock.dbNameModelPerf;
+            if (ft.equalsIgnoreCase("SHORT")) baseName = CacheMLStock.dbNameModelShortPerf;
+            InfluxDaoConnector.deleteDB(baseName);
+
+            //process result with model and save them
+            ModelTypeList.modelTypes.forEach( t -> {
+                ml.processList(t);
+                CacheMLStock.savePerf(t);
+            });
+
+            //process aggragation model and save it
+            ml.updateEnsemble();
+            CacheMLStock.savePerf(ModelType.ENSEMBLE);
+
+            //update result
+            ml.updatePredictor();
+
         });
 
-
-        ml.updateEnsemble();
-        CacheMLStock.savePerf(ModelType.ENSEMBLE);
-        ml.updatePredictor();
 
         return "ok";
     }

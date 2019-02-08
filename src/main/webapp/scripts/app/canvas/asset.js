@@ -39,7 +39,7 @@ function loadAssetHistory(list) {
                 data: data,
 
                 options: {
-
+                    responsive: true,
 
                     legend: {
                         labels: {
@@ -54,8 +54,32 @@ function loadAssetHistory(list) {
                             }
                         }]
                     },
-                    categoryPercentage: 0.5
+                    categoryPercentage: 0.5,
+                    tooltips: {
+                        mode: 'index',
+                        callbacks: {
+                            // Use the footer callback to display the sum of the items showing in the tooltip
 
+                            afterBody: function(tooltipItems) {
+                                return 'buy date: ' + dataV[tooltipItems[0].index].dateBuyIn ;
+                            },
+
+                            beforeFooter: function(tooltipItems) {
+                                return 'sell date: ' + dataV[tooltipItems[0].index].dateBuyOut ;
+                            },
+
+
+                            footer: function(tooltipItems) {
+
+                                return 'price in: ' + dataV[tooltipItems[0].index].priceBuyIn + '\n price out '+ dataV[tooltipItems[0].index].priceBuyOut ;
+                            },
+                            afterFooter: function(tooltipItems) {
+
+                                return 'priceStopLose: ' + dataV[tooltipItems[0].index].priceStopLose.toFixed(2) + '\n priceStopWin '+ dataV[tooltipItems[0].index].priceStopWin.toFixed(2) ;
+                            },
+                        },
+                        footerFontStyle: 'normal'
+                    }
 
                 }
             }

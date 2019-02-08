@@ -22,29 +22,29 @@ var perf = [];
  * init route for get parameter data
  * init websocket for new notification
  */
-function load (data) {
+function load (data, container) {
 
 
     var stagePredictionD20 = new Kinetic.Stage({
-        container: "kinetic20D",
+        container: container+"20D",
         width: 1220,
         height: 200
     });
 
     var stagePredictionD20Error = new Kinetic.Stage({
-        container: "kinetic20DError",
+        container: container+"20DError",
         width: 1220,
         height: 200
     });
 
     var stagePredictionD40 = new Kinetic.Stage({
-        container: "kinetic40D",
+        container: container+"40D",
         width: 1220,
         height: 200
     });
 
     var stagePredictionD40Error = new Kinetic.Stage({
-        container: "kinetic40DError",
+        container: container+"40DError",
         width: 1220,
         height: 200
     });
@@ -86,31 +86,31 @@ function load (data) {
  * init route for get parameter data
  * init websocket for new notification
  */
-function loadGBT (data) {
+function loadGBT (data, container) {
 
 
 
 
     var stagePredictionD20GBT = new Kinetic.Stage({
-        container: "kinetic20DGBT",
+        container: container+"20DGBT",
         width: 1220,
         height: 200
     });
 
     var stagePredictionD20ErrorGBT = new Kinetic.Stage({
-        container: "kinetic20DErrorGBT",
+        container: container+"20DErrorGBT",
         width: 1220,
         height: 200
     });
 
     var stagePredictionD40GBT = new Kinetic.Stage({
-        container: "kinetic40DGBT",
+        container: container+"40DGBT",
         width: 1220,
         height: 200
     });
 
     var stagePredictionD40ErrorGBT = new Kinetic.Stage({
-        container: "kinetic40DErrorGBT",
+        container: container+"40DErrorGBT",
         width: 1220,
         height: 200
     });
@@ -149,31 +149,29 @@ function loadGBT (data) {
  * init route for get parameter data
  * init websocket for new notification
  */
-function loadEnsemble (data) {
-
-
+function loadEnsemble (data, container) {
 
 
     var stagePredictionD20Ensemble = new Kinetic.Stage({
-        container: "kinetic20DEnsemble",
+        container: container+"20DEnsemble",
         width: 1220,
         height: 200
     });
 
     var stagePredictionD20ErrorEnsemble = new Kinetic.Stage({
-        container: "kinetic20DErrorEnsemble",
+        container: container+"20DErrorEnsemble",
         width: 1220,
         height: 200
     });
 
     var stagePredictionD40Ensemble = new Kinetic.Stage({
-        container: "kinetic40DEnsemble",
+        container: container+"40DEnsemble",
         width: 1220,
         height: 200
     });
 
     var stagePredictionD40ErrorEnsemble = new Kinetic.Stage({
-        container: "kinetic40DErrorEnsemble",
+        container: container+"40DErrorEnsemble",
         width: 1220,
         height: 200
     });
@@ -554,7 +552,7 @@ function drawChart(group, pos, elt ,key , heightM, eltSize, i, text , layer, col
         tooltip.add(new Kinetic.Text({
             x:pos.x+100,
             y: -8,
-            text: elt.realvalue.toFixed(5),
+            text: elt.currentValue.toFixed(5),
             fontFamily: 'Calibri',
             fontSize: 12,
             fill: 'grey'

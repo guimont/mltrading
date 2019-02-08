@@ -107,8 +107,8 @@ public class MlForecast extends Evaluate{
 
     private void setMap() {
         switch (mlStockType) {
-            case BASE: this.stocksMap = CacheMLStock.getMLStockCache();
-            case SHORT: this.stocksMap = CacheMLStock.getMLStockShortCache();
+            case BASE: this.stocksMap = CacheMLStock.getMLStockCache(); break;
+            case SHORT: this.stocksMap = CacheMLStock.getMLStockShortCache(); break;
         }
     }
 
@@ -175,8 +175,8 @@ public class MlForecast extends Evaluate{
 
     private void save() {
         switch (mlStockType) {
-            case BASE:  CacheMLStock.save( ModelType.get(forecastDTO.getModelType()));
-            case SHORT:  CacheMLStock.saveShort( ModelType.get(forecastDTO.getModelType()));
+            case BASE:  CacheMLStock.save( ModelType.get(forecastDTO.getModelType())); break;
+            case SHORT:  CacheMLStock.saveShort( ModelType.get(forecastDTO.getModelType())); break;
         }
     }
 

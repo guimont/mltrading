@@ -68,7 +68,7 @@ public class MLPredictor  implements Serializable {
                 String date = StockHistory.getLastDateHistory(codif);
 
                 if (CacheMLStock.getMlRankCache().getModel() != null) {
-                    FeaturesRank fr = FeaturesRank.createRT(codif, date, sp);
+                    FeaturesRank fr = FeaturesRank.createRT(codif, date);
                     sp.setYieldD20(CacheMLStock.getMlRankCache().getModel().predict(Vectors.dense(fr.vectorize())));
                     sp.setConfidence(100 - (s.getStatus(ModelType.RANDOMFOREST).getErrorRate(PredictionPeriodicity.D20) * 100
                         / s.getStatus(ModelType.RANDOMFOREST).getCount(PredictionPeriodicity.D20)), PredictionPeriodicity.D20);

@@ -6,21 +6,27 @@ import com.mltrading.models.stock.StockPrediction;
 import com.mltrading.models.stock.cache.CacheStockGeneral;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class RulingSimple implements Ruling {
 
 
-    public double process( Map<String,AssetStock> assetStockMap, AssetProperties properties, double invest) {
-        return process(CacheStockGeneral.getCache(), assetStockMap, properties, invest);
+    public double process( AssetManagement assetManagement ) {
+        return process(CacheStockGeneral.getCache(), assetManagement);
     }
 
 
     @Override
     public double evaluateAsset(StockGeneral sg) {
-        return sg.getPrediction().getYieldD20()* sg.getPrediction().getConfidenceD20();
+        return sg.getPerformanceEstimate()*sg.getPrediction().getLogConfidenceD20()* sg.getPredictionShort().getConfidenceD20();
+        //return sg.getPrediction().getYieldD20()* sg.getPrediction().getConfidenceD20();
     }
 
-    public double process(Map<String,StockGeneral> stockMap, Map<String,AssetStock> assetStockMap, AssetProperties properties, double invest) {
+    public double process(Map<String,StockGeneral> stockMap,AssetManagement assetManagement ) {
+        Map<String,AssetStock> assetStockMap = assetManagement.curentAssetStock;
+        AssetProperties properties = assetManagement.getProperties();
+        double invest =  assetManagement.getAssetValue();
+        List<String> notUse = assetManagement.assetStockList.stream().map(a -> a.getCode()).collect(Collectors.toList());
 
 
         List<StockGeneral> l = new ArrayList<>(stockMap.values());
@@ -41,7 +47,7 @@ public class RulingSimple implements Ruling {
         Pair<Double, String> codeSelected = (Pair<Double, String>) iterator.next();
         while (codeSelected != null && invest > properties.getPart()) {
 
-            if (assetStockMap.containsKey(codeSelected.second())) {
+            if (assetStockMap.containsKey(codeSelected.second()) || notUse.contains(codeSelected.second())) {
                 if (iterator.hasNext())
                     codeSelected = (Pair<Double, String>) iterator.next();
                 else

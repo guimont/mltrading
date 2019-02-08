@@ -58,26 +58,32 @@ public class ScheduleUpdate {
         updateBase();
 
         //CacheMLStock.load(); not need !!
-        ForecastDTO forecastDTO = new ForecastDTO();
-        forecastDTO.setForecastType("BASE");
-        MlForecast ml = new MlForecast(forecastDTO);
+        Arrays.asList("BASE","SHORT").forEach( ft -> {
+            ForecastDTO forecastDTO = new ForecastDTO();
+            forecastDTO.setForecastType(ft);
+            MlForecast ml = new MlForecast(forecastDTO);
 
-        //clean model perf database
-        InfluxDaoConnector.deleteDB(CacheMLStock.dbNameModelPerf);
+            //clean model perf database
+            //change db name according to forecasttype .. not clean
+            String baseName = CacheMLStock.dbNameModelPerf;
+            if (ft.equalsIgnoreCase("SHORT")) baseName = CacheMLStock.dbNameModelShortPerf;
+            InfluxDaoConnector.deleteDB(baseName);
 
+            //process result with model and save them
+            ModelTypeList.modelTypes.forEach( t -> {
+                ml.processList(t);
+                CacheMLStock.savePerf(t);
+            });
 
-        //process result with model and save them
-        ModelTypeList.modelTypes.forEach( t -> {
-            ml.processList(t);
-            CacheMLStock.savePerf(t);
+            //process aggragation model and save it
+            ml.updateEnsemble();
+            CacheMLStock.savePerf(ModelType.ENSEMBLE);
+
+            //update result
+            ml.updatePredictor();
+
         });
 
-        //process aggragation model and save it
-        ml.updateEnsemble();
-        CacheMLStock.savePerf(ModelType.ENSEMBLE);
-
-        //update result
-        ml.updatePredictor();
 
         // close mutex
         CacheMLActivities.endRunning();

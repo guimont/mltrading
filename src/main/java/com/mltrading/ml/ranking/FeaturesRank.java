@@ -2,6 +2,7 @@ package com.mltrading.ml.ranking;
 
 import com.mltrading.ml.*;
 import com.mltrading.ml.model.ModelType;
+import com.mltrading.ml.util.MLMath;
 import com.mltrading.models.stock.*;
 import com.mltrading.models.stock.cache.CacheStockGeneral;
 import org.joda.time.DateTime;
@@ -10,15 +11,15 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+
+import static com.mltrading.ml.MlForecast.updatePredictor;
 
 public class FeaturesRank extends Feature implements Serializable{
 
     private static final Logger log = LoggerFactory.getLogger(FeaturesRank.class);
 
     private String codif;
-    private static List<PredictionPeriodicity> periodicity = Arrays.asList(PredictionPeriodicity.D20, PredictionPeriodicity.D40);
 
 
     public FeaturesRank() {
@@ -99,7 +100,7 @@ public class FeaturesRank extends Feature implements Serializable{
             int index = 0;
 
             for (String date : rangeDate) {
-                FeaturesRank fr = filledFeaturesRank(sg, date, null);
+                FeaturesRank fr = filledFeaturesRank(sg, date);
                 if (fr == null)
                     continue;
 
@@ -153,49 +154,46 @@ public class FeaturesRank extends Feature implements Serializable{
      * Create a FeatureStock list for prediction
      * use each day to refresh data with current model
      * @param date
-     * @param sp
      * @return
      */
-    public static FeaturesRank createRT(String codif, String date, StockPrediction sp) {
+    public static FeaturesRank createRT(String codif, String date) {
         StockGeneral sg = CacheStockGeneral.getCache().get(CacheStockGeneral.getCode(codif));
-        return filledFeaturesRank(sg, date, sp);
+        return filledFeaturesRank(sg, date);
 
     }
 
 
-    private static FeaturesRank filledFeaturesRank(StockGeneral sg, String date, StockPrediction sp) {
+    private static FeaturesRank filledFeaturesRank(StockGeneral sg, String date) {
 
         String sector = sg.getSector();
 
-        final StockPrediction stockPrediction = sp;
+
 
         MLStocks ref = CacheMLStock.getMLStockCache().get(sg.getCodif());
 
         FeaturesRank fr = new FeaturesRank();
         fr.setCurrentDate(date);
 
-        if (setResultYield(fr, periodicity, sg.getCodif(), date) == false) return null;
+        if (setResultYield(fr, PeriodicityList.periodicityLong, sg.getCodif(), date) == false) return null;
+        StockGeneral sgSim = new StockGeneral(StockHistory.getStockHistory(sg.getCodif(), date), sg);
+        updatePredictor(sgSim,false);
+        final StockPrediction stockPrediction = sgSim.getPrediction();
 
+        PeriodicityList.periodicityLong.forEach(p -> {
 
-        //TODO use GBT
-        periodicity.forEach(p -> {
-
-            double res = ref.getStatus(ModelType.RANDOMFOREST).getAvg(p);
+            double res = ref.getStatus(ModelType.ENSEMBLE).getAvg(p);
             fr.linearize(res);
-            double error = ref.getStatus(ModelType.RANDOMFOREST).getErrorRate(p);
+            double error = ref.getStatus(ModelType.ENSEMBLE).getErrorRate(p);
             fr.linearize(error);
 
             /**
              * for training stockPrediction is null
              */
             if (stockPrediction == null) {
-                MLPerformances perf = ref.getStatus(ModelType.RANDOMFOREST).getPerfList(date);
-                double yieldPrediction = perf.getMl(p).getYield()*100;
-                fr.linearize(yieldPrediction);
+                fr.linearize(0);
             }
             else {
-                double yieldPrediction = 0;
-                if (stockPrediction.getPrediction(p) != 0) yieldPrediction =(stockPrediction.getPrediction(p) - sg.getValue()) / sg.getValue() * 100;
+                double yieldPrediction =  MLMath.yield(stockPrediction.getPrediction(p), sgSim.getValue());
                 fr.linearize(yieldPrediction);
             }
 
@@ -205,6 +203,16 @@ public class FeaturesRank extends Feature implements Serializable{
         fr.linearize(si);
         StockAnalyse asi = StockAnalyse.getAnalyse("PX1", date);
         fr.linearize(asi);
+
+        StockHistory siDJ = StockHistory.getStockHistory("DJI", date);
+        fr.linearize(siDJ);
+        StockAnalyse asiDJ = StockAnalyse.getAnalyse("DJI", date);
+        fr.linearize(asiDJ);
+
+        StockHistory siETOD= StockHistory.getStockHistory("ETOD", date);
+        fr.linearize(siETOD);
+        StockAnalyse asiETOD = StockAnalyse.getAnalyse("ETOD", date);
+        fr.linearize(asiETOD);
 
         si = StockHistory.getStockHistory(sector, date);
         fr.linearize(si);

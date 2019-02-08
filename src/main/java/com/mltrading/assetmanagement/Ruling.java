@@ -8,7 +8,7 @@ import java.util.Map;
 public interface Ruling {
 
     double evaluateAsset(StockGeneral sg);
-    double process(Map<String, StockGeneral> stockMap,  Map<String,AssetStock> assetStockMap, AssetProperties properties, double invest);
-    double process(Map<String,AssetStock> assetStockMap, AssetProperties properties, double invest);
+    double process(Map<String, StockGeneral> stockMap, AssetManagement assetManagement);
+    double process(AssetManagement assetManagement);
 
 }

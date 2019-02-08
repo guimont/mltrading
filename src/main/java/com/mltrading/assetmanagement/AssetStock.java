@@ -32,6 +32,12 @@ public class AssetStock extends AssetProperties implements Serializable {
     /*difference between buy and sell*/
     private double margin;
 
+    private double yieldExpected;
+
+    private double yieldExpectedLong;
+    private double yieldExpectedShort;
+    private double yieldExpectedGlobal;
+
 
     public AssetStock(String code, String sector, AssetProperties properties) {
         super(properties);
@@ -40,22 +46,47 @@ public class AssetStock extends AssetProperties implements Serializable {
     }
 
 
+    /**
+     * change objective performance
+     * @param sg
+     */
+    public void changeValue(StockGeneral sg) {
+
+        this.setPriceStopWin(sg.getValue() * (sg.getPerformanceEstimate()*0.01+1));
+        this.setYieldExpected(sg.getPerformanceEstimate());
+        this.setYieldExpectedLong(sg.getPrediction().getYieldD20());
+        this.setYieldExpectedShort(sg.getPredictionShort().getYieldD20());
+    }
+
+
+    /**
+     * buy stock
+     * @param sg
+     * @return
+     */
     public double buyIt(StockGeneral sg) {
-        this.setDateBuyIn(new Date().toString());
+        this.setDateBuyIn(sg.getDay());
         this.setIncrease(sg.getPrediction().isIncrease());
         this.setPriceBuyIn(sg.getValue());
         double stopLose =  this.getStopLose();
         if (!this.isIncrease()) stopLose = 2 - this.getStopLose(); // we expected stock down revert stop lose 0,95 give 1.05
         this.setPriceStopLose(sg.getValue() *  stopLose);
-        this.setPriceStopWin(sg.getValue() * (sg.getPrediction().getYieldD20()*0.01+1));
+        this.setPriceStopWin(sg.getValue() * (sg.getPerformanceEstimate()*0.01+1));
         this.setVolume((int) (this.getPart()/sg.getValue()));
+
+        this.setYieldExpected(sg.getPerformanceEstimate());
+
+
+        this.setYieldExpectedLong(sg.getPrediction().getYieldD20());
+        this.setYieldExpectedShort(sg.getPredictionShort().getYieldD20());
+
 
         return this.getVolume()*sg.getValue();
     }
 
-    public boolean sellIt(double value) {
+    public boolean sellIt(double value, String date) {
         priceBuyOut = value;
-        DateBuyOut = new Date().toString();
+        DateBuyOut = date;
         if (!increase)
             margin = priceBuyIn - priceBuyOut;
         else
@@ -171,5 +202,38 @@ public class AssetStock extends AssetProperties implements Serializable {
 
     public void setMargin(double margin) {
         this.margin = margin;
+    }
+
+
+    public double getYieldExpected() {
+        return yieldExpected;
+    }
+
+    public void setYieldExpected(double yieldExpected) {
+        this.yieldExpected = yieldExpected;
+    }
+
+    public double getYieldExpectedLong() {
+        return yieldExpectedLong;
+    }
+
+    public void setYieldExpectedLong(double yieldExpectedLong) {
+        this.yieldExpectedLong = yieldExpectedLong;
+    }
+
+    public double getYieldExpectedShort() {
+        return yieldExpectedShort;
+    }
+
+    public void setYieldExpectedShort(double yieldExpectedShort) {
+        this.yieldExpectedShort = yieldExpectedShort;
+    }
+
+    public double getYieldExpectedGlobal() {
+        return yieldExpectedGlobal;
+    }
+
+    public void setYieldExpectedGlobal(double yieldExpectedGlobal) {
+        this.yieldExpectedGlobal = yieldExpectedGlobal;
     }
 }

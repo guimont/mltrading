@@ -11,6 +11,7 @@ import com.mltrading.models.stock.StockPrediction;
 import com.mltrading.models.stock.cache.CacheStockGeneral;
 import org.apache.spark.mllib.linalg.Vectors;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,19 +33,37 @@ public class Simulation {
         //Take ORA as reference
         List<String> rangeDate = StockHistory.getDateHistoryListOffsetLimit("ORA", 100);
 
-        assetToSims.forEach(assetToSim -> rangeDate.forEach(d -> {
+        /*assetToSims.forEach(assetToSim -> rangeDate.forEach(d -> {
             Map<String, StockGeneral> mapSim = new HashMap<>();
+            System.out.println("Sim for date" + d);
             CacheStockGeneral.getCache().values().forEach(sg -> {
-
                 StockGeneral sgSim = new StockGeneral(StockHistory.getStockHistory(sg.getCodif(), d), sg);
                 updatePredictor(sgSim,true);
-
                 mapSim.put(sgSim.getCode(), sgSim);
-
             });
             assetToSim.evaluate(mapSim);
             assetToSim.decision(mapSim);
-        }));
+        }));*/
+
+
+
+        rangeDate.forEach( d -> {
+            Map<String, StockGeneral> mapSim = new HashMap<>();
+            System.out.println("Sim for date" + d);
+            CacheStockGeneral.getCache().values().forEach(sg -> {
+                StockGeneral sgSim = new StockGeneral(StockHistory.getStockHistory(sg.getCodif(), d), sg);
+                updatePredictor(sgSim,true);
+                mapSim.put(sgSim.getCode(), sgSim);
+            });
+
+            assetToSims.forEach(assetToSim -> {
+                assetToSim.evaluate(mapSim);
+                assetToSim.decision(mapSim);
+            });
+
+        });
+
+
 
     }
 
@@ -54,7 +73,7 @@ public class Simulation {
     public void cleanAsset(AssetManagement assetToSim) {
         assetToSim.curentAssetStock.values().forEach( assetStock -> {
             StockGeneral sg  = CacheStockGeneral.getCache().get(CacheStockGeneral.getCode(assetStock.getCode()));
-            assetStock.sellIt(sg.getValue());
+            assetStock.sellIt(sg.getValue(), new Date().toString());
             assetToSim.setMargin(assetStock);
             assetToSim.assetStockList.add(assetStock);
         });
