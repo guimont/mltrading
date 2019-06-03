@@ -72,12 +72,12 @@ public class ScheduleUpdate {
             //process result with model and save them
             ModelTypeList.modelTypes.forEach( t -> {
                 ml.processList(t);
-                CacheMLStock.savePerf(t);
+                ml.savePerf(t);
             });
 
             //process aggragation model and save it
             ml.updateEnsemble();
-            CacheMLStock.savePerf(ModelType.ENSEMBLE);
+            ml.savePerf(ModelType.ENSEMBLE);
 
             //update result
             ml.updatePredictor();

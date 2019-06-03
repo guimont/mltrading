@@ -54,6 +54,9 @@ public class DatabaseInfoList {
 
         sg.stream().map(s -> stockList.add(DatabaseInfo.populate(s.getCodif(), StockHistory.getStockHistoryLastInvert(s.getCodif(), RANGE)))).collect(Collectors.toList());
 
+        List<StockGeneral> sgEx = new ArrayList(CacheStockGeneral.getIsinExCache().values());
+        sgEx.stream().map(s -> stockList.add(DatabaseInfo.populate(s.getCodif(), StockHistory.getStockHistoryLastInvert(s.getCodif(), RANGE)))).collect(Collectors.toList());
+
         List<? extends StockHistory> ss = new ArrayList(CacheStockSector.getSectorCache().values());
         List<? extends StockHistory> si = new ArrayList(CacheStockIndice.getIndiceCache().values());
         List<? extends StockHistory> sr = new ArrayList(CacheRawMaterial.getCache().values());

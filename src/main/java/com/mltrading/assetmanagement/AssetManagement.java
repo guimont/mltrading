@@ -1,7 +1,7 @@
 package com.mltrading.assetmanagement;
 
 import com.mltrading.models.stock.StockGeneral;
-import com.mltrading.models.stock.cache.CacheStockGeneral;
+
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
+
 
 public class AssetManagement implements Serializable {
 
@@ -29,11 +29,11 @@ public class AssetManagement implements Serializable {
     }
 
 
-    void decision() {
+    public void decision() {
         assetValue = rule.process(this);
     }
 
-    void decision(Map<String,StockGeneral>  stockGeneralMap) {
+    public void decision(Map<String,StockGeneral>  stockGeneralMap) {
         assetValue = rule.process(stockGeneralMap, this);
     }
 

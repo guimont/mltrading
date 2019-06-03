@@ -13,10 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.security.RolesAllowed;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by gmo on 20/01/2016.
@@ -35,6 +32,8 @@ public class RealTimeResource {
     public List<StockGeneral> findAll() {
 
         List<StockGeneral> l = new ArrayList<>(CacheStockGeneral.getCache().values());
+        l.addAll(new ArrayList<>(CacheStockGeneral.getCacheEx().values()));
+
         return l;
     }
 

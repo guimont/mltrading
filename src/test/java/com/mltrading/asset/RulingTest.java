@@ -3,7 +3,7 @@ package com.mltrading.asset;
 import com.mltrading.assetmanagement.AssetManagement;
 import com.mltrading.assetmanagement.AssetProperties;
 import com.mltrading.assetmanagement.AssetStock;
-import com.mltrading.assetmanagement.RulingSimple;
+
 import com.mltrading.models.stock.StockGeneral;
 import com.mltrading.models.stock.StockPrediction;
 import com.mltrading.models.stock.cache.CacheStockGeneral;
@@ -36,7 +36,7 @@ public class RulingTest {
         Map<String,AssetStock> curentAssetStock = new HashMap<String, AssetStock>();
 
 
-        RulingSimple ruling = new RulingSimple();
+        //RulingSimple ruling = new RulingSimple();
         //AssetManagement assetManagement = new AssetManagement();
         //ruling.process(curentAssetStock,new AssetProperties("bink", 0, true, 9), INVEST);
 
@@ -76,7 +76,7 @@ public class RulingTest {
         Map<String,AssetStock> currentAssetStock = new HashMap<String, AssetStock>();
 
 
-        RulingSimple ruling = new RulingSimple();
+        //RulingSimple ruling = new RulingSimple();
         //ruling.process(currentAssetStock,new AssetProperties("bink", 0, true, 9), INVEST);
 
         assertThat(currentAssetStock.size()).isEqualTo(2);
@@ -103,7 +103,7 @@ public class RulingTest {
         Map<String,AssetStock> curentAssetStock = new HashMap<String, AssetStock>();
 
 
-        RulingSimple ruling = new RulingSimple();
+        //RulingSimple ruling = new RulingSimple();
         //ruling.process(curentAssetStock,new AssetProperties("bink", 0, true, 9), INVEST);
 
         assertThat(curentAssetStock.size()).isEqualTo(1);
@@ -131,7 +131,7 @@ public class RulingTest {
         Map<String,AssetStock> curentAssetStock = new HashMap<String, AssetStock>();
 
 
-        RulingSimple ruling = new RulingSimple();
+        //RulingSimple ruling = new RulingSimple();
         //ruling.process(curentAssetStock,new AssetProperties("bink", 0, true, 9), INVEST);
 
         assertThat(curentAssetStock.size()).isEqualTo(1);
@@ -172,7 +172,7 @@ public class RulingTest {
         Map<String,AssetStock> currentAssetStock = new HashMap<String, AssetStock>();
 
 
-        RulingSimple ruling = new RulingSimple();
+        //RulingSimple ruling = new RulingSimple();
         /*limit invest to one part*/
         //ruling.process(currentAssetStock,new AssetProperties("bink", 0, true, 9), 3000);
 

@@ -35,6 +35,7 @@ public class MLPredictionResource {
     public MLStatus getPerformance(@RequestParam(value = "key") String key, @RequestParam(value = "model") String model) {
 
         MLStocks ms = CacheMLStock.getMLStockCache().get(key);
+        if (ms == null) ms = CacheMLStock.getMlStockExMap().get(key);
         if (ms != null) {
             MLStatus l = ms.getStatus(ModelType.get(model)).clone();
             List pList = l.getPerfList();
@@ -68,6 +69,7 @@ public class MLPredictionResource {
     public MLStatus getPerformanceShort(@RequestParam(value = "key") String key, @RequestParam(value = "model") String model) {
 
         MLStocks ms = CacheMLStock.getMLStockShortCache().get(key);
+        if (ms == null) ms = CacheMLStock.getMlStockExShortMap().get(key);
         if (ms != null) {
             MLStatus l = ms.getStatus(ModelType.get(model)).clone();
             List pList = l.getPerfList();
@@ -102,6 +104,7 @@ public class MLPredictionResource {
     public List<StockValidator> getValidator(@RequestParam(value = "key") String key) {
 
         MLStocks ms = CacheMLStock.getMLStockCache().get(key);
+        if (ms == null) ms = CacheMLStock.getMlStockExMap().get(key);
         if (ms != null) {
            // Map<PredictionPeriodicity, MatrixValidator> mvList = ms.getModel().getValidators();
             //List<StockValidator>  res = mvList.entrySet().stream().map(p -> new StockValidator().filled(key, p.getKey(),p.getCurrentValue())).collect(Collectors.toList());

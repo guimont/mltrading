@@ -75,8 +75,12 @@ public class MLStocks  implements Serializable {;
     public static MLStocks newStock(String codif, ForecastDTO forecastDTO) {
         if (forecastDTO.getForecastType().equalsIgnoreCase("BASE"))
             return new MLStocksBase(codif);
+        else if (forecastDTO.getForecastType().equalsIgnoreCase("EXTENDED"))
+            return new MLStocksExtended(codif);
         else if (forecastDTO.getForecastType().equalsIgnoreCase("SHORT"))
             return new MLStocksShort(codif);
+        else if (forecastDTO.getForecastType().equalsIgnoreCase("EXTENDED_SHORT"))
+            return new MLStocksShortExtended(codif);
 
         else return null;
     }

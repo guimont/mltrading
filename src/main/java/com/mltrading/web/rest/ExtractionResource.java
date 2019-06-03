@@ -2,9 +2,12 @@ package com.mltrading.web.rest;
 
 
 import com.mltrading.assetmanagement.*;
+import com.mltrading.assetmanagement.evaluateimpl.EvaluateAdjusted;
+import com.mltrading.assetmanagement.evaluateimpl.EvaluateSimple;
+import com.mltrading.assetmanagement.ruleimpl.RulingAjusted;
+import com.mltrading.assetmanagement.ruleimpl.RulingSimple;
 import com.mltrading.dao.InfluxDaoConnector;
 import com.mltrading.ml.CacheMLStock;
-import com.mltrading.ml.MatrixValidator;
 import com.mltrading.ml.model.ModelType;
 import com.mltrading.ml.model.ModelTypeList;
 import com.mltrading.ml.ranking.MLStockRanking;
@@ -370,7 +373,7 @@ public class ExtractionResource {
         properties.setPart(15000);
 
 
-        AssetManagement assetToSim = new AssetManagement(new RulingSimple(), new EvaluateSimple(), 100000,properties);
+        AssetManagement assetToSim = new AssetManagement(new RulingSimple(), new EvaluateSimple(), 100000, properties);
         AssetManagement assetToSimADJ = new AssetManagement(new RulingAjusted(),new EvaluateSimple(),100000,properties);
         AssetManagement assetToSimADJExt = new AssetManagement(new RulingAjusted(),new EvaluateAdjusted(),100000,properties);
 
@@ -409,12 +412,12 @@ public class ExtractionResource {
             //process result with model and save them
             ModelTypeList.modelTypes.forEach( t -> {
                 ml.processList(t);
-                CacheMLStock.savePerf(t);
+                ml.savePerf(t);
             });
 
             //process aggragation model and save it
             ml.updateEnsemble();
-            CacheMLStock.savePerf(ModelType.ENSEMBLE);
+            ml.savePerf(ModelType.ENSEMBLE);
 
             //update result
             ml.updatePredictor();

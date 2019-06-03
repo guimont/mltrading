@@ -1,8 +1,12 @@
-package com.mltrading.assetmanagement;
+package com.mltrading.assetmanagement.ruleimpl;
+
 
 import akka.japi.Pair;
+import com.mltrading.assetmanagement.AssetManagement;
+import com.mltrading.assetmanagement.AssetStock;
+import com.mltrading.assetmanagement.AssetProperties;
+import com.mltrading.assetmanagement.Ruling;
 import com.mltrading.models.stock.StockGeneral;
-import com.mltrading.models.stock.StockPrediction;
 import com.mltrading.models.stock.cache.CacheStockGeneral;
 
 import java.util.*;
@@ -16,17 +20,18 @@ public class RulingSimple implements Ruling {
     }
 
 
-    @Override
+
     public double evaluateAsset(StockGeneral sg) {
         return sg.getPerformanceEstimate()*sg.getPrediction().getLogConfidenceD20()* sg.getPredictionShort().getConfidenceD20();
         //return sg.getPrediction().getYieldD20()* sg.getPrediction().getConfidenceD20();
     }
 
-    public double process(Map<String,StockGeneral> stockMap,AssetManagement assetManagement ) {
-        Map<String,AssetStock> assetStockMap = assetManagement.curentAssetStock;
+
+    public double process(Map<String,StockGeneral> stockMap, AssetManagement assetManagement ) {
+        Map<String, AssetStock> assetStockMap = assetManagement.getCurentAssetStock();
         AssetProperties properties = assetManagement.getProperties();
         double invest =  assetManagement.getAssetValue();
-        List<String> notUse = assetManagement.assetStockList.stream().map(a -> a.getCode()).collect(Collectors.toList());
+        List<String> notUse = assetManagement.getAssetStockList().stream().map(a -> a.getCode()).collect(Collectors.toList());
 
 
         List<StockGeneral> l = new ArrayList<>(stockMap.values());

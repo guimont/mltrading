@@ -37,8 +37,16 @@ public class InfluxDaoConnector {
         if (!repo.contains(CacheMLStock.dbNameModel)) dao.createDB(CacheMLStock.dbNameModel);
         if (!repo.contains(CacheMLStock.dbNameModelPerf)) dao.createDB(CacheMLStock.dbNameModelPerf);
 
+        if (!repo.contains(CacheMLStock.dbNameModelEx)) dao.createDB(CacheMLStock.dbNameModelEx);
+        if (!repo.contains(CacheMLStock.dbNameModelPerfEx)) dao.createDB(CacheMLStock.dbNameModelPerfEx);
+
         if (!repo.contains(CacheMLStock.dbNameModelShort)) dao.createDB(CacheMLStock.dbNameModelShort);
         if (!repo.contains(CacheMLStock.dbNameModelShortPerf)) dao.createDB(CacheMLStock.dbNameModelShortPerf);
+
+        if (!repo.contains(CacheMLStock.dbNameModelExShort)) dao.createDB(CacheMLStock.dbNameModelExShort);
+        if (!repo.contains(CacheMLStock.dbNameModelExShortPerf)) dao.createDB(CacheMLStock.dbNameModelExShortPerf);
+
+
         if (!repo.contains(StockDocument.dbName)) dao.createDB(StockDocument.dbName);
         if (!repo.contains(HistogramDocument.dbName)) dao.createDB(HistogramDocument.dbName);
 

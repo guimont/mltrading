@@ -150,9 +150,9 @@
                                 <td>{{rt.volume}}</td>
                                 <td style="color: {{getcolorSign(rt.variation)}}">{{rt.variation}}</td>
                                 <!--<td style="color: {{getcolor(rt.prediction.confidenceD20)}}">{{prediction(rt.prediction.predictionD20, rt.prediction.confidenceD20)}}</td>-->
-                                <td>
-                                    <meter data-toggle="tooltip" title="{{rt.prediction.confidenceD20}}" style="background-color: {{getcolor(rt.prediction.confidenceD20)}};width: {{rt.prediction.confidenceD20}}%; margin: unset"></meter>
-                                    <meter data-toggle="tooltip" title="{{rt.predictionShort.confidenceD20}}" style="background-color: {{getcolor(rt.predictionShort.confidenceD20)}};width: {{rt.predictionShort.confidenceD20}}%; min-width: 50%"></meter>
+                                <td >
+                                    <meter ng-if="rt.prediction.confidenceD20" data-toggle="tooltip" title="{{rt.prediction.confidenceD20}}" style="background-color: {{getcolor(rt.prediction.confidenceD20)}};width: {{rt.prediction.confidenceD20}}%; margin: unset"></meter>
+                                    <meter ng-if="rt.predictionShort.confidenceD20" data-toggle="tooltip" title="{{rt.predictionShort.confidenceD20}}" style="background-color: {{getcolor(rt.predictionShort.confidenceD20)}};width: {{rt.predictionShort.confidenceD20}}%; min-width: 50%"></meter>
                                 </td>
                                 <td>
                                     <a ui-sref="performance({code: '{{rt.codif}}'})" ><i style="margin-left: 5px" class="glyphicon glyphicon-eye-open"/></a>

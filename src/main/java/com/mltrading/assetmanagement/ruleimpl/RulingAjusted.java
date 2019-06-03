@@ -1,6 +1,10 @@
-package com.mltrading.assetmanagement;
+package com.mltrading.assetmanagement.ruleimpl;
 
 import akka.japi.Pair;
+import com.mltrading.assetmanagement.AssetManagement;
+import com.mltrading.assetmanagement.AssetProperties;
+import com.mltrading.assetmanagement.AssetStock;
+import com.mltrading.assetmanagement.Ruling;
 import com.mltrading.models.stock.StockGeneral;
 import com.mltrading.models.stock.StockPrediction;
 import com.mltrading.models.stock.cache.CacheStockGeneral;
@@ -37,10 +41,10 @@ public class RulingAjusted implements Ruling {
     public double process(Map<String,StockGeneral> stockMap,AssetManagement assetManagement ) {
 
 
-        Map<String,AssetStock> assetStockMap = assetManagement.curentAssetStock;
+        Map<String,AssetStock> assetStockMap = assetManagement.getCurentAssetStock();
         AssetProperties properties = assetManagement.getProperties();
         double invest =  assetManagement.getAssetValue();
-        List<String> notUse = assetManagement.assetStockList.stream().map(a -> a.getCode()).collect(Collectors.toList());
+        List<String> notUse = assetManagement.getAssetStockList().stream().map(a -> a.getCode()).collect(Collectors.toList());
 
 
         List<StockGeneral> l = new ArrayList<>(stockMap.values());
@@ -70,7 +74,7 @@ public class RulingAjusted implements Ruling {
                     if (iterator.hasNext())
                         codeSelected = (Pair<Double, String>) iterator.next();
                     else
-                        codeSelected = null;
+                        return invest;
                     continue;
                 }
 

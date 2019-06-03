@@ -37,7 +37,7 @@ public class HistoryParserInvesting extends ParserCommon implements HistoryCommo
                 String url = localUrl + host + path + key + ".html";
                 System.out.println("url: " + url);
 
-                parser(CacheStockGeneral.getIsinCache().get(code),NO_RANGE,url);
+                parser(CacheStockGeneral.getIsinExCache().get(code),NO_RANGE,url);
 
             } catch (Exception e) {
                 e.printStackTrace();

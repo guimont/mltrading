@@ -33,19 +33,6 @@ public class Simulation {
         //Take ORA as reference
         List<String> rangeDate = StockHistory.getDateHistoryListOffsetLimit("ORA", 100);
 
-        /*assetToSims.forEach(assetToSim -> rangeDate.forEach(d -> {
-            Map<String, StockGeneral> mapSim = new HashMap<>();
-            System.out.println("Sim for date" + d);
-            CacheStockGeneral.getCache().values().forEach(sg -> {
-                StockGeneral sgSim = new StockGeneral(StockHistory.getStockHistory(sg.getCodif(), d), sg);
-                updatePredictor(sgSim,true);
-                mapSim.put(sgSim.getCode(), sgSim);
-            });
-            assetToSim.evaluate(mapSim);
-            assetToSim.decision(mapSim);
-        }));*/
-
-
 
         rangeDate.forEach( d -> {
             Map<String, StockGeneral> mapSim = new HashMap<>();

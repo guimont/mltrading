@@ -163,7 +163,7 @@ public class MLStock  implements Serializable {
             File dirmeta = new File(path+"model/Model" + ModelType.code(type) + period.toString() + codif + modelExtendedPrefix +"/metadata");
             MongoUtil.distribute(gfsModel, dir, dirmeta);
         } catch (Exception e) {
-            log.error("saveModel: " + codif + e);
+            log.error("distribute: " + codif + e);
         }
     }
 

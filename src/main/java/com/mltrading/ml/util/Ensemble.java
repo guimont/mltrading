@@ -4,6 +4,7 @@ import com.mltrading.ml.*;
 import com.mltrading.ml.model.GradiantBoostStock;
 import com.mltrading.ml.model.ModelType;
 import com.mltrading.ml.model.RandomForestStock;
+import com.mltrading.ml.ranking.MLRank;
 import com.mltrading.models.util.MLActivities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,10 +55,28 @@ public class Ensemble {
 
     static int SCORENOTREACHABLE =  500;
     static int BADSCORE =  0;
-    public double evaluate(MLStocks mls) {
 
-        List<MLPerformances> mlPerformancesRF =  mls.getStatus(ModelType.RANDOMFOREST).getPerfList();
-        List<MLPerformances> mlPerformancesGBT =  mls.getStatus(ModelType.GRADIANTBOOSTTREE).getPerfList();
+    public double evaluate(MLRank mlr,  PredictionPeriodicity periodicity) {
+
+        List<MLPerformances> mlPerformancesRF = mlr.getStatus(ModelType.RANDOMFOREST).getPerfList();
+        List<MLPerformances> mlPerformancesGBT = mlr.getStatus(ModelType.GRADIANTBOOSTTREE).getPerfList();
+
+        return calculate(mlPerformancesRF, mlPerformancesGBT, periodicity);
+
+    }
+
+    public double evaluate(MLStocks mls, PredictionPeriodicity periodicity) {
+
+        List<MLPerformances> mlPerformancesRF = mls.getStatus(ModelType.RANDOMFOREST).getPerfList();
+        List<MLPerformances> mlPerformancesGBT = mls.getStatus(ModelType.GRADIANTBOOSTTREE).getPerfList();
+
+        return calculate(mlPerformancesRF, mlPerformancesGBT, periodicity);
+    }
+
+
+
+
+    public double calculate(List<MLPerformances> mlPerformancesRF, List<MLPerformances> mlPerformancesGBT, PredictionPeriodicity p) {
 
 
         if ((((mlPerformancesRF == null) || (mlPerformancesGBT == null))
@@ -76,42 +95,37 @@ public class Ensemble {
             MLPerformances mlGBT = mlPerformancesGBT.get(index);
             MLPerformances perf = new MLPerformances(mlRF.getDate());
 
-            PeriodicityList.periodicityLong.forEach(p -> {
-                MLPerformance mpRF = mlRF.getMl(p);
-                MLPerformance mpGBT = mlGBT.getMl(p);
+
+            MLPerformance mpRF = mlRF.getMl(p);
+            MLPerformance mpGBT = mlGBT.getMl(p);
 
 
-                perf.setMl(MLPerformance.calculYields(mlRF.getMl(p).getDate(), mlRF.getMl(p).getCurrentDate(),
-                    (mpRF.getPrediction() * this.getRatio() + mpGBT.getPrediction())/(1. + this.ratio),
-                    mpRF.getRealvalue(), mpRF.getCurrentValue()), p);
+            perf.setMl(MLPerformance.calculYields(mlRF.getMl(p).getDate(), mlRF.getMl(p).getCurrentDate(),
+                (mpRF.getPrediction() * this.getRatio() + mpGBT.getPrediction())/(1. + this.ratio),
+                mpRF.getRealvalue(), mpRF.getCurrentValue()), p);
 
-            });
+
             listEnsemble.add(perf);
-
-
-
-
         }
 
         MLStatus checkStatus = new MLStatus();
 
-        PeriodicityList.periodicityLong.forEach(p -> {
-            try {
-                checkStatus.setPerfList(listEnsemble, p);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
+
+        try {
+            checkStatus.setPerfList(listEnsemble, p);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
 
         checkStatus.calculeAvgPrd();
-
 
         //dont store result now
         //mls.getStatus(ModelType.ENSEMBLE).setPerfList(listEnsemble);
 
         //inverse score
-        return SCORENOTREACHABLE - convert(checkStatus.getErrorRate(PredictionPeriodicity.D20),
-            checkStatus.getAvg(PredictionPeriodicity.D20));
+        return SCORENOTREACHABLE - convert(checkStatus.getErrorRate(p),
+            checkStatus.getAvg(p));
     }
 
 

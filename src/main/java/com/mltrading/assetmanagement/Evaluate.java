@@ -6,6 +6,6 @@ import java.util.Map;
 
 public interface Evaluate {
 
-    void evaluate(Map<String,StockGeneral> stockMap,  AssetManagement assetManagement);
+    void evaluate(Map<String, StockGeneral> stockMap, AssetManagement assetManagement);
 
 }

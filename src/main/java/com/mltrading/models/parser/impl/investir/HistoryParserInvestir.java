@@ -41,6 +41,16 @@ public class HistoryParserInvestir extends ParserCommon implements HistoryParser
                 e.printStackTrace();
             }
         }
+
+        for (StockGeneral g : CacheStockGeneral.getIsinExCache().values()) {
+            String url = startUrl + g.getName().toLowerCase().replaceAll(" ", "-")
+                + separator + g.getPlace()  + separator + g.getRealCodif().toLowerCase()+separator+g.getCode().toLowerCase()+endUrl;
+            try {
+                parser(url,g,range);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 

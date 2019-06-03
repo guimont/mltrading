@@ -19,18 +19,14 @@ import java.util.List;
  */
 public class MLStatus implements Serializable,DaoChecker{
 
-    private double avgD1 = 0;
-    private double avgD5 = 0;
     private double avgD20 = 0;
     private double avgD40 = 0;
 
-    private int errorRateD1 = 0;
-    private int errorRateD5 = 0;
     private int errorRateD20 = 0;
     private int errorRateD40 = 0;
 
 
-    private int countD1 = 0, countD5 = 0, countD20 = 0, countD40 = 0;
+    private int  countD20 = 0, countD40 = 0;
 
     private List<MLPerformances> perfList = null;
 
@@ -126,22 +122,6 @@ public class MLStatus implements Serializable,DaoChecker{
         return errorRateD40;
     }
 
-    public double getAvgD1() {
-        return avgD1;
-    }
-
-    public void setAvgD1(double avgD1) {
-        this.avgD1 = avgD1;
-    }
-
-    public double getAvgD5() {
-        return avgD5;
-    }
-
-    public void setAvgD5(double avgD5) {
-        this.avgD5 = avgD5;
-    }
-
     public double getAvgD20() {
         return avgD20;
     }
@@ -150,21 +130,6 @@ public class MLStatus implements Serializable,DaoChecker{
         this.avgD20 = avgD20;
     }
 
-    public int getErrorRateD1() {
-        return errorRateD1;
-    }
-
-    public void setErrorRateD1(int errorRateD1) {
-        this.errorRateD1 = errorRateD1;
-    }
-
-    public int getErrorRateD5() {
-        return errorRateD5;
-    }
-
-    public void setErrorRateD5(int errorRateD5) {
-        this.errorRateD5 = errorRateD5;
-    }
 
     public int getErrorRateD20() {
         return errorRateD20;
@@ -174,21 +139,6 @@ public class MLStatus implements Serializable,DaoChecker{
         this.errorRateD20 = errorRateD6;
     }
 
-    public int getCountD1() {
-        return countD1;
-    }
-
-    public void setCountD1(int countD1) {
-        this.countD1 = countD1;
-    }
-
-    public int getCountD5() {
-        return countD5;
-    }
-
-    public void setCountD5(int countD5) {
-        this.countD5 = countD5;
-    }
 
     public int getCountD20() {
         return countD20;
@@ -354,32 +304,23 @@ public class MLStatus implements Serializable,DaoChecker{
 
 
     public int getErrorRate(PredictionPeriodicity period) {
-        if (period == PredictionPeriodicity.D1) return errorRateD1;
-        if (period == PredictionPeriodicity.D5) return errorRateD5;
         if (period == PredictionPeriodicity.D20) return errorRateD20;
         if (period == PredictionPeriodicity.D40) return errorRateD40;
-
         return 0;
     }
 
     public double getAvg(PredictionPeriodicity period) {
-        if (period == PredictionPeriodicity.D1) return avgD1;
-        if (period == PredictionPeriodicity.D5) return avgD5;
         if (period == PredictionPeriodicity.D20) return avgD20;
         if (period == PredictionPeriodicity.D40) return avgD40;
         return 0;
     }
 
     public void setAvg(double avg, PredictionPeriodicity period) {
-        if (period == PredictionPeriodicity.D1) avgD1 = avg;
-        if (period == PredictionPeriodicity.D5) avgD5= avg;
         if (period == PredictionPeriodicity.D20) avgD20= avg;
         if (period == PredictionPeriodicity.D40) avgD40= avg;
     }
 
     public void setErrorRate(int errorRate, PredictionPeriodicity period) {
-        if (period == PredictionPeriodicity.D1) errorRateD1 = errorRate;
-        if (period == PredictionPeriodicity.D5) errorRateD5= errorRate;
         if (period == PredictionPeriodicity.D20) errorRateD20= errorRate;
         if (period == PredictionPeriodicity.D40) errorRateD40= errorRate;
     }
@@ -388,17 +329,13 @@ public class MLStatus implements Serializable,DaoChecker{
     @Override
     public MLStatus clone()  {
         MLStatus cloneObject = new MLStatus();
-        cloneObject.avgD1 = this.avgD1;
         cloneObject.avgD20 = this.avgD20;
-        cloneObject.avgD5 = this.avgD5;
         cloneObject.avgD40 = this.avgD40;
-        cloneObject.errorRateD1 = this.errorRateD1;
-        cloneObject.errorRateD5 = this.errorRateD5;
+
         cloneObject.errorRateD20 = this.errorRateD20;
         cloneObject.errorRateD40 = this.errorRateD40;
 
-        cloneObject.countD1 = this.countD1;
-        cloneObject.countD5 = this.countD5;
+
         cloneObject.countD20 = this.countD20;
         cloneObject.countD40 = this.countD40;
 
@@ -411,8 +348,6 @@ public class MLStatus implements Serializable,DaoChecker{
     }
 
     public int getCount(PredictionPeriodicity period) {
-        if (period == PredictionPeriodicity.D1) return countD1;
-        if (period == PredictionPeriodicity.D5) return countD5;
         if (period == PredictionPeriodicity.D20) return countD20;
         if (period == PredictionPeriodicity.D40) return countD40;
 

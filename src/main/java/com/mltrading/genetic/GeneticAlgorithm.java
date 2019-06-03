@@ -1,4 +1,4 @@
-package com.mltrading.ml.genetic;
+package com.mltrading.genetic;
 
 import java.io.PrintStream;
 import java.util.*;

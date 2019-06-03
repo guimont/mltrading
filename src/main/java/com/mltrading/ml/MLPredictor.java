@@ -32,6 +32,7 @@ public class MLPredictor  implements Serializable {
     public StockPrediction prediction(String codif, double value) {
 
         MLStocks s = CacheMLStock.getMLStockCache().get(codif);
+        if ( s == null) s = CacheMLStock.getMlStockExMap().get(codif);
         if (s != null)
             return commonPrediction(codif, value, s);
         else
@@ -48,6 +49,7 @@ public class MLPredictor  implements Serializable {
     public StockPrediction predictionShort(String codif, double value) {
 
         MLStocks s = CacheMLStock.getMLStockShortCache().get(codif);
+        if ( s == null) s = CacheMLStock.getMlStockExShortMap().get(codif);
         if (s != null)
             return commonPrediction(codif, value, s);
         else
@@ -69,7 +71,8 @@ public class MLPredictor  implements Serializable {
 
                 if (CacheMLStock.getMlRankCache().getModel() != null) {
                     FeaturesRank fr = FeaturesRank.createRT(codif, date);
-                    sp.setYieldD20(CacheMLStock.getMlRankCache().getModel().predict(Vectors.dense(fr.vectorize())));
+                    //sp.setYieldD20(CacheMLStock.getMlRankCache().getModel().predict(Vectors.dense(fr.vectorize())));
+                    sp.setYieldD20(0);
                     sp.setConfidence(100 - (s.getStatus(ModelType.RANDOMFOREST).getErrorRate(PredictionPeriodicity.D20) * 100
                         / s.getStatus(ModelType.RANDOMFOREST).getCount(PredictionPeriodicity.D20)), PredictionPeriodicity.D20);
                 }

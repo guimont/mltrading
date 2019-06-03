@@ -1,7 +1,11 @@
 package com.mltrading.models;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import com.mltrading.config.MLProperties;
 import com.mltrading.models.parser.Analyse;
+import com.mltrading.models.parser.ServiceParser;
+import com.mltrading.models.parser.impl.boursorama.RealTimeParserBoursorama;
 import com.mltrading.models.parser.impl.boursorama.RealTimeSectorBoursorama;
 import com.mltrading.models.parser.impl.investing.HistoryIndiceParserInvesting;
 import com.mltrading.models.parser.impl.investing.HistoryLocalRawMaterials;
@@ -34,7 +38,7 @@ public class test {
     @Inject
     private static UserService userService;
 
-
+/*
 
     public static void main(String[] args) {
         for (StockGeneral g : CacheStockGeneral.getIsinCache().values()) {
@@ -49,10 +53,10 @@ public class test {
                 v.saveModel(g.getCodif()+"VD20");
             } catch (Exception e) {
                 System.out.println(g.getCodif()+"execption");
-            }**/
+            }**
 
         }
-    }
+    }*/
 
 /*
     public static void main(String[] args) {
@@ -66,17 +70,22 @@ public class test {
         }
     }
 
-
+*
     public static void main(String[] args) {
         MLProperties.load();
         try {
-            HistoryVolatilityParserInvesting raw = new HistoryVolatilityParserInvesting();
-            //raw.fetch();
+            HistoryParserInvesting importStock = new HistoryParserInvesting();
+            /*for (StockGeneral sg : CacheStockGeneral.getIsinExCache().values()) {
+                importStock.loader("localhost:7090", sg.getCodif(), sg.getCode());
+            }
+*
 
             System.out.println("Start analyse");
             Analyse analyse = new Analyse();
 
-            analyse.processAnalysisAll("VCAC");
+            for (StockGeneral sg : CacheStockGeneral.getIsinExCache().values()) {
+                analyse.processAnalysisAll(sg.getCodif());
+            }
 
             System.out.println("**************************");
             System.out.println("END analyse");
@@ -311,8 +320,7 @@ public static void main(String[] args) {
 
         //StockDocument.getStockDocument()
 
-    }
-
+    }*/
 
 
 

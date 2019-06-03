@@ -86,6 +86,17 @@ public class Analyse {
             }
         }
 
+        for (StockGeneral g: CacheStockGeneral.getIsinExCache().values()) {
+            dateList = StockHistory.getDateHistoryListOffsetLimit(g.getCodif(),period);
+            if (dateList != null) {
+                for (String date : dateList) {
+                    if (CacheStockAnalyse.CacheStockAnalyseHolder().isInStockAanlyse(g.getCodif(), date))
+                        continue;
+                    processAnalysisSpecific(g.getCodif(), date);
+                }
+            }
+        }
+
         /**
          * not all french indice so date could be different .. add an error margin
          */

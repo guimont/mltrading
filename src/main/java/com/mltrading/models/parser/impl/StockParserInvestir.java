@@ -40,9 +40,9 @@ public class StockParserInvestir extends ParserCommon implements StockParser{
 
 
     private void loader(StockRepository repository) {
-        for (StockGeneral g: CacheStockGeneral.getIsinCache().values()) {
+        for (StockGeneral g: CacheStockGeneral.getIsinExCache().values()) {
 
-            String url = base + CacheStockGeneral.getIsinCache().get(g.getCode()).getName().toLowerCase().replaceAll(" ","-") + sep + g.getPlace().toLowerCase() + sep  + g.getRealCodif().toLowerCase() + sep + g.getCode().toLowerCase() +end;
+            String url = base + CacheStockGeneral.getIsinExCache().get(g.getCode()).getName().toLowerCase().replaceAll(" ","-") + sep + g.getPlace().toLowerCase() + sep  + g.getRealCodif().toLowerCase() + sep + g.getCode().toLowerCase() +end;
 
 
             try {

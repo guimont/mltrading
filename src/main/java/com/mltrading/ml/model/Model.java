@@ -28,9 +28,9 @@ public abstract class Model<R> implements Serializable {
         this.validator = validator;
     }
 
-    abstract void setModel(R model);
+    public abstract void setModel(R model);
     public abstract R getModel();
-    abstract void load(String path, String period, String codif, String modelExtendedPrefix);
+    public abstract void load(String path, String period, String codif, String modelExtendedPrefix);
     public abstract double predict(Vector vector);
     public abstract void save(String s);
 }

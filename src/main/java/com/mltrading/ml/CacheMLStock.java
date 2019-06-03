@@ -26,11 +26,19 @@ public class CacheMLStock {
     //
 
 
+    /** cac 40 stock*/
     public static String dbNameModel = "modelNote2";
     public static String dbNameModelPerf = "modelPerf";
 
+    /**sbf120 stock*/
+    public static String dbNameModelEx = "modelNoteEx";
+    public static String dbNameModelPerfEx = "modelPerfEx";
+
     public static String dbNameModelShort = "modelNoteShort";
     public static String dbNameModelShortPerf = "modelShortPerf";
+
+    public static String dbNameModelExShort = "modelNoteShortEx";
+    public static String dbNameModelExShortPerf = "modelShortPerfEx";
 
     public static final List<ModelType> modelTypes = Arrays.asList(ModelType.RANDOMFOREST, ModelType.GRADIANTBOOSTTREE);
 
@@ -39,17 +47,21 @@ public class CacheMLStock {
 
     public static int RENDERING_SHORT = 90;
     public static int RENDERING = 300;
-    public static int RANGE_MAX = 1500;
+    public static int RANGE_MAX = 1200;
     public static int RANGE_MIN = 300;
 
     public static String NO_EXTENDED ="";
-    public static String SHORT_EXTENDED ="SH";
+    public static String EXTENDED ="EX";
+    public static String SHORT_NO_EXTENDED ="SH";
+    public static String SHORT_EXTENDED ="EXSH";
 
     private static final Logger log = LoggerFactory.getLogger(CacheMLStock.class);
 
     private static final Map<String, MLStocks> mlStockMap;
+    private static final Map<String, MLStocks> mlStockExMap;
 
     private static final Map<String, MLStocks> mlStockShortMap;
+    private static final Map<String, MLStocks> mlStockExShortMap;
 
 
     private static  MLRank mlRank = null;
@@ -59,6 +71,9 @@ public class CacheMLStock {
         System.setProperty("spark.sql.warehouse.dir", MLProperties.getProperty("spark.warehouse"));
         mlStockMap = new HashMap<>();
         mlStockShortMap = new HashMap<>();
+
+        mlStockExMap = new HashMap<>();
+        mlStockExShortMap = new HashMap<>();
     }
 
     //static SparkConf sparkConf = new SparkConf().setAppName("JavaRandomForest").setMaster("local[*]");
@@ -91,10 +106,14 @@ public class CacheMLStock {
         //SynchWorker.load();
 
         mlRank = new MLRank();
-        mlRank.loadModel();
+        modelTypes.forEach(mlRank::loadModel);
+        //modelTypes.forEach(t -> mlRank.getStatus(t).loadPerf());
+        //MLStockRanking.updateEsembleRanking();
 
         load(new ArrayList(CacheStockSector.getSectorCache().values()));
+
         load(new ArrayList(CacheStockGeneral.getIsinCache().values()));
+        loadEx(new ArrayList(CacheStockGeneral.getIsinExCache().values()));
 
         CacheMLActivities.addActivities(g.setEndDate());
     }
@@ -136,7 +155,7 @@ public class CacheMLStock {
                     mlsShort.getStatus(t).loadPerf(s.getCodif(),t, mlsShort.getDbNamePerf(), CacheMLStock.RENDERING_SHORT);
                     mlsShort.load(t);
                 });
-                mlsShort.getStatus(ModelType.ENSEMBLE).loadPerf(s.getCodif(), ModelType.ENSEMBLE, mls.getDbNamePerf(), CacheMLStock.RENDERING_SHORT);
+                mlsShort.getStatus(ModelType.ENSEMBLE).loadPerf(s.getCodif(), ModelType.ENSEMBLE, mlsShort.getDbNamePerf(), CacheMLStock.RENDERING_SHORT);
                 mlStockShortMap.put(s.getCodif(), mlsShort);
                 CacheMLActivities.addActivities(a.setEndDate().setStatus("Success"));
 
@@ -151,12 +170,72 @@ public class CacheMLStock {
     }
 
 
+    /**
+     * load model for each stock
+     * @param sl stock list (px1 or sector)
+     */
+    public static void loadEx(List<? extends StockHistory> sl) {
+
+
+
+        for (StockHistory s : sl) {
+            MLActivities a = new MLActivities("CacheMLStock", "", "load", 0, 0, false);
+            try {
+
+
+                MLStocks mls = new MLStocksExtended(s.getCodif());
+                modelTypes.forEach(mls::distibute);
+
+                modelTypes.forEach( t -> {
+                    mls.getStatus(t).loadPerf(s.getCodif(),t, mls.getDbNamePerf(), CacheMLStock.RENDERING);
+                    mls.load(t);
+                });
+
+                mls.getStatus(ModelType.ENSEMBLE).loadPerf(s.getCodif(), ModelType.ENSEMBLE, mls.getDbNamePerf(), CacheMLStock.RENDERING);
+
+                mlStockExMap.put(s.getCodif(), mls);
+
+
+
+                /**Short model***/
+                MLStocks mlsShort = new MLStocksShortExtended(s.getCodif());
+                //ModelType t = ModelType.RANDOMFOREST;
+                modelTypes.forEach(mlsShort::distibute);
+                //mlsShort.distibute(t);
+                modelTypes.forEach( t -> {
+                    mlsShort.getStatus(t).loadPerf(s.getCodif(),t, mlsShort.getDbNamePerf(), CacheMLStock.RENDERING_SHORT);
+                    mlsShort.load(t);
+                });
+                mlsShort.getStatus(ModelType.ENSEMBLE).loadPerf(s.getCodif(), ModelType.ENSEMBLE, mlsShort.getDbNamePerf(), CacheMLStock.RENDERING_SHORT);
+                mlStockExShortMap.put(s.getCodif(), mlsShort);
+                CacheMLActivities.addActivities(a.setEndDate().setStatus("Success"));
+
+
+
+            } catch (Exception e) {
+                log.error(e.toString());
+                CacheMLActivities.addActivities(a.setEndDate().setStatus("Failed"));
+            }
+        }
+
+    }
+
+
+
     public static Map<String, MLStocks> getMLStockCache() {
         return mlStockMap;
     }
 
     public static Map<String, MLStocks> getMLStockShortCache() {
         return mlStockShortMap;
+    }
+
+    public static Map<String, MLStocks> getMlStockExMap() {
+        return mlStockExMap;
+    }
+
+    public static Map<String, MLStocks> getMlStockExShortMap() {
+        return mlStockExShortMap;
     }
 
     public static MLRank getMlRankCache() {
@@ -175,15 +254,24 @@ public class CacheMLStock {
 
     public static void save(ModelType type) {
         deleteModel(CacheMLStock.dbNameModel, CacheMLStock.dbNameModelPerf);
-        //SynchWorker.delete(); don't use this not works
         saveCommon(type, mlStockMap);
+    }
+
+    public static void saveEx(ModelType type) {
+        deleteModel(CacheMLStock.dbNameModelEx, CacheMLStock.dbNameModelPerfEx);
+        saveCommon(type, mlStockExMap);
     }
 
     public static void saveShort(ModelType type) {
 
         deleteModel(CacheMLStock.dbNameModelShort, CacheMLStock.dbNameModelShortPerf);
-        //SynchWorker.delete();
         saveCommon(type, mlStockShortMap );
+    }
+
+    public static void saveShortEx(ModelType type) {
+
+        deleteModel(CacheMLStock.dbNameModelExShort, CacheMLStock.dbNameModelExShortPerf);
+        saveCommon(type, mlStockExShortMap );
     }
 
 
@@ -227,6 +315,7 @@ public class CacheMLStock {
     /**
      * update perf list
      */
+    @Deprecated
     public static void savePerf(ModelType type) {
 
         for (MLStocks mls : mlStockMap.values()) {
@@ -293,7 +382,9 @@ public class CacheMLStock {
      */
     public static String guessDbName(String prefix) {
         if (prefix.equalsIgnoreCase(CacheMLStock.NO_EXTENDED)) return CacheMLStock.dbNameModel;
-        if (prefix.equalsIgnoreCase(CacheMLStock.SHORT_EXTENDED)) return CacheMLStock.dbNameModelShort;
+        if (prefix.equalsIgnoreCase(CacheMLStock.EXTENDED)) return CacheMLStock.dbNameModelEx;
+        if (prefix.equalsIgnoreCase(CacheMLStock.SHORT_NO_EXTENDED)) return CacheMLStock.dbNameModelShort;
+        if (prefix.equalsIgnoreCase(CacheMLStock.SHORT_EXTENDED)) return CacheMLStock.dbNameModelExShortPerf;
 
         return null;
 
