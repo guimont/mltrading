@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import com.mltrading.ml.CacheMLStock;
 import com.mltrading.ml.MlForecast;
 import com.mltrading.ml.model.ModelType;
+import com.mltrading.models.parser.impl.boursedirect.RealTimeParserBoursedirect;
 import com.mltrading.models.parser.impl.boursorama.RealTimeParserBoursorama;
 import com.mltrading.models.parser.impl.boursorama.RealTimeSectorBoursorama;
 import com.mltrading.repository.ArticleRepository;
@@ -29,14 +30,14 @@ public class ScheduleParserGeneral  {
     protected TimerTask timerTask;
     private static ExtractionService service = new ExtractionService();
 
-    private RealTimeParserBoursorama realTimeParserBoursorama;
+    private RealTimeParserBoursedirect realTimeParserBoursorama;
     private RealTimeSectorBoursorama realTimeSectorBoursorama;
 
     @javax.inject.Inject
     private ArticleRepository articleRepository;
 
     public ScheduleParserGeneral() {
-        realTimeParserBoursorama = new RealTimeParserBoursorama();
+        realTimeParserBoursorama = new RealTimeParserBoursedirect();
         realTimeSectorBoursorama = new RealTimeSectorBoursorama();
     }
 
@@ -63,15 +64,14 @@ public class ScheduleParserGeneral  {
 
     protected void runExtraction() {
         realTimeParserBoursorama.refreshCache();
-        realTimeSectorBoursorama.refreshCache();
-
+        //realTimeSectorBoursorama.refreshCache();
     }
 
 
     public void start() {
         //updateBase(); //not use here but in upddate scheduler*/
         realTimeParserBoursorama.loaderCache();
-        updatePredictor();
+       // updatePredictor();
         this.extractionCycleInMs =  30000;
         this.timer = new Timer("ExtractionProcess", true);
         this.timerTask = new GlobalTimerTask();

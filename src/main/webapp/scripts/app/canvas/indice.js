@@ -32,7 +32,7 @@ function loadIndice(dataV, id, label,bdate, color) {
                 pointRadius: 2,
                 pointHitRadius: 10,
                 data: [],
-                spanGaps: false,
+                spanGaps: true,
 
             }
         ]
@@ -42,11 +42,13 @@ function loadIndice(dataV, id, label,bdate, color) {
         data.labels[i] = dataV[i].day.substring(5, 10)
         data.datasets[0].data[i] = dataV[i].value
     }
+    var timeFormat = 'MM/DD/YYYY'
 
     var ctx = document.getElementById(id);
     var myBarChart = new Chart(ctx, {
             type: 'line',
             data: data,
+
 
             options: {
                 legend: {
@@ -57,11 +59,17 @@ function loadIndice(dataV, id, label,bdate, color) {
                 },
                 scales: {
                     xAxes: [{
-                        display: bdate,
+                        display : bdate,
+                        distribution: 'series',
+                        type: 'time',
+                        bounds: 'data',
+                        time: {
+                            parser: timeFormat
+                        },
                         scaleLabel: {
                             display: true
                         },
-                        fontSize: 8
+
                     }],
                     yAxes: [{
                         display: true,
@@ -72,7 +80,7 @@ function loadIndice(dataV, id, label,bdate, color) {
                     }]
                 },
                 hover: {
-                    mode: 'nearest',
+
                     intersect: true
                 },
                 responsive: true

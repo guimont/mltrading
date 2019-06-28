@@ -110,10 +110,10 @@ public class CacheMLStock {
         //modelTypes.forEach(t -> mlRank.getStatus(t).loadPerf());
         //MLStockRanking.updateEsembleRanking();
 
-        load(new ArrayList(CacheStockSector.getSectorCache().values()));
-
-        load(new ArrayList(CacheStockGeneral.getIsinCache().values()));
         loadEx(new ArrayList(CacheStockGeneral.getIsinExCache().values()));
+        load(new ArrayList(CacheStockSector.getSectorCache().values()));
+        load(new ArrayList(CacheStockGeneral.getIsinCache().values()));
+
 
         CacheMLActivities.addActivities(g.setEndDate());
     }

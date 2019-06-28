@@ -294,6 +294,8 @@ public class RealTimeParserBoursorama extends ParserCommon implements RealTimePa
                     continue;
 
 
+                if (CacheStockGeneral.getCode(codif) == null)
+                    continue;
 
                 StockGeneral g;
 
@@ -313,13 +315,19 @@ public class RealTimeParserBoursorama extends ParserCommon implements RealTimePa
                     name.append(data[index]);
                 }
                 g.setName(name.toString());
-                System.out.println("load action: " + g.getName() +" code: " + codif);
-                g.setValue(new Double(data[index].replaceAll(" \\(c\\)","").replaceAll(" \\(s\\)","")));
-                g.setVariation(new Double(data[index+1].replaceAll("%", "")));
-                g.setOpening(new Double(data[index+2].replace("ND","0")));
-                g.setHighest(new Double(data[index+3].replace("ND","0")));
-                g.setLowest(new Double(data[index+4].replace("ND","0")));
-                g.setVolume(new Double(data[index+6].replaceAll(" ", "")));
+                if (init) System.out.println("load action: " + g.getName() +" code: " + codif);
+                g.setValue(new Double(link.getElementsByAttribute("data-ist-last").text().replaceAll(" ", "").replaceAll(" \\(c\\)","").replaceAll(" \\(s\\)","")));
+
+                g.setVariation(new Double(link.getElementsByAttribute("data-ist-instant-variation").text().replaceAll("%", "")));
+
+                g.setOpening(new Double(link.getElementsByAttribute("data-ist-open").text().replaceAll(" ", "").replace("ND","0")));
+
+                g.setHighest(new Double(link.getElementsByAttribute("data-ist-high").text().replaceAll(" ", "").replace("ND","0")));
+
+                g.setLowest(new Double(link.getElementsByAttribute("data-ist-low").text().replaceAll(" ", "").replace("ND","0")));
+
+                g.setVolume(new Double(link.getElementsByAttribute("data-ist-totalvolume").text().replaceAll(" ", "")));
+
 
                 g.setCode(CacheStockGeneral.getCode(g.getCodif()));
                 g.setPlace(CacheStockGeneral.getPlace(g.getCodif()));

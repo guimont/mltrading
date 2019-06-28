@@ -63,9 +63,10 @@ public class StockGeneral extends StockHistory implements Serializable {
         this.setCodif(codif);
         this.setPlaceCodif(placeCodif);
     }
-    public StockGeneral(String code, String name,  String codif, String place, String placeCodif, String sector, String subsector) {
+    public StockGeneral(String code, String name, String nameBoursier, String codif, String place, String placeCodif, String sector, String subsector) {
         this.setCode(code);
         this.setName(name);
+        this.setNameBoursier(nameBoursier);
         this.setPlace(place);
         this.setCodif(codif);
         this.setPlaceCodif(placeCodif);

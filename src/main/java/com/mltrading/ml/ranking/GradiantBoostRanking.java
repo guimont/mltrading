@@ -20,7 +20,7 @@ public class GradiantBoostRanking extends MLModelRanking<MLGradiantBoostRanking>
     @Override
     protected MLGradiantBoostRanking trainModel(JavaRDD<LabeledPoint> trainingData) {
         BoostingStrategy boostingStrategyRank = BoostingStrategy.defaultParams("Regression");
-        boostingStrategyRank.setNumIterations(3); // Note: Use more iterations in practice.
+        boostingStrategyRank.setNumIterations(100); // Note: Use more iterations in practice.
         boostingStrategyRank.getTreeStrategy().setMaxDepth(5);
 // Empty categoricalFeaturesInfo indicates all features are continuous.
 

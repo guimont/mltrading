@@ -186,7 +186,7 @@ public class ExtractionResource {
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     public String getExtractionAction() {
-        stockRepository.deleteAll();
+        //stockRepository.deleteAll();
         extractionService.extractStock(stockRepository);
         return "ok";
     }

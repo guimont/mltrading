@@ -13,4 +13,6 @@ public abstract class StockBase extends Object {
     public void setDay(String day) {
         this.day = day;
     }
+
+
 }

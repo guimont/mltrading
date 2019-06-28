@@ -1,12 +1,12 @@
 var result = [];
 
 
-var SIZERESX=1100;
+var SIZERESX=1300;
 var RSIZERESX=1080;
 var SIZERESY=240;
 
-var margeX = 9;
-var GLOBAL_X =1200;
+var margeX = 10;
+var GLOBAL_X =1400;
 
 /**
  * init stage kinetic canvas
@@ -29,13 +29,13 @@ function loadResult (data) {
     result = data;
 
     GLOBAL_X = window.innerWidth;
-    margeX = window.innerWidth/180;
+    margeX = window.innerWidth/150;
 
     chartResult({x:5,y:20}, layerChart, true);
     stageResult.add(layerChart);
 
-    loadIndice(result.indice,"indicePanelDetail","", false, "rgba(75,192,192,0.2)")
-    loadIndice(result.sector,"sectorPanelDetail","", false, "rgba(119,136,153,0.2)")
+    loadIndice(result.indice,"indicePanelDetail","", true, "rgba(75,192,192,0.2)")
+    loadIndice(result.sector,"sectorPanelDetail","", true, "rgba(119,136,153,0.2)")
 
 };
 
@@ -68,7 +68,13 @@ function chartResult(pos, layer) {
     drawGridRes(group,pos, max, max-min,  heightM, marge);
 
     layer.add(group);
+
+
+
 }
+
+
+
 
 function getmaxRunResult( list,c,maxP) {
     var max = maxP;
@@ -91,6 +97,7 @@ function getminRunResult( list,c, minP) {
     }
     return min;
 }
+
 
 
 
@@ -346,7 +353,7 @@ function drawValue(group, pos, data,min, heightM, marge,  i ,  layer) {
                 x: pos.x * 2 + i * (margeX) +1,
                 y: SIZERESY - (data[i].predD20 - min) * heightM - marge,
                 radius: {
-                    x: 3,
+                    x: 6,
                     y: 12
                 },
                 opacity: 0.2,
@@ -361,7 +368,7 @@ function drawValue(group, pos, data,min, heightM, marge,  i ,  layer) {
                 x: pos.x * 2 + i * (margeX) +1,
                 y: SIZERESY - (data[i].predD40 - min) * heightM - marge,
                 radius: {
-                    x: 3,
+                    x: 8,
                     y: 12
                 },
                 opacity: 0.2,
@@ -379,15 +386,13 @@ function drawValue(group, pos, data,min, heightM, marge,  i ,  layer) {
     var chartGroup = new Kinetic.Group();
     ref.on('mouseover', function() {
         dist = 0;
-        //detail.start();
-        //anim.stop()
+        detail.start();
         group.add(chartGroup);
         layer.draw();
     });
 
     ref.on('mouseout', function() {
-        //detail.stop();
-        //anim.start()
+        detail.stop();
         chartGroup.remove();
         layer.draw();
     });
@@ -401,24 +406,140 @@ function drawValue(group, pos, data,min, heightM, marge,  i ,  layer) {
     var detail = new Kinetic.Animation(function() {
         chartGroup.destroyChildren();
 
+        var elt = data [i];
+        if (i> 79) return;
 
         detail.stop();
 
+        var decalage  = i <70 ? 15: -120;
+        var spos = {x:i*5+decalage,y:pos.y};
+
+        var colorR  = elt.opening > elt.value ? 'red' : 'green'
+
         chartGroup.add(new Kinetic.Rect({
             x: pos.x*2+i*(margeX),
-            y: 100,
+            y: 10,
             width: 2,
-            height:SIZERESY-120,
+            height:SIZERESY,
             fill: 'red',
-            opacity: 0.1
+            opacity: 0.4
         }));
 
-        var origin = i >= 20 ? data[i-20].value: data[0].value;
-        origin = origin - min;
-        var dest = data[i].predD20-min;
+        var tooltip = new Kinetic.Label({
+            x: spos.x,
+            y: 60,
+            height: 85
+        });
+
+        var rect = new Kinetic.Rect({
+            x:spos.x,
+            y: 80,
+            width: 170,
+            height: -110,
+            fill: 'white',
+            shadowOffset: {x:1,y:1}
+        });
+        tooltip.add(rect);
 
 
-        var colorSign = data[i].signD20 == true ? 'green':'red';
+        tooltip.add(new Kinetic.Text({
+            x:spos.x+10,
+            y: -23,
+            text: 'date:         ',
+            fontFamily: 'Calibri',
+            fontSize: 12,
+            fill: 'black'
+        }));
+
+        tooltip.add(new Kinetic.Text({
+            x:spos.x+40,
+            y: -23,
+            text: elt.date,
+            fontFamily: 'Calibri',
+            fontSize: 11,
+            fill: 'grey'
+        }));
+
+
+
+        tooltip.add(new Kinetic.Text({
+            x:spos.x+10,
+            y: -8,
+            text: 'day value:    ',
+            fontFamily: 'Calibri',
+            fontSize: 12,
+            fill: 'black'
+        }));
+
+        tooltip.add(new Kinetic.Text({
+            x:spos.x+100,
+            y: -8,
+            text: elt.value.toFixed(2),
+            fontFamily: 'Calibri',
+            fontSize: 12,
+            fill: colorR
+        }));
+
+
+
+        tooltip.add(new Kinetic.Text({
+            x:spos.x+10,
+            y: 7,
+            text: 'opening value:',
+            fontFamily: 'Calibri',
+            fontSize: 12,
+            fill: 'black'
+        }));
+
+        tooltip.add(new Kinetic.Text({
+            x:spos.x+100,
+            y: 7,
+            text: elt.opening.toFixed(2),
+            fontFamily: 'Calibri',
+            fontSize: 12,
+            fill: 'grey'
+        }));
+
+        tooltip.add(new Kinetic.Text({
+            x:spos.x+10,
+            y: 22,
+            text: 'highest value:',
+            fontFamily: 'Calibri',
+            fontSize: 12,
+            fill: 'black'
+        }));
+
+        tooltip.add(new Kinetic.Text({
+            x:spos.x+100,
+            y: 22,
+            text: elt.high.toFixed(2),
+            fontFamily: 'Calibri',
+            fontSize: 12,
+            fill: 'grey'
+        }));
+
+        tooltip.add(new Kinetic.Text({
+            x:spos.x+10,
+            y: 37,
+            text: 'lowest value:',
+            fontFamily: 'Calibri',
+            fontSize: 12,
+            fill: 'black'
+        }));
+
+        tooltip.add(new Kinetic.Text({
+            x:spos.x+100,
+            y: 37,
+            text: elt.low.toFixed(2),
+            fontFamily: 'Calibri',
+            fontSize: 12,
+            fill: 'grey'
+        }));
+
+
+
+
+        chartGroup.add(tooltip);
 
         /*var pts = [pos.x * 2 + i * (10) - 2, SIZERESY - dest * heightM - marge, pos.x * 2 + (i >= 20 ? i-20:0) * (10) - 2, SIZERESY - origin * heightM - marge +2];
         chartGroup.add(new Kinetic.Line({
@@ -441,22 +562,6 @@ function drawValue(group, pos, data,min, heightM, marge,  i ,  layer) {
             lineJoin: 'round',
             dashArray: [1, 1]
         }));*/
-
-
-
-
-
-
-
-        chartGroup.add(new Kinetic.Text({
-            x:880,
-            y: 100,
-            text: "BONJOUR",
-            fontFamily: 'Calibri',
-            fontSize: 9,
-            fill: 'black'
-
-        }));
 
 
 

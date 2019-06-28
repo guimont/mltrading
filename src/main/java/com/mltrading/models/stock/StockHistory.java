@@ -23,6 +23,8 @@ public class StockHistory extends StockBase implements Serializable , Comparable
 
     private String name;
 
+    private String nameBoursier;
+
     private String place;
 
     DateTime timeInsert;
@@ -122,6 +124,13 @@ public class StockHistory extends StockBase implements Serializable , Comparable
         this.prediction = prediction;
     }
 
+    public String getNameBoursier() {
+        return nameBoursier;
+    }
+
+    public void setNameBoursier(String nameBoursier) {
+        this.nameBoursier = nameBoursier;
+    }
 
     @Override
     public int compareTo(StockHistory o) {

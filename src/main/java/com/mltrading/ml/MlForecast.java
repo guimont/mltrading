@@ -34,12 +34,16 @@ public class MlForecast extends Evaluate {
 
 
     private static final Logger log = LoggerFactory.getLogger(MlForecast.class);
+    private static final int PERF_BASE = 75;
+    private static final int PERF_SHORT = 25;
     private ExecutorService executorRef;
     private static int DEFAULT_NB_THREADS = 2;
 
     private MlStockType mlStockType;
     private ForecastDTO forecastDTO;
     private Map<String, MLStocks> stocksMap;
+
+    private int index_error = 70;
 
     public void processList(ModelType type) {
 
@@ -108,15 +112,19 @@ public class MlForecast extends Evaluate {
     private void setMap() {
         switch (mlStockType) {
             case BASE:
+                this.index_error = PERF_BASE;
                 this.stocksMap = CacheMLStock.getMLStockCache();
                 break;
             case EXTENDED:
+                this.index_error = PERF_BASE;
                 this.stocksMap = CacheMLStock.getMlStockExMap();
                 break;
             case SHORT:
+                this.index_error = PERF_SHORT;
                 this.stocksMap = CacheMLStock.getMLStockShortCache();
                 break;
             case EXTENDED_SHORT:
+                this.index_error = PERF_SHORT;
                 this.stocksMap = CacheMLStock.getMlStockExShortMap();
                 break;
         }
@@ -124,15 +132,13 @@ public class MlForecast extends Evaluate {
 
 
     public void optimize() {
-        if (forecastDTO.getSpecific().equalsIgnoreCase("ALL")) {
+
             if (forecastDTO.getTarget().equals("PX1"))
                 optimizeBase(new ArrayList(CacheStockGeneral.getIsinCache().values()), CacheStockGeneral.getIsinCache().values().size());
             else if (forecastDTO.getTarget().equals("SBF120"))
                 optimizeBase(new ArrayList(CacheStockGeneral.getIsinExCache().values()), CacheStockGeneral.getIsinExCache().values().size());
             else
                 optimizeBase(new ArrayList(CacheStockSector.getSectorCache().values()), CacheStockSector.getSectorCache().values().size());
-        }
-
     }
 
     public void savePerf(ModelType type) {
@@ -346,6 +352,9 @@ public class MlForecast extends Evaluate {
         final ModelType type = ModelType.get(forecastDTO.getModelType());
         final int loop = forecastDTO.getInputLoop();
 
+
+
+
         for (int i = 0; i < loop; i++) {
 
 
@@ -353,6 +362,12 @@ public class MlForecast extends Evaluate {
 
             CacheMLActivities.addActivities(new MLActivities("optimize", codif, "start", loop, 0, false));
             MLStocks ref = this.stocksMap.get(mls.getCodif());
+
+            /* dont improve for good result model 20 by default*/
+            if (forecastDTO.getSpecific().equalsIgnoreCase("IMPROVE") && ref.getStatus(type).getErrorRate(PredictionPeriodicity.D20) <  this.index_error) {
+                System.out.println("cannot processing: " +codif+" for model: " +type.toString());
+                continue;
+            }
 
             int rowSector = getRowSector(codif);
 
@@ -429,6 +444,9 @@ public class MlForecast extends Evaluate {
         final int loop = forecastDTO.getInputLoop();
 
 
+
+
+
         for (PredictionPeriodicity p : PeriodicityList.periodicityLong) {
             //periodicity.forEach(p -> {
             MLStocks ref = null;
@@ -436,9 +454,14 @@ public class MlForecast extends Evaluate {
             if (this.stocksMap.get(codif) != null)
                 ref = this.stocksMap.get(codif);
 
+
+
             /* dont improve for good result*/
-            /*if (ref.getStatus(ModelType.RANDOMFOREST).getErrorRate(p) < 70)
-                continue;*/
+            if (forecastDTO.getSpecific().equalsIgnoreCase("IMPROVE") && ref.getStatus(type).getErrorRate(p) < this.index_error) {
+                System.out.println("cannot processing: " +codif+" for model: " +type.toString());
+                continue;
+            }
+
 
             log.info("start loop for period: " + p);
             final GeneticAlgorithm<Combination> algo = new GeneticAlgorithm<Combination>(c -> c.evaluate(codif, p, forecastDTO), () -> Combination.newInstance(),

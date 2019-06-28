@@ -15,14 +15,16 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 @Service
 public class MLStockRanking {
 
 
-    public static final int RANGE_MAX = 300;
-    public static final int RENDERING = 100;
+    public static final int RANGE_MAX = 200;
+    public static final int RENDERING = 70;
     public static final int NOT_DEFINE = 20;
 
     public void optimize() {
@@ -30,7 +32,8 @@ public class MLStockRanking {
         //MLRank ref = CacheMLStock.getMlRankCache();
         CacheMLStock.modelTypes.forEach( t -> {
 
-            List<StockGeneral> l = new ArrayList(CacheStockGeneral.getIsinCache().values());
+            List<StockGeneral> l = Stream.concat(CacheStockGeneral.getIsinCache().values().stream(), CacheStockGeneral.getIsinExCache().values().stream())
+                .collect(Collectors.toList());
 
 
             MLModelRanking rfr;

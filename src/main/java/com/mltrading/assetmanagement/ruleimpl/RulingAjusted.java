@@ -16,7 +16,9 @@ public class RulingAjusted implements Ruling {
 
 
     public double process( AssetManagement assetManagement ) {
-        return process(CacheStockGeneral.getCache(), assetManagement);
+        double invest = process(CacheStockGeneral.getCache(), assetManagement);
+        invest += process(CacheStockGeneral.getCacheEx(), assetManagement);
+        return invest;
     }
 
 

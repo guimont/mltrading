@@ -1,67 +1,67 @@
 <div class="container"  style="margin: unset; width: 95%">
 
     <!--<div class="col-md-12">-->
-    <div class="col-lg-12 col-md-12">
+    <div class="col-lg-12 col-md-12" style="margin-top: 20px" >
         <div class="detail" style="border-left-color: {{getcolorSign(detail.variation)}}">
 
-                <div class="col-lg-3 col-md-3">
+                <div class="col-lg-4 col-md-4">
                     <h2><strong>{{detail.name}} </strong></h2>
                     <h2><strong>{{detail.value}}</strong> Eur</h2>
                     <h3 style="color: {{getcolorSign(detail.variation)}}; margin-block-start: unset">{{detail.variation}}%</h3>
-                    <p><strong  class="badge" style="width: 45px; background-color: silver; "><span>{{detail.code}}</span> <small class="text-muted" style="margin-left: 20px">{{selected[0].name}}</small></strong></p>
+                    <p><strong  class="badge badge-secondary" style="border-radius: 0.25em; "><span>{{detail.stock.code}}   {{detail.code}}</span> <small class="text-muted" style="margin-left: 20px">{{selected[0].name}}</small></strong></p>
                 </div>
-                <div class="col-lg-3 col-md-3" style="border-left-style: outset;">
+                <div class="col-lg-4 col-md-4" style="border-left-style: outset;">
                     <div class="col-lg-6 col-md-6" >
-                    <p style="color: lightslategrey;">Openning</p>
+                    <p style="color: lightslategrey;margin-bottom: 2px">Openning</p>
                     <p ><strong>{{detail.open}}</strong></p>
 
 
-                    <p style="color: lightslategrey;">High</p>
+                    <p style="color: lightslategrey;margin-bottom: 2px">High</p>
                     <p ><strong>{{detail.high}}</strong></p>
 
-                    <p style="color: lightslategrey;">Low</p>
+                    <p style="color: lightslategrey;margin-bottom: 2px">Low</p>
                     <p><strong>{{detail.low}}</strong></p>
 
                     </div>
                     <div class="col-lg-6 col-md-6" >
-                        <p style="color: lightslategrey;">Performance</p>
+                        <p style="color: lightslategrey;margin-bottom: 2px">Performance</p>
                         <p ><strong>{{detail.prediction.yieldD20.toFixed(2)}}</strong></p>
 
-                        <p style="color: lightslategrey;">Accuracy 20 days</p>
+                        <p style="color: lightslategrey;margin-bottom: 2px">Accuracy 20 days</p>
                         <p  style="color : {{getcolor(detail.prediction.confidenceD20)}}">{{detail.prediction.confidenceD20}}%</p>
 
-                        <p style="color: lightslategrey;">Accuracy 40 days</p>
+                        <p style="color: lightslategrey;margin-bottom: 2px">Accuracy 40 days</p>
                         <p  style="color : {{getcolor(detail.prediction.confidenceD40)}}">{{detail.prediction.confidenceD40}}%</p>
                     </div>
 
                 </div>
-                <div class="col-lg-3 col-md-3" style="    border-left-style: outset;">
-                    <p style="color: lightslategrey;">Title numbers</p>
-                    <p><strong>{{detail.stock.titleNb}}</strong></p>
+                <div class="col-lg-2 col-md-2" style="    border-left-style: outset;">
+                    <p style="color: lightslategrey;margin-bottom: 2px ">Title numbers</p>
+                    <p style="margin-bottom: 20px"><strong>{{detail.stock.titleNb}}</strong></p>
 
-                    <p style="color: lightslategrey;">Volume</p>
-                    <p><strong>{{detail.volume}}</strong></p>
+                    <p style="color: lightslategrey;margin-bottom: 2px">Volume</p>
+                    <p style="margin-bottom: 20px"><strong>{{detail.volume}}</strong></p>
 
-                    <p style="color: lightslategrey;">Volume exchange</p>
-                    <p><strong>{{calculateVolumeDay()}} %</strong></p>
+                    <p style="color: lightslategrey;margin-bottom: 2px">Volume exchange</p>
+                    <p style="margin-bottom: 20px"><strong>{{calculateVolumeDay()}} %</strong></p>
 
                 </div>
-                <div class="col-lg-3 col-md-3" style="    border-left-style: outset;">
-                    <p style="color: lightslategrey;">Sector</strong></p>
-                    <p style="color: steelblue"> <strong>{{detail.sectorCode}}</strong></p>
+                <div class="col-lg-2 col-md-2" style="    border-left-style: outset;">
+                    <p style="color: lightslategrey;margin-bottom: 2px">Sector</strong></p>
+                    <p style="color: steelblue;margin-bottom: 20px"> <strong>{{detail.sectorCode}}</strong></p>
 
-                    <p style="color: lightslategrey;">Indice</strong></p>
-                    <p style="color: steelblue"> <strong> {{detail.stock.indice}}</strong></p>
+                    <p style="color: lightslategrey;margin-bottom: 2px">Indice</strong></p>
+                    <p class="badge badge-secondary;" style="border-radius: .25rem;margin-bottom: 20px"> <strong> {{detail.stock.indice}}</strong></p>
 
 
-                    <p style="color: lightslategrey;">Elligibility</strong></p>
-                    <p style="color: steelblue">  {{detail.stock.eligib}}</p>
+                    <p style="color: lightslategrey;margin-bottom: 2px">Elligibility</strong></p>
+                    <p class="badge badge-secondary" style="border-radius: .25rem;margin-bottom: 20px" >  {{detail.stock.eligib}}</p>
 
                 </div>
 
         </div><!-- /.panel -->
 
-        <div class="col-lg-10 col-md-10">
+
         <!--<div class="col-md-4">
         </div>-->
 
@@ -132,7 +132,8 @@
                     <span id="result" style="margin: 20px" width="1000" height="250"></span>
                 </div>
             </div>
-        </div>
+
+        <div class="col-lg-10 col-md-10">
 
                 <div class="mypanel panel panel-primary" style="border-color:lightslategray">
                     <div class="panel-heading" style="background-color: lightslategray">
@@ -189,13 +190,13 @@
                 </div>
 
 
-
+        </div>
 
             </div>
         <div class="col-lg-2 col-md-2">
 
             <div >
-                <div style="background-color: lightslategrey; height: 1200px; width: 198px">
+                <div style="height: 1200px; width: 198px">
                     <span id="kineticMapRF"></span>
                     <span id="kineticMapGBT"></span>
                 </div>

@@ -70,10 +70,27 @@ public class test {
         }
     }
 
-*
+*/
+
+
     public static void main(String[] args) {
         MLProperties.load();
+
         try {
+
+            HistoryParserInvesting importStock = new HistoryParserInvesting();
+            importStock.loader("localhost:7090", "COFA", "FR0010667147"); //RMS hermes
+
+            System.out.println("Start analyse");
+            Analyse analyse = new Analyse();
+
+            analyse.processAnalysisAll("COFA");
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+        /*try {
             HistoryParserInvesting importStock = new HistoryParserInvesting();
             /*for (StockGeneral sg : CacheStockGeneral.getIsinExCache().values()) {
                 importStock.loader("localhost:7090", sg.getCodif(), sg.getCode());

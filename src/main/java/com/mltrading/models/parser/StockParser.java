@@ -8,4 +8,5 @@ import com.mltrading.repository.StockRepository;
 public interface StockParser {
 
     void fetch(StockRepository repository);
+    void fetch(StockRepository repository, String codif);
 }

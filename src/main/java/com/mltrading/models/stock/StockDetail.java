@@ -155,7 +155,7 @@ public class StockDetail implements Serializable{
         List<StockHistory> h = StockHistory.getStockHistoryLast(codif, PERIOD);
         MLStocks mls = CacheMLStock.getMLStockCache().get(codif);
 
-        ModelType type = ModelType.RANDOMFOREST;
+        ModelType type = ModelType.ENSEMBLE;
 
         for (StockHistory he:h) {
             DetailData d = new DetailData();
@@ -164,19 +164,12 @@ public class StockDetail implements Serializable{
             if (he.getOpening() != null) d.setOpening(he.getOpening());
             else d.setOpening(he.getValue());
 
+            if (he.getLowest() != null) d.setLow(he.getLowest());
+            else d.setLow(he.getValue());
 
-           /* MLPerformance perf = findPred(mls.getStatus(type).getPerfList(), he.getDay(), PredictionPeriodicity.D5);
-            if (perf != null) {
-                d.setPredD1(perf.getPrediction());
-            }
+            if (he.getHighest() != null) d.setHigh(he.getHighest());
+            else d.setHigh(he.getValue());
 
-
-
-            MLPerformance perf5 = findPred(mls.getStatus(type).getPerfList(), he.getDay(), PredictionPeriodicity.D5);
-            if (perf5 != null) {
-                d.setPredD5(perf5.getPrediction());
-                d.setSignD5(perf5.isSign());
-            }*/
 
 
             MLPerformance perf20 = findPred(mls.getStatus(type).getPerfList(), he.getDay(), PredictionPeriodicity.D20);

@@ -3,6 +3,7 @@ package com.mltrading.models.parser;
 import com.google.inject.AbstractModule;
 import com.mltrading.models.parser.impl.*;
 
+import com.mltrading.models.parser.impl.boursedirect.RealTimeParserBoursedirect;
 import com.mltrading.models.parser.impl.boursorama.DiaryParserBoursorama;
 import com.mltrading.models.parser.impl.boursorama.RealTimeParserBoursorama;
 import com.mltrading.models.parser.impl.investing.HistoryLocalRawMaterials;
@@ -19,7 +20,7 @@ public class ServiceParser extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(RealTimeParser.class).to(RealTimeParserBoursorama.class);
+        bind(RealTimeParser.class).to(RealTimeParserBoursedirect.class);
         bind(HistoryParser.class).to(HistoryParserInvestir.class);
         bind(HistoryRawMaterialsParser.class).to(HistoryLocalRawMaterials.class);
         bind(ConsensusParser.class).to(ConsensusParserInvestir.class);

@@ -30,7 +30,6 @@ public class StockParserInvestir extends ParserCommon implements StockParser{
     static String sep = ",";
     static String end = ",isin.html";
 
-    static String refCode = "tbody";
 
 
     @Override
@@ -38,11 +37,25 @@ public class StockParserInvestir extends ParserCommon implements StockParser{
         loader(repository);
     }
 
+    @Override
+    public void fetch(StockRepository repository, String codif) {
+        StockGeneral sg = CacheStockGeneral.getIsinExCache().get("codif");
+
+        loader(repository, sg);
+    }
+
 
     private void loader(StockRepository repository) {
-        for (StockGeneral g: CacheStockGeneral.getIsinExCache().values()) {
+        for (StockGeneral g: CacheStockGeneral.getIsinCache().values()) {
+            loader(repository, g);
+        }
 
-            String url = base + CacheStockGeneral.getIsinExCache().get(g.getCode()).getName().toLowerCase().replaceAll(" ","-") + sep + g.getPlace().toLowerCase() + sep  + g.getRealCodif().toLowerCase() + sep + g.getCode().toLowerCase() +end;
+    }
+
+
+    private void loader(StockRepository repository, StockGeneral g ){
+
+            String url = base + CacheStockGeneral.getIsinCache().get(g.getCode()).getName().toLowerCase().replaceAll(" ","-") + sep + g.getPlace().toLowerCase() + sep  + g.getRealCodif().toLowerCase() + sep + g.getCode().toLowerCase() +end;
 
 
             try {
@@ -51,8 +64,16 @@ public class StockParserInvestir extends ParserCommon implements StockParser{
                 System.out.println(url);
                 text = loadUrl(new URL(url));
 
-                if (g.getCode().toLowerCase().equals("fr0000124711")) {
-                    String test ="";
+                if (g.getCodif().toLowerCase().equals("urw")) {
+                    Stock stock = new Stock("Compartiment A", "CAC 40", "URW", "FR0013326246", "NA", "NA", "SRD PEA", "138 296 941", "18 981 M€", "ND", "ND", "ND", "FRFIN");
+                    repository.save(stock);
+                    return;
+                }
+
+                if (g.getCodif().toLowerCase().equals("mt")) {
+                    Stock stock = new Stock("Compartiment A", "CAC 40", "MT", "LU1598757687", "NA", "NA", "SRD PEA", "1 021 903 623", "13 756 M€", "ND", "ND", "ND", "FRBM");
+                    repository.save(stock);
+                    return;
                 }
 
                 if (text != null) {
@@ -88,14 +109,16 @@ public class StockParserInvestir extends ParserCommon implements StockParser{
                     repository.save(stock);
                     Thread.sleep(500);
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 System.out.println("ERROR for : " + g.getName());
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
 
 
+
         }
+
+
+
     }
-}
+
