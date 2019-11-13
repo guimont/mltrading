@@ -4,6 +4,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.mltrading.config.MLProperties;
 import com.mltrading.models.parser.Analyse;
+import com.mltrading.models.parser.HistoryRawMaterialsParser;
 import com.mltrading.models.parser.ServiceParser;
 import com.mltrading.models.parser.impl.boursorama.RealTimeParserBoursorama;
 import com.mltrading.models.parser.impl.boursorama.RealTimeSectorBoursorama;
@@ -42,7 +43,8 @@ public class test {
 
     public static void main(String[] args) {
         for (StockGeneral g : CacheStockGeneral.getIsinCache().values()) {
-            System.out.println(g.getCodif());
+            System.out.print("\""+g.getCodif()+"R\",");
+
             /*try {
                 Validator v = new Validator();
                 v.loadValidator(g.getCodif()+"VD1");
@@ -56,23 +58,30 @@ public class test {
             }**
 
         }
-    }*/
+
+        for (StockGeneral g : CacheStockGeneral.getIsinExCache().values()) {
+            System.out.print("\""+g.getCodif()+"R\",");
+
+        }
+    }
+
+
 
 /*
     public static void main(String[] args) {
         MLProperties.load();
 
-        Analyse a = new Analyse();
+
         try {
-            a.processDaily(20);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            service.extractArticleFull();
+        } catch (Exception e) {
+            System.out.println(e);
         }
     }
 
-*/
 
 
+/*
     public static void main(String[] args) {
         MLProperties.load();
 

@@ -64,14 +64,14 @@ public class ScheduleParserGeneral  {
 
     protected void runExtraction() {
         realTimeParserBoursorama.refreshCache();
-        //realTimeSectorBoursorama.refreshCache();
+        realTimeSectorBoursorama.refreshCache();
     }
 
 
     public void start() {
         //updateBase(); //not use here but in upddate scheduler*/
         realTimeParserBoursorama.loaderCache();
-       // updatePredictor();
+        updatePredictor();
         this.extractionCycleInMs =  30000;
         this.timer = new Timer("ExtractionProcess", true);
         this.timerTask = new GlobalTimerTask();

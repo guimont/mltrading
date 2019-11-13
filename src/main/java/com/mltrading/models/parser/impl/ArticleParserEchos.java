@@ -43,13 +43,13 @@ public class ArticleParserEchos extends ParserCommon implements ArticleParser {
             HistogramDocument hd = new HistogramDocument();
             String dateRef = hd.getLastDateHistory(g.getCodif() + "R");
             if (dateRef != null)
-                loaderFrom(g, dateRef);
+                loaderFrom(repository , g, dateRef);
         }
 
     }
 
 
-    private void loaderFrom(StockGeneral g, String dateRef) {
+    private void loaderFrom(ArticleRepository repository, StockGeneral g, String dateRef) {
         DateTime dref = new DateTime(dateRef);
 
         List<StockDocument> sds =  StockDocument.getStockDocumentInvert(g.getCodif(), StockDocument.TYPE_ARTICLE);
@@ -81,26 +81,38 @@ public class ArticleParserEchos extends ParserCommon implements ArticleParser {
                 System.out.println(url);
                 text = loadUrl(new URL(url));
 
-
-
                 Document doc = Jsoup.parse(text);
+
+                Article a = new Article();
+                a.setKey(new ArticleKey(g.getCodif(), d.getDate()));
+                a.setReference(d.getRef());
 
                 /**
                  * Check balise number, if too much dont refer to action
                  */
                 if (doc.select("div.bloc-tags").select("li").size() <5) {
 
+                    String title = doc.select("h1").attr("itemprop","Headline").get(0).text();
+                    a.setTitle(title);
+
                     Elements links = doc.select(refCode);
-                    HistogramDocument hd = new HistogramDocument(d.getCode()+"R", d.getDate());
 
                     Elements sentences = links.select("p");
 
                     for (Element sentence : sentences) {
+                        a.getLines().add(Jsoup.parse(sentence.toString()).text());
 
                     }
 
+                    Elements kewWords = doc.select("div.bloc-tags").select("li");
+                    for (Element kewWord : kewWords) {
+                        a.getTopic().add(Jsoup.parse(kewWord.toString()).text());
+                    }
 
                 }
+
+                repository.save(a);
+
 
             } catch (Exception e) {
                 //e.printStackTrace();

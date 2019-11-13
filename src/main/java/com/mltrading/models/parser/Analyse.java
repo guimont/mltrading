@@ -188,55 +188,61 @@ public class Analyse {
 
         List<Container> cList = new ArrayList<>();
 
-        QueryResult res = InfluxDaoConnector.getPoints("SELECT * FROM " + code + " where time > '" + date +"' - 180d and time <= '" + date +"'",StockHistory.dbName);
+        try {
 
-        if (res.getResults().get(0).getSeries() == null || res.getResults().get(0).getSeries().get(0).getValues() == null) return; //resultat empry
+            QueryResult res = InfluxDaoConnector.getPoints("SELECT * FROM " + code + " where time > '" + date + "' - 180d and time <= '" + date + "'", StockHistory.dbName);
 
-        int len = res.getResults().get(0).getSeries().get(0).getValues().size();
-        int index = len-1;
+            if (res.getResults().get(0).getSeries() == null || res.getResults().get(0).getSeries().get(0).getValues() == null)
+                return; //resultat empry
 
-        if (len <= 100) {
-            log.warn("Not enough element in code "+ code +". Cannot launch AT parser");
-            return;
+            int len = res.getResults().get(0).getSeries().get(0).getValues().size();
+            int index = len - 1;
+
+            if (len <= 100) {
+                log.warn("Not enough element in code " + code + ". Cannot launch AT parser");
+                return;
+            }
+
+
+            Container c = new Container(res.getResults().get(0).getSeries().get(0).getValues().get(index).get(0).toString());
+            c.indice.put(MM20, mmRange(res, code, index, 20));
+            c.indice.put(MM50, mmRange(res, code, index, 50));
+            c.indice.put(STDDEV, stddevRange(res, code, index, 20));
+            double ref_mme26 = mmeRange(res, index, 26, 0.075, columnValue);
+            double ref_mme12 = mmeRange(res, index, 12, 0.15, columnValue);
+            c.indice.put(MME12, Double.toString(ref_mme12));
+            c.indice.put(MME26, Double.toString(ref_mme26));
+            c.indice.put(MOMENTUM, Double.toString(momentum(res, index, columnValue)));
+
+
+            /**
+             *GARCH */
+            double[] vector = new double[100];
+            int currentVectorPos = 0;
+            for (int gindex = 100; gindex > 0; gindex--) {
+                vector[currentVectorPos++] = Double.parseDouble(res.getResults().get(0).getSeries().get(0).getValues().get(index - gindex).get(columnValue).toString());
+            }
+            GARCH garch = new GARCH(vector);
+            Map<String, Object> params = garch.getBestParameters();
+
+            c.indice.put(GARCH_100, params.get("Likelihood").toString());
+            c.indice.put(GARCHVOL_100, params.get("Vol").toString());
+
+            GARCH garch50 = new GARCH(vector, 50, 99);
+            params = garch50.getBestParameters();
+            c.indice.put(GARCH_50, params.get("Likelihood").toString());
+            c.indice.put(GARCHVOL_50, params.get("Vol").toString());
+
+            GARCH garch20 = new GARCH(vector, 80, 99);
+            params = garch20.getBestParameters();
+            c.indice.put(GARCH_20, params.get("Likelihood").toString());
+            c.indice.put(GARCHVOL_20, params.get("Vol").toString());
+
+            saveAnalysis(code, c);
+            cList.add(c);
+        }catch (Exception e) {
+            System.out.println("error in analyse for " + code +" and date: " +date);
         }
-
-
-        Container c = new Container(res.getResults().get(0).getSeries().get(0).getValues().get(index).get(0).toString());
-        c.indice.put(MM20,mmRange(res, code, index, 20));
-        c.indice.put(MM50,mmRange(res, code, index, 50));
-        c.indice.put(STDDEV,stddevRange(res, code, index, 20));
-        double ref_mme26 = mmeRange(res, index, 26, 0.075, columnValue);
-        double ref_mme12 = mmeRange(res, index, 12, 0.15, columnValue);
-        c.indice.put(MME12, Double.toString(ref_mme12));
-        c.indice.put(MME26, Double.toString(ref_mme26));
-        c.indice.put(MOMENTUM, Double.toString(momentum(res,index, columnValue)));
-
-
-        /**
-         *GARCH */
-        double[] vector = new double[100];
-        int currentVectorPos = 0;
-        for (int gindex = 100 ; gindex> 0; gindex --) {
-            vector[currentVectorPos++] = Double.parseDouble(res.getResults().get(0).getSeries().get(0).getValues().get(index-gindex).get(columnValue).toString());
-        }
-        GARCH garch = new GARCH(vector);
-        Map<String, Object> params = garch.getBestParameters();
-
-        c.indice.put(GARCH_100, params.get("Likelihood").toString());
-        c.indice.put(GARCHVOL_100, params.get("Vol").toString());
-
-        GARCH garch50 = new GARCH(vector,50,99);
-        params = garch50.getBestParameters();
-        c.indice.put(GARCH_50, params.get("Likelihood").toString());
-        c.indice.put(GARCHVOL_50, params.get("Vol").toString());
-
-        GARCH garch20 = new GARCH(vector,80,99);
-        params = garch20.getBestParameters();
-        c.indice.put(GARCH_20, params.get("Likelihood").toString());
-        c.indice.put(GARCHVOL_20, params.get("Vol").toString());
-
-        saveAnalysis(code, c);
-        cList.add(c);
 
     }
 

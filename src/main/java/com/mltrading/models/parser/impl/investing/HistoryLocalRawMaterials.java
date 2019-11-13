@@ -50,7 +50,7 @@ public class HistoryLocalRawMaterials extends ParserCommon implements HistoryRaw
     public  void loader(String host) {
         for (StockRawMat r: CacheRawMaterial.getCache().values()) {
             try {
-                String url = localUrl + host + path + r.getName() + ".html";
+                String url = localUrl + host + path + r.getCode() + ".html";
                 System.out.println("url: " + url);
                 parser(r,NO_RANGE,url);
 
